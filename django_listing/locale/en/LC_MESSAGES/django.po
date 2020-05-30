@@ -1,0 +1,293 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-05-15 09:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: actions_buttons_column.py:132
+msgid "Move up"
+msgstr ""
+
+#: actions_buttons_column.py:133
+msgid "Change order up"
+msgstr ""
+
+#: actions_buttons_column.py:162
+msgid "Move down"
+msgstr ""
+
+#: actions_buttons_column.py:163
+msgid "Change order down"
+msgstr ""
+
+#: actions_buttons_column.py:192
+msgid "Details"
+msgstr ""
+
+#: actions_buttons_column.py:193
+msgid "See details"
+msgstr ""
+
+#: aggregations.py:46
+msgid "Unknown \"{}\" aggregation, choose one of these : {}"
+msgstr ""
+
+#: aggregations.py:53
+#, python-brace-format
+msgid "{value}"
+msgstr ""
+
+#: aggregations.py:136
+#, python-brace-format
+msgid "Total :<br>{value}"
+msgstr ""
+
+#: aggregations.py:146
+#, python-brace-format
+msgid "Min :<br>{value}"
+msgstr ""
+
+#: aggregations.py:156
+#, python-brace-format
+msgid "Max :<br>{value}"
+msgstr ""
+
+#: aggregations.py:166
+#, python-brace-format
+msgid "Min : {min_val}<br>Max : {max_val}"
+msgstr ""
+
+#: aggregations.py:178
+msgid ""
+"Min : {min_val}<br>Max : {max_val}<br>Avg : {avg_val:.{col.footer_precision}"
+"f}"
+msgstr ""
+
+#: columns.py:105
+#, python-brace-format
+msgid ""
+"column {col_id} of listing {listing} is not a Column instance (class = "
+"{colclass})"
+msgstr ""
+
+#: columns.py:270
+msgid "Please choose..."
+msgstr ""
+
+#: columns.py:602
+msgid "{} is not a valid django forms field class"
+msgstr ""
+
+#: columns.py:612
+msgid "{} is not a valid django forms widget class"
+msgstr ""
+
+#: columns.py:644 filters.py:370
+#, python-brace-format
+msgid ""
+"Cannot find choices from model for filter \"{name}\", Please specify the "
+"choices to display"
+msgstr ""
+
+#: columns.py:648 filters.py:374
+#, python-brace-format
+msgid "Please specify the choices to display for filter \"{name}\""
+msgstr ""
+
+#: columns.py:658
+msgid "True"
+msgstr ""
+
+#: columns.py:659
+msgid "False"
+msgstr ""
+
+#: columns.py:1019
+msgid "Total"
+msgstr ""
+
+#: columns.py:1021
+#, python-brace-format
+msgid "<td{attrs}>Grand Total:<br>{value}</td>"
+msgstr ""
+
+#: columns.py:1030
+msgid "Min"
+msgstr ""
+
+#: columns.py:1032
+#, python-brace-format
+msgid "<td{attrs}>Overall Min:<br>{value}</td>"
+msgstr ""
+
+#: columns.py:1040
+msgid "Max"
+msgstr ""
+
+#: columns.py:1042
+#, python-brace-format
+msgid "<td{attrs}>Overall Max:<br>{value}</td>"
+msgstr ""
+
+#: columns.py:1051
+msgid "Average"
+msgstr ""
+
+#: columns.py:1056
+msgid "<td{attrs}>Overall avg:<br>{value:.{col.footer_precision}f}</td>"
+msgstr ""
+
+#: filters.py:55
+msgctxt "Filters form"
+msgid "Reset"
+msgstr ""
+
+#: filters.py:56
+msgctxt "Filters form"
+msgid "Filter"
+msgstr ""
+
+#: filters.py:256
+msgid "- No filtering -"
+msgstr ""
+
+#: filters.py:461
+msgid "Use CTRL+click to select/deselect multiple choices"
+msgstr ""
+
+#: listing.py:304
+msgid "<i>Nothing to display</i>"
+msgstr ""
+
+#: listing.py:445
+msgid "Please configure at least one column in your listing"
+msgstr ""
+
+#: listing.py:519
+msgid "record"
+msgstr ""
+
+#: listing_form.py:73
+msgctxt "Listing form"
+msgid "Reset"
+msgstr ""
+
+#: listing_form.py:74
+msgctxt "Listing form"
+msgid "Add"
+msgstr ""
+
+#: listing_form.py:140
+msgid "You must specify a list of columns names in the form layout"
+msgstr ""
+
+#: listing_form.py:147
+#, python-brace-format
+msgid ""
+"In the {form_name} layout you specified the field \"{field_name}\" but there "
+"is no existing listing column with that name"
+msgstr ""
+
+#: paginators.py:32
+#, python-brace-format
+msgctxt "paginator"
+msgid "Page {page_number} of {nb_pages}"
+msgstr ""
+
+#: paginators.py:34
+#, python-brace-format
+msgctxt "paginator"
+msgid "{row_first}-{row_last} of {nb_rows}"
+msgstr ""
+
+#: paginators.py:36
+msgctxt "paginator"
+msgid "Previous"
+msgstr ""
+
+#: paginators.py:37
+msgctxt "paginator"
+msgid "Next"
+msgstr ""
+
+#: paginators.py:39
+msgctxt "paginator"
+msgid "First"
+msgstr ""
+
+#: paginators.py:40
+msgctxt "paginator"
+msgid "Last"
+msgstr ""
+
+#: paginators.py:51
+#, python-brace-format
+msgctxt "paginator"
+msgid "Go to page {goto_form}"
+msgstr ""
+
+#: record.py:42
+msgid ""
+"Getting all records is only supported on SMALL sequence data, not on Django "
+"querysets"
+msgstr ""
+
+#: record.py:79
+#, python-brace-format
+msgid ""
+"field \"{field}\" must be an integer, please choose the correct field that "
+"will be used to change object ordering"
+msgstr ""
+
+#: templates/django_listing/empty_listing.html:4
+#, python-format
+msgid "There is no %(record_label)s to display."
+msgstr ""
+
+#: toolbar.py:175
+msgid "Sort by"
+msgstr ""
+
+#: toolbar.py:176 toolbar.py:240 toolbar.py:278
+msgid "OK"
+msgstr ""
+
+#: toolbar.py:202
+msgid "Sort by..."
+msgstr ""
+
+#: toolbar.py:239
+msgid "Per page"
+msgstr ""
+
+#: toolbar.py:270
+msgid "Per page..."
+msgstr ""
+
+#: toolbar.py:275
+msgid "Choose..."
+msgstr ""
+
+#: toolbar.py:292
+msgid "Export to..."
+msgstr ""
+
+#: views.py:191
+msgid ""
+"At least a form layout and name are mandatory in POST data to build a "
+"relevant form instance"
+msgstr ""

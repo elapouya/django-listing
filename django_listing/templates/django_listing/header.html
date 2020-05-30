@@ -1,0 +1,7 @@
+{% load static %}
+<link rel="stylesheet" href="{% static "django_listing/css/django_listing.css" %}">
+{% block header_snippets %}
+    {% if request.django_listing_header_snippets %}
+        {% for snippet in request.django_listing_header_snippets %}{{ snippet|safe }}{% endfor %}
+    {% endif %}
+{% endblock %}

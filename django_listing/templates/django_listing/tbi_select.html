@@ -1,0 +1,31 @@
+{% load django_listing %}
+{% get_uniq_id as uniq_id %}
+<div class="btn-group mr-2 toolbar_item {{ item.css_class }}" role="group">
+    <form id="toolbar-item-{{ uniq_id }}-form-id" class="form-inline">
+        {% gethiddens_listing listing without=item.select_name %}
+        {% if item.label %}
+            <label class="sr-only" for="toolbar-item-{{ uniq_id }}-select-id">{{ item.label }}</label>
+        {% endif %}
+        <div class="input-group input-group-sm mr-sm-2">
+        {% if item.label %}
+            <div class="input-group-prepend">
+                <div class="input-group-text">{{ item.label }}</div>
+            </div>
+        {% endif %}
+            <select id="toolbar-item-{{ uniq_id }}-select-id"
+                    name="{{ item.select_name}}{{ listing.suffix }}"
+                    class="listing-nav custom-select form-control pr-4"
+                    {% if not listing.accept_ajax and not item.has_submit_button %}
+                    onchange="document.getElementById('toolbar-item-{{ uniq_id }}-form-id').submit()"
+                    {% endif %}
+            >
+                {% for key,label,selected in item.selected_choices %}
+                    <option value="{{ key }}" class="listing-icon-up-open"{% if selected %} selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            {% if item.has_submit_button %}
+                <button type="submit" class="btn btn-secondary btn-sm ml-1">{{ item.button_label }}</button>
+            {% endif %}
+        </div>
+    </form>
+</div>

@@ -1,0 +1,6 @@
+{% load i18n %}
+<div class="alert alert-primary" role="alert">
+    {% with listing.record_label as record_label %}
+        {% blocktrans %}There is no {{ record_label }} to display.{% endblocktrans %}
+    {% endwith %}
+</div>

@@ -1,0 +1,24 @@
+{% load static %}
+<div id="listing-popup-container"></div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajaxSetup({
+            data: { 'csrfmiddlewaretoken':'{{ csrf_token }}' }
+        });
+    });
+</script>
+<script src="{% static "django_listing/js/django_listing.js" %}"></script>
+{% block footer_snippets %}
+    {% if request.django_listing_footer_snippets %}
+        {% for snippet in request.django_listing_footer_snippets %}{{ snippet|safe }}{% endfor %}
+    {% endif %}
+{% endblock %}
+{% block onready_snippets %}
+    {% if request.django_listing_onready_snippets %}
+        <script type="text/javascript">
+        $(document).ready(function () {
+            {% for snippet in request.django_listing_onready_snippets %}{{ snippet|safe }}{% endfor %}
+        });
+        </script>
+    {% endif %}
+{% endblock %}

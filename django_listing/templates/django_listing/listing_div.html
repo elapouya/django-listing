@@ -1,0 +1,29 @@
+{% extends "django_listing/listing.html" %}
+{% block listing %}
+    <div{{ listing.attrs }}>
+        {% for row in listing.div_rows %}
+            <div{{ row.attrs }}>
+            {% if listing.can_select %}
+                <input class="row-select" type="hidden" select-name="selected_rows{{ listing.suffix }}" value="{{ row.selection_value }}">
+                {% if listing.selection_has_overlay %}
+                    {% include listing.selection_overlay_template_name %}
+                {%  endif %}
+            {%  endif %}
+            {% block listing_body_row_cycle %}{% endblock listing_body_row_cycle %}
+            {% with row.rec as rec %}
+                {% autoescape on %}
+                    {% include listing.div_template_name %}
+                {% endautoescape %}
+            {% endwith %}
+            </div>
+        {% empty %}
+            {% if listing.empty_table_msg %}
+                {% block listing_empty %}
+                    <div class="empty-message">
+                        {{ listing.empty_table_msg }}
+                    </div>
+                {% endblock listing_empty %}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock listing %}
