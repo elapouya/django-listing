@@ -1,10 +1,10 @@
-__version__='0.0.3'
+__version__='0.0.4'
 __author__ = "Eric Lapouyade"
 __copyright__ = "Copyright 2018, The Django listing Project"
 __credits__ = ["Eric Lapouyade"]
-__license__ = "LGPL v2.1"
+__license__ = "Dual licensing"
 __maintainer__ = "Eric Lapouyade"
-__status__ = "Beta"
+__status__ = "Alpha"
 
 EXPORT_FORMATS = ['CSV','DBF','HTML','JSON','ODS','TSV','XLS','XLSX','YAML']
 
