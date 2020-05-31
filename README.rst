@@ -16,7 +16,8 @@ Django app for building HTML listings / tables, it includes many features :
 * A lot of column types are provided, there automatically created when a QuerySet or a model is provided
 * Columns are class-bases and one can create custom ones
 * Columns manage One-to-many, Many-to-many and foreign relations
-* Provides aggregation columns : sum, avg, min, max values (useful when not using Django querysets)
+* Provides aggregation columns : sum, avg, min, max values
+* Provides page-level and global aggregation : sum, avg, min, max values displayed at listing last row
 * Provides columns to make a link to the object, a custom link, checkbox, select box, text input...
 * Provides "action column" that comes with many actions : show, edit, delete, move up, move down...
 * is able to manage multiple variations to present data in multiple way at the same place
