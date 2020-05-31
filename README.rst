@@ -40,8 +40,6 @@ Django app for building HTML listings / tables, it includes many features :
 Demo
 ----
 
-A demo code is available on github here : `django-listing-demo <https://github.com/elapouya/django-listing-demo>`_
-
 If you have docker you can run the demo with this command::
 
     docker run -p 8123:8123 elapouya/django-listing-demo
@@ -53,6 +51,11 @@ To install docker on Linux, just use this command::
     curl -sSL https://get.docker.com/ | sh
 
 Otherwise, you can upload from here : https://docs.docker.com/get-docker/
+
+Code
+....
+
+The demo code is available on github here : `django-listing-demo <https://github.com/elapouya/django-listing-demo>`_
 
 
 License
