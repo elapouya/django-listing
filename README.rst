@@ -12,7 +12,7 @@ Django app for building HTML listings / tables, it includes many features :
 * Customized for Bootstrap by default, but can be easily customized in many way (templates, icons, etc...)
 * You can select columns to display, columns title, default sorting etc..
 * Pagination is highly customizable (buttons to display, goto page, ellipsis, icons et labels)
-* Rows can a div, so it is possible to format data in many ways
+* Rows can be <div> instead of <tr>, so it is possible to format data in many ways
 * A lot of column types are provided, there automatically created when a QuerySet or a model is provided
 * Columns are class-bases and one can create custom ones
 * Columns manage One-to-many, Many-to-many and foreign relations
