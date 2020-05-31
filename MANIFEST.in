@@ -1,0 +1,7 @@
+include README.rst
+include CHANGES.rst
+include LICENSE
+recursive-exclude docs/_build *
+recursive-include django_listing/templates *
+recursive-include django_listing/static *
+recursive-include django_listing/locale *
