@@ -15,7 +15,7 @@ Django app for building HTML listings / tables, it includes many features :
 * Rows can a div, so it is possible to format data in many ways
 * A lot of column types are provided, there automatically created when a QuerySet or a model is provided
 * Columns are class-bases and one can create custom ones
-* Columns manages One-to-many, Many-to-many and foreign relations
+* Columns manage One-to-many, Many-to-many and foreign relations
 * Provides aggregation columns : sum, avg, min, max values (useful when not using Django querysets)
 * Provides columns to make a link to the object, a custom link, checkbox, select box, text input...
 * Provides "action column" that comes with many actions : show, edit, delete, move up, move down...
@@ -24,9 +24,9 @@ Django app for building HTML listings / tables, it includes many features :
 * Uses Django translation framework : one can translate the listing as needed
 * Toolbars can be added at the top and/or at the bottom to make actions
 * Built-in toolbar action are : sorting, select a listing variation, number of rows per page,
-  export data. There are customizable.
+  export data. They are customizable.
 * Toolbar items are class-based : one can create a custom one easily
-* django-listing can automatically create a form for filtering data source
+* django-listing can automatically create a filter form (aka search form)
 * Listing rows can be selectable in order to apply some actions
 * Listings can be editable for mass updates
 * django-listing can automatically create a form for inserting data to database
