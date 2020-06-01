@@ -2,6 +2,9 @@
 django-listing
 ==============
 
+.. image:: https://raw.githubusercontent.com/elapouya/django-listing/master/docs/_static/readme_intro1.png
+.. image:: https://raw.githubusercontent.com/elapouya/django-listing/master/docs/_static/readme_intro2.png
+
 Django app for building HTML listings / tables, it includes many features :
 
 * Any iterable, Django QuerySet or model can be used.
