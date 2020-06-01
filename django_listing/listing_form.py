@@ -48,8 +48,11 @@ class ListingBaseForm(forms.BaseForm):
                 method = None
                 view = self.listing.get_view()
                 if view:
-                    method_name = f'manage_listing_{self.form_name}_clean_{name}'
+                    method_name = f'manage_listing_{view.listing.id[:-3]}_{self.form_name}_clean_{name}'
                     method = getattr(view, method_name, None)
+                    if not method:
+                        method_name = f'manage_listing_{self.form_name}_clean_{name}'
+                        method = getattr(view, method_name, None)
                 if not method:
                     method_name = f'{self.form_name}_clean_{name}'
                     method = getattr(self.listing, method_name, None)
@@ -64,8 +67,11 @@ class ListingBaseForm(forms.BaseForm):
             method = None
             view = self.listing.get_view()
             if view:
-                method_name = f'manage_listing_{self.form_name}_clean'
+                method_name = f'manage_listing_{view.listing.id[:-3]}_{self.form_name}_clean'
                 method = getattr(view, method_name, None)
+                if not method:
+                    method_name = f'manage_listing_{self.form_name}_clean'
+                    method = getattr(view, method_name, None)
             if not method:
                 method_name = f'{self.form_name}_clean'
                 method = getattr(self.listing, method_name, None)

@@ -40,11 +40,12 @@ class ListingViewMixin:
     listing_context_name = 'listing'
     listing_instance = None
     listing = None
-    update_success_redirect_url = LISTING_REDIRECT_NONE
+    insert_success_redirect_url = LISTING_REDIRECT_NONE
     insert_success_msg = _('<b>{object}</b> has been successfully added.')
     insert_success_msg_no_save = _(
         'The form is valid but nothing has been added to database '
         'as <tt>save_to_database=False</tt>.')
+    update_success_redirect_url = LISTING_REDIRECT_NONE
     update_success_msg = _('<b>{nb_updates} {model_verbose}</b> '
                            'has been successfully updated.')
     update_success_msg_no_save = _(
@@ -54,6 +55,7 @@ class ListingViewMixin:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._listing_instances = {}
+        self._formset_errors = {}
 
     def post(self, request, *args, **kwargs):
         try:
@@ -201,6 +203,11 @@ class ListingViewMixin:
             formset = listing.get_formset()
             if formset.is_valid():
                 return self.manage_listing_update_valid(listing, formset)
+            else:
+                # extract error strings from Django ErrorDict
+                listing.row_form_errors = [ ', '.join(list(e['__all__']))
+                                            for e in formset.errors
+                                            if '__all__' in e ]
 
     def get_form_instance(self, listing):
         if listing.form:

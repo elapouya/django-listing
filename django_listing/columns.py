@@ -37,7 +37,7 @@ __all__ = ['COLUMNS_PARAMS_KEYS', 'Columns', 'ModelColumns', 'SequenceColumns',
            'COLUMNS_FORM_FIELD_KEYS',]
 
 COLUMNS_PARAMS_KEYS = {
-    'name', 'header', 'footer', 'data_key',
+    'name', 'header', 'footer', 'data_key', 'cell_edit_tpl',
     'cell_tpl', 'cell_attrs', 'value_tpl', 'cell_value', 'label',
     'header_tpl', 'header_sortable_tpl',
     'footer_tpl', 'footer_value_tpl', 'sort_key', 'sortable', 'header_attrs',
@@ -259,6 +259,7 @@ class Column(metaclass=ColumnMeta):
     ascending_by_default = True
     can_edit = False
     cell_tpl = None
+    cell_edit_tpl = None
     cell_value = None
     data_key = None
     default_footer_value = ''
@@ -458,11 +459,13 @@ class Column(metaclass=ColumnMeta):
         return value_tpl
 
     def get_cell_template(self, rec, ctx, value):
-        tpl = self.cell_tpl or '<td{attrs}>%s</td>'
         if self.can_edit and rec.get_form() is not None:
             value_tpl = self.get_edit_value_tpl(rec, ctx, value)
+            cell_tpl = self.cell_edit_tpl or self.cell_tpl
         else:
+            cell_tpl = self.cell_tpl
             value_tpl = self.get_value_tpl(rec, ctx, value)
+        tpl = cell_tpl or '<td{attrs}>%s</td>'
         return tpl % value_tpl
 
     def render_cell(self,rec):
@@ -899,16 +902,18 @@ class LinkColumn(Column):
     params_keys = 'link_attrs,href_tpl,no_link'
     href_tpl = None
     no_link = False
+    link_attrs = None
+    cell_tpl = '<td{attrs}><a{link_attrs}>%s</a></td>'
+    cell_edit_tpl = '<td{attrs}>%s</td>'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.link_attrs = {}
 
     def get_link_attrs(self, rec, value):
         link_attrs = self.link_attrs
         if callable(link_attrs):
             link_attrs = link_attrs(rec, value)
-        attrs = HTMLAttributes(link_attrs)
+        attrs = HTMLAttributes(link_attrs or {})
         return attrs
 
     def get_href_tpl(self, rec, value):
@@ -923,13 +928,6 @@ class LinkColumn(Column):
             return href_tpl.format(**ctx)
         return None
 
-    def get_cell_template(self, rec, ctx, value):
-        if self.can_edit:
-            return '<td{attrs}>%s</td>' % self.value_tpl
-        if self.cell_tpl:
-            return self.cell_tpl
-        return '<td{attrs}><a{link_attrs}>%s</a></td>' % self.value_tpl
-
     def get_cell_context(self, rec, value):
         ctx = super().get_cell_context(rec, value)
         ctx.link_attrs = self.get_link_attrs(rec, value)
@@ -937,10 +935,10 @@ class LinkColumn(Column):
             ctx.link_attrs.add('href',self.get_href(rec, ctx, value))
         return ctx
 
-
 class URLColumn(LinkColumn):
     href_tpl = '{value}'
     from_model_field_classes = (models.URLField,)
+    form_field_widget_class = widgets.URLInput
     params_keys = 'remove_proto'
     remove_proto = True
 
@@ -954,6 +952,7 @@ class URLColumn(LinkColumn):
 class EmailColumn(LinkColumn):
     href_tpl = 'mailto:{value}'
     from_model_field_classes = (models.EmailField,)
+    form_field_widget_class = widgets.EmailInput
 
 
 class LinkObjectColumn(LinkColumn):

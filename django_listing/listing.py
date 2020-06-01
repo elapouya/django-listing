@@ -334,6 +334,7 @@ class Listing(ListingBase):
     primary_key = 'id'
     records_class = RecordManager
     record_label = None
+    row_form_errors = None
     row_inner_div_tpl = None
     save_to_database = False
     select_columns = None

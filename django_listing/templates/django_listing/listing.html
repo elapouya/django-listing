@@ -7,6 +7,13 @@
     >
     <div class="listing-spinner"><span class="{{ listing.theme_spinner_icon }}"></span></div>
 
+        {% if listing.row_form_errors %}
+            <ul class="listing-row-form-errors">
+                {% for error in listing.row_form_errors %}<li>{{error|safe}}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
         {% if listing.paginator.count or not listing.empty_listing_template_name %}
             {% if has_top_toolbar %}
                 <div class="top-toolbar">
