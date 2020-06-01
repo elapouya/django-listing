@@ -1,6 +1,7 @@
 Django-listing is licensed under the GPLv3 license for all open source applications.
 A commercial license is required for all commercial applications or non-open applications,
 this includes :
+
 - Any web site with ads or to sell something,
 - Any application that includes django-listing you plan to sell
 - Any service that includes django-listing
