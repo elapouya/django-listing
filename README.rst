@@ -13,7 +13,8 @@ Django app for building HTML listings / tables, it includes many features :
 * You can select columns to display, columns title, default sorting etc..
 * Pagination is highly customizable (buttons to display, goto page, ellipsis, icons et labels)
 * Rows can be <div> instead of <tr>, so it is possible to format data in many ways
-* A lot of column types are provided, there automatically created when a QuerySet or a model is provided
+* A lot of column types are provided, they are automatically created when a
+  QuerySet or a model is provided
 * Columns are class-bases and one can create custom ones
 * Columns manage One-to-many, Many-to-many and foreign relations
 * Provides aggregation columns : sum, avg, min, max values
@@ -64,7 +65,7 @@ License
 Django-listing is licensed under the GPLv3 license for all open source applications.
 A commercial license is required for all commercial applications or non-open applications
 
-See LICENSE file for more informations.
+See `LICENSE.rst <LICENSE.rst>`_ file for more informations.
 
 
 Documentation
