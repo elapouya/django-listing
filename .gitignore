@@ -101,4 +101,4 @@ ENV/
 .mypy_cache/
 
 .idea/
-/django-listing-demo/
+django-listing-demo/
