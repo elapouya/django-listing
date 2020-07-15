@@ -68,7 +68,7 @@ License
 Django-listing is licensed under the GPLv3 license for all open source applications.
 A commercial license is required for all commercial applications or non-open applications
 
-See `LICENSE.rst <LICENSE.rst>`_ file for more informations.
+See `LICENSE.rst <https://github.com/elapouya/django-listing/blob/master/LICENSE.rst>`_ file for more informations.
 
 
 Documentation
