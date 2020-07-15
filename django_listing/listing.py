@@ -660,7 +660,24 @@ class Listing(ListingBase):
                                                           self.export.lower())
         return hasattr(self.request,'export_data')
 
+    def django_listing_info(self):
+        if hasattr(self, 'request'):
+            if self.request.GET.get('__django_listing_info__'):
+                out = '<b><u>django-listing informations :</u></b><br>'
+                import django_listing
+                out += f'django-listing version : {django_listing.__version__}<br>'
+                import django
+                out += f'django version : {django.__version__}<br>'
+                import tablib
+                out += f'tablib version : {tablib.__version__}<br>'
+                import sys
+                out += f'Python version : {sys.version.split()[0]}<br>'
+                return out
+
     def render_template(self):
+        request_for_info = self.django_listing_info()
+        if request_for_info:
+            return request_for_info
         ctx = self.get_listing_context()
         template = loader.get_template(self.listing_template_name)
         out = template.render(ctx)
