@@ -315,6 +315,7 @@ class Listing(ListingBase):
     has_hidden_selection = False
     has_paginator = True
     has_toolbar = False
+    has_upload = False
     id = None
     link_object_columns = None
     row_form_base_class = ListingBaseForm
@@ -356,6 +357,7 @@ class Listing(ListingBase):
     toolbar = None
     toolbar_placement = 'both'
     unsortable = True
+    upload_accepted_files = None
     variation = None
     variations = None
 
@@ -370,6 +372,7 @@ class Listing(ListingBase):
     theme_sortable_class = 'sortable'
     theme_sort_asc_class = 'asc'
     theme_sort_desc_class = 'desc'
+    theme_button_class = 'btn btn-primary'
     theme_button_disabled_class = 'disabled'
     theme_button_active_class = 'active'
     theme_div_row_container_class = ''
@@ -426,12 +429,20 @@ class Listing(ListingBase):
     def add_onready_snippet(self, snippet):
         if not hasattr(self.request,'django_listing_onready_snippets'):
             self.request.django_listing_onready_snippets = []
-        self.request.django_listing_onready_snippets.append(snippet)
+        if snippet not in self.request.django_listing_onready_snippets:
+            self.request.django_listing_onready_snippets.append(snippet)
+
+    def add_header_snippet(self, snippet):
+        if not hasattr(self.request,'django_listing_header_snippets'):
+            self.request.django_listing_header_snippets = []
+        if snippet not in self.request.django_listing_header_snippets:
+            self.request.django_listing_header_snippets.append(snippet)
 
     def add_footer_snippet(self, snippet):
         if not hasattr(self.request,'django_listing_footer_snippets'):
             self.request.django_listing_footer_snippets = []
-        self.request.django_listing_footer_snippets.append(snippet)
+        if snippet not in self.request.django_listing_footer_snippets:
+            self.request.django_listing_footer_snippets.append(snippet)
 
     def create_missing_columns(self):
         if self.columns is None:
@@ -539,12 +550,20 @@ class Listing(ListingBase):
             self._initialized = True
 
     def datetimepicker_init(self):
-        if self.can_edit:
-            self.add_onready_snippet("\n"
-                "$('#{listing.id} .edit-datecolumn').datetimepicker({{timepicker:false, format:'{listing.datetimepicker_date_format}'}});\n"
-                "$('#{listing.id} .edit-datetimecolumn').datetimepicker({{format:'{listing.datetimepicker_datetime_format}'}});\n"
-                "$('#{listing.id} .edit-timecolumn').datetimepicker({{datepicker:false, format:'{listing.datetimepicker_time_format}'}});\n"
-                .format(listing=self))
+        self.add_header_snippet("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>""")
+        self.add_footer_snippet("""<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>""")
+        self.add_onready_snippet(f"""
+            $('.edit-datecolumn').datetimepicker({{timepicker:false, format:'{self.datetimepicker_date_format}'}});
+            $('.edit-datetimecolumn').datetimepicker({{format:'{self.datetimepicker_datetime_format}'}});
+            $('.edit-timecolumn').datetimepicker({{datepicker:false, format:'{self.datetimepicker_time_format}'}});
+            """)
+
+    def dropzone_init(self):
+        self.add_footer_snippet("""<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.1/dropzone.min.js"></script>""")
+        self.add_onready_snippet(f"""
+            console.log('Dropzone "initialized 2"');
+            $('#upload-form{self.id}').dropzone({{}});
+            """)
 
     def global_context_init(self):
         self.global_context.update(
@@ -623,7 +642,10 @@ class Listing(ListingBase):
                 self.editing_hidden_columns - self.can_edit_columns_names
             self.selected_hidden_columns = \
                 self.columns.select(self.editing_really_hidden_columns)
-            self.datetimepicker_init()
+            if self.can_edit:
+                self.datetimepicker_init()
+            if self.has_upload:
+                self.dropzone_init()
             if self.can_edit or self.can_select or self.form:
                 self.add_form_input_hiddens(listing_id=self.id,
                                             listing_suffix=self.suffix)

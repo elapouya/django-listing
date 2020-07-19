@@ -198,6 +198,9 @@ class ListingViewMixin:
                 #     response = self.manage_listing_select(listing, *args, **kwargs)
             return response
 
+    def manage_listing_upload(self, listing, *args, **kwargs):
+        raise ListingException('Upload reached : Cool !')
+
     def manage_listing_update(self, listing, *args, **kwargs):
         if listing.editable and listing.editing:
             formset = listing.get_formset()
@@ -372,11 +375,6 @@ class ListingViewMixin:
             context[self.listing_class.__name__] = self.listing_class
         context.update(self.get_listings_instances())
         return context
-
-    def add_listing_header_snippet(self, snippet):
-        if not hasattr(self.request,'django_listing_header_snippets'):
-            self.request.django_listing_header_snippets = []
-        self.request.django_listing_header_snippets.append(snippet)
 
 class ListingView(ListingViewMixin, TemplateView):
     pass

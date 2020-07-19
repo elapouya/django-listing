@@ -133,13 +133,6 @@ class Filters(list):
             filters.form_buttons = list(map(str.strip,fbuttons.split(',')))
         return filters
 
-    def datetimepicker_init(self):
-        self.listing.add_onready_snippet("\n"
-            "$('#{filters.id} .edit-datecolumn').datetimepicker({{timepicker:false, format:'{listing.datetimepicker_date_format}'}});\n"
-            "$('#{filters.id} .edit-datetimecolumn').datetimepicker({{format:'{listing.datetimepicker_datetime_format}'}});\n"
-            "$('#{filters.id} .edit-timecolumn').datetimepicker({{datepicker:false, format:'{listing.datetimepicker_time_format}'}});\n"
-            .format(filters=self, listing=self.listing))
-
     def create_filter(self, name, listing):
         if isinstance(name,str):
             model_attr_name, *_ = name.split('__')
@@ -184,7 +177,7 @@ class Filters(list):
             self.form_attrs.add('id',
                                 'filters-form{}'.format(self.listing.suffix))
         self.id = self.form_attrs['id']
-        self.datetimepicker_init()
+        self.listing.datetimepicker_init()
 
     def render_form(self, context):
         self.render_init(context)

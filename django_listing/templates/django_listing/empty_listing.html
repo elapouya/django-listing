@@ -1,6 +1,29 @@
 {% load i18n %}
+{% if listing.has_upload %}
+    <form class="empty-listing" id="upload-form{{ listing.suffix }}">
+        {% csrf_token %}
+        <input type="hidden" name="listing_id" value="{{ listing.id }}">
+        <input type="hidden" name="listing_suffix" value="{{ listing.suffix }}">
+{%  endif %}
 <div class="alert alert-primary" role="alert">
     {% with listing.record_label as record_label %}
         {% blocktrans %}There is no {{ record_label }} to display.{% endblocktrans %}
     {% endwith %}
 </div>
+{% if listing.has_upload %}
+    <div class="fallback">
+        <div class="upload-msg">{% trans "Upload a file" %}</div>
+        <div class="upload-input"><input name="file" type="file" class="{{ listing.theme_button_class }}" multiple /></div>
+        {% if listing.upload_accepted_files %}
+            <div class="upload-accepted-files">{% trans "Accepted files are" %} : {{ listing.upload_accepted_files }}</div>
+        {% endif %}
+    </div>
+    <div class="dz-message" data-dz-message>
+        <div class="upload-button"><button type="button" name="upload" class="{{ listing.theme_button_class }}">{% trans "Upload" %}</button></div>
+        <div class="upload-drop-here">{% trans "You can drop files here" %}</div>
+        {% if listing.upload_accepted_files %}
+            <div class="upload-accepted-files">{% trans "Accepted files are" %} : {{ listing.upload_accepted_files }}</div>
+        {% endif %}
+    </div>
+    </form>
+{% endif %}
