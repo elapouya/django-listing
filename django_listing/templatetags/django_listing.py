@@ -13,6 +13,30 @@ register = template.Library()
 _uniq_counter = count(0)
 
 
+class ListingHeaderNode(template.Node):
+    def __init__(self, nodelist):
+        self.nodelist = nodelist
+
+    def render(self, context):
+        remaining_output = self.nodelist.render(context)
+        tpl = template.loader.get_template('django_listing/header.html')
+        tpl_output = tpl.render(context.flatten())
+        return f'{tpl_output}\n{remaining_output}'
+
+
+@register.tag(name="render_listing_header")
+def do_listing_header(parser, token):
+    nodelist = parser.parse()
+    return ListingHeaderNode(nodelist)
+
+
+@register.simple_tag(takes_context=True)
+def render_listing_footer(context):
+    tpl = template.loader.get_template('django_listing/footer.html')
+    tpl_output = tpl.render(context.flatten())
+    return tpl_output
+
+
 def initialize_listing(context, listing, data=None, *args, **kwargs):
     if isinstance(listing,str) or listing is None:
         return None

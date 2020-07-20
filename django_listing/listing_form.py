@@ -148,6 +148,14 @@ class ListingForm:
         if isinstance(buttons,str):
             self.buttons = list(map(str.strip,buttons.split(',')))
 
+    def datetimepicker_init(self):
+        self.listing.need_media_for('datetimepicker')
+        self.listing.add_onready_snippet(f"""
+            $('#{self.id} .edit-datecolumn').datetimepicker({{timepicker:false, format:'{self.listing.datetimepicker_date_format}'}});
+            $('#{self.id} .edit-datetimecolumn').datetimepicker({{format:'{self.listing.datetimepicker_datetime_format}'}});
+            $('#{self.id} .edit-timecolumn').datetimepicker({{datepicker:false, format:'{self.listing.datetimepicker_time_format}'}});
+            """)
+
     def create_form_from_layout(self):
         fields = {}
         if not self.layout:
@@ -179,7 +187,7 @@ class ListingForm:
 
     def render_init(self,context):
         self.listing.manage_page_context(context)
-        self.listing.datetimepicker_init()
+        self.datetimepicker_init()
 
     def render(self, context):
         self.render_init(context)

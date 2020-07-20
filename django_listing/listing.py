@@ -81,7 +81,8 @@ LISTING_PARAMS_KEYS = {
     'row_attrs', 'theme_div_row_container_class', 'selection_mode',
     'selection_overlay_template_name', 'selection_menu_id',
     'onready_snippet','footer_snippet', 'selection_initial', 'form',
-    'link_object_columns', 'anchor_hash', 'theme_spinner_icon'
+    'link_object_columns', 'anchor_hash', 'theme_spinner_icon', 'has_upload',
+    'upload_accepted_files',
 }
 
 LISTING_VARIATIONS_KEYS = LISTING_PARAMS_KEYS | {'get_url'}
@@ -444,6 +445,11 @@ class Listing(ListingBase):
         if snippet not in self.request.django_listing_footer_snippets:
             self.request.django_listing_footer_snippets.append(snippet)
 
+    def need_media_for(self, feature_name):
+        if not hasattr(self.request, 'need_media_for'):
+            self.request.need_media_for = {}
+        self.request.need_media_for[feature_name] = True
+
     def create_missing_columns(self):
         if self.columns is None:
             if isinstance(self.columns_headers,str):
@@ -550,18 +556,16 @@ class Listing(ListingBase):
             self._initialized = True
 
     def datetimepicker_init(self):
-        self.add_header_snippet("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>""")
-        self.add_footer_snippet("""<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>""")
+        self.need_media_for('datetimepicker')
         self.add_onready_snippet(f"""
-            $('.edit-datecolumn').datetimepicker({{timepicker:false, format:'{self.datetimepicker_date_format}'}});
-            $('.edit-datetimecolumn').datetimepicker({{format:'{self.datetimepicker_datetime_format}'}});
-            $('.edit-timecolumn').datetimepicker({{datepicker:false, format:'{self.datetimepicker_time_format}'}});
+            $('#{self.id} .edit-datecolumn').datetimepicker({{timepicker:false, format:'{self.datetimepicker_date_format}'}});
+            $('#{self.id} .edit-datetimecolumn').datetimepicker({{format:'{self.datetimepicker_datetime_format}'}});
+            $('#{self.id} .edit-timecolumn').datetimepicker({{datepicker:false, format:'{self.datetimepicker_time_format}'}});
             """)
 
     def dropzone_init(self):
-        self.add_footer_snippet("""<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.1/dropzone.min.js"></script>""")
+        self.need_media_for('dropzone')
         self.add_onready_snippet(f"""
-            console.log('Dropzone "initialized 2"');
             $('#upload-form{self.id}').dropzone({{}});
             """)
 
