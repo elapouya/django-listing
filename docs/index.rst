@@ -30,7 +30,7 @@ Then declare the app in your settings.py ::
 Usage
 -----
 
-The very basic setting is to use create a view from the TemplateView class.
+The very basic setting is to create a view from the TemplateView class.
 
 in views.py::
 
@@ -46,7 +46,7 @@ In this exemple, ``Employee`` is a model and is exported as ``employees_as_model
 ``demo/basic_usage.html``. If you want, you can also use ``get_context_data()`` method instead of ``extra_context``
 attribute.
 
-As usual, you attach a view to an url in url.py::
+As usual, you attach the view to an url in url.py::
 
     from .views import *
 
@@ -64,7 +64,7 @@ It is time to define the template ``demo/basic_usage.html``::
     <head>
     ...
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"/>
-    {% include "django_listing/header.html" %}
+    {% render_listing_header %}
     ...
     </head>
     ...
@@ -74,13 +74,14 @@ It is time to define the template ``demo/basic_usage.html``::
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
-    {% include "django_listing/footer.html" %}
+    {% render_listing_footer %}
     </body>
     </html>
 
 You need to load django_listing tags at the very begining of the template,
-then include ``django_listing/header.html`` template in the ``<HEAD>...</HEAD>`` part of the template,
-and ``django_listing/footer.html`` template at the very end of the ``<BODY>...</BODY>`` part of the template.
+then include ``{% render_listing_header %}`` template in the ``<HEAD>...</HEAD>`` part of the template,
+and ``{% render_listing_footer %}`` template at the very end of the ``<BODY>...</BODY>`` part of the template.
+This will automatically add necessary CSS and JS in your page.
 Then you can use the ``{% render_listing ... %}`` tag where you want to display the listing. First parameter must be
 a Django model, a queryset, an iterable or a ``Listing`` instance.
 Some parameters can be added : here the listing will have 5 rows per page.

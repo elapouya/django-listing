@@ -27,6 +27,7 @@ from .exceptions import *
 from .html_attributes import HTMLAttributes
 from .record import cache_in_record
 from .utils import init_dicts_from_class
+from .app_settings import app_settings
 
 __all__ = ['COLUMNS_PARAMS_KEYS', 'Columns', 'ModelColumns', 'SequenceColumns',
            'Column', 'BooleanColumn', 'CheckboxColumn', 'ChoiceColumn',
@@ -437,8 +438,8 @@ class Column(metaclass=ColumnMeta):
     def get_cell_context(self, rec, value):
         if isinstance(value,str):
             value = conditional_escape(value)
-        media_url = getattr(settings, 'MEDIA_URL', '/media/')
-        media_upload_url = getattr(settings, 'MEDIA_UPLOAD_URL', media_url+'uploads')
+        media_url = app_settings.MEDIA_URL
+        media_upload_url = app_settings.MEDIA_UPLOAD_URL
         return RenderContext(self.listing.global_context,
                              rec.get_format_ctx(),
                              value,  # if value is a dict it will be merged (see RenderContext)

@@ -12,13 +12,13 @@
 
 {% if request.need_media_for.datetimepicker %}
     {% block media_datetimepicker_js %}
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+        <script src="{{ app_settings.DATETIMEPICKER_JS_URL }}"></script>
     {% endblock %}
 {% endif %}
 
 {% if request.need_media_for.dropzone %}
     {% block media_dropzone_js %}
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.1/dropzone.min.js"></script>
+        <script src="{{ app_settings.DROPZONE_JS_URL }}"></script>
     {% endblock %}
 {% endif %}
 
