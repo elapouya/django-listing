@@ -12,13 +12,13 @@
 
 {% if request.need_media_for.datetimepicker %}
     {% block media_datetimepicker_js %}
-        <script src="{{ app_settings.DATETIMEPICKER_JS_URL }}"></script>
+        <script src="{{ django_listing.DATETIMEPICKER_JS_URL }}"></script>
     {% endblock %}
 {% endif %}
 
 {% if request.need_media_for.dropzone %}
     {% block media_dropzone_js %}
-        <script src="{{ app_settings.DROPZONE_JS_URL }}"></script>
+        <script src="{{ django_listing.DROPZONE_JS_URL }}"></script>
     {% endblock %}
 {% endif %}
 

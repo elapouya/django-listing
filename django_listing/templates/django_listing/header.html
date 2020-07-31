@@ -3,7 +3,7 @@
 {% spaceless %}
 {% if request.need_media_for.datetimepicker %}
     {% block media_datetimepicker_css %}
-        <link rel="stylesheet" href="{{ app_settings.DATETIMEPICKER_CSS_URL }}"/>
+        <link rel="stylesheet" href="{{ django_listing.DATETIMEPICKER_CSS_URL }}"/>
     {% endblock %}
 {% endif %}
 {% endspaceless %}
