@@ -438,14 +438,10 @@ class Column(metaclass=ColumnMeta):
     def get_cell_context(self, rec, value):
         if isinstance(value,str):
             value = conditional_escape(value)
-        media_url = app_settings.MEDIA_URL
-        media_upload_url = app_settings.MEDIA_UPLOAD_URL
         return RenderContext(self.listing.global_context,
                              rec.get_format_ctx(),
                              value,  # if value is a dict it will be merged (see RenderContext)
                              value=value,  # if value is not a dict it will have the key 'value' in the context
-                             MEDIA_URL=media_url,
-                             MEDIA_UPLOAD_URL=media_upload_url,
                              rec=rec,
                              listing=self.listing,
                              col=self)

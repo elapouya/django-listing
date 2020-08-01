@@ -16,6 +16,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms.fields import FileField
 from urllib.parse import urlsplit, urlunsplit
+
+from .app_settings import app_settings
 from .exceptions import *
 from .record import RecordManager
 from .html_attributes import HTMLAttributes
@@ -570,10 +572,7 @@ class Listing(ListingBase):
             """)
 
     def global_context_init(self):
-        self.global_context.update(
-            static_url=settings.STATIC_URL,
-            media_url=settings.MEDIA_URL,
-        )
+        self.global_context.update(app_settings.context)
 
     def render_init(self,context):
         if not self._render_initialized:
