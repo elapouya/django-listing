@@ -2,38 +2,35 @@
 {% spaceless %}
 <div id="listing-popup-container"></div>
 <script type="text/javascript">
+    var csrf_token = '{{ csrf_token }}';
     $(document).ready(function () {
         $.ajaxSetup({
-            data: { 'csrfmiddlewaretoken':'{{ csrf_token }}' }
+            data: { 'csrfmiddlewaretoken':csrf_token  }
         });
     });
 </script>
 <script src="{% static "django_listing/js/django_listing.js" %}"></script>
 
 {% if request.need_media_for.datetimepicker and DATETIMEPICKER_JS_URL %}
-    {% block media_datetimepicker_js %}
-        <script src="{{ DATETIMEPICKER_JS_URL }}"></script>
-    {% endblock %}
+    <script src="{{ DATETIMEPICKER_JS_URL }}"></script>
 {% endif %}
 
 {% if request.need_media_for.dropzone and DROPZONE_JS_URL %}
-    {% block media_dropzone_js %}
-        <script src="{{ DROPZONE_JS_URL }}"></script>
-    {% endblock %}
+    <script src="{{ DROPZONE_JS_URL }}"></script>
+    <script type="text/javascript">// disable autoDiscover immediately after the js include
+        Dropzone.autoDiscover = false;
+    </script>
 {% endif %}
 
-{% block footer_snippets %}
-    {% if request.django_listing_footer_snippets %}
-        {% for snippet in request.django_listing_footer_snippets %}{{ snippet|safe }}{% endfor %}
-    {% endif %}
-{% endblock %}
-{% block onready_snippets %}
-    {% if request.django_listing_onready_snippets %}
-        <script type="text/javascript">
-        $(document).ready(function () {
-            {% for snippet in request.django_listing_onready_snippets %}{{ snippet|safe }}{% endfor %}
-        });
-        </script>
-    {% endif %}
-{% endblock %}
+{% if request.django_listing_footer_snippets %}
+    {% for snippet in request.django_listing_footer_snippets %}{{ snippet|safe }}{% endfor %}
+{% endif %}
+
+{% if request.django_listing_onready_snippets %}
+    <script type="text/javascript">
+    $(document).ready(function () {
+        {% for snippet in request.django_listing_onready_snippets %}{{ snippet|safe }}{% endfor %}
+    });
+    </script>
+{% endif %}
 {% endspaceless %}

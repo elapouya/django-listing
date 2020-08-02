@@ -567,11 +567,15 @@ class Listing(ListingBase):
 
     def dropzone_init(self):
         self.need_media_for('dropzone')
-        self.add_onready_snippet(f"""
-            $('#{self.id}').closest('form').dropzone({{
-                url:'.',
-                params:{{action:'upload'}}
-            }});
+        self.add_onready_snippet(
+            f"$('#{self.id}').dropzone("
+            """{
+                url: '.',
+                params: {
+                    action: 'upload',
+                    csrfmiddlewaretoken: csrf_token
+                }
+            });
             """)
 
     def global_context_init(self):
@@ -730,6 +734,8 @@ class Listing(ListingBase):
                 listing_container_class += ' selection_unique'
             listing_container_class += \
                 ' selection_position_{}'.format(self.selection_position)
+        if self.has_upload:
+            listing_container_class += ' has_upload dropzone'
         sel_css_class = ( LISTING_SELECTOR_CSS_CLASS
                           if self.selection_has_overlay else '' )
         hover_css_class = ( LISTING_SELECTION_HOVER_CSS_CLASS

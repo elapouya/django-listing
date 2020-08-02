@@ -906,3 +906,32 @@ empty-listing-upload-accepted-files {
     margin: 16px;
     font-style: italic;
 }
+
+.django-listing-container.dropzone .dz-preview.dz-image-preview {
+    background: none;
+}
+
+.django-listing-container.dropzone {
+    min-height: 150px;
+    border: none;
+    background: none;
+    padding: initial;
+}
+
+.django-listing-container.dropzone .dz-preview .dz-image {
+    border-radius: 8px;
+}
+
+.dz-success-mark svg path {
+    fill: #28a745;
+    fill-opacity: 1;
+    stroke: #444444;
+    stroke-opacity: 1;
+}
+
+.dz-error-mark svg g g {
+    fill: red;
+    fill-opacity: 1;
+    stroke: #444444;
+    stroke-opacity: 1;
+}

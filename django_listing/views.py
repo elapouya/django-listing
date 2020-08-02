@@ -3,6 +3,8 @@
 #
 # @author: Eric Lapouyade
 #
+import json
+
 from django.db.models import QuerySet
 from django.utils.module_loading import import_string
 from django.utils.safestring import mark_safe
@@ -93,6 +95,11 @@ class ListingViewMixin:
             response['Content-Disposition'] = (
                 'attachment; filename="{}"'.format(filename) )
             return response
+        return response
+
+    def json_response(self, data):
+        response = HttpResponse(json.dumps(data), content_type='application/json')
+        response['Cache-Control'] = 'no-cache'
         return response
 
     def get_listing_from_post(self, request):
@@ -199,7 +206,9 @@ class ListingViewMixin:
             return response
 
     def manage_listing_upload(self, listing, *args, **kwargs):
-        raise ListingException('Upload reached : Cool !')
+        for chunk in listing.request.FILES['file'].chunks():
+            pass
+        return self.json_response(dict(message='OK',))
 
     def manage_listing_update(self, listing, *args, **kwargs):
         if listing.editable and listing.editing:
