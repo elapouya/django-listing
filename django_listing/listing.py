@@ -568,7 +568,10 @@ class Listing(ListingBase):
     def dropzone_init(self):
         self.need_media_for('dropzone')
         self.add_onready_snippet(f"""
-            $('#upload-form{self.id}').dropzone({{}});
+            $('#{self.id}').closest('form').dropzone({{
+                url:'.',
+                params:{{action:'upload'}}
+            }});
             """)
 
     def global_context_init(self):
@@ -649,7 +652,7 @@ class Listing(ListingBase):
                 self.datetimepicker_init()
             if self.has_upload:
                 self.dropzone_init()
-            if self.can_edit or self.can_select or self.form:
+            if self.can_edit or self.can_select or self.form or self.has_upload:
                 self.add_form_input_hiddens(listing_id=self.id,
                                             listing_suffix=self.suffix)
             if self.onready_snippet:

@@ -77,16 +77,6 @@
                 </table>
             {% endblock listing %}
 
-            {% block hiddens %}
-                {% for hidden in listing.form_input_hiddens %}
-                    <input type="hidden" name="{{ hidden.0 }}" value="{{ hidden.1 }}">{% endfor %}
-                {% if listing.editable and listing.editing %}
-                    {% for hidden_field in listing.editing_hidden_form_fields %}
-                        {{ hidden_field }}{% endfor %}
-                    {{ listing.get_formset.management_form }}
-                {% endif %}
-            {% endblock %}
-
             {% if has_bottom_toolbar %}
                 <div class="bottom-toolbar">
                     {% include listing.toolbar.template_name %}
@@ -99,5 +89,15 @@
         {% else %}
             {% include listing.empty_listing_template_name %}
         {% endif %}
+
+        {% block hiddens %}
+            {% for hidden in listing.form_input_hiddens %}
+                <input type="hidden" name="{{ hidden.0 }}" value="{{ hidden.1 }}">{% endfor %}
+            {% if listing.editable and listing.editing %}
+                {% for hidden_field in listing.editing_hidden_form_fields %}
+                    {{ hidden_field }}{% endfor %}
+                {{ listing.get_formset.management_form }}
+            {% endif %}
+        {% endblock %}
     </div>
 {% endautoescape %}

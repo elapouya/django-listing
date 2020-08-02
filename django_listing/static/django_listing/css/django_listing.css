@@ -890,3 +890,19 @@ table.object-popup td.section span {
 table.object-popup th {
     vertical-align: top;
 }
+
+.empty-listing-upload-button {
+    text-align: center;
+}
+
+.empty-listing-upload-drop-here {
+    text-align: center;
+    margin: 16px;
+    color: #8d8d8d;
+}
+
+empty-listing-upload-accepted-files {
+    text-align: center;
+    margin: 16px;
+    font-style: italic;
+}

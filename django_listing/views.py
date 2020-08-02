@@ -114,8 +114,8 @@ class ListingViewMixin:
         response = None
         if listing:
             listing_part = request.POST.get('listing_part', 'all')
-            listing.set_attr('ajax_request', True)
-            listing.set_attr('ajax_part', listing_part)
+            listing.ajax_request = True
+            listing.ajax_part = listing_part
             if isinstance(listing.action, str) and listing.action:
                 listing.render_init(RequestContext(request))
                 method = getattr(self,'manage_listing_%s' % listing.action, None)
