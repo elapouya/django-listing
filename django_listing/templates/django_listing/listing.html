@@ -1,4 +1,9 @@
 {% autoescape off %}
+    {% if listing.can_edit or listing.has_upload %}
+        {% if listing.action_header_template_name %}
+            {% include listing.action_header_template_name %}
+        {% endif %}
+    {% endif %}
     <div id="{{ listing.id }}"
          listing-suffix="{{ listing.suffix }}"
          class="{{ listing_container_class }}"
@@ -100,4 +105,9 @@
             {% endif %}
         {% endblock %}
     </div>
+    {% if listing.can_edit or listing.has_upload %}
+        {% if listing.action_footer_template_name %}
+            {% include listing.action_footer_template_name %}
+        {% endif %}
+    {% endif %}
 {% endautoescape %}

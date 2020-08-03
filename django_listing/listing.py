@@ -15,6 +15,7 @@ from django.conf import settings
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms.fields import FileField
+from django.middleware.csrf import get_token as get_csrf_token
 from urllib.parse import urlsplit, urlunsplit
 
 from .app_settings import app_settings
@@ -84,7 +85,12 @@ LISTING_PARAMS_KEYS = {
     'selection_overlay_template_name', 'selection_menu_id',
     'onready_snippet','footer_snippet', 'selection_initial', 'form',
     'link_object_columns', 'anchor_hash', 'theme_spinner_icon', 'has_upload',
-    'upload_accepted_files',
+    'upload_accepted_files', 'theme_action_button_class',
+    'theme_action_button_cancel_icon', 'theme_action_button_edit_icon',
+    'theme_action_button_update_icon', 'theme_action_button_upload_icon',
+    'action_button_cancel_label', 'action_button_edit_label',
+    'action_button_update_label', 'action_button_upload_label',
+    'action_footer_template_name', 'action_header_template_name',
 }
 
 LISTING_VARIATIONS_KEYS = LISTING_PARAMS_KEYS | {'get_url'}
@@ -283,7 +289,13 @@ class ListingVariations(ListingBase):
 class Listing(ListingBase):
     accept_ajax = False
     action = None
+    action_button_cancel_label = pgettext_lazy('action button','Cancel')
+    action_button_edit_label = pgettext_lazy('action button','Edit')
+    action_button_update_label = pgettext_lazy('action button','Update')
+    action_button_upload_label = pgettext_lazy('action button','Upload')
     action_col = None
+    action_footer_template_name = 'django_listing/action_footer.html'
+    action_header_template_name = 'django_listing/action_header.html'
     ajax_part = None
     allow_empty_first_page = True
     anchor_hash = None
@@ -367,6 +379,11 @@ class Listing(ListingBase):
     params_keys = set()  # keep it here in the class not in __init__()
 
     theme_listing_class = 'django-listing'
+    theme_action_button_class = 'btn btn-primary'
+    theme_action_button_cancel_icon = ''
+    theme_action_button_edit_icon = ''
+    theme_action_button_update_icon = ''
+    theme_action_button_upload_icon = ''
     theme_container_class = 'django-listing-container'
     theme_sort_asc_icon = 'listing-icon-angle-up'
     theme_sort_desc_icon = 'listing-icon-angle-down'
@@ -580,6 +597,8 @@ class Listing(ListingBase):
 
     def global_context_init(self):
         self.global_context.update(app_settings.context)
+        if self.request and ( self.can_edit or self.has_upload ):
+            self.global_context['csrf_token'] = get_csrf_token(self.request)
 
     def render_init(self,context):
         if not self._render_initialized:

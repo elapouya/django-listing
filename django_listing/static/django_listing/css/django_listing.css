@@ -551,6 +551,7 @@ form.listing-form div.form-field {
 }
 
 div.django-listing-container div.form-field.errors,
+div.django-listing-container ul.listing-row-form-errors,
 form.listing-form div.form-field.errors {
     background-color: rgba(255,0,0,.25);
     padding:10px;
@@ -558,6 +559,10 @@ form.listing-form div.form-field.errors {
     border-radius: 6px;
     color: red;
     font-weight: bold;
+}
+
+div.django-listing-container ul.listing-row-form-errors li {
+    list-style: none;
 }
 
 div.django-listing-container div.form-field.errors ul.errorlist,
