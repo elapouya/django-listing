@@ -240,4 +240,23 @@ $(document).ready(function () {
     $(document.body).on("click","li.action-item.view-object-popup a", djlst_view_object_popup);
 
     $('[data-toggle="popover"]').popover();
+
+    var dropzoneCounter = 0;
+
+    $('.dropzone').on('dragenter', function(){
+        dropzoneCounter++;
+        $(this).addClass('drag-over');
+    });
+
+    $('.dropzone').bind('dragleave', function(){
+        dropzoneCounter--;
+        if (dropzoneCounter === 0) {
+            $(this).removeClass('drag-over');
+        }
+    });
+
+    $('.dropzone').bind('drop', function(){
+        dropzoneCounter = 0;
+        $(this).removeClass('drag-over');
+    });
 });

@@ -3,5 +3,7 @@
       enctype="multipart/form-data"
       id="action_form{{ listing.suffix }}"
       {% if listing.has_upload %} class="dropzone"{% endif %}>
-{% if listing.has_upload %}<div class="drag-overlay"></div>{% endif %}
+{% if listing.has_upload %}
+    <div class="drag-overlay"><div class="overlay-inner"><span class="listing-icon-upload-cloud"></span></div></div>
+{% endif %}
 <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">

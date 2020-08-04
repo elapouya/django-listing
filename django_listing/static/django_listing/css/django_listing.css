@@ -929,7 +929,7 @@ form.dropzone .dz-preview .dz-image {
 }
 
 form.dropzone .drag-overlay {
-    background: #8888FF;
+    background: #8888FFA0;
     border: 3px dashed #4444FF;
     width: 100%;
     height: 100%;
@@ -938,11 +938,16 @@ form.dropzone .drag-overlay {
     left: 0;
     display: none;
     z-index: 10;
-    opacity: .50;
 }
 
-form.dropzone.dz-drag-hover .drag-overlay {
-    display: block;
+form.dropzone.drag-over .drag-overlay {
+    display: flex;
+}
+
+form.dropzone .drag-overlay .overlay-inner {
+    margin: auto;
+    font-size: 6rem;
+    color: #FFFFFF;
 }
 
 form.dropzone.dz-drag-hover {
