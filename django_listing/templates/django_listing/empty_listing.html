@@ -4,12 +4,3 @@
         {% blocktrans %}There is no {{ record_label }} to display.{% endblocktrans %}
     {% endwith %}
 </div>
-{% if listing.has_upload %}
-    <div class="dz-message" data-dz-message>
-        <div class="empty-listing-upload-button"><button type="button" class="{{ listing.theme_button_class }}">{% trans "Upload" %}</button></div>
-        <div class="empty-listing-upload-drop-here">{% trans "You can drop files here" %}</div>
-        {% if listing.upload_accepted_files %}
-            <div class="empty-listing-upload-accepted-files">{% trans "Accepted files are" %} : <span>{{ listing.upload_accepted_files }}</span></div>
-        {% endif %}
-    </div>
-{% endif %}

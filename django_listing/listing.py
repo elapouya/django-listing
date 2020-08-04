@@ -91,6 +91,7 @@ LISTING_PARAMS_KEYS = {
     'action_button_cancel_label', 'action_button_edit_label',
     'action_button_update_label', 'action_button_upload_label',
     'action_footer_template_name', 'action_header_template_name',
+    'has_footer_action_buttons',
 }
 
 LISTING_VARIATIONS_KEYS = LISTING_PARAMS_KEYS | {'get_url'}
@@ -316,7 +317,7 @@ class Listing(ListingBase):
     editing_columns = None
     editing_row_pk = None
     editing_hidden_columns = None
-    empty_table_msg = gettext_lazy('<i>Nothing to display</i>')
+    empty_table_msg = gettext_lazy('Nothing to display')
     empty_listing_template_name = 'django_listing/empty_listing.html'
     exclude_columns = None
     export = None
@@ -325,6 +326,7 @@ class Listing(ListingBase):
     footer_template_name = None
     form = None
     has_footer = False
+    has_footer_action_buttons = True
     has_form = False
     has_header = True
     has_hidden_selection = False
@@ -584,16 +586,24 @@ class Listing(ListingBase):
 
     def dropzone_init(self):
         self.need_media_for('dropzone')
-        self.add_onready_snippet(
-            f"$('#{self.id}').dropzone("
-            """{
-                url: '.',
-                params: {
-                    action: 'upload',
-                    csrfmiddlewaretoken: csrf_token
-                }
-            });
-            """)
+        dzsuffix = self.suffix[1:] if isinstance(self.suffix, str) else ''
+        self.add_footer_snippet("""
+            <script type="text/javascript">
+                Dropzone.options.actionForm"""+dzsuffix+""" = {
+                    clickable: '.button-action-upload'
+                };
+            </script>
+        """)
+        # self.add_onready_snippet(
+        #     f"$('#{self.id}').dropzone("
+        #     """{
+        #         url: '.',
+        #         params: {
+        #             action: 'upload',
+        #             csrfmiddlewaretoken: csrf_token
+        #         }
+        #     });
+        #     """)
 
     def global_context_init(self):
         self.global_context.update(app_settings.context)
@@ -754,7 +764,7 @@ class Listing(ListingBase):
             listing_container_class += \
                 ' selection_position_{}'.format(self.selection_position)
         if self.has_upload:
-            listing_container_class += ' has_upload dropzone'
+            listing_container_class += ' has_upload'
         sel_css_class = ( LISTING_SELECTOR_CSS_CLASS
                           if self.selection_has_overlay else '' )
         hover_css_class = ( LISTING_SELECTION_HOVER_CSS_CLASS

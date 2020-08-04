@@ -1,9 +1,28 @@
+{% load i18n %}
     <div class="text-center">
-        <button type="submit"
-                name="action"
-                value="update"
-                class="{{ listing.theme_action_button_class }}">
-            {{ listing.action_button_update_label }}
-        </button>
+        {% if listing.has_footer_action_buttons %}
+            {% if listing.can_edit %}
+                <button type="submit"
+                        name="action"
+                        value="update"
+                        class="button-action-update {{ listing.theme_action_button_class }}">
+                    <span class="{{ listing.action_button_update_icon }}"></span>
+                    {{ listing.action_button_update_label }}
+                </button>
+            {% endif %}
+            {% if listing.has_upload %}
+                <button type="button"
+                        class="button-action-upload {{ listing.theme_action_button_class }}">
+                    <span class="{{ listing.action_button_upload_icon }}"></span>
+                    {{ listing.action_button_upload_label }}
+                </button>
+                <div class="dz-message" data-dz-message>
+                    <div class="empty-listing-upload-drop-here">{% trans "You can drop files here" %}</div>
+                    {% if listing.upload_accepted_files %}
+                        <div class="empty-listing-upload-accepted-files">{% trans "Accepted files are" %} : <span>{{ listing.upload_accepted_files }}</span></div>
+                    {% endif %}
+                </div>
+            {% endif %}
+         {% endif %}
     </div>
 </form>

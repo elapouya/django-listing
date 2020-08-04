@@ -912,19 +912,41 @@ empty-listing-upload-accepted-files {
     font-style: italic;
 }
 
-.django-listing-container.dropzone .dz-preview.dz-image-preview {
+form.dropzone .dz-preview.dz-image-preview {
     background: none;
 }
 
-.django-listing-container.dropzone {
+form.dropzone {
     min-height: 150px;
     border: none;
     background: none;
     padding: initial;
+    position: relative;
 }
 
-.django-listing-container.dropzone .dz-preview .dz-image {
+form.dropzone .dz-preview .dz-image {
     border-radius: 8px;
+}
+
+form.dropzone .drag-overlay {
+    background: #8888FF;
+    border: 3px dashed #4444FF;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    z-index: 10;
+    opacity: .50;
+}
+
+form.dropzone.dz-drag-hover .drag-overlay {
+    display: block;
+}
+
+form.dropzone.dz-drag-hover {
+    border: none;
 }
 
 .dz-success-mark svg path {
