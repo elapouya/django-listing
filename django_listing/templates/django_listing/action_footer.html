@@ -1,7 +1,16 @@
 {% load i18n %}
+{% load django_listing %}
     <div class="text-center">
         {% if listing.has_footer_action_buttons %}
             {% if listing.can_edit %}
+                {% if listing.edit_on_demand %}
+                    <a href="{% geturl_listing listing without='editing' %}#action_form{{ listing.suffix }}"
+                       class="button-action-cancel {{ listing.theme_action_button_class }}"
+                       role="button">
+                        <span class="{{ listing.action_button_cancel_icon }}"></span>
+                        {{ listing.action_button_cancel_label }}
+                    </a>
+                {% endif %}
                 <button type="submit"
                         name="action"
                         value="update"
@@ -9,6 +18,15 @@
                     <span class="{{ listing.action_button_update_icon }}"></span>
                     {{ listing.action_button_update_label }}
                 </button>
+            {% else %}
+                {% if listing.edit_on_demand %}
+                    <a href="{% geturl_listing listing editing='true' %}#action_form{{ listing.suffix }}"
+                       class="button-action-edit {{ listing.theme_action_button_class }}"
+                       role="button">
+                        <span class="{{ listing.action_button_edit_icon }}"></span>
+                        {{ listing.action_button_edit_label }}
+                    </a>
+                {% endif %}
             {% endif %}
             {% if listing.has_upload %}
                 <button type="button"

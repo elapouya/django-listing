@@ -91,7 +91,7 @@ LISTING_PARAMS_KEYS = {
     'action_button_cancel_label', 'action_button_edit_label',
     'action_button_update_label', 'action_button_upload_label',
     'action_footer_template_name', 'action_header_template_name',
-    'has_footer_action_buttons',
+    'has_footer_action_buttons', 'edit_on_demand',
 }
 
 LISTING_VARIATIONS_KEYS = LISTING_PARAMS_KEYS | {'get_url'}
@@ -311,6 +311,7 @@ class Listing(ListingBase):
     datetimepicker_time_format = 'H:i'
     div_template_name = 'django_listing/div_row.html'
     row_attrs = {'class':'row-container'}
+    edit_on_demand = False
     editable = False
     editable_columns = set()
     editing = None

@@ -1,5 +1,5 @@
 {% autoescape off %}
-    {% if listing.can_edit or listing.has_upload %}
+    {% if listing.can_edit or listing.has_upload or listing.edit_on_demand %}
         {% if listing.action_header_template_name %}
             {% include listing.action_header_template_name %}
         {% endif %}
@@ -105,7 +105,7 @@
             {% endif %}
         {% endblock %}
     </div>
-    {% if listing.can_edit or listing.has_upload %}
+    {% if listing.can_edit or listing.has_upload or listing.edit_on_demand %}
         {% if listing.action_footer_template_name %}
             {% include listing.action_footer_template_name %}
         {% endif %}
