@@ -150,11 +150,10 @@ class ListingForm:
 
     def datetimepicker_init(self):
         self.listing.need_media_for('datetimepicker')
-        self.listing.add_onready_snippet(f"""
-            $('#{self.id} .edit-datecolumn').datetimepicker({{timepicker:false, format:'{self.listing.datetimepicker_date_format}'}});
-            $('#{self.id} .edit-datetimecolumn').datetimepicker({{format:'{self.listing.datetimepicker_datetime_format}'}});
-            $('#{self.id} .edit-timecolumn').datetimepicker({{datepicker:false, format:'{self.listing.datetimepicker_time_format}'}});
-            """)
+        self.listing.add_footer_dict_list('datetimepickers', {
+            'listing':self.listing,
+            'div_id':self.id
+        })
 
     def create_form_from_layout(self):
         fields = {}

@@ -1,4 +1,5 @@
 {% load static %}
+{% load django_listing %}
 {% spaceless %}
 <div id="listing-popup-container"></div>
 <script type="text/javascript">
@@ -9,10 +10,22 @@
         });
     });
 </script>
-<script src="{% static "django_listing/js/django_listing.js" %}"></script>
+<script src="{% static 'django_listing/js/django_listing.js' %}"></script>
 
 {% if request.need_media_for.datetimepicker and DATETIMEPICKER_JS_URL %}
     <script src="{{ DATETIMEPICKER_JS_URL }}"></script>
+    {% get_dict_list "datetimepickers" as dict_list %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            {% for dct in dict_list %}
+                $('#{{dct.div_id}} .edit-datecolumn').datetimepicker({timepicker:false, format:'{{dct.listing.datetimepicker_date_format}}'});
+                $('#{{dct.div_id}} .edit-datetimecolumn').datetimepicker({format:'{{dct.listing.datetimepicker_datetime_format}}'});
+                $('#{{dct.div_id}} .edit-timecolumn').datetimepicker({datepicker:false, format:'{{dct.listing.datetimepicker_time_format}}'});
+            {% endfor %}
+        });
+    </script>
+
+DROPZONE_PARAMS = {{ DROPZONE_PARAMS|json_data }}
 {% endif %}
 
 {% if request.need_media_for.dropzone and DROPZONE_JS_URL %}

@@ -862,7 +862,7 @@ class DateColumn(Column):
     params_keys = 'date_format'
     from_model_field_classes = (models.DateField,)
     form_field_class = forms.DateField
-    widget_attrs = {'class': 'edit-datecolumn'}
+    widget_attrs = {'class': 'edit-datecolumn', 'autocomplete':'off'}
 
     def get_cell_value(self,rec):
         value = super().get_cell_value(rec)
@@ -875,6 +875,7 @@ class DateTimeColumn(Column):
     datetime_format = settings.DATETIME_FORMAT
     params_keys = 'datetime_format'
     from_model_field_classes = (models.DateTimeField,)
+    widget_attrs = {'class': 'edit-datetimecolumn', 'autocomplete':'off'}
 
     def get_cell_value(self,rec):
         value = super().get_cell_value(rec)
@@ -887,6 +888,7 @@ class TimeColumn(Column):
     time_format = settings.TIME_FORMAT
     params_keys = 'time_format'
     from_model_field_classes = (models.TimeField,)
+    widget_attrs = {'class': 'edit-timecolumn', 'autocomplete':'off'}
 
     def get_cell_value(self, rec):
         value = super().get_cell_value(rec)

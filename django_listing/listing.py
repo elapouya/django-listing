@@ -460,6 +460,12 @@ class Listing(ListingBase):
         if snippet not in self.request.django_listing_header_snippets:
             self.request.django_listing_header_snippets.append(snippet)
 
+    def add_footer_dict_list(self, key, dct):
+        if not hasattr(self.request,'django_listing_footer_dict_list'):
+            self.request.django_listing_footer_dict_list = {}
+        dict_list = self.request.django_listing_footer_dict_list.setdefault(key, [])
+        dict_list.append(dct)
+
     def add_footer_snippet(self, snippet):
         if not hasattr(self.request,'django_listing_footer_snippets'):
             self.request.django_listing_footer_snippets = []
@@ -578,11 +584,10 @@ class Listing(ListingBase):
 
     def datetimepicker_init(self):
         self.need_media_for('datetimepicker')
-        self.add_onready_snippet(f"""
-            $('#{self.id} .edit-datecolumn').datetimepicker({{timepicker:false, format:'{self.datetimepicker_date_format}'}});
-            $('#{self.id} .edit-datetimecolumn').datetimepicker({{format:'{self.datetimepicker_datetime_format}'}});
-            $('#{self.id} .edit-timecolumn').datetimepicker({{datepicker:false, format:'{self.datetimepicker_time_format}'}});
-            """)
+        self.listing.add_footer_dict_list('datetimepickers', {
+            'listing':self,
+            'div_id':self.id
+        })
 
     def dropzone_init(self):
         self.need_media_for('dropzone')
@@ -594,16 +599,6 @@ class Listing(ListingBase):
                 };
             </script>
         """)
-        # self.add_onready_snippet(
-        #     f"$('#{self.id}').dropzone("
-        #     """{
-        #         url: '.',
-        #         params: {
-        #             action: 'upload',
-        #             csrfmiddlewaretoken: csrf_token
-        #         }
-        #     });
-        #     """)
 
     def global_context_init(self):
         self.global_context.update(app_settings.context)

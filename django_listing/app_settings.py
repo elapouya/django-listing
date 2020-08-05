@@ -12,10 +12,17 @@ class AppSettings:
     DATETIMEPICKER_JS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js'
     DROPZONE_CSS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/dropzone.min.css'
     DROPZONE_JS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/dropzone.min.js'
-
+    DROPZONE_PARAMS = dict(
+        clickable='.button-action-upload',
+    )
     def __init__(self):
         if hasattr(settings, 'DJANGO_LISTING'):
-            self.__dict__.update(settings.DJANGO_LISTING)
+            for k,v in settings.DJANGO_LISTING.items():
+                if k.isupper() and hasattr(self, k):
+                    if isinstance(v, dict):
+                        self.__dict__[k].update(v)
+                    else:
+                        self.__dict__[k] = v
         self.context = { k:getattr(self, k) for k in dir(self) if k.isupper() }
 
 

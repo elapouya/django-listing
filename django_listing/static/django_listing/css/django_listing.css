@@ -938,6 +938,7 @@ form.dropzone .drag-overlay {
     left: 0;
     display: none;
     z-index: 10;
+    border-radius: 1rem;
 }
 
 form.dropzone.drag-over .drag-overlay {

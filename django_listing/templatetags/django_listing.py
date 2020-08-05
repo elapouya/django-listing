@@ -10,9 +10,15 @@ from ..listing import Listing, ListingVariations
 from ..listing_form import ListingForm
 from itertools import count
 from ..app_settings import app_settings
+import json
 
 register = template.Library()
 _uniq_counter = count(0)
+
+
+@register.filter(name='json_data')
+def json_data(data):
+    return mark_safe(json.dumps(data, indent=4))
 
 
 class ListingHeaderNode(template.Node):
@@ -261,3 +267,11 @@ def render_listing_form(context, listing, *args,
                                    layout=layout, *args, **kwargs)
     listing.form.bind_to_listing(listing)
     return mark_safe(listing.form.render(context))
+
+
+@register.simple_tag(takes_context=True)
+def get_dict_list(context, key):
+    request = context.flatten().get('request')
+    if hasattr(request, 'django_listing_footer_dict_list'):
+        return request.django_listing_footer_dict_list.get(key, [])
+    return []
