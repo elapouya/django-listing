@@ -1,6 +1,5 @@
 {% load static %}
 {% load django_listing %}
-{% spaceless %}
 <div id="listing-popup-container"></div>
 <script type="text/javascript">
     var csrf_token = '{{ csrf_token }}';
@@ -12,7 +11,8 @@
 </script>
 <script src="{% static 'django_listing/js/django_listing.js' %}"></script>
 
-{% if request.need_media_for.datetimepicker and DATETIMEPICKER_JS_URL %}
+{% if need_media_for.datetimepicker and DATETIMEPICKER_JS_URL %}
+    {% block django_listing_datepicker %}
     <script src="{{ DATETIMEPICKER_JS_URL }}"></script>
     {% get_dict_list "datetimepickers" as dict_list %}
     <script type="text/javascript">
@@ -24,23 +24,26 @@
             {% endfor %}
         });
     </script>
-
-DROPZONE_PARAMS = {{ DROPZONE_PARAMS|json_data }}
+    {% endblock %}
 {% endif %}
 
-{% if request.need_media_for.dropzone and DROPZONE_JS_URL %}
+{% if need_media_for.dropzone and DROPZONE_JS_URL %}
     <script src="{{ DROPZONE_JS_URL }}"></script>
+    {% get_dict_list "dropzones" as dict_list %}
+    <script type="text/javascript">
+        {% for dct in dict_list %}
+        Dropzone.options.{{ dct.dz_camel_name}} = {{ dct.options|json_options }};
+        {% endfor %}
+    </script>
+
 {% endif %}
 
-{% if request.django_listing_footer_snippets %}
-    {% for snippet in request.django_listing_footer_snippets %}{{ snippet|safe }}{% endfor %}
-{% endif %}
+{% footer_snippets %}
 
 {% if request.django_listing_onready_snippets %}
     <script type="text/javascript">
     $(document).ready(function () {
-        {% for snippet in request.django_listing_onready_snippets %}{{ snippet|safe }}{% endfor %}
+        {% onready_snippets %}
     });
     </script>
 {% endif %}
-{% endspaceless %}

@@ -5,20 +5,30 @@ Création : 12 janv. 2010
 '''
 from django import template
 from django.conf import settings
-from django.utils.safestring import mark_safe
+from django.utils.safestring import mark_safe, SafeString
 from ..listing import Listing, ListingVariations
 from ..listing_form import ListingForm
 from itertools import count
 from ..app_settings import app_settings
+from ..utils import JsonDirect
 import json
 
 register = template.Library()
 _uniq_counter = count(0)
 
 
-@register.filter(name='json_data')
-def json_data(data):
-    return mark_safe(json.dumps(data, indent=4))
+@register.filter(name='json_options')
+def json_options(dct):
+    out = '{\n'
+    options = []
+    for k,v in sorted(dct.items()):
+        if isinstance(v, SafeString):
+            options.append(f'{k}:{v}')
+        else:
+            options.append(f'{k}:{json.dumps(v, indent=4)}')
+    out += ',\n'.join(options)
+    out += '\n}'
+    return mark_safe(out)
 
 
 class ListingHeaderNode(template.Node):
@@ -29,7 +39,10 @@ class ListingHeaderNode(template.Node):
         remaining_output = self.nodelist.render(context)
         tpl = template.loader.get_template(app_settings.HEADER_TEMPLATE)
         context = context.flatten()
-        context.update(app_settings.context)
+        context.update(
+            app_settings.context,
+            need_media_for=getattr(context['request'], 'need_media_for',{})
+        )
         tpl_output = tpl.render(context)
         return f'{tpl_output}\n{remaining_output}'
 
@@ -44,7 +57,10 @@ def do_listing_header(parser, token):
 def render_listing_footer(context):
     tpl = template.loader.get_template(app_settings.FOOTER_TEMPLATE)
     context = context.flatten()
-    context.update(app_settings.context)
+    context.update(
+        app_settings.context,
+        need_media_for=getattr(context['request'],'need_media_for',{})
+    )
     tpl_output = tpl.render(context)
     return tpl_output
 
@@ -275,3 +291,31 @@ def get_dict_list(context, key):
     if hasattr(request, 'django_listing_footer_dict_list'):
         return request.django_listing_footer_dict_list.get(key, [])
     return []
+
+
+@register.simple_tag(takes_context=True)
+def header_snippets(context):
+    request = context.flatten().get('request')
+    snippets = getattr(request, 'django_listing_header_snippets', None)
+    if snippets:
+        return mark_safe('\n'.join(snippets))
+    return ''
+
+
+@register.simple_tag(takes_context=True)
+def footer_snippets(context):
+    request = context.flatten().get('request')
+    snippets = getattr(request, 'django_listing_footer_snippets', None)
+    if snippets:
+        return mark_safe('\n'.join(snippets))
+    return ''
+
+
+@register.simple_tag(takes_context=True)
+def onready_snippets(context):
+    request = context.flatten().get('request')
+    snippets = getattr(request, 'django_listing_onready_snippets', None)
+    if snippets:
+        return mark_safe('\n'.join(snippets))
+    return ''
+

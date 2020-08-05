@@ -584,21 +584,20 @@ class Listing(ListingBase):
 
     def datetimepicker_init(self):
         self.need_media_for('datetimepicker')
-        self.listing.add_footer_dict_list('datetimepickers', {
-            'listing':self,
-            'div_id':self.id
-        })
+        self.add_footer_dict_list('datetimepickers', dict(
+            listing=self,
+            div_id=self.id
+        ))
 
     def dropzone_init(self):
         self.need_media_for('dropzone')
-        dzsuffix = self.suffix[1:] if isinstance(self.suffix, str) else ''
-        self.add_footer_snippet("""
-            <script type="text/javascript">
-                Dropzone.options.actionForm"""+dzsuffix+""" = {
-                    clickable: '.button-action-upload'
-                };
-            </script>
-        """)
+        dz_suffix = self.suffix[1:] if isinstance(self.suffix, str) else ''
+        dz_camel_name = f'actionForm{dz_suffix}'
+        self.add_footer_dict_list('dropzones', dict(
+            listing=self,
+            dz_camel_name=dz_camel_name,
+            options=app_settings.DROPZONE_PARAMS
+        ))
 
     def global_context_init(self):
         self.global_context.update(app_settings.context)

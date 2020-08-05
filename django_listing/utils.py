@@ -66,5 +66,9 @@ def pretty_format_querydict(qd):
         out += "'{k}' : {v}\n".format(k=k,v=repr(v))
     return out
 
+
+class JsonDirect(str):
+    pass
+
 #TODO : create functions to add sum/min/max/avg columns to a sequence
 

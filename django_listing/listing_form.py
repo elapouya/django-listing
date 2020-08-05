@@ -150,10 +150,10 @@ class ListingForm:
 
     def datetimepicker_init(self):
         self.listing.need_media_for('datetimepicker')
-        self.listing.add_footer_dict_list('datetimepickers', {
-            'listing':self.listing,
-            'div_id':self.id
-        })
+        self.listing.add_footer_dict_list('datetimepickers', dict(
+            listing=self.listing,
+            div_id=self.id
+        ))
 
     def create_form_from_layout(self):
         fields = {}

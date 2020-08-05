@@ -20,9 +20,9 @@ class AppSettings:
             for k,v in settings.DJANGO_LISTING.items():
                 if k.isupper() and hasattr(self, k):
                     if isinstance(v, dict):
-                        self.__dict__[k].update(v)
+                        setattr(self, k, { **getattr(self,k), **v })
                     else:
-                        self.__dict__[k] = v
+                        setattr(self, k, v)
         self.context = { k:getattr(self, k) for k in dir(self) if k.isupper() }
 
 
