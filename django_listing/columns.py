@@ -428,7 +428,7 @@ class Column(metaclass=ColumnMeta):
         errors = form_field.errors
         if errors:
             html = ('<div class="form-field errors"><span class='
-                     '"listing-icon-attention">{errors}{form_field}</div>').format(
+                     '"listing-icon-attention"></span>{errors}{form_field}</div>').format(
                      errors=errors, form_field=form_field)
         else:
             html = ('<div class="form-field">{form_field}</div>').format(
@@ -540,7 +540,7 @@ class Column(metaclass=ColumnMeta):
         if ctx.sort_url:
             return self.header_sortable_tpl or (
                    '<th{attrs}><a class="listing-nav" href="{sort_url}">{value}'
-                   '<span class="sorting{icon}"><span></a></th>')
+                   '<span class="sorting{icon}"></span></a></th>')
         else:
             return self.header_tpl or '<th{attrs}>{value}</th>'
 

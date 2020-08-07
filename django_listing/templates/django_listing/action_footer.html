@@ -4,7 +4,7 @@
         {% if listing.has_footer_action_buttons %}
             {% if listing.can_edit %}
                 {% if listing.edit_on_demand %}
-                    <a href="{% geturl_listing listing without='editing' %}#action_form{{ listing.suffix }}"
+                    <a href="{% geturl_listing listing without='editing' %}"
                        class="button-action-cancel {{ listing.theme_action_button_class }}"
                        role="button">
                         <span class="{{ listing.action_button_cancel_icon }}"></span>
@@ -20,7 +20,7 @@
                 </button>
             {% else %}
                 {% if listing.edit_on_demand %}
-                    <a href="{% geturl_listing listing editing='true' %}#action_form{{ listing.suffix }}"
+                    <a href="{% geturl_listing listing editing='true' %}"
                        class="button-action-edit {{ listing.theme_action_button_class }}"
                        role="button">
                         <span class="{{ listing.action_button_edit_icon }}"></span>

@@ -20,11 +20,12 @@ __all__ = [
     'SortSelectToolbarItem', 'VariationsToolbarItem',
     'PerPageSelectToolbarItem', 'ExportSelectToolbarItem',
     'PerPageDropdownToolbarItem', 'ExportDropdownToolbarItem',
-    'SortDropdownToolbarItem',
+    'SortDropdownToolbarItem', 'UpdateToolbarItem',
 ]
 
 TOOLBAR_PARAMS_KEYS = {
     'name', 'label', 'button_label','template_name', 'attrs', 'choices',
+    'theme_button_class',
 }
 
 class Toolbar(list):
@@ -104,6 +105,8 @@ class ToolbarItem(metaclass=ToolbarItemMeta):
     params_keys = ''
     attrs = {}
     listing = None
+    theme_button_class = 'btn btn-secondary'
+
     _ids = count(0)
 
     def __init__(self, *args, **kwargs):
@@ -291,3 +294,8 @@ class ExportDropdownToolbarItem(ExportSelectToolbarItem):
     template_name = 'django_listing/tbi_dropdown.html'
     label = _('Export to...')
     choices = EXPORT_FORMATS
+
+
+class UpdateToolbarItem(ToolbarItem):
+    template_name = 'django_listing/tbi_update.html'
+    label = _('Update')

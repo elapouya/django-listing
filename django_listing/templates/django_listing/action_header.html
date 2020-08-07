@@ -1,8 +1,10 @@
-<div class="listing-container-with-form" id="{{ listing.id }}-main-action-form">
+{% load django_listing %}
+<div class="listing-container-with-form" id="{{ listing.id|underscore_to_dash }}-main-action-form">
 <form method="post"
-      action="#action_form{{ listing.suffix }}"
+      {% comment %}Be careful, for dropzone, action="..." must be NOT empty : use at lease "#"{% endcomment %}
+      action="{% if listing.anchor_hash is not None %}#{{ listing.anchor_hash }}{% else %}#{% endif %}"
       enctype="multipart/form-data"
-      id="action_form{{ listing.suffix }}"
+      id="action-form{{ listing.suffix|underscore_to_dash }}"
       {% if listing.has_upload %} class="dropzone"{% endif %}>
 {% if listing.has_upload %}
     <div class="drag-overlay"><div class="overlay-inner"><span class="listing-icon-upload-cloud"></span></div></div>
