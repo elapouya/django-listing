@@ -4,6 +4,8 @@
 # @author: Eric Lapouyade
 #
 from django.conf import settings
+from django.utils.safestring import mark_safe
+
 
 class AppSettings:
     HEADER_TEMPLATE = 'django_listing/header.html'
@@ -13,7 +15,10 @@ class AppSettings:
     DROPZONE_CSS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/dropzone.min.css'
     DROPZONE_JS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/dropzone.min.js'
     DROPZONE_PARAMS = dict(
-        clickable='.button-action-upload',
+        params={'force_action':'upload'},
+        # addedfile=mark_safe('function() { ajax_error=false; }'),
+        # error=mark_safe('function() {ajax_error = true;}'),
+        # queuecomplete=mark_safe('function(e) { if (! ajax_error) document.location.reload(true); }')
     )
     def __init__(self):
         if hasattr(settings, 'DJANGO_LISTING'):

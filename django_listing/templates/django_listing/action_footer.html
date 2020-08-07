@@ -34,12 +34,6 @@
                 <span class="{{ listing.action_button_upload_icon }}"></span>
                 {{ listing.action_button_upload_label }}
             </button>
-            <div class="dz-message" data-dz-message>
-                <div class="empty-listing-upload-drop-here">{% trans "You can drop files here" %}</div>
-                {% if listing.upload_accepted_files %}
-                    <div class="empty-listing-upload-accepted-files">{% trans "Accepted files are" %} : <span>{{ listing.upload_accepted_files }}</span></div>
-                {% endif %}
-            </div>
         {% endif %}
      {% endif %}
 </div>

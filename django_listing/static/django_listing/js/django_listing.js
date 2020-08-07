@@ -265,5 +265,5 @@ $(document).ready(function () {
         var hidden = form.find('.action-hidden-value');
         hidden.val(action);
         form.submit();
-    })
+    });
 });

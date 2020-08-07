@@ -38,6 +38,7 @@ LISTING_REDIRECT_NO_EDIT = 2
 class ListingViewMixin:
     listing_class = None
     listing_data = None
+    upload_field = 'image'
     context_classes = ()
     listing_context_name = 'listing'
     listing_instance = None
@@ -111,7 +112,7 @@ class ListingViewMixin:
                 '{}-id is a bad listing ID : django-listing library misconf'
                 'iguration. Contact the webmaster !'.format(listing_id))
         Listing.set_suffix(request, listing, listing_suffix)
-        listing.action = request.POST.get('action')
+        listing.action = request.POST.get('force_action') or request.POST.get('action')
         listing.action_col = request.POST.get('action_col')
         return listing
 
@@ -228,8 +229,9 @@ class ListingViewMixin:
             return response
 
     def manage_listing_upload(self, listing, *args, **kwargs):
-        for chunk in listing.request.FILES['file'].chunks():
-            pass
+        listing.model.objects.create(
+            **{self.upload_field:listing.request.FILES['file']}
+        )
         return self.json_response(dict(message='OK',))
 
     def manage_listing_update(self, listing, *args, **kwargs):

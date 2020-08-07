@@ -85,7 +85,7 @@ LISTING_PARAMS_KEYS = {
     'selection_overlay_template_name', 'selection_menu_id',
     'onready_snippet','footer_snippet', 'selection_initial', 'form',
     'link_object_columns', 'anchor_hash', 'theme_spinner_icon', 'has_upload',
-    'upload_accepted_files', 'theme_action_button_class',
+    'theme_action_button_class',
     'theme_action_button_cancel_icon', 'theme_action_button_edit_icon',
     'theme_action_button_update_icon', 'theme_action_button_upload_icon',
     'action_button_cancel_label', 'action_button_edit_label',
@@ -375,7 +375,6 @@ class Listing(ListingBase):
     toolbar = None
     toolbar_placement = 'both'
     unsortable = True
-    upload_accepted_files = None
     variation = None
     variations = None
 
@@ -594,10 +593,14 @@ class Listing(ListingBase):
         self.need_media_for('dropzone')
         dz_suffix = self.suffix[1:] if isinstance(self.suffix, str) else ''
         dz_camel_name = f'actionForm{dz_suffix}'
+        listing_id_dashed = self.id.replace('_','-')
         self.add_footer_dict_list('dropzones', dict(
             listing=self,
             dz_camel_name=dz_camel_name,
-            options=app_settings.DROPZONE_PARAMS
+            options=dict(
+                app_settings.DROPZONE_PARAMS,
+                clickable=f'#{listing_id_dashed} .button-action-upload',
+            )
         ))
 
     def global_context_init(self):

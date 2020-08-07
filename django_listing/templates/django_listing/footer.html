@@ -31,6 +31,7 @@
     <script src="{{ DROPZONE_JS_URL }}"></script>
     {% get_dict_list "dropzones" as dict_list %}
     <script type="text/javascript">
+        var ajax_error = false;
         {% for dct in dict_list %}
         Dropzone.options.{{ dct.dz_camel_name}} = {{ dct.options|json_options }};
         {% endfor %}
