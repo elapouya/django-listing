@@ -153,14 +153,36 @@ class ListingViewMixin:
             listing_class = self.get_listing_class() or Listing
             return listing_class(data,**self.get_listing_params())
 
+    # this set of methods manage a special storage because when using ajax
+    # listing name are taken from div id which has been normalized
+    # by replacing underscores by dashes
+    def get_from_listing_instances(self, name):
+        v = self._listing_instances.get(name.replace('_','-'))
+        if v:
+            return v[1]
+        return None
+
+    def in_listing_instances(self, name):
+        return name.replace('_','-') in self._listing_instances
+
+    def set_to_listing_instances(self, name, instance):
+        self._listing_instances[name.replace('_','-')] = (name, instance)
+
+    def yield_listing_instances(self):
+        for v in self._listing_instances.values():
+            yield v[1]
+
+    def listing_instances_context(self):
+        return dict(self._listing_instances.values())
+
     def get_default_listing_instance(self):
         context_name = self.get_listing_context_name()
-        instance = self._listing_instances.get(context_name)
+        instance = self.get_from_listing_instances(context_name)
         if not instance:
             instance = self.get_listing_instance()
             if instance:
                 instance.id = context_name + '-id'  # Ensure id is set according to method name + '-id'
-                self._listing_instances[context_name] = instance
+                self.set_to_listing_instances(context_name, instance)
         return instance
 
     def get_listing_update_success_redirect_url(self, listing = None):
@@ -341,13 +363,13 @@ class ListingViewMixin:
         the one from the given ID in the request. This avoids to create
         all listing instances when not necessary """
         if isinstance(listing_id,str):
-            instance = self._listing_instances.get(listing_id)
+            instance = self.get_from_listing_instances(listing_id)
             if instance is None:
                 method = getattr(
-                    self, INSTANCE_METHOD_PREFIX + listing_id, None)
+                    self, INSTANCE_METHOD_PREFIX + listing_id.replace('-','_'), None)
                 if callable(method):
                     instance = method()
-                    self._listing_instances[listing_id] = instance
+                    self.set_to_listing_instances(listing_id, instance)
                 else:
                     instance = self.get_default_listing_instance()
             if instance:
@@ -363,16 +385,16 @@ class ListingViewMixin:
                 method = getattr(self,method_name)
                 if callable(method):
                     listing_id = method_name[prefix_length:]
-                    if listing_id not in self._listing_instances:
+                    if not self.in_listing_instances(listing_id):
                         instance = method()
                         instance.id = listing_id + '-id' # Ensure id is set according to method name + '-id'
-                        self._listing_instances[listing_id] = instance
+                        self.set_to_listing_instances(listing_id, instance)
         self.get_default_listing_instance()  # will update self._listing_instances
-        for listing in self._listing_instances.values():
+        for listing in self.yield_listing_instances():
             if listing.is_initialized() and not listing.is_render_initialized():
                 listing.render_init(RequestContext(self.request))
 
-        return self._listing_instances
+        return self.listing_instances_context()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

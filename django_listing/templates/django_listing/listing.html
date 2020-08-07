@@ -1,10 +1,11 @@
+{% load django_listing %}
 {% autoescape off %}
     {% if listing.can_edit or listing.has_upload or listing.edit_on_demand %}
         {% if listing.action_header_template_name %}
             {% include listing.action_header_template_name %}
         {% endif %}
     {% endif %}
-    <div id="{{ listing.id }}"
+    <div id="{{ listing.id|underscore_to_dash }}"
          listing-suffix="{{ listing.suffix }}"
          class="{{ listing_container_class }}"
          ajax_url="{{ listing.get_url }}"

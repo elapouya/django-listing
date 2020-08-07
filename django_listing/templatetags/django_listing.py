@@ -31,6 +31,11 @@ def json_options(dct):
     return mark_safe(out)
 
 
+@register.filter()
+def underscore_to_dash(s):
+    return s.replace('_','-')
+
+
 class ListingHeaderNode(template.Node):
     def __init__(self, nodelist):
         self.nodelist = nodelist

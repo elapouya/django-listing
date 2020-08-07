@@ -1,6 +1,6 @@
 {% load i18n %}
 {% load django_listing %}
-    <div class="text-center">
+    <div class="text-center footer-action-buttons">
         {% if listing.has_footer_action_buttons %}
             {% if listing.can_edit %}
                 {% if listing.edit_on_demand %}
@@ -44,3 +44,4 @@
          {% endif %}
     </div>
 </form>
+</div>
