@@ -1,10 +1,5 @@
 {% load django_listing %}
 {% autoescape off %}
-    {% if listing.can_edit or listing.has_upload or listing.edit_on_demand %}
-        {% if listing.action_header_template_name %}
-            {% include listing.action_header_template_name %}
-        {% endif %}
-    {% endif %}
     <div id="{{ listing.id|underscore_to_dash }}"
          listing-suffix="{{ listing.suffix }}"
          class="{{ listing_container_class }}"
@@ -27,6 +22,11 @@
                 </div>
             {% endif %}
 
+            {% if listing.can_edit or listing.has_upload or listing.edit_on_demand %}
+                {% if listing.action_header_template_name %}
+                    {% include listing.action_header_template_name %}
+                {% endif %}
+            {% endif %}
             {% block listing %}
                 <table{{ listing.attrs }}>
                     {% block listing_header %}
@@ -83,6 +83,20 @@
                 </table>
             {% endblock listing %}
 
+            {% block hiddens %}
+                {% for hidden in listing.form_input_hiddens %}
+                    <input type="hidden" name="{{ hidden.0 }}" value="{{ hidden.1 }}">{% endfor %}
+                {% if listing.editable and listing.editing %}
+                    {% for hidden_field in listing.editing_hidden_form_fields %}
+                        {{ hidden_field }}{% endfor %}
+                    {{ listing.get_formset.management_form }}
+                {% endif %}
+            {% endblock %}
+
+            {% if listing.can_edit or listing.has_upload or listing.edit_on_demand %}
+                </form>
+            {% endif %}
+
             {% if has_bottom_toolbar %}
                 <div class="bottom-toolbar">
                     {% include listing.toolbar.template_name %}
@@ -92,23 +106,26 @@
             {% if listing.has_paginator and not listing.paginator.in_footer %}
                 {% include listing.paginator.template_name %}
             {% endif %}
+
+            {% if listing.can_edit or listing.has_upload or listing.edit_on_demand %}
+                {% if listing.action_footer_template_name %}
+                    {% include listing.action_footer_template_name %}
+                {% endif %}
+            {% endif %}
         {% else %}
+            {% if listing.can_edit or listing.has_upload or listing.edit_on_demand %}
+                {% if listing.action_header_template_name %}
+                    {% include listing.action_header_template_name %}
+                {% endif %}
+            {% endif %}
             {% include listing.empty_listing_template_name %}
+            {% if listing.can_edit or listing.has_upload or listing.edit_on_demand %}
+                {% if listing.action_footer_template_name %}
+                    {% include listing.action_footer_template_name %}
+                {% endif %}
+            {% endif %}
+            </form>
         {% endif %}
 
-        {% block hiddens %}
-            {% for hidden in listing.form_input_hiddens %}
-                <input type="hidden" name="{{ hidden.0 }}" value="{{ hidden.1 }}">{% endfor %}
-            {% if listing.editable and listing.editing %}
-                {% for hidden_field in listing.editing_hidden_form_fields %}
-                    {{ hidden_field }}{% endfor %}
-                {{ listing.get_formset.management_form }}
-            {% endif %}
-        {% endblock %}
     </div>
-    {% if listing.can_edit or listing.has_upload or listing.edit_on_demand %}
-        {% if listing.action_footer_template_name %}
-            {% include listing.action_footer_template_name %}
-        {% endif %}
-    {% endif %}
 {% endautoescape %}

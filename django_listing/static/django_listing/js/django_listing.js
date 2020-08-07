@@ -45,7 +45,6 @@ function djlst_load_listing_href() {
 
 function djlst_load_listing_val() {
     var param_value = $(this).val();
-    console.log("Value = " + param_value);
     var param_name = $(this).attr("name");
     var ajax_url = $(this).closest("div.django-listing-ajax").attr("ajax_url");
     var url = djlst_replaceUrlParam(ajax_url, param_name, param_value);
@@ -259,4 +258,12 @@ $(document).ready(function () {
         dropzoneCounter = 0;
         $(this).removeClass('drag-over');
     });
+
+    $('.submit-action-form').on('click', function () {
+        var action = $(this).val();
+        var form = $(this).closest('.django-listing-container').find('.action-form');
+        var hidden = form.find('.action-hidden-value');
+        hidden.val(action);
+        form.submit();
+    })
 });

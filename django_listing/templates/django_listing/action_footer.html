@@ -1,47 +1,45 @@
 {% load i18n %}
 {% load django_listing %}
-    <div class="text-center footer-action-buttons">
-        {% if listing.has_footer_action_buttons %}
-            {% if listing.can_edit %}
-                {% if listing.edit_on_demand %}
-                    <a href="{% geturl_listing listing without='editing' %}"
-                       class="button-action-cancel {{ listing.theme_action_button_class }}"
-                       role="button">
-                        <span class="{{ listing.action_button_cancel_icon }}"></span>
-                        {{ listing.action_button_cancel_label }}
-                    </a>
-                {% endif %}
-                <button type="submit"
-                        name="action"
-                        value="update"
-                        class="button-action-update {{ listing.theme_action_button_class }}">
-                    <span class="{{ listing.action_button_update_icon }}"></span>
-                    {{ listing.action_button_update_label }}
-                </button>
-            {% else %}
-                {% if listing.edit_on_demand %}
-                    <a href="{% geturl_listing listing editing='true' %}"
-                       class="button-action-edit {{ listing.theme_action_button_class }}"
-                       role="button">
-                        <span class="{{ listing.action_button_edit_icon }}"></span>
-                        {{ listing.action_button_edit_label }}
-                    </a>
-                {% endif %}
+<div class="text-center footer-action-buttons">
+    {% if listing.has_footer_action_buttons %}
+        {% if listing.can_edit %}
+            {% if listing.edit_on_demand %}
+                <a href="{% geturl_listing listing without='editing' %}"
+                   class="button-action-cancel {{ listing.theme_action_button_class }}"
+                   role="button">
+                    <span class="{{ listing.action_button_cancel_icon }}"></span>
+                    {{ listing.action_button_cancel_label }}
+                </a>
             {% endif %}
-            {% if listing.has_upload %}
-                <button type="button"
-                        class="button-action-upload {{ listing.theme_action_button_class }}">
-                    <span class="{{ listing.action_button_upload_icon }}"></span>
-                    {{ listing.action_button_upload_label }}
-                </button>
-                <div class="dz-message" data-dz-message>
-                    <div class="empty-listing-upload-drop-here">{% trans "You can drop files here" %}</div>
-                    {% if listing.upload_accepted_files %}
-                        <div class="empty-listing-upload-accepted-files">{% trans "Accepted files are" %} : <span>{{ listing.upload_accepted_files }}</span></div>
-                    {% endif %}
-                </div>
+            <button type="button"
+                    name="action"
+                    value="update"
+                    class="submit-action-form button-action-update {{ listing.theme_action_button_class }}">
+                <span class="{{ listing.action_button_update_icon }}"></span>
+                {{ listing.action_button_update_label }}
+            </button>
+        {% else %}
+            {% if listing.edit_on_demand %}
+                <a href="{% geturl_listing listing editing='true' %}"
+                   class="button-action-edit {{ listing.theme_action_button_class }}"
+                   role="button">
+                    <span class="{{ listing.action_button_edit_icon }}"></span>
+                    {{ listing.action_button_edit_label }}
+                </a>
             {% endif %}
-         {% endif %}
-    </div>
-</form>
+        {% endif %}
+        {% if listing.has_upload %}
+            <button type="button"
+                    class="button-action-upload {{ listing.theme_action_button_class }}">
+                <span class="{{ listing.action_button_upload_icon }}"></span>
+                {{ listing.action_button_upload_label }}
+            </button>
+            <div class="dz-message" data-dz-message>
+                <div class="empty-listing-upload-drop-here">{% trans "You can drop files here" %}</div>
+                {% if listing.upload_accepted_files %}
+                    <div class="empty-listing-upload-accepted-files">{% trans "Accepted files are" %} : <span>{{ listing.upload_accepted_files }}</span></div>
+                {% endif %}
+            </div>
+        {% endif %}
+     {% endif %}
 </div>
