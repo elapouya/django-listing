@@ -593,14 +593,10 @@ class Listing(ListingBase):
         self.need_media_for('dropzone')
         dz_suffix = self.suffix[1:] if isinstance(self.suffix, str) else ''
         dz_camel_name = f'actionForm{dz_suffix}'
-        listing_id_dashed = self.id.replace('_','-')
         self.add_footer_dict_list('dropzones', dict(
             listing=self,
             dz_camel_name=dz_camel_name,
-            options=dict(
-                app_settings.DROPZONE_PARAMS,
-                clickable=f'#{listing_id_dashed} .button-action-upload',
-            )
+            options=app_settings.DROPZONE_PARAMS,
         ))
 
     def global_context_init(self):

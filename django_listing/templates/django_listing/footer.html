@@ -32,6 +32,7 @@
     {% get_dict_list "dropzones" as dict_list %}
     <script type="text/javascript">
         var ajax_error = false;
+        var listing_div_id = '{{ listing.id|underscore_to_dash }}';
         {% for dct in dict_list %}
         Dropzone.options.{{ dct.dz_camel_name}} = {{ dct.options|json_options }};
         {% endfor %}
