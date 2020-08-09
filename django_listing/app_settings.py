@@ -15,11 +15,17 @@ class AppSettings:
     DROPZONE_CSS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/dropzone.min.css'
     DROPZONE_JS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/dropzone.min.js'
     DROPZONE_PARAMS = dict(
-        params={'force_action':'upload'},
+        params={'force_action':'upload'}, # this parameter is mandatory to have upload button working
         clickable=mark_safe('"#" + listing_div_id + " .button-action-upload"'), # listing_div_id is defined in footer.html
-        addedfile=mark_safe('function() { ajax_error=false; }'),
-        error=mark_safe('function() {ajax_error = true;}'),
-        queuecomplete=mark_safe('function(e) { if (! ajax_error) document.location.reload(true); }')
+        init=mark_safe("""function() {
+            var ajax_error=false;
+            this.on("error", function() { ajax_error=true; });
+            this.on("queuecomplete", function(e) {
+                if (! ajax_error) {
+                    document.location.reload(true);
+                }
+            });
+            }"""),
     )
     def __init__(self):
         if hasattr(settings, 'DJANGO_LISTING'):
