@@ -18,7 +18,7 @@
                                         {% if paginator.theme_first_last_has_icon %}
                                             <span class="{{ paginator.theme_first_icon }}"></span>{% endif %}
                                         {% if paginator.theme_first_last_has_text %}
-                                            {{ paginator.first_text }}{% endif %}
+                                            <span class="{{ paginator.theme_button_text_class }}">{{ paginator.first_text }}</span>{% endif %}
                                     </a>
                                 </li>
                             {% endblock pagination_first %}
@@ -36,7 +36,7 @@
                                         {% if paginator.theme_fast_page_has_icon %}
                                             <span class="{{ paginator.theme_fast_prev_icon }}"></span>{% endif %}
                                         {% if paginator.theme_fast_page_has_text %}
-                                            {{ fast_page_prev_text }}{% endif %}
+                                            <span class="{{ paginator.theme_button_text_class }}">{{ fast_page_prev_text }}</span>{% endif %}
                                     </a>
                                 </li>
                             {% endblock fast_page_prev %}
@@ -55,7 +55,7 @@
                                         {% if paginator.theme_prev_next_has_icon %}
                                             <span class="{{ paginator.theme_prev_icon }}"></span>{% endif %}
                                         {% if paginator.theme_prev_next_has_text %}
-                                            {{ paginator.prev_text }}{% endif %}
+                                            <span class="{{ paginator.theme_button_text_class }}">{{ paginator.prev_text }}</span>{% endif %}
                                     </a>
                                 </li>
                             {% endblock pagination_previous %}
@@ -134,7 +134,7 @@
                                        role="button"
                                        href="{{ next_page_url }}">
                                         {% if paginator.theme_prev_next_has_text %}
-                                            {{ paginator.next_text }}{% endif %}
+                                            <span class="{{ paginator.theme_button_text_class }}">{{ paginator.next_text }}</span>{% endif %}
                                         {% if paginator.theme_prev_next_has_icon %}
                                             <span class="{{ paginator.theme_next_icon }}"></span>{% endif %}
                                     </a>
@@ -153,7 +153,7 @@
                                        role="button"
                                        href="{{ fast_page_next_url }}">
                                         {% if paginator.theme_fast_page_has_text %}
-                                            {{ fast_page_next_text }}{% endif %}
+                                            <span class="{{ paginator.theme_button_text_class }}">{{ fast_page_next_text }}</span>{% endif %}
                                         {% if paginator.theme_fast_page_has_icon %}
                                             <span class="{{ paginator.theme_fast_next_icon }}"></span>{% endif %}
                                     </a>
@@ -172,7 +172,7 @@
                                        role="button"
                                        href="{{ last_page_url }}">
                                         {% if paginator.theme_first_last_has_text %}
-                                            {{ paginator.last_text }}{% endif %}
+                                            <span class="{{ paginator.theme_button_text_class }}">{{ paginator.last_text }}</span>{% endif %}
                                         {% if paginator.theme_first_last_has_icon %}
                                             <span class="{{ paginator.theme_last_icon }}"></span>{% endif %}
                                     </a>

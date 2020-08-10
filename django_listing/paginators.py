@@ -23,6 +23,7 @@ PAGINATOR_PARAMS_KEYS = {
     'has_row_info', 'page_row_tpl', 'parts_order', 'has_goto_page',
     'goto_page_tpl', 'has_editable_page_info', 'theme_button_a_class',
     'theme_button_li_class', 'in_footer', 'hide_single_page',
+    'theme_button_text_class',
 }
 
 class Paginator(DjangoPaginator):
@@ -65,6 +66,7 @@ class Paginator(DjangoPaginator):
     theme_next_icon = 'listing-icon-right-dir'
     theme_button_a_class = 'page-link'
     theme_button_li_class = 'page-item'
+    theme_button_text_class = 'button-text'
 
     def __init__(self, listing, object_list, per_page, orphans=0,
                  allow_empty_first_page=True):
