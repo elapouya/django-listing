@@ -27,6 +27,9 @@ class AppSettings:
             });
             }"""),
     )
+    STATIC_URL = settings.STATIC_URL
+    MEDIA_URL = settings.MEDIA_URL
+
     def __init__(self):
         if hasattr(settings, 'DJANGO_LISTING'):
             for k,v in settings.DJANGO_LISTING.items():
