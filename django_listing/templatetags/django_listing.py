@@ -43,12 +43,13 @@ class ListingHeaderNode(template.Node):
     def render(self, context):
         remaining_output = self.nodelist.render(context)
         tpl = template.loader.get_template(app_settings.HEADER_TEMPLATE)
+        request = context.request
         context = context.flatten()
         context.update(
             app_settings.context,
             need_media_for=getattr(context['request'], 'need_media_for',{})
         )
-        tpl_output = tpl.render(context)
+        tpl_output = tpl.render(context, request)
         return f'{tpl_output}\n{remaining_output}'
 
 
@@ -61,12 +62,13 @@ def do_listing_header(parser, token):
 @register.simple_tag(takes_context=True)
 def render_listing_footer(context):
     tpl = template.loader.get_template(app_settings.FOOTER_TEMPLATE)
+    request = context.request
     context = context.flatten()
     context.update(
         app_settings.context,
         need_media_for=getattr(context['request'],'need_media_for',{})
     )
-    tpl_output = tpl.render(context)
+    tpl_output = tpl.render(context, request)
     return tpl_output
 
 
@@ -292,7 +294,7 @@ def render_listing_form(context, listing, *args,
 
 @register.simple_tag(takes_context=True)
 def get_dict_list(context, key):
-    request = context.flatten().get('request')
+    request = context.request
     if hasattr(request, 'django_listing_footer_dict_list'):
         return request.django_listing_footer_dict_list.get(key, [])
     return []
@@ -300,7 +302,7 @@ def get_dict_list(context, key):
 
 @register.simple_tag(takes_context=True)
 def header_snippets(context):
-    request = context.flatten().get('request')
+    request = context.request
     snippets = getattr(request, 'django_listing_header_snippets', None)
     if snippets:
         return mark_safe('\n'.join(snippets))
@@ -309,7 +311,7 @@ def header_snippets(context):
 
 @register.simple_tag(takes_context=True)
 def footer_snippets(context):
-    request = context.flatten().get('request')
+    request = context.request
     snippets = getattr(request, 'django_listing_footer_snippets', None)
     if snippets:
         return mark_safe('\n'.join(snippets))
@@ -318,7 +320,7 @@ def footer_snippets(context):
 
 @register.simple_tag(takes_context=True)
 def onready_snippets(context):
-    request = context.flatten().get('request')
+    request = context.request
     snippets = getattr(request, 'django_listing_onready_snippets', None)
     if snippets:
         return mark_safe('\n'.join(snippets))
