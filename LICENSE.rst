@@ -10,9 +10,16 @@ this includes :
 - Any application that includes django-listing used inside a company
 - etc...
 
-A commercial license is very easy to acquire : just send us a donation for our work here :
+For the moment the commercial license is free but requires you to put a link on every page a
+listing is present. The link can use very small font size, but must be still readable.
+The HTML code could be::
+
+    <a href="https://github.com/elapouya/django-listing">Powered by django-listing</a>
+
+Donation :
+==========
+
+To support development, you can make a donation here :
 
 https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=EA9ENDA5WSXCU&source=url
 
-You are free to give us any amount.
-Paypal confirmation mail will be the proof you have a commercial license.
