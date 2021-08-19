@@ -421,7 +421,7 @@ class Listing(ListingBase):
         # listing initialisation must be in 2 steps because when a class is
         # passed to a template, it is automatically instanciated by Django
         # without any parameter.
-        if isinstance(data, QuerySet) or data:
+        if isinstance(data, QuerySet) or data is not None:
             self.init(data, **kwargs)
 
     @classmethod
@@ -526,6 +526,9 @@ class Listing(ListingBase):
         if self.columns:
             return self.columns.get_model()
         return None
+
+    def is_empty(self):
+        return not bool(self.data)
 
     def is_initialized(self):
         return self._initialized

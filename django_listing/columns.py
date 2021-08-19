@@ -15,6 +15,7 @@ from django import forms
 from django.conf import settings
 from django.db import models
 from django.forms import widgets
+from django.template.defaultfilters import filesizeformat
 from django.utils import formats
 from django.utils.encoding import force_str
 from django.utils.html import conditional_escape
@@ -33,7 +34,7 @@ __all__ = ['COLUMNS_PARAMS_KEYS', 'Columns', 'ModelColumns', 'SequenceColumns',
            'Column', 'BooleanColumn', 'CheckboxColumn', 'ChoiceColumn',
            'ManyColumn', 'DateColumn', 'DateTimeColumn', 'TimeColumn',
            'LinkColumn', 'TotalColumn', 'AvgColumn', 'MaxColumn', 'MinColumn',
-           'MultipleChoiceColumn','ButtonColumn','InputColumn',
+           'MultipleChoiceColumn','ButtonColumn','InputColumn', 'FileSizeColumn',
            'SelectColumn', 'ForeignKeyColumn', 'LinkObjectColumn',
            'COLUMNS_FORM_FIELD_KEYS',]
 
@@ -881,6 +882,14 @@ class DateTimeColumn(Column):
         value = super().get_cell_value(rec)
         if isinstance(value, datetime.date):  # date also match datetime
             return formats.date_format(value, self.datetime_format)
+        return value
+
+
+class FileSizeColumn(Column):
+    def get_cell_value(self,rec):
+        value = super().get_cell_value(rec)
+        if isinstance(value, (int, float)):
+            return filesizeformat(value)
         return value
 
 

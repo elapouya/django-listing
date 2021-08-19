@@ -47,7 +47,7 @@ class Paginator(DjangoPaginator):
     hide_disabled_buttons = False
     hide_single_page = False
     parts_order = ( 'first,fastprev,prev,pageinfo,rowinfo,scale,'
-                    'next,fastnext,last;gotopage' )
+                    'next,fastnext,last' )
     has_goto_page = False
     goto_page_tpl = pgettext_lazy('paginator','Go to page {goto_form}')
     in_footer = False

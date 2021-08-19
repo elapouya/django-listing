@@ -11,6 +11,29 @@ function djlst_replaceUrlParam(url, param_name, param_value)
     return url + (url.indexOf('?')>0 ? '&' : '?') + param_name + '=' + param_value;
 }
 
+function get_csrf_token() {
+    name = 'csrftoken';
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue
+}
+
+function update_csrf_token() {
+    $.ajaxSetup({
+        data: { 'csrfmiddlewaretoken': get_csrf_token() }
+    });
+}
+
 function djlst_load_listing_url(nav_obj, url) {
     var listing_div = nav_obj.closest("div.django-listing-ajax");
     listing_div.addClass("spinning");
@@ -20,6 +43,7 @@ function djlst_load_listing_url(nav_obj, url) {
     if (! listing_target) listing_target = "#"+listing_id;
     var listing_part = nav_obj.attr("listing-part");
     if (! listing_part) listing_part = "all";
+    update_csrf_token();
     $(listing_target).load(
         url,
         {
@@ -70,6 +94,7 @@ function djlst_post_button_action(event) {
         serialized_data : nav_obj.closest('form').serialize()
     };
     request_data[$(this).attr('name')]=$(this).val();
+    update_csrf_token();
     $.ajax({
        type: "POST",
        url: ajax_url,
@@ -206,6 +231,7 @@ function djlst_view_object_popup(event) {
         action_button : 'view_object_popup',
         serialized_data : nav_obj.closest('form').serialize()
     };
+    update_csrf_token();
     $.ajax({
        type: "POST",
        url: ajax_url,
