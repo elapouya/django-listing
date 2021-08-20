@@ -515,6 +515,7 @@ div.django-listing-container.standard-theme td.cls-totalcolumn {
     font-weight: bold;
 }
 
+div.django-listing-container td.type-str.cls-filesizecolumn,
 div.django-listing-container td.type-int,
 div.django-listing-container td.type-float,
 div.django-listing-container td.agg-minmax,

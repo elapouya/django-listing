@@ -19,6 +19,7 @@ from django.template.defaultfilters import filesizeformat
 from django.utils import formats
 from django.utils.encoding import force_str
 from django.utils.html import conditional_escape
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ugettext
 
@@ -35,8 +36,8 @@ __all__ = ['COLUMNS_PARAMS_KEYS', 'Columns', 'ModelColumns', 'SequenceColumns',
            'ManyColumn', 'DateColumn', 'DateTimeColumn', 'TimeColumn',
            'LinkColumn', 'TotalColumn', 'AvgColumn', 'MaxColumn', 'MinColumn',
            'MultipleChoiceColumn','ButtonColumn','InputColumn', 'FileSizeColumn',
-           'SelectColumn', 'ForeignKeyColumn', 'LinkObjectColumn',
-           'COLUMNS_FORM_FIELD_KEYS',]
+           'SelectColumn', 'ForeignKeyColumn', 'LinkObjectColumn', 'ListingMethodRef',
+           'ButtonLinkColumn', 'COLUMNS_FORM_FIELD_KEYS',]
 
 COLUMNS_PARAMS_KEYS = {
     'name', 'header', 'footer', 'data_key', 'cell_edit_tpl',
@@ -57,6 +58,16 @@ COLUMNS_FORM_FIELD_KEYS = {
     'validators', 'localize', 'disabled','input_formats','min_value',
     'max_value',
 }
+
+
+class ListingMethodRef:
+    """ Helper to reference a Listing method in column.cell_value instead of a lambda"""
+    def __init__(self, method_name):
+        self.method_name = method_name
+
+    def __call__(self, listing, *args, **kwargs):
+        method = getattr(listing, self.method_name)
+        return method(*args, **kwargs)
 
 
 class Columns(list):
@@ -391,7 +402,7 @@ class Column(metaclass=ColumnMeta):
         if callable(cell_attrs):
             cell_attrs = cell_attrs(rec, ctx, value)
         attrs = HTMLAttributes(cell_attrs)
-        attrs.add('class',{'col-'+self.name,
+        attrs.add('class', {'col-'+self.name,
                            'type-'+type(value).__name__,
                            'cls-'+self.__class__.__name__.lower()
                            } | self.theme_cell_class)
@@ -404,9 +415,11 @@ class Column(metaclass=ColumnMeta):
     #     return rec.get(self.data_key)
 
     @cache_in_record
-    def get_cell_value(self,rec):
-        if callable(self.cell_value):
-            value = self.cell_value(self,rec)
+    def get_cell_value(self, rec):
+        if isinstance(self.cell_value, ListingMethodRef):
+            value = self.cell_value(self.listing, self, rec)
+        elif callable(self.cell_value):
+            value = self.cell_value(self, rec)
         else:
             value = rec.get(self.data_key)
             if value is None:
@@ -919,20 +932,24 @@ class LinkColumn(Column):
 
     def get_link_attrs(self, rec, value):
         link_attrs = self.link_attrs
-        if callable(link_attrs):
+        if isinstance(link_attrs, ListingMethodRef):
+            link_attrs = link_attrs(self.listing, self, rec, value)
+        elif callable(link_attrs):
             link_attrs = link_attrs(rec, value)
         attrs = HTMLAttributes(link_attrs or {})
         return attrs
 
     def get_href_tpl(self, rec, value):
         href_tpl = self.href_tpl
-        if callable(href_tpl):
+        if isinstance(href_tpl, ListingMethodRef):
+            href_tpl = href_tpl(self.listing, self, rec, value)
+        elif callable(href_tpl):
             href_tpl = href_tpl(rec, value)
         return href_tpl
 
     def get_href(self,rec, ctx, value):
         href_tpl = self.get_href_tpl(rec, value)
-        if isinstance(href_tpl,str):
+        if isinstance(href_tpl, str):
             return href_tpl.format(**ctx)
         return None
 
@@ -940,8 +957,22 @@ class LinkColumn(Column):
         ctx = super().get_cell_context(rec, value)
         ctx.link_attrs = self.get_link_attrs(rec, value)
         if not self.no_link:
-            ctx.link_attrs.add('href',self.get_href(rec, ctx, value))
+            ctx.link_attrs.add('href', self.get_href(rec, ctx, value))
         return ctx
+
+
+class ButtonLinkColumn(LinkColumn):
+    label = 'Button'
+
+    def get_link_attrs(self, rec, value):
+        attrs = super().get_link_attrs(rec, value)
+        attrs.add('class', self.theme_button_class)
+        return attrs
+
+    def get_cell_value(self, rec):
+        value = mark_safe(self.label)
+        return value
+
 
 class URLColumn(LinkColumn):
     href_tpl = '{value}'
