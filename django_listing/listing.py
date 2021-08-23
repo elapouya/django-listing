@@ -417,6 +417,7 @@ class Listing(ListingBase):
         self._formset = None
         self._view = None
         self.form_params = {}
+        self._have_to_refresh = False
 
         # listing initialisation must be in 2 steps because when a class is
         # passed to a template, it is automatically instanciated by Django
@@ -447,6 +448,12 @@ class Listing(ListingBase):
             if k in params_keys or ('__' in k and not k.startswith('__')):
                 setattr(self,k,v)
         self.stored_params = {}
+
+    def have_to_refresh(self):
+        return self._have_to_refresh
+
+    def plan_refresh(self):
+        self._have_to_refresh = True
 
     def add_onready_snippet(self, snippet):
         if not hasattr(self.request,'django_listing_onready_snippets'):

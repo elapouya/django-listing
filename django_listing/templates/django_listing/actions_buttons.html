@@ -1,6 +1,8 @@
+{% load django_listing %}
 {% block actions_buttons %}{% spaceless %}
 <form method="post">
 <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+<input type="hidden" name="listing_id" value="{{ listing.id|underscore_to_dash }}">
 <input type="hidden" name="action" value="action_button">
 <input type="hidden" name="action_pk" value="{{ rec.pk }}">
 <input type="hidden" name="action_col" value="{{ action_col }}">

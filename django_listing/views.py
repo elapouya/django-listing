@@ -80,7 +80,7 @@ class ListingViewMixin:
             response = self.manage_listing_post(request, *args, **kwargs)
             if response:
                 return response
-            return self.get(request, *args, **kwargs)
+            return HttpResponseRedirect('.')
         except ListingException as e:
             return HttpResponseServerError(e)
 
@@ -103,10 +103,10 @@ class ListingViewMixin:
         response['Cache-Control'] = 'no-cache'
         return response
 
-    def get_listing_from_post(self, request):
+    def get_listing_from_post(self, request, refresh=False):
         listing_id = request.POST.get('listing_id', '')[:-3]  # remove '-id' suffix
         listing_suffix = request.POST.get('listing_suffix', '')
-        listing = self.get_listing_id(listing_id)
+        listing = self.get_listing_id(listing_id, refresh)
         if not listing:
             raise ListingException(
                 '{}-id is a bad listing ID : django-listing library misconf'
@@ -131,6 +131,8 @@ class ListingViewMixin:
                     response = method(listing, *args, **kwargs)
         if response:
             return response
+        if listing.have_to_refresh():
+            listing = self.get_listing_from_post(request, refresh=True)
         return HttpResponse(listing.render(RequestContext(request)))
 
     def get_listing_class(self):
@@ -359,14 +361,14 @@ class ListingViewMixin:
                 messages.add_message(listing.request, messages.INFO,
                     mark_safe(msg))
 
-    def get_listing_id(self, listing_id):
+    def get_listing_id(self, listing_id, refresh=False):
         """ For AJAX purposes : when using multiple listings on the same page
         and having one AJAX request : we need only ONE listing instance :
         the one from the given ID in the request. This avoids to create
         all listing instances when not necessary """
         if isinstance(listing_id,str):
             instance = self.get_from_listing_instances(listing_id)
-            if instance is None:
+            if instance is None or refresh==True:
                 method = getattr(
                     self, INSTANCE_METHOD_PREFIX + listing_id.replace('-','_'), None)
                 if callable(method):

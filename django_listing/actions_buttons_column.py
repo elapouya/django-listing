@@ -44,8 +44,8 @@ class ActionsButtonsColumn(Column):
 
     def init(self, *args, **kwargs):
         super().init(*args, **kwargs)
-        if not isinstance(self.listing.data, QuerySet):
-            raise InvalidData('Actions buttons work only with QuerySet as listing data.')
+        # if not isinstance(self.listing.data, QuerySet):
+        #     raise InvalidData('Actions buttons work only with QuerySet as listing data.')
 
     def render_init(self):
         self.extract_action_params()
@@ -76,19 +76,18 @@ class ActionsButtonsColumn(Column):
     def extract_action_params(self):
         get_dict = self.listing.request.GET
         post_dict = self.listing.request.POST
-        for k in self.actions_query_string_keys:
-            qs_key = k + self.listing.suffix
+        for qs_key in self.actions_query_string_keys:
             v = None
             if qs_key in post_dict:
                 v = post_dict.get(qs_key)
             elif qs_key in get_dict:
                 v = get_dict.get(qs_key)
-            if v is not None and k in self.actions_query_string_int_keys:
+            if v is not None and qs_key in self.actions_query_string_int_keys:
                 try:
                     v = int(v)
                 except ValueError:
                     pass
-            setattr(self, k, v)
+            setattr(self, qs_key, v)
 
     def get_buttons_template(self, rec):
         if not hasattr(self,'_value_template'):
@@ -101,12 +100,15 @@ class ActionsButtonsColumn(Column):
             buttons = map(str.strip,buttons.split(','))
         buttons_context = []
         for b in buttons:
-            try:
-                meth_name = f'get_button_{b}_context'
-                context_method = getattr(self, meth_name)
-            except AttributeError:
-                self.get_button_context(b,rec)
-            context = context_method(b, rec)
+            meth_name = f'get_button_{b}_context'
+            context = {}
+            context_method = getattr(self.listing, meth_name, None)
+            if context_method is not None:
+                context = context_method(self, b, rec)  # give col objet to listing method
+            else:
+                context_method = getattr(self, meth_name, None)
+                if context_method is not None:
+                    context = context_method(b, rec)
             context.update(
                 self.buttons_description[b],
                 name=b,
@@ -114,6 +116,7 @@ class ActionsButtonsColumn(Column):
             )
             buttons_context.append(context)
         return dict(
+            listing=self.listing,
             buttons=buttons_context,
             rec=rec,
             action_col=self.name,
@@ -132,10 +135,14 @@ class ActionsButtonsColumn(Column):
         )
 
     def manage_button_action(self, *args, **kwargs):
-        try:
-            meth_name = f'manage_button_{self.action_button}_action'
-            action_method = getattr(self, meth_name)
-        except AttributeError as e:
+        meth_name = f'manage_button_{self.action_button}_action'
+        # Search method in listing object first
+        action_method = getattr(self.listing, meth_name, None)
+        if action_method is not None:
+            return action_method(self, *args, **kwargs)  # give col objet to listing method
+        # Search method in column object otherwise
+        action_method = getattr(self, meth_name, None)
+        if action_method is None:
             raise ListingException(f'Unknown "{self.action_button}" action.')
         return action_method(*args, **kwargs)
 
