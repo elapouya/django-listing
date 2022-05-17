@@ -8,7 +8,7 @@ from django.db import models
 from django import forms
 from django.template import loader
 from django.utils.translation import gettext_lazy, pgettext_lazy
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 import copy
 import re
 from .context import RenderContext

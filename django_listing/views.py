@@ -16,7 +16,7 @@ from django.db import models
 from django import forms
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 from django.template import loader
 from .listing import Listing, logger
 from .listing_form import ListingForm
@@ -29,6 +29,8 @@ __all__ = [
     'LISTING_REDIRECT_NONE', 'LISTING_REDIRECT_SAME_PAGE',
     'LISTING_REDIRECT_NO_EDIT',
 ]
+
+from .utils import is_ajax
 
 INSTANCE_METHOD_PREFIX = 'get_listing_instance_'
 LISTING_REDIRECT_NONE = None
@@ -62,7 +64,7 @@ class ListingViewMixin:
 
     def post(self, request, *args, **kwargs):
         try:
-            if request.is_ajax():
+            if is_ajax(request):
                 if 'serialized_data' in request.POST:
                     post = request.POST.copy()
                     serialized_data = post.pop('serialized_data')
@@ -264,7 +266,7 @@ class ListingViewMixin:
             layout = listing.request.POST.get('listing_form_layout')
             name = listing.request.POST.get('listing_form_name')
             if not layout or not name:
-                raise InvalidListingForm(ugettext(
+                raise InvalidListingForm(gettext(
                     'At least a form layout and name are mandatory in POST data '
                     'to build a relevant form instance'))
             listing_form = ListingForm(listing.action, name=name, layout=layout)

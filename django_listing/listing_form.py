@@ -9,7 +9,7 @@ from django import forms
 from django.template import loader
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy, pgettext_lazy
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
 from django.forms.fields import FileField
 import copy

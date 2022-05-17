@@ -5,7 +5,7 @@
 #
 
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 from django.utils.html import conditional_escape
 from django.db.models import Avg, Min, Max, Count, Sum
 from django.db.models.query import QuerySet
@@ -43,7 +43,7 @@ class AggregationMeta(type):
         agg_cls = cls.slug2class.get(slug)
         if agg_cls is None:
             raise InvalidAggregation(
-                ugettext('Unknown "{}" aggregation, choose one of these : '
+                gettext('Unknown "{}" aggregation, choose one of these : '
                     '{}').format(slug, ','.join(cls.get_aggregation_slugs())))
         return agg_cls(column, global_aggregation=global_aggregation)
 

@@ -1,3 +1,7 @@
+0.0.10 (2022-05-17)
+------------------
+- Add support for python 3.10
+
 0.0.9 (2021-11-09)
 ------------------
 - Add possibility to create custom action button linked with listing method

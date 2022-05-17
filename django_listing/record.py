@@ -10,7 +10,7 @@ from django.db.models.query import QuerySet
 from django.db.models import F
 from django.utils.safestring import mark_safe
 from django.db import models
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from urllib.parse import quote_plus
 import types
 import re
@@ -119,7 +119,7 @@ class RecordManager:
 
     def compute_current_page_records(self):
         lsg = self.listing
-        if not isinstance(lsg.data,(collections.Sequence,QuerySet)):
+        if not isinstance(lsg.data,(collections.abc.Sequence,QuerySet)):
             raise InvalidData(_('Listing data must be a sequence or a QuerySet.'))
         if isinstance(lsg.data,QuerySet):
             objs = self.get_objs_from_queryset()

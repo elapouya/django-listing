@@ -4,7 +4,7 @@
 # @author: Eric Lapouyade
 #
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy, pgettext_lazy
 from django.utils.translation import to_locale
 from django.http import QueryDict
@@ -492,7 +492,7 @@ class Listing(ListingBase):
                 self.columns = ModelColumns(
                     self.model, listing=self,
                     link_object_columns=self.link_object_columns )
-            elif self.data and isinstance(self.data,collections.Sequence):
+            elif self.data and isinstance(self.data,collections.abc.Sequence):
                 self.columns = SequenceColumns(self.data, self.columns_headers,
                                                listing=self)
         if not self.columns:

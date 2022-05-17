@@ -67,6 +67,10 @@ def pretty_format_querydict(qd):
     return out
 
 
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
+
 class JsonDirect(str):
     pass
 

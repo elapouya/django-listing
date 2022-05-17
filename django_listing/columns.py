@@ -21,7 +21,7 @@ from django.utils.encoding import force_str
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 
 from .aggregations import AggregationMeta, Aggregation
 from .context import RenderContext
@@ -116,7 +116,7 @@ class Columns(list):
             # check col is a Column instance
             if not isinstance(col,Column):
                 raise InvalidColumn(
-                    ugettext('column {col_id} of listing {listing} is not '
+                    gettext('column {col_id} of listing {listing} is not '
                              'a Column instance (class = {colclass})')
                     .format(col_id=i, listing=listing.__class__.__name__,
                             colclass=col.__class__.__name__))
@@ -628,7 +628,7 @@ class Column(metaclass=ColumnMeta):
             cls = getattr(forms, cls, None)
             if cls is None:
                 raise InvalidColumn(
-                    ugettext('{} is not a valid django forms field class')
+                    gettext('{} is not a valid django forms field class')
                     .format(self.form_field_class))
         return cls
 
@@ -638,7 +638,7 @@ class Column(metaclass=ColumnMeta):
             cls = getattr(widgets, cls, None)
             if cls is None:
                 raise InvalidColumn(
-                    ugettext('{} is not a valid django forms widget class')
+                    gettext('{} is not a valid django forms widget class')
                     .format(self.form_field_widget_class))
         widget_attrs=HTMLAttributes(self.widget_attrs)
         widget_attrs.add('class',self.theme_form_widget_class)
