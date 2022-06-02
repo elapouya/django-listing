@@ -1,3 +1,7 @@
+0.0.11 (2022-06-02)
+------------------
+- Add JsonDateTimeColumn class
+
 0.0.10 (2022-05-17)
 ------------------
 - Add support for python 3.10

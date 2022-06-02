@@ -19,7 +19,7 @@ from .utils import init_dicts_from_class
 
 __all__ = ['FILTERS_PARAMS_KEYS', 'FILTER_QUERYSTRING_PREFIX', 'Filters',
            'Filter', 'IntegerFilter', 'ChoiceFilter', 'MultipleChoiceFilter',
-           'DateFilter']
+           'DateFilter', 'DateTimeFilter', 'TimeFilter']
 
 # Declare keys only for "Filters" object
 FILTERS_KEYS = {
@@ -95,8 +95,9 @@ class Filters(list):
             listing_key = 'filters_' + k
             if hasattr(listing,listing_key):
                 setattr(filters,k,getattr(listing,listing_key))
-        if isinstance(self.form_layout,str):
+        if isinstance(self.form_layout, str):
             # transform layout string into list of lists of lists
+            self.form_layout = re.sub(r'\s', '', self.form_layout)
             filters.form_layout = list(map(lambda s:list(map(
                 lambda t:(t.split('|')+[None,None,None])[:4],s.split(','))),
                 self.form_layout.split(';')))
@@ -200,6 +201,10 @@ class Filters(list):
 
     def get_form_field(self,name):
         filter = self.get(name)
+        if filter is None:
+            raise InvalidFilters(
+                _('Cannot find filter "{name}" definition').format(name=name)
+            )
         return self.form()[filter.input_name + self.listing.suffix]
 
     def get_context(self):
@@ -354,7 +359,7 @@ class Filter(metaclass=FilterMeta):
     def filter_sequence(self, seq):
         if not self.value:
             return seq
-        return filter(lambda rec:rec[self.filter_key]==self.value,seq)
+        return filter(lambda rec:rec[self.filter_key]==self.value, seq)
 
     def extract_params(self, request_get_data):
         self.value = request_get_data.get(self.input_name + self.listing.suffix)
@@ -393,7 +398,7 @@ class DateTimeFilter(Filter):
     widget_attrs = {'class': 'form-control edit-datetimecolumn'}
 
 
-class DateFilter(Filter):
+class TimeFilter(Filter):
     from_model_field_classes = (models.TimeField,)
     form_field_class = forms.TimeField
     widget_attrs = {'class': 'form-control edit-timecolumn'}

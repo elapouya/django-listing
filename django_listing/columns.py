@@ -22,6 +22,7 @@ from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import gettext
+from django.utils.dateparse import parse_datetime
 
 from .aggregations import AggregationMeta, Aggregation
 from .context import RenderContext
@@ -37,7 +38,7 @@ __all__ = ['COLUMNS_PARAMS_KEYS', 'Columns', 'ModelColumns', 'SequenceColumns',
            'LinkColumn', 'TotalColumn', 'AvgColumn', 'MaxColumn', 'MinColumn',
            'MultipleChoiceColumn','ButtonColumn','InputColumn', 'FileSizeColumn',
            'SelectColumn', 'ForeignKeyColumn', 'LinkObjectColumn', 'ListingMethodRef',
-           'ButtonLinkColumn', 'COLUMNS_FORM_FIELD_KEYS',]
+           'ButtonLinkColumn', 'COLUMNS_FORM_FIELD_KEYS', 'JsonDateTimeColumn', ]
 
 COLUMNS_PARAMS_KEYS = {
     'name', 'header', 'footer', 'data_key', 'cell_edit_tpl',
@@ -893,6 +894,19 @@ class DateTimeColumn(Column):
 
     def get_cell_value(self,rec):
         value = super().get_cell_value(rec)
+        if isinstance(value, datetime.date):  # date also match datetime
+            return formats.date_format(value, self.datetime_format)
+        return value
+
+
+class JsonDateTimeColumn(Column):
+    datetime_format = settings.DATETIME_FORMAT
+    params_keys = 'datetime_format'
+
+    def get_cell_value(self,rec):
+        value = super().get_cell_value(rec)
+        if isinstance(value, str):
+            value = parse_datetime(value) or value  # convert json date to datetime object
         if isinstance(value, datetime.date):  # date also match datetime
             return formats.date_format(value, self.datetime_format)
         return value
