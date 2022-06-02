@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-15 09:06+0200\n"
+"POT-Creation-Date: 2022-06-02 15:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,275 +18,355 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: actions_buttons_column.py:132
+#: django_listing/actions_buttons_column.py:151
 msgid "Move up"
-msgstr ""
+msgstr "En haut"
 
-#: actions_buttons_column.py:133
+#: django_listing/actions_buttons_column.py:152
 msgid "Change order up"
-msgstr ""
+msgstr "Change l'ordre vers le haut"
 
-#: actions_buttons_column.py:162
+#: django_listing/actions_buttons_column.py:180
 msgid "Move down"
-msgstr ""
+msgstr "En bas"
 
-#: actions_buttons_column.py:163
+#: django_listing/actions_buttons_column.py:181
 msgid "Change order down"
-msgstr ""
+msgstr "Change l'ordre vers le bas"
 
-#: actions_buttons_column.py:192
+#: django_listing/actions_buttons_column.py:209
+#: django_listing/actions_buttons_column.py:220
 msgid "Details"
-msgstr ""
+msgstr "Détails"
 
-#: actions_buttons_column.py:193
+#: django_listing/actions_buttons_column.py:210
+#: django_listing/actions_buttons_column.py:221
 msgid "See details"
-msgstr ""
+msgstr "Voir les détails"
 
-#: aggregations.py:46
+#: django_listing/actions_buttons_column.py:226
+msgid "Not set"
+msgstr "Non défini"
+
+#: django_listing/actions_buttons_column.py:253
+msgid "You must specify a layout in view_object_popup__layout"
+msgstr "Vous devez spécifier un layout dans view_object_popup__layout"
+
+#: django_listing/actions_buttons_column.py:256
+msgid "Object id not specified !"
+msgstr "Object id non specifié !"
+
+#: django_listing/actions_buttons_column.py:295
+msgid "*** Not a valid column name ***"
+msgstr "*** Nom de colonne invalide ***"
+
+#: django_listing/aggregations.py:46
 msgid "Unknown \"{}\" aggregation, choose one of these : {}"
-msgstr ""
+msgstr "aggrégation \"{}\" inconnue, choisir une de celles-ci : {}"
 
-#: aggregations.py:53
+#: django_listing/aggregations.py:53
 #, python-brace-format
 msgid "{value}"
 msgstr ""
 
-#: aggregations.py:136
+#: django_listing/aggregations.py:136
 #, python-brace-format
 msgid "Total :<br>{value}"
 msgstr ""
 
-#: aggregations.py:146
+#: django_listing/aggregations.py:146
 #, python-brace-format
 msgid "Min :<br>{value}"
 msgstr ""
 
-#: aggregations.py:156
+#: django_listing/aggregations.py:156
 #, python-brace-format
 msgid "Max :<br>{value}"
 msgstr ""
 
-#: aggregations.py:166
+#: django_listing/aggregations.py:166
 #, python-brace-format
 msgid "Min : {min_val}<br>Max : {max_val}"
 msgstr ""
 
-#: aggregations.py:178
+#: django_listing/aggregations.py:178
 msgid ""
 "Min : {min_val}<br>Max : {max_val}<br>Avg : {avg_val:.{col.footer_precision}"
 "f}"
 msgstr ""
+"Min : {min_val}<br>Max : {max_val}<br>Moy : {avg_val:.{col.footer_precision}"
+"f}"
 
-#: columns.py:105
+#: django_listing/columns.py:120
 #, python-brace-format
 msgid ""
 "column {col_id} of listing {listing} is not a Column instance (class = "
 "{colclass})"
 msgstr ""
+"colunne {col_id} du listing {listing} n'est pas une instance de Column (class = "
+"{colclass})"
 
-#: columns.py:270
+#: django_listing/columns.py:299
 msgid "Please choose..."
-msgstr ""
+msgstr "Choisir..."
 
-#: columns.py:602
+#: django_listing/columns.py:632
 msgid "{} is not a valid django forms field class"
-msgstr ""
+msgstr "{} n'est pas une classs de champs de formulaire django valide"
 
-#: columns.py:612
+#: django_listing/columns.py:642
 msgid "{} is not a valid django forms widget class"
-msgstr ""
+msgstr "{} n'est pas une classe de widget de formulaire django valide"
 
-#: columns.py:644 filters.py:370
+#: django_listing/columns.py:674 django_listing/filters.py:376
 #, python-brace-format
 msgid ""
 "Cannot find choices from model for filter \"{name}\", Please specify the "
 "choices to display"
 msgstr ""
+"Ne trouve pas 'choices' du modèle de filtrage \"{name}\", merçi de spécifier "
+"les choix à afficher"
 
-#: columns.py:648 filters.py:374
+#: django_listing/columns.py:678 django_listing/filters.py:380
 #, python-brace-format
 msgid "Please specify the choices to display for filter \"{name}\""
 msgstr ""
 
-#: columns.py:658
+#: django_listing/columns.py:688
 msgid "True"
 msgstr ""
 
-#: columns.py:659
+#: django_listing/columns.py:689
 msgid "False"
 msgstr ""
 
-#: columns.py:1019
+#: django_listing/columns.py:1086
 msgid "Total"
 msgstr ""
 
-#: columns.py:1021
+#: django_listing/columns.py:1088
 #, python-brace-format
 msgid "<td{attrs}>Grand Total:<br>{value}</td>"
 msgstr ""
 
-#: columns.py:1030
+#: django_listing/columns.py:1097
 msgid "Min"
 msgstr ""
 
-#: columns.py:1032
+#: django_listing/columns.py:1099
 #, python-brace-format
 msgid "<td{attrs}>Overall Min:<br>{value}</td>"
 msgstr ""
 
-#: columns.py:1040
+#: django_listing/columns.py:1107
 msgid "Max"
 msgstr ""
 
-#: columns.py:1042
+#: django_listing/columns.py:1109
 #, python-brace-format
 msgid "<td{attrs}>Overall Max:<br>{value}</td>"
 msgstr ""
 
-#: columns.py:1051
+#: django_listing/columns.py:1118
 msgid "Average"
 msgstr ""
 
-#: columns.py:1056
+#: django_listing/columns.py:1123
 msgid "<td{attrs}>Overall avg:<br>{value:.{col.footer_precision}f}</td>"
 msgstr ""
 
-#: filters.py:55
+#: django_listing/filters.py:55
 msgctxt "Filters form"
 msgid "Reset"
 msgstr ""
 
-#: filters.py:56
+#: django_listing/filters.py:56
 msgctxt "Filters form"
 msgid "Filter"
 msgstr ""
 
-#: filters.py:256
+#: django_listing/filters.py:206
+#, python-brace-format
+msgid "Cannot find filter \"{name}\" definition"
+msgstr ""
+
+#: django_listing/filters.py:262
 msgid "- No filtering -"
 msgstr ""
 
-#: filters.py:461
+#: django_listing/filters.py:467
 msgid "Use CTRL+click to select/deselect multiple choices"
 msgstr ""
 
-#: listing.py:304
-msgid "<i>Nothing to display</i>"
+#: django_listing/listing.py:293
+msgctxt "action button"
+msgid "Cancel"
 msgstr ""
 
-#: listing.py:445
+#: django_listing/listing.py:294
+msgctxt "action button"
+msgid "Edit"
+msgstr ""
+
+#: django_listing/listing.py:295
+msgctxt "action button"
+msgid "Update"
+msgstr ""
+
+#: django_listing/listing.py:296
+msgctxt "action button"
+msgid "Upload"
+msgstr ""
+
+#: django_listing/listing.py:321
+msgid "Nothing to display"
+msgstr ""
+
+#: django_listing/listing.py:499
 msgid "Please configure at least one column in your listing"
 msgstr ""
 
-#: listing.py:519
+#: django_listing/listing.py:576
 msgid "record"
 msgstr ""
 
-#: listing_form.py:73
+#: django_listing/listing_form.py:94
 msgctxt "Listing form"
 msgid "Reset"
 msgstr ""
 
-#: listing_form.py:74
+#: django_listing/listing_form.py:95
 msgctxt "Listing form"
 msgid "Add"
 msgstr ""
 
-#: listing_form.py:140
+#: django_listing/listing_form.py:161
 msgid "You must specify a list of columns names in the form layout"
 msgstr ""
 
-#: listing_form.py:147
+#: django_listing/listing_form.py:168
 #, python-brace-format
 msgid ""
 "In the {form_name} layout you specified the field \"{field_name}\" but there "
 "is no existing listing column with that name"
 msgstr ""
 
-#: paginators.py:32
+#: django_listing/paginators.py:33
 #, python-brace-format
 msgctxt "paginator"
 msgid "Page {page_number} of {nb_pages}"
-msgstr ""
+msgstr "Page {page_number} sur {nb_pages}"
 
-#: paginators.py:34
+#: django_listing/paginators.py:35
 #, python-brace-format
 msgctxt "paginator"
 msgid "{row_first}-{row_last} of {nb_rows}"
-msgstr ""
+msgstr "{row_first}-{row_last} sur {nb_rows}"
 
-#: paginators.py:36
+#: django_listing/paginators.py:37
 msgctxt "paginator"
 msgid "Previous"
 msgstr ""
 
-#: paginators.py:37
+#: django_listing/paginators.py:38
 msgctxt "paginator"
 msgid "Next"
 msgstr ""
 
-#: paginators.py:39
+#: django_listing/paginators.py:40
 msgctxt "paginator"
 msgid "First"
 msgstr ""
 
-#: paginators.py:40
+#: django_listing/paginators.py:41
 msgctxt "paginator"
 msgid "Last"
 msgstr ""
 
-#: paginators.py:51
+#: django_listing/paginators.py:52
 #, python-brace-format
 msgctxt "paginator"
 msgid "Go to page {goto_form}"
 msgstr ""
 
-#: record.py:42
+#: django_listing/record.py:48
 msgid ""
 "Getting all records is only supported on SMALL sequence data, not on Django "
 "querysets"
 msgstr ""
 
-#: record.py:79
+#: django_listing/record.py:101
 #, python-brace-format
 msgid ""
 "field \"{field}\" must be an integer, please choose the correct field that "
 "will be used to change object ordering"
 msgstr ""
 
-#: templates/django_listing/empty_listing.html:4
+#: django_listing/record.py:123
+msgid "Listing data must be a sequence or a QuerySet."
+msgstr ""
+
+#: django_listing/templates/django_listing/empty_listing.html:4
 #, python-format
 msgid "There is no %(record_label)s to display."
 msgstr ""
 
-#: toolbar.py:175
+#: django_listing/toolbar.py:178
 msgid "Sort by"
 msgstr ""
 
-#: toolbar.py:176 toolbar.py:240 toolbar.py:278
+#: django_listing/toolbar.py:179 django_listing/toolbar.py:243
+#: django_listing/toolbar.py:281
 msgid "OK"
 msgstr ""
 
-#: toolbar.py:202
+#: django_listing/toolbar.py:205
 msgid "Sort by..."
 msgstr ""
 
-#: toolbar.py:239
+#: django_listing/toolbar.py:242
 msgid "Per page"
-msgstr ""
+msgstr "Par page"
 
-#: toolbar.py:270
+#: django_listing/toolbar.py:273
 msgid "Per page..."
 msgstr ""
 
-#: toolbar.py:275
+#: django_listing/toolbar.py:278
 msgid "Choose..."
 msgstr ""
 
-#: toolbar.py:292
+#: django_listing/toolbar.py:295
 msgid "Export to..."
 msgstr ""
 
-#: views.py:191
+#: django_listing/toolbar.py:301
+msgid "Update"
+msgstr ""
+
+#: django_listing/views.py:49
+#, python-brace-format
+msgid "<b>{object}</b> has been successfully added."
+msgstr ""
+
+#: django_listing/views.py:51
+msgid ""
+"The form is valid but nothing has been added to database as "
+"<tt>save_to_database=False</tt>."
+msgstr ""
+
+#: django_listing/views.py:54
+#, python-brace-format
+msgid "<b>{nb_updates} {model_verbose}</b> has been successfully updated."
+msgstr ""
+
+#: django_listing/views.py:57
+msgid ""
+"The form is valid but nothing has been updated to database as "
+"<tt>save_to_database=False</tt>."
+msgstr ""
+
+#: django_listing/views.py:270
 msgid ""
 "At least a form layout and name are mandatory in POST data to build a "
 "relevant form instance"

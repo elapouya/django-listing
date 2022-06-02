@@ -1,4 +1,4 @@
-from setuptools import setup,find_packages
+from setuptools import setup, find_packages
 import os
 import re
 
@@ -62,7 +62,7 @@ setup(name='django-listing',
       author='Eric Lapouyade',
       author_email='elapouya@gmail.com',
       license='GPLv3+',
-      packages=find_packages(exclude=['docs.*','docs']),
+      packages=find_packages(exclude=['docs.*', 'example.*', 'example', 'docs']),
       include_package_data=True,
       install_requires=['django>=2', 'tablib'],
       extras_require={

@@ -30,9 +30,9 @@ class Paginator(DjangoPaginator):
     template_name = 'django_listing/paginator.html'
     has_page_info = True
     has_editable_page_info = False
-    page_info_tpl = pgettext_lazy('paginator','Page {page_number} of {nb_pages}')
+    page_info_tpl = pgettext_lazy('paginator', 'Page {page_number} of {nb_pages}')
     has_row_info = False
-    row_info_tpl = pgettext_lazy('paginator','{row_first}-{row_last} of {nb_rows}')
+    row_info_tpl = pgettext_lazy('paginator', '{row_first}-{row_last} of {nb_rows}')
     has_prev_next = True
     prev_text = pgettext_lazy('paginator','Previous')
     next_text = pgettext_lazy('paginator','Next')
