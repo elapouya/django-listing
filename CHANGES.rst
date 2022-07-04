@@ -1,3 +1,7 @@
+0.0.12 (2022-07-04)
+-------------------
+- Add django-like filter syntax for sequences
+
 0.0.11 (2022-06-02)
 -------------------
 - Add JsonDateTimeColumn class

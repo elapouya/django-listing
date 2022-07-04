@@ -30,7 +30,7 @@ FILTERS_KEYS = {
 # Declare keys for "Filter" object (not "Filters" with an ending 's')
 FILTERS_PARAMS_KEYS = {
     'name', 'filter_key', 'input_type', 'widget_attrs', 'model_field',
-    'no_choice_msg',
+    'no_choice_msg', 'key_type',
 }
 
 # Declare keys for django form fields
@@ -254,6 +254,7 @@ class Filter(metaclass=FilterMeta):
     label = None
     value = None
     filter_key = None
+    key_type = None
     input_name = None
     input_type = None
     required = False
@@ -359,7 +360,27 @@ class Filter(metaclass=FilterMeta):
     def filter_sequence(self, seq):
         if not self.value:
             return seq
-        return filter(lambda rec:rec[self.filter_key]==self.value, seq)
+        key_filter = self.filter_key if '__' in self.filter_key else f'{self.filter_key}__equal'
+        key, filtr = key_filter.split('__', 1)
+        if filtr == 'equal':
+            return filter(lambda rec: rec[key] == self.value, seq)
+        elif filtr == 'contains':
+            return filter(lambda rec: rec[key] is not None and self.value in str(rec[key]), seq)
+        elif filtr == 'icontains':
+            return filter(lambda rec: rec[key] is not None and self.value.lower() in str(rec[key]).lower(), seq)
+        elif filtr == 'regex':
+            return filter(lambda rec: re.search(self.value, rec[key]), seq)
+        elif filtr == 'iregex':
+            return filter(lambda rec: re.search(self.value, rec[key], flags=re.I), seq)
+        elif filtr == 'lt':
+            return filter(lambda rec: rec[key] is not None and rec[key] < self.value, seq)
+        elif filtr == 'lte':
+            return filter(lambda rec: rec[key] is not None and rec[key] <= self.value, seq)
+        elif filtr == 'gt':
+            return filter(lambda rec: rec[key] is not None and rec[key] > self.value, seq)
+        elif filtr == 'gte':
+            return filter(lambda rec: rec[key] is not None and rec[key] >= self.value, seq)
+        return seq
 
     def extract_params(self, request_get_data):
         self.value = request_get_data.get(self.input_name + self.listing.suffix)
