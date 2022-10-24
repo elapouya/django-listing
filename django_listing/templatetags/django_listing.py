@@ -326,3 +326,22 @@ def onready_snippets(context):
         return mark_safe('\n'.join(snippets))
     return ''
 
+
+@register.simple_tag()
+def listing_responsive_columns_css(listing, format_str=None):
+    if not isinstance(listing, (Listing, ListingVariations)):
+        return mark_safe(
+            '<!-- ERROR : you must provide a valid listing to {% listing_responsive_css %} -->'
+        )
+    css = []
+    if format_str is None:
+        format_str = '{} : '
+    for i, col in enumerate(listing.selected_columns, start=1):
+        title = col.get_header_value();
+        content = format_str.format(title, col=col)
+        css_class = listing.theme_listing_class.replace(' ','.')
+        css.append(
+            f"table.{css_class} td:nth-of-type({i}):before {{content: '{content}';}}"
+        )
+    return mark_safe('\n'.join(css))
+

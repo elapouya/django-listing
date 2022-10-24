@@ -324,10 +324,10 @@ class Column(metaclass=ColumnMeta):
         self.set_listing(listing)
         header = kwargs.get('header')
         if name:
-            self.name = re.sub(r'\W','',name)
+            self.name = re.sub(r'\W', '', name)
         if self.name is None:
             if header:
-                self.name = re.sub(r'\W', '',header.strip().replace(' ','_').lower())
+                self.name = re.sub(r'\W', '', header.strip().replace(' ', '_').lower())
             else:
                 self.name = 'noname'
         self.set_kwargs(**kwargs)
@@ -480,7 +480,7 @@ class Column(metaclass=ColumnMeta):
         tpl = cell_tpl or '<td{attrs}>%s</td>'
         return tpl % value_tpl
 
-    def render_cell(self,rec):
+    def render_cell(self, rec):
         value = self.get_cell_value(rec)
         ctx = self.get_cell_context(rec, value)
         ctx.attrs = self.get_cell_attrs(rec, ctx, value)

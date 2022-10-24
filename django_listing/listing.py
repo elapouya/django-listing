@@ -593,8 +593,8 @@ class Listing(ListingBase):
             if self.toolbar:
                 self.toolbar = self.toolbar.bind_to_listing(self)
             self.col_cell_renderers = {
-                col : getattr(self, 'render_{}'.format(col.name), col.render_cell)
-                for col in self.columns }
+                col: getattr(self, 'render_{}'.format(col.name), col.render_cell)
+                for col in self.columns}
             self._initialized = True
 
     def datetimepicker_init(self):
@@ -672,7 +672,7 @@ class Listing(ListingBase):
             if not isinstance(self.attrs,HTMLAttributes):
                 self.attrs = HTMLAttributes(self.attrs)
             html_class = 'listing-'+self.__class__.__name__.lower()
-            self.attrs.add('class',{ html_class, self.theme_listing_class })
+            self.attrs.add('class', {html_class, self.theme_listing_class})
             if self.variation is not None:
                 self.attrs.add('class','variation-{}'.format(self.variation))
             if not self.id:
@@ -681,7 +681,7 @@ class Listing(ListingBase):
                 self.row_attrs = HTMLAttributes(
                     self.row_attrs )
             self.row_attrs.add(
-                'class',{ self.theme_div_row_container_class })
+                'class',{self.theme_div_row_container_class})
             self.selected_columns = self.columns.select(self.select_columns,
                                                         self.exclude_columns)
             self.can_edit_columns=[ c for c in self.selected_columns if c.can_edit ]
@@ -943,7 +943,7 @@ class Listing(ListingBase):
             setattr(request,LISTING_SUFFIX_REQUEST_DATA_FIELD, {
                 'listings_suffixes' : {},
                 'counter' : 0,
-            })
+        })
         return getattr(request,LISTING_SUFFIX_REQUEST_DATA_FIELD)
 
     @classmethod
@@ -1028,10 +1028,10 @@ class Listing(ListingBase):
                 if posted_listing_id == self.id:
                     post_data = self.request.POST
                     post_files = self.request.FILES
-            fields = { c.name : c.create_hidden_form_field()
-                            for c in self.selected_hidden_columns }
-            fields.update({ c.name : c.create_form_field()
-                       for c in self.can_edit_columns })
+            fields = {c.name : c.create_hidden_form_field()
+                            for c in self.selected_hidden_columns}
+            fields.update({c.name : c.create_form_field()
+                       for c in self.can_edit_columns})
             form_class = type('ListingRowForm{}'.format(self.suffix),
                               (self.row_form_base_class,),
                               {'base_fields': fields})
