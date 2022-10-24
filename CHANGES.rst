@@ -1,3 +1,8 @@
+0.0.14 (2022-10-24)
+-------------------
+- Fix bad form closing
+- Fix ListingVariation with Ajax
+
 0.0.12 (2022-07-04)
 -------------------
 - Add django-like filter syntax for sequences

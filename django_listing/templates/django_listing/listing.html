@@ -124,7 +124,9 @@
                     {% include listing.action_footer_template_name %}
                 {% endif %}
             {% endif %}
-            </form>
+            {% if listing.can_edit or listing.has_upload or listing.edit_on_demand %}
+                </form>
+            {% endif %}
         {% endif %}
 
     </div>

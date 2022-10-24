@@ -281,6 +281,11 @@ class ListingVariations(ListingBase):
         self.create_listing(context)
         return self.listing.get_url(context, **kwargs)
 
+    def have_to_refresh(self):
+        if self.listing:
+            return self.listing.have_to_refresh()
+        return False
+
     def __getattr__(self, item):
         if item in LISTING_VARIATIONS_KEYS and self.listing:
             return getattr(self.listing, item)
