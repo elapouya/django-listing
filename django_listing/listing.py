@@ -26,6 +26,7 @@ from .context import RenderContext
 from .paginators import Paginator, PAGINATOR_PARAMS_KEYS
 from .columns import ( ModelColumns, SequenceColumns, COLUMNS_PARAMS_KEYS,
                        SelectionColumn, )
+from .theme_config import ThemeConfigBoostrap4, ThemeAttribute, theme_template
 from .toolbar import Toolbar, TOOLBAR_PARAMS_KEYS
 from .filters import Filters, FILTERS_PARAMS_KEYS
 from .utils import init_dicts_from_class
@@ -300,8 +301,8 @@ class Listing(ListingBase):
     action_button_update_label = pgettext_lazy('action button','Update')
     action_button_upload_label = pgettext_lazy('action button','Upload')
     action_col = None
-    action_footer_template_name = 'django_listing/action_footer.html'
-    action_header_template_name = 'django_listing/action_header.html'
+    action_footer_template_name = theme_template('action_footer.html')
+    action_header_template_name = theme_template('action_header.html')
     ajax_part = None
     allow_empty_first_page = True
     anchor_hash = None
@@ -314,7 +315,7 @@ class Listing(ListingBase):
     datetimepicker_date_format = 'Y-m-d'
     datetimepicker_datetime_format = 'Y-m-d H:i'
     datetimepicker_time_format = 'H:i'
-    div_template_name = 'django_listing/div_row.html'
+    div_template_name = theme_template('div_row.html')
     row_attrs = {'class':'row-container'}
     edit_on_demand = False
     editable = False
@@ -324,7 +325,7 @@ class Listing(ListingBase):
     editing_row_pk = None
     editing_hidden_columns = None
     empty_table_msg = gettext_lazy('Nothing to display')
-    empty_listing_template_name = 'django_listing/empty_listing.html'
+    empty_listing_template_name = theme_template('empty_listing.html')
     exclude_columns = None
     export = None
     filters = None
@@ -343,7 +344,7 @@ class Listing(ListingBase):
     link_object_columns = None
     row_form_base_class = ListingBaseForm
     listing_form_base_class = ListingBaseForm
-    listing_template_name = 'django_listing/listing.html'
+    listing_template_name = theme_template('listing.html')
     model = None
     name = 'listing'
     onready_snippet = None
@@ -371,7 +372,7 @@ class Listing(ListingBase):
     selection_menu_id = None
     selection_mode = 'default'  # default, overlay, hover
     selection_multiple = False
-    selection_overlay_template_name = 'django_listing/selection_overlay.html'
+    selection_overlay_template_name = theme_template('selection_overlay.html')
     selection_position = 'hidden'  # left, right or hidden
     sort = None
     sortable = True
@@ -385,24 +386,24 @@ class Listing(ListingBase):
 
     params_keys = set()  # keep it here in the class not in __init__()
 
-    theme_listing_class = 'django-listing'
-    theme_action_button_class = 'btn btn-primary'
-    theme_action_button_cancel_icon = ''
-    theme_action_button_edit_icon = ''
-    theme_action_button_update_icon = ''
-    theme_action_button_upload_icon = ''
-    theme_container_class = 'django-listing-container'
-    theme_sort_asc_icon = 'listing-icon-angle-up'
-    theme_sort_desc_icon = 'listing-icon-angle-down'
-    theme_sort_none_icon = ''
-    theme_spinner_icon = 'animate-spin listing-icon-spin2'
-    theme_sortable_class = 'sortable'
-    theme_sort_asc_class = 'asc'
-    theme_sort_desc_class = 'desc'
-    theme_button_class = 'btn btn-primary'
-    theme_button_disabled_class = 'disabled'
-    theme_button_active_class = 'active'
-    theme_div_row_container_class = ''
+    theme_listing_class = ThemeAttribute()
+    theme_action_button_class = ThemeAttribute()
+    theme_action_button_cancel_icon = ThemeAttribute()
+    theme_action_button_edit_icon = ThemeAttribute()
+    theme_action_button_update_icon = ThemeAttribute()
+    theme_action_button_upload_icon = ThemeAttribute()
+    theme_container_class = ThemeAttribute()
+    theme_sort_asc_icon = ThemeAttribute()
+    theme_sort_desc_icon = ThemeAttribute()
+    theme_sort_none_icon = ThemeAttribute()
+    theme_spinner_icon = ThemeAttribute()
+    theme_sortable_class = ThemeAttribute()
+    theme_sort_asc_class = ThemeAttribute()
+    theme_sort_desc_class = ThemeAttribute()
+    theme_button_class = ThemeAttribute()
+    theme_button_disabled_class = ThemeAttribute()
+    theme_button_active_class = ThemeAttribute()
+    theme_div_row_container_class = ThemeAttribute()
 
     def __init__(self, data=None, **kwargs):
         super().__init__(data,**kwargs)
@@ -1058,4 +1059,4 @@ class Listing(ListingBase):
 
 
 class DivListing(Listing):
-    listing_template_name = 'django_listing/listing_div.html'
+    listing_template_name = theme_template('listing_div.html')

@@ -1,0 +1,50 @@
+{% load static %}
+{% load django_listing %}
+<div id="listing-popup-container"></div>
+<script type="text/javascript">
+    var csrf_token = '{{ csrf_token }}';
+    $(document).ready(function () {
+        $.ajaxSetup({
+            data: { 'csrfmiddlewaretoken':csrf_token  }
+        });
+    });
+</script>
+<script src="{% static 'django_listing/js/django_listing.js' %}"></script>
+
+{% if need_media_for.datetimepicker and DATETIMEPICKER_JS_URL %}
+    {% block django_listing_datepicker %}
+    <script src="{{ DATETIMEPICKER_JS_URL }}"></script>
+    {% get_dict_list "datetimepickers" as dict_list %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            {% for dct in dict_list %}
+                $('#{{dct.div_id}} .edit-datecolumn').datetimepicker({timepicker:false, format:'{{dct.listing.datetimepicker_date_format}}'});
+                $('#{{dct.div_id}} .edit-datetimecolumn').datetimepicker({format:'{{dct.listing.datetimepicker_datetime_format}}'});
+                $('#{{dct.div_id}} .edit-timecolumn').datetimepicker({datepicker:false, format:'{{dct.listing.datetimepicker_time_format}}'});
+            {% endfor %}
+        });
+    </script>
+    {% endblock %}
+{% endif %}
+
+{% if need_media_for.dropzone and DROPZONE_JS_URL %}
+    <script src="{{ DROPZONE_JS_URL }}"></script>
+    {% get_dict_list "dropzones" as dict_list %}
+    <script type="text/javascript">
+        var listing_div_id = '{{ listing.id|underscore_to_dash }}';
+        {% for dct in dict_list %}
+        Dropzone.options.{{ dct.dz_camel_name}} = {{ dct.options|json_options }};
+        {% endfor %}
+    </script>
+
+{% endif %}
+
+{% footer_snippets %}
+
+{% if request.django_listing_onready_snippets %}
+    <script type="text/javascript">
+    $(document).ready(function () {
+        {% onready_snippets %}
+    });
+    </script>
+{% endif %}

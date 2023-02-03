@@ -8,8 +8,9 @@ from django.utils.safestring import mark_safe
 
 
 class AppSettings:
-    HEADER_TEMPLATE = 'django_listing/header.html'
-    FOOTER_TEMPLATE = 'django_listing/footer.html'
+    THEME_NAME = 'bootstrap4'
+    HEADER_TEMPLATE = 'header.html'
+    FOOTER_TEMPLATE = 'footer.html'
     DATETIMEPICKER_CSS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css'
     DATETIMEPICKER_JS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js'
     DROPZONE_CSS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/dropzone.min.css'

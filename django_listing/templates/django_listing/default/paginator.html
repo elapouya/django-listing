@@ -1,0 +1,191 @@
+{% block pagination %}{% spaceless %}
+    {% if show_paginator_single_page %}
+    <nav>
+    <ul class="pagination-groups">
+        {% for group in paginator.parts_order %}
+        <li class="pagination-group" id="group-{{ forloop.counter }}">
+        <ul class="pagination">
+            {% for part in group %}
+                {% if part == 'first' %}
+                    {# ------------------------------- First button ---------------------------------------- #}
+                    {% if paginator.has_first_last %}
+                        {% if current_page.has_previous or not paginator.hide_disabled_buttons %}
+                            {% block pagination_first %}
+                                <li class="listing-nav {{ paginator.theme_button_li_class }} first{% if not current_page.has_previous %} {{ listing.theme_button_disabled_class }}{% endif %}">
+                                    <a class="listing-nav {{ paginator.theme_button_a_class }}"
+                                       role="button"
+                                       href="{{ first_page_url }}">
+                                        {% if paginator.theme_first_last_has_icon %}
+                                            <span class="{{ paginator.theme_first_icon }}"></span>{% endif %}
+                                        {% if paginator.theme_first_last_has_text %}
+                                            <span class="{{ paginator.theme_button_text_class }}">{{ paginator.first_text }}</span>{% endif %}
+                                    </a>
+                                </li>
+                            {% endblock pagination_first %}
+                        {% endif %}
+                    {% endif %}
+                {% elif part == 'fastprev' %}
+                    {# ------------------------------- Fast previous button ---------------------------------- #}
+                    {% if paginator.fast_page_step %}
+                        {% if current_page.has_previous or not paginator.hide_disabled_buttons %}
+                            {% block fast_page_prev %}
+                                <li class="listing-nav {{ paginator.theme_button_li_class }} fast_page_prev{% if not current_page.has_previous %} {{ listing.theme_button_disabled_class }}{% endif %}">
+                                    <a class="listing-nav {{ paginator.theme_button_a_class }}"
+                                       role="button"
+                                       href="{{ fast_page_prev_url }}">
+                                        {% if paginator.theme_fast_page_has_icon %}
+                                            <span class="{{ paginator.theme_fast_prev_icon }}"></span>{% endif %}
+                                        {% if paginator.theme_fast_page_has_text %}
+                                            <span class="{{ paginator.theme_button_text_class }}">{{ fast_page_prev_text }}</span>{% endif %}
+                                    </a>
+                                </li>
+                            {% endblock fast_page_prev %}
+                        {% endif %}
+                    {% endif %}
+
+                {% elif part == 'prev' %}
+                    {# ------------------------------- Previous button ---------------------------------------- #}
+                    {% if paginator.has_prev_next %}
+                        {% if current_page.has_previous or not paginator.hide_disabled_buttons %}
+                            {% block pagination_previous %}
+                                <li class="listing-nav {{ paginator.theme_button_li_class }} previous{% if not current_page.has_previous %} {{ listing.theme_button_disabled_class }}{% endif %}">
+                                    <a class="listing-nav {{ paginator.theme_button_a_class }}"
+                                       role="button"
+                                       href="{{ prev_page_url }}">
+                                        {% if paginator.theme_prev_next_has_icon %}
+                                            <span class="{{ paginator.theme_prev_icon }}"></span>{% endif %}
+                                        {% if paginator.theme_prev_next_has_text %}
+                                            <span class="{{ paginator.theme_button_text_class }}">{{ paginator.prev_text }}</span>{% endif %}
+                                    </a>
+                                </li>
+                            {% endblock pagination_previous %}
+                        {% endif %}
+                    {% endif %}
+
+                {% elif part == 'pageinfo' %}
+                    {# ------------------------------- Pagination info ----------------------------------------- #}
+                    {% if paginator.has_page_info or paginator.has_editable_page_info %}
+                        {% block pagination_info %}
+                            <li class="pagination-info {{ paginator.theme_button_li_class }}">
+                                {{ page_info }}
+                            </li>
+                        {% endblock pagination_info %}
+                    {% endif %}
+
+                {% elif part == 'gotopage' %}
+                    {# ------------------------------- Go to page ------------------------------------------ #}
+                    {% if paginator.has_goto_page %}
+                        {% block pagination_goto_page %}
+                            <li class="goto-page {{ paginator.theme_button_li_class }}">
+                                {{ goto_page }}
+                            </li>
+                        {% endblock pagination_goto_page %}
+                    {% endif %}
+
+                {% elif part == 'rowinfo' %}
+                    {# ------------------------------- Row info ----------------------------------------- #}
+                    {% if paginator.has_row_info %}
+                        {% block row_info %}
+                            <li class="row-info">
+                                {{ row_info }}
+                            </li>
+                        {% endblock row_info %}
+                    {% endif %}
+
+                {% elif part == 'scale' %}
+                    {# ------------------------------- Page scale buttons --------------------------------------- #}
+                    {% if scale_pages %}
+                        {% if current_page.has_previous or current_page.has_next %}
+                            {% block scale_pages %}
+                                        {% if beginning_ellipsis_pages %}
+                                            {% block beginning_ellipsis_pages %}
+                                                {% for p,url,is_current in beginning_ellipsis_pages %}
+                                                    <li class="ellipsis_page listing-nav {{ paginator.theme_button_li_class }}"><a class="listing-nav {{ paginator.theme_button_a_class }}{% if is_current %} disabled{% endif %}" href="{{ url }}">{{ p }}</a></li>
+                                                {% endfor %}
+                                                {% if beginning_ellipsis_display %}
+                                                    <li class="ellipsis" {{ paginator.theme_button_li_class }}>...</li>
+                                                {% endif %}
+                                            {% endblock beginning_ellipsis_pages %}
+                                        {% endif %}
+                                        {% for p,url,is_current in scale_pages %}
+                                            <li class="scale_page listing-nav {{ paginator.theme_button_li_class }}{% if is_current %} {{ listing.theme_button_active_class }}{% endif %}"><a class="listing-nav {{ paginator.theme_button_a_class }}" href="{{ url }}">{{ p }}</a></li>
+                                        {% endfor %}
+                                        {% if ending_ellipsis_pages %}
+                                            {% block ending_ellipsis_pages %}
+                                                {% if ending_ellipsis_display %}
+                                                    <li class="ellipsis {{ paginator.theme_button_li_class }}">...</li>
+                                                {% endif %}
+                                                {% for p,url,is_current in ending_ellipsis_pages %}
+                                                    <li class="ellipsis_page listing-nav {{ paginator.theme_button_li_class }}"><a class="listing-nav {{ paginator.theme_button_a_class }}{% if is_current %} disabled{% endif %}" href="{{ url }}">{{ p }}</a></li>
+                                                {% endfor %}
+                                            {% endblock ending_ellipsis_pages %}
+                                        {% endif %}
+                            {% endblock scale_pages %}
+                        {% endif %}
+                    {% endif %}
+
+                {% elif part == 'next' %}
+                    {# ------------------------------- Next button ---------------------------------------- #}
+                    {% if paginator.has_prev_next %}
+                        {% if current_page.has_next or not paginator.hide_disabled_buttons %}
+                            {% block pagination_next %}
+                                <li class="listing-nav {{ paginator.theme_button_li_class }} next{% if not current_page.has_next %} {{ listing.theme_button_disabled_class }}{% endif %}">
+                                    <a class="listing-nav {{ paginator.theme_button_a_class }}"
+                                       role="button"
+                                       href="{{ next_page_url }}">
+                                        {% if paginator.theme_prev_next_has_text %}
+                                            <span class="{{ paginator.theme_button_text_class }}">{{ paginator.next_text }}</span>{% endif %}
+                                        {% if paginator.theme_prev_next_has_icon %}
+                                            <span class="{{ paginator.theme_next_icon }}"></span>{% endif %}
+                                    </a>
+                                </li>
+                            {% endblock pagination_next %}
+                        {% endif %}
+                    {% endif %}
+
+                {% elif part == 'fastnext' %}
+                    {# ------------------------------- Fast next button ---------------------------------------- #}
+                    {% if paginator.fast_page_step %}
+                        {% if current_page.has_next or not paginator.hide_disabled_buttons %}
+                            {% block fast_page_next %}
+                                <li class="listing-nav {{ paginator.theme_button_li_class }} fast_page_next{% if not current_page.has_next %} {{ listing.theme_button_disabled_class }}{% endif %}">
+                                    <a class="listing-nav {{ paginator.theme_button_a_class }}"
+                                       role="button"
+                                       href="{{ fast_page_next_url }}">
+                                        {% if paginator.theme_fast_page_has_text %}
+                                            <span class="{{ paginator.theme_button_text_class }}">{{ fast_page_next_text }}</span>{% endif %}
+                                        {% if paginator.theme_fast_page_has_icon %}
+                                            <span class="{{ paginator.theme_fast_next_icon }}"></span>{% endif %}
+                                    </a>
+                                </li>
+                            {% endblock fast_page_next %}
+                        {% endif %}
+                    {% endif %}
+
+                {% elif part == 'last' %}
+                    {# ------------------------------- Last button ---------------------------------------- #}
+                    {% if paginator.has_first_last %}
+                        {% if current_page.has_next or not paginator.hide_disabled_buttons %}
+                            {% block pagination_last %}
+                                <li class="listing-nav {{ paginator.theme_button_li_class }} last{% if not current_page.has_next %} {{ listing.theme_button_disabled_class }}{% endif %}">
+                                    <a class="listing-nav {{ paginator.theme_button_a_class }}"
+                                       role="button"
+                                       href="{{ last_page_url }}">
+                                        {% if paginator.theme_first_last_has_text %}
+                                            <span class="{{ paginator.theme_button_text_class }}">{{ paginator.last_text }}</span>{% endif %}
+                                        {% if paginator.theme_first_last_has_icon %}
+                                            <span class="{{ paginator.theme_last_icon }}"></span>{% endif %}
+                                    </a>
+                                </li>
+                            {% endblock pagination_last %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+        </li>
+        {% endfor %}
+    </ul>
+    </nav>
+    {% endif %}
+{% endspaceless %}{% endblock pagination %}

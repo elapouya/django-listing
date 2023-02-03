@@ -29,6 +29,7 @@ from .context import RenderContext
 from .exceptions import *
 from .html_attributes import HTMLAttributes
 from .record import cache_in_record
+from .theme_config import ThemeAttribute
 from .utils import init_dicts_from_class
 from .app_settings import app_settings
 
@@ -302,11 +303,11 @@ class Column(metaclass=ColumnMeta):
     sortable = True
     value_tpl = '{value}'
 
-    theme_header_class = ''
-    theme_cell_class = ''
-    theme_footer_class = ''
-    theme_form_widget_class = 'form-control form-control-sm'
-    theme_button_class = 'btn btn-primary btn-sm'
+    theme_header_class = ThemeAttribute(section='column')
+    theme_cell_class = ThemeAttribute(section='column')
+    theme_footer_class = ThemeAttribute(section='column')
+    theme_form_widget_class = ThemeAttribute(section='column')
+    theme_button_class = ThemeAttribute(section='column')
 
     def __init__(self, *args, **kwargs):
         self.init_args = args

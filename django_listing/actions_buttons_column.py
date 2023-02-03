@@ -16,6 +16,9 @@ from django.middleware.csrf import get_token as get_csrf_token
 
 __all__ = ['ActionsButtonsColumn',]
 
+from django_listing.theme_config import theme_template
+
+
 class ActionsButtonsColumn(Column):
     params_keys = ( 'buttons', 'buttons_template', 'buttons_text',
                     'buttons_theme_li_class', 'buttons_theme_button_class',
@@ -23,7 +26,7 @@ class ActionsButtonsColumn(Column):
     params_keys_suffixes = ('theme_li_class','theme_button_class', 'icon',
                             'text', 'title', 'has_icon', 'has_text' )
     buttons = 'move_up,move_down,view_object'
-    buttons_template = 'django_listing/actions_buttons.html'
+    buttons_template = theme_template('actions_buttons.html')
     buttons_text = ''
     buttons_icon = ''
     buttons_title = ''
@@ -219,7 +222,7 @@ class ActionsButtonsColumn(Column):
     view_object_popup__icon = 'listing-icon-magnifier'
     view_object_popup__text = _('Details')
     view_object_popup__title = _('See details')
-    view_object_popup__template_name = 'django_listing/view_object_popup.html'
+    view_object_popup__template_name = theme_template('view_object_popup.html')
     view_object_popup__layout = ''
     view_object_popup__label_ending = ' :'
     view_object_popup__display_empty = True

@@ -1,0 +1,21 @@
+{% load django_listing %}
+{% block actions_buttons %}{% spaceless %}
+<form method="post">
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+<input type="hidden" name="listing_id" value="{{ listing.id|underscore_to_dash }}">
+<input type="hidden" name="action" value="action_button">
+<input type="hidden" name="action_pk" value="{{ rec.pk }}">
+<input type="hidden" name="action_col" value="{{ action_col }}">
+    <ul class="actions-buttons">
+        {% for button in buttons %}
+            <li class="{{ button.theme_li_class }} {{ button.name_css_class }}{% if button.disabled %} disabled{% endif %}">
+                {% if button.type == "link" %}
+                    <a class="listing-nav {{ button.theme_button_class }}{% if button.disabled %} disabled{% endif %}" role="button"{% if not button.disabled %} href="{{ button.url }}"{% endif %}{% if button.title %} title="{{ button.title }}"{% endif %}>{% if button.icon and button.has_icon %}<span class="{{ button.icon }} icon"></span> {% endif %}{% if button.text and button.has_text %}<span class="text">{{ button.text }}</span>{% endif %}</a>
+                {% else %}
+                    <button type="{{ button.type }}" name="action_button" value="{{ button.name }}"{% if button.title %} title="{{ button.title }}"{% endif %} class="listing-nav {{ button.theme_button_class }}{% if button.disabled %} disabled{% endif %}" role="button">{% if button.icon and button.has_icon %}<span class="{{ button.icon }} icon"></span> {% endif %}{% if button.text and button.has_text%}<span class="text">{{ button.text }}</span>{% endif %}</button>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</form>
+{% endspaceless %}{% endblock actions_buttons %}

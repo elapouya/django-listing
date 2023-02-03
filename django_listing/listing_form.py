@@ -17,6 +17,7 @@ import re
 from .context import RenderContext
 from .html_attributes import HTMLAttributes
 from .exceptions import InvalidListingForm
+from .theme_config import theme_template
 from .utils import init_dicts_from_class
 
 
@@ -93,7 +94,7 @@ class ListingForm:
     django_form_class = None
     reset_label = pgettext_lazy('Listing form', 'Reset')
     submit_label = pgettext_lazy('Listing form', 'Add')
-    template_name = 'django_listing/listing_form.html'
+    template_name = theme_template('listing_form.html')
     layout = None
     buttons = 'reset,submit'
     name = 'listing_form'

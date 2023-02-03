@@ -9,6 +9,10 @@ class ListingException(Exception):
     pass
 
 
+class InvalidListingConfiguration(ListingException):
+    pass
+
+
 class InvalidListing(ListingException):
     pass
 

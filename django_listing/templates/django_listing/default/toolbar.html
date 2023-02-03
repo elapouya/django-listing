@@ -1,0 +1,6 @@
+{% block toolbar %}
+    <div class="btn-toolbar mb-2" role="toolbar">
+        {% for item in listing.toolbar %}
+            {% include item.template_name %}{% endfor %}
+    </div>
+{% endblock toolbar %}

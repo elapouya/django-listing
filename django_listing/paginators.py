@@ -6,6 +6,7 @@
 
 from django.core.paginator import Paginator as DjangoPaginator
 from .context import RenderContext
+from .theme_config import ThemeAttribute, theme_template
 from django.utils.translation import pgettext_lazy
 
 __all__ = ['Paginator', 'NoTextButtonPaginator', 'NoTextButtonPaginatorMixin',
@@ -27,7 +28,7 @@ PAGINATOR_PARAMS_KEYS = {
 }
 
 class Paginator(DjangoPaginator):
-    template_name = 'django_listing/paginator.html'
+    template_name = theme_template('paginator.html')
     has_page_info = True
     has_editable_page_info = False
     page_info_tpl = pgettext_lazy('paginator', 'Page {page_number} of {nb_pages}')
@@ -52,21 +53,21 @@ class Paginator(DjangoPaginator):
     goto_page_tpl = pgettext_lazy('paginator','Go to page {goto_form}')
     in_footer = False
 
-    theme_first_last_has_icon = True
-    theme_first_last_has_text = True
-    theme_first_icon = 'listing-icon-to-start-1'
-    theme_last_icon = 'listing-icon-to-end-1'
-    theme_fast_page_has_icon = True
-    theme_fast_page_has_text = True
-    theme_fast_prev_icon = 'listing-icon-fast-backward'
-    theme_fast_next_icon = 'listing-icon-fast-forward'
-    theme_prev_next_has_icon = True
-    theme_prev_next_has_text = True
-    theme_prev_icon = 'listing-icon-left-dir'
-    theme_next_icon = 'listing-icon-right-dir'
-    theme_button_a_class = 'page-link'
-    theme_button_li_class = 'page-item'
-    theme_button_text_class = 'button-text'
+    theme_first_last_has_icon = ThemeAttribute(section='paginator')
+    theme_first_last_has_text = ThemeAttribute(section='paginator')
+    theme_first_icon = ThemeAttribute(section='paginator')
+    theme_last_icon = ThemeAttribute(section='paginator')
+    theme_fast_page_has_icon = ThemeAttribute(section='paginator')
+    theme_fast_page_has_text = ThemeAttribute(section='paginator')
+    theme_fast_prev_icon = ThemeAttribute(section='paginator')
+    theme_fast_next_icon = ThemeAttribute(section='paginator')
+    theme_prev_next_has_icon = ThemeAttribute(section='paginator')
+    theme_prev_next_has_text = ThemeAttribute(section='paginator')
+    theme_prev_icon = ThemeAttribute(section='paginator')
+    theme_next_icon = ThemeAttribute(section='paginator')
+    theme_button_a_class = ThemeAttribute(section='paginator')
+    theme_button_li_class = ThemeAttribute(section='paginator')
+    theme_button_text_class = ThemeAttribute(section='paginator')
 
     def __init__(self, listing, object_list, per_page, orphans=0,
                  allow_empty_first_page=True):

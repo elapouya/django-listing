@@ -1,0 +1,12 @@
+{% load static %}
+{% load django_listing %}
+{% spaceless %}
+{% if need_media_for.datetimepicker and DATETIMEPICKER_CSS_URL %}
+    <link rel="stylesheet" href="{{ DATETIMEPICKER_CSS_URL }}"/>
+{% endif %}
+{% if need_media_for.dropzone and DROPZONE_CSS_URL %}
+    <link rel="stylesheet" href="{{ DROPZONE_CSS_URL }}"/>
+{% endif %}
+<link rel="stylesheet" href="{% static "django_listing/css/django_listing.css" %}">
+{% header_snippets %}
+{% endspaceless %}

@@ -1,0 +1,14 @@
+{% load django_listing %}
+<div class="btn-group mr-3 btn-group-sm toolbar_item {{ item.css_class }}" role="group">
+        {% for url, label, icon in item.buttons %}
+            {% with v=forloop.counter0 %}
+                    <a href="{{ url }}"
+                       title="{{ label }}"
+                       class="listing-nav btn btn-outline-secondary {% if listing.variation == v %} active{% endif %}"
+                    >
+                        {% if icon and item.show_icons %}<span class="{{ icon }}"></span>{% endif %}
+                        {% if label and item.show_labels %}{{ label }}{% endif %}
+                    </a>
+            {% endwith %}
+        {% endfor %}
+</div>

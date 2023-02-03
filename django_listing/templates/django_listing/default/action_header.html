@@ -1,0 +1,13 @@
+{% load django_listing %}
+<form method="post"
+      {% comment %}Be careful, for dropzone, action="..." must be NOT empty : use at lease "#"{% endcomment %}
+      action="{% if listing.anchor_hash is not None %}#{{ listing.anchor_hash }}{% else %}{% if listing.has_upload %}#{% endif %}{% endif %}"
+      enctype="multipart/form-data"
+      id="action-form{{ listing.suffix|underscore_to_dash }}"
+      class="action-form{% if listing.has_upload %} dropzone{% endif %}">
+{% if listing.has_upload %}
+    <div class="drag-overlay"><div class="overlay-inner"><span class="listing-icon-upload-cloud"></span></div></div>
+{% endif %}
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+<input type="hidden" name="action" value="" class="action-hidden-value">
+<div class="dz-message" style="margin: 0"></div>
