@@ -3,14 +3,13 @@
 #
 # @author: Eric Lapouyade
 #
-
+from .app_settings import app_settings
 from .html_attributes import HTMLAttributes
 from django.utils.translation import gettext_lazy as _
 from types import GeneratorType
 import copy
 from .context import RenderContext
 from .exceptions import *
-from .theme_config import ThemeAttribute, theme_template
 from .utils import normalize_list, normalize_choices
 from django_listing import EXPORT_FORMATS
 from itertools import count
@@ -30,7 +29,7 @@ TOOLBAR_PARAMS_KEYS = {
 }
 
 class Toolbar(list):
-    template_name = theme_template('toolbar.html')
+    template_name = app_settings.theme_template('toolbar.html')
 
     def __init__(self, *items, params=None, listing=None):
         if params is None:
@@ -106,7 +105,7 @@ class ToolbarItem(metaclass=ToolbarItemMeta):
     params_keys = ''
     attrs = {}
     listing = None
-    theme_button_class = ThemeAttribute(section='toolbar')
+    theme_button_class = app_settings.theme_attribute('toolbar_theme_button_class')
 
     _ids = count(0)
 
@@ -170,7 +169,7 @@ class ToolbarItem(metaclass=ToolbarItemMeta):
         return {}
 
 class SortSelectToolbarItem(ToolbarItem):
-    template_name = theme_template('tbi_select.html')
+    template_name = app_settings.theme_template('tbi_select.html')
     params_keys = 'up_arrow,down_arrow,has_submit_button'
     choices = None
     up_arrow = ' &#xF106;'
@@ -202,12 +201,12 @@ class SortSelectToolbarItem(ToolbarItem):
 
 
 class SortDropdownToolbarItem(SortSelectToolbarItem):
-    template_name = theme_template('tbi_dropdown.html')
+    template_name = app_settings.theme_template('tbi_dropdown.html')
     label = _('Sort by...')
 
 
 class VariationsToolbarItem(ToolbarItem):
-    template_name = theme_template('tbi_variations.html')
+    template_name = app_settings.theme_template('tbi_variations.html')
     params_keys = ['show_labels', 'show_icons', 'labels', 'icons']
     labels = ''
     icons = ''
@@ -236,7 +235,7 @@ class VariationsToolbarItem(ToolbarItem):
 
 
 class PerPageSelectToolbarItem(ToolbarItem):
-    template_name = theme_template('tbi_select.html')
+    template_name = app_settings.theme_template('tbi_select.html')
     params_keys = 'choices'
     choices = '10,25,50,100,-1:All'
     has_submit_button = False
@@ -270,12 +269,12 @@ class PerPageSelectToolbarItem(ToolbarItem):
 
 
 class PerPageDropdownToolbarItem(PerPageSelectToolbarItem):
-    template_name = theme_template('tbi_dropdown.html')
+    template_name = app_settings.theme_template('tbi_dropdown.html')
     label = _('Per page...')
 
 
 class ExportSelectToolbarItem(ToolbarItem):
-    template_name = theme_template('tbi_select.html')
+    template_name = app_settings.theme_template('tbi_select.html')
     choices = [('',_('Choose...'))] + EXPORT_FORMATS
     has_submit_button = True
     label = 'Export to '
@@ -292,11 +291,11 @@ class ExportSelectToolbarItem(ToolbarItem):
 
 
 class ExportDropdownToolbarItem(ExportSelectToolbarItem):
-    template_name = theme_template('tbi_dropdown.html')
+    template_name = app_settings.theme_template('tbi_dropdown.html')
     label = _('Export to...')
     choices = EXPORT_FORMATS
 
 
 class UpdateToolbarItem(ToolbarItem):
-    template_name = theme_template('tbi_update.html')
+    template_name = app_settings.theme_template('tbi_update.html')
     label = _('Update')

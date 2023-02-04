@@ -14,8 +14,8 @@ import re
 from .context import RenderContext
 from .html_attributes import HTMLAttributes
 from .exceptions import InvalidFilters
-from .theme_config import theme_template
 from .utils import init_dicts_from_class
+from .app_settings import app_settings
 
 
 __all__ = ['FILTERS_PARAMS_KEYS', 'FILTER_QUERYSTRING_PREFIX', 'Filters',
@@ -55,7 +55,7 @@ class Filters(list):
     listing=None
     form_reset_label = pgettext_lazy('Filters form', 'Reset')
     form_submit_label = pgettext_lazy('Filters form', 'Filter')
-    form_template_name = theme_template('filters_form.html')
+    form_template_name = app_settings.theme_template('filters_form.html')
     form_layout = None
     form_buttons = 'reset,submit'
 

@@ -4,9 +4,7 @@
 # @author: Eric Lapouyade
 #
 import os
-from .app_settings import app_settings
 from .exceptions import InvalidListingConfiguration
-
 
 class ThemeConfigMeta(type):
     themes_name_to_class = {}
@@ -17,15 +15,14 @@ class ThemeConfigMeta(type):
         return cls
 
     @classmethod
-    def get_class(cls, theme_name):
-        config = cls.themes_name_to_class.get(theme_name)
+    def get_class(mcs, theme_name):
+        config = mcs.themes_name_to_class.get(theme_name)
         if config is None:
-            themes = ', '.join(cls.themes_name_to_class.keys())
+            themes = ', '.join(mcs.themes_name_to_class.keys())
             raise InvalidListingConfiguration(
                 f'Theme "{theme_name}" does not exist. Possible values : {themes}'
             )
         return config
-
 
 class ThemeConfigBase(metaclass=ThemeConfigMeta):
     theme_name = 'default'
@@ -73,27 +70,35 @@ class ThemeConfigBase(metaclass=ThemeConfigMeta):
 
     toolbar_theme_button_class = 'btn btn-secondary'
 
-
-class ThemeAttribute:
-    def __init__(self, section=None, default=None):
-        self.default = default
-        self.section = section
-
-    def __get__(self, obj, objtype):
-        config = ThemeConfigMeta.get_class(app_settings.THEME_NAME)
-        try:
-            return getattr(config, self.attrname)
-        except AttributeError as e:
-            raise InvalidListingConfiguration(
-                f'{self.attrname} does not exist in {config.__module__}.{config.__qualname__}'
-            )
-
-    def __set_name__(self, objtype, attrname):
-        self.attrname = f'{self.section}_{attrname}' if self.section else attrname
-
-
-def theme_template(name):
-    return os.path.join('django_listing', app_settings.THEME_NAME, name)
+# class ThemeAttribute:
+#     def __init__(self, section=None, default=None):
+#         self.default = default
+#         self.section = section
+#
+#     def __get__(self, obj, objtype):
+#         config = ThemeConfigMeta.get_class(app_settings.THEME_NAME)
+#         try:
+#             return getattr(config, self.attrname)
+#         except AttributeError as e:
+#             raise InvalidListingConfiguration(
+#                 f'{self.attrname} does not exist in {config.__module__}.{config.__qualname__}'
+#             )
+#
+#     def __set_name__(self, objtype, attrname):
+#         self.attrname = f'{self.section}_{attrname}' if self.section else attrname
+#
+#
+# def theme_attribute(attrname):
+#     try:
+#         return getattr(config, attrname)
+#     except AttributeError as e:
+#         raise InvalidListingConfiguration(
+#             f'{attrname} does not exist in {config.__module__}.{config.__qualname__}'
+#         )
+#
+#
+# def theme_template(name):
+#     return os.path.join('django_listing', app_settings.THEME_NAME, name)
 
 
 class ThemeConfigBoostrap4(ThemeConfigBase):

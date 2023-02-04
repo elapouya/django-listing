@@ -5,10 +5,12 @@
 #
 from django.conf import settings
 from django.utils.safestring import mark_safe
-
+from django_listing.theme_config import ThemeConfigMeta, ThemeConfigBase
+from .exceptions import InvalidListingConfiguration
+import os
 
 class AppSettings:
-    THEME_NAME = 'bootstrap4'
+    THEME = 'bootstrap4'
     HEADER_TEMPLATE = 'header.html'
     FOOTER_TEMPLATE = 'footer.html'
     DATETIMEPICKER_CSS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css'
@@ -40,7 +42,27 @@ class AppSettings:
                     else:
                         setattr(self, k, v)
         self.context = { k:getattr(self, k) for k in dir(self) if k.isupper() }
+        if isinstance(self.THEME, str):
+            self.theme_config = ThemeConfigMeta.get_class(self.THEME)
+        elif isinstance(self.THEME, ThemeConfigBase):
+            self.theme_config = self.THEME_NAME
+        else:
+            raise InvalidListingConfiguration(
+                'THEME parameter must contain either a string '
+                'either a class derivated from ThemeConfigBase'
+            )
 
+    def theme_attribute(self, attrname):
+        try:
+            return getattr(self.theme_config, attrname)
+        except AttributeError as e:
+            raise InvalidListingConfiguration(
+                f'{attrname} does not exist in '
+                f'{self.theme_config.__module__}.{self.theme_config.__qualname__}'
+            )
+
+    def theme_template(self, name):
+        return os.path.join('django_listing', self.theme_config.theme_name, name)
 
 app_settings = AppSettings()
 

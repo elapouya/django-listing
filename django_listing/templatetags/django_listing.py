@@ -4,14 +4,11 @@ Création : 12 janv. 2010
 @author: Eric Lapouyade
 '''
 from django import template
-from django.conf import settings
 from django.utils.safestring import mark_safe, SafeString
 from ..listing import Listing, ListingVariations
 from ..listing_form import ListingForm
 from itertools import count
 from ..app_settings import app_settings
-from ..theme_config import theme_template
-from ..utils import JsonDirect
 import json
 
 register = template.Library()
@@ -43,7 +40,7 @@ class ListingHeaderNode(template.Node):
 
     def render(self, context):
         remaining_output = self.nodelist.render(context)
-        tpl = template.loader.get_template(theme_template(app_settings.HEADER_TEMPLATE))
+        tpl = template.loader.get_template(app_settings.theme_template(app_settings.HEADER_TEMPLATE))
         request = context.request
         context = context.flatten()
         context.update(
@@ -62,7 +59,7 @@ def do_listing_header(parser, token):
 
 @register.simple_tag(takes_context=True)
 def render_listing_footer(context):
-    tpl = template.loader.get_template(theme_template(app_settings.FOOTER_TEMPLATE))
+    tpl = template.loader.get_template(app_settings.theme_template(app_settings.FOOTER_TEMPLATE))
     request = context.request
     context = context.flatten()
     context.update(
