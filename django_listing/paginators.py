@@ -7,7 +7,7 @@
 from django.core.paginator import Paginator as DjangoPaginator
 from .context import RenderContext
 from django.utils.translation import pgettext_lazy
-from .app_settings import app_settings
+from .theme_config import ThemeAttribute, ThemeTemplate
 
 __all__ = ['Paginator', 'NoTextButtonPaginator', 'NoTextButtonPaginatorMixin',
            'NoIconButtonPaginatorMixin','NoIconButtonPaginator']
@@ -28,7 +28,7 @@ PAGINATOR_PARAMS_KEYS = {
 }
 
 class Paginator(DjangoPaginator):
-    template_name = app_settings.theme_template('paginator.html')
+    template_name = ThemeTemplate('paginator.html')
     has_page_info = True
     has_editable_page_info = False
     page_info_tpl = pgettext_lazy('paginator', 'Page {page_number} of {nb_pages}')
@@ -53,21 +53,21 @@ class Paginator(DjangoPaginator):
     goto_page_tpl = pgettext_lazy('paginator','Go to page {goto_form}')
     in_footer = False
 
-    theme_first_last_has_icon = app_settings.theme_attribute('paginator_theme_first_last_has_icon')
-    theme_first_last_has_text = app_settings.theme_attribute('paginator_theme_first_last_has_text')
-    theme_first_icon = app_settings.theme_attribute('paginator_theme_first_icon')
-    theme_last_icon = app_settings.theme_attribute('paginator_theme_last_icon')
-    theme_fast_page_has_icon = app_settings.theme_attribute('paginator_theme_fast_page_has_icon')
-    theme_fast_page_has_text = app_settings.theme_attribute('paginator_theme_fast_page_has_text')
-    theme_fast_prev_icon = app_settings.theme_attribute('paginator_theme_fast_prev_icon')
-    theme_fast_next_icon = app_settings.theme_attribute('paginator_theme_fast_next_icon')
-    theme_prev_next_has_icon = app_settings.theme_attribute('paginator_theme_prev_next_has_icon')
-    theme_prev_next_has_text = app_settings.theme_attribute('paginator_theme_prev_next_has_text')
-    theme_prev_icon = app_settings.theme_attribute('paginator_theme_prev_icon')
-    theme_next_icon = app_settings.theme_attribute('paginator_theme_next_icon')
-    theme_button_a_class = app_settings.theme_attribute('paginator_theme_button_a_class')
-    theme_button_li_class = app_settings.theme_attribute('paginator_theme_button_li_class')
-    theme_button_text_class = app_settings.theme_attribute('paginator_theme_button_text_class')
+    theme_first_last_has_icon = ThemeAttribute('paginator_theme_first_last_has_icon')
+    theme_first_last_has_text = ThemeAttribute('paginator_theme_first_last_has_text')
+    theme_first_icon = ThemeAttribute('paginator_theme_first_icon')
+    theme_last_icon = ThemeAttribute('paginator_theme_last_icon')
+    theme_fast_page_has_icon = ThemeAttribute('paginator_theme_fast_page_has_icon')
+    theme_fast_page_has_text = ThemeAttribute('paginator_theme_fast_page_has_text')
+    theme_fast_prev_icon = ThemeAttribute('paginator_theme_fast_prev_icon')
+    theme_fast_next_icon = ThemeAttribute('paginator_theme_fast_next_icon')
+    theme_prev_next_has_icon = ThemeAttribute('paginator_theme_prev_next_has_icon')
+    theme_prev_next_has_text = ThemeAttribute('paginator_theme_prev_next_has_text')
+    theme_prev_icon = ThemeAttribute('paginator_theme_prev_icon')
+    theme_next_icon = ThemeAttribute('paginator_theme_next_icon')
+    theme_button_a_class = ThemeAttribute('paginator_theme_button_a_class')
+    theme_button_li_class = ThemeAttribute('paginator_theme_button_li_class')
+    theme_button_text_class = ThemeAttribute('paginator_theme_button_text_class')
 
     def __init__(self, listing, object_list, per_page, orphans=0,
                  allow_empty_first_page=True):

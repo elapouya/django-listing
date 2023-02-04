@@ -5,6 +5,7 @@
 #
 import os
 from .exceptions import InvalidListingConfiguration
+from django.conf import settings
 
 class ThemeConfigMeta(type):
     themes_name_to_class = {}
@@ -70,35 +71,34 @@ class ThemeConfigBase(metaclass=ThemeConfigMeta):
 
     toolbar_theme_button_class = 'btn btn-secondary'
 
-# class ThemeAttribute:
-#     def __init__(self, section=None, default=None):
-#         self.default = default
-#         self.section = section
-#
-#     def __get__(self, obj, objtype):
-#         config = ThemeConfigMeta.get_class(app_settings.THEME_NAME)
-#         try:
-#             return getattr(config, self.attrname)
-#         except AttributeError as e:
-#             raise InvalidListingConfiguration(
-#                 f'{self.attrname} does not exist in {config.__module__}.{config.__qualname__}'
-#             )
-#
-#     def __set_name__(self, objtype, attrname):
-#         self.attrname = f'{self.section}_{attrname}' if self.section else attrname
-#
-#
-# def theme_attribute(attrname):
-#     try:
-#         return getattr(config, attrname)
-#     except AttributeError as e:
-#         raise InvalidListingConfiguration(
-#             f'{attrname} does not exist in {config.__module__}.{config.__qualname__}'
-#         )
-#
-#
-# def theme_template(name):
-#     return os.path.join('django_listing', app_settings.THEME_NAME, name)
+
+class ThemeAttribute:
+    def __init__(self, attrname):
+        self.attrname = attrname
+
+    def __get__(self, obj, objtype):
+        config = settings.django_listing_settings.theme_config
+        try:
+            return getattr(config, self.attrname)
+        except AttributeError as e:
+            raise InvalidListingConfiguration(
+                f'{self.attrname} does not exist in {config.__module__}.{config.__qualname__}'
+            )
+
+
+class ThemeTemplate(str):
+    def __init__(self, template_name):
+        self.template_name = template_name
+
+    def __get__(self, obj, objtype):
+        return self.__str__()
+
+    def __str__(self):
+        return os.path.join(
+            'django_listing',
+            settings.django_listing_settings.theme_config.theme_name,
+            self.template_name
+        )
 
 
 class ThemeConfigBoostrap4(ThemeConfigBase):

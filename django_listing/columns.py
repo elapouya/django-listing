@@ -30,7 +30,7 @@ from .exceptions import *
 from .html_attributes import HTMLAttributes
 from .record import cache_in_record
 from .utils import init_dicts_from_class
-from .app_settings import app_settings
+from .theme_config import ThemeAttribute, ThemeTemplate
 
 __all__ = ['COLUMNS_PARAMS_KEYS', 'Columns', 'ModelColumns', 'SequenceColumns',
            'Column', 'BooleanColumn', 'CheckboxColumn', 'ChoiceColumn',
@@ -302,11 +302,11 @@ class Column(metaclass=ColumnMeta):
     sortable = True
     value_tpl = '{value}'
 
-    theme_header_class = app_settings.theme_attribute('column_theme_header_class')
-    theme_cell_class = app_settings.theme_attribute('column_theme_cell_class')
-    theme_footer_class = app_settings.theme_attribute('column_theme_footer_class')
-    theme_form_widget_class = app_settings.theme_attribute('column_theme_form_widget_class')
-    theme_button_class = app_settings.theme_attribute('column_theme_button_class')
+    theme_header_class = ThemeAttribute('column_theme_header_class')
+    theme_cell_class = ThemeAttribute('column_theme_cell_class')
+    theme_footer_class = ThemeAttribute('column_theme_footer_class')
+    theme_form_widget_class = ThemeAttribute('column_theme_form_widget_class')
+    theme_button_class = ThemeAttribute('column_theme_button_class')
 
     def __init__(self, *args, **kwargs):
         self.init_args = args

@@ -5,10 +5,11 @@ Création : 12 janv. 2010
 '''
 from django import template
 from django.utils.safestring import mark_safe, SafeString
+from django.conf import settings
 from ..listing import Listing, ListingVariations
 from ..listing_form import ListingForm
+from ..theme_config import ThemeTemplate
 from itertools import count
-from ..app_settings import app_settings
 import json
 
 register = template.Library()
@@ -40,11 +41,12 @@ class ListingHeaderNode(template.Node):
 
     def render(self, context):
         remaining_output = self.nodelist.render(context)
-        tpl = template.loader.get_template(app_settings.theme_template(app_settings.HEADER_TEMPLATE))
+        template_name = str(ThemeTemplate('header.html'))
+        tpl = template.loader.get_template(template_name)
         request = context.request
         context = context.flatten()
         context.update(
-            app_settings.context,
+            settings.django_listing_settings.context,
             need_media_for=getattr(context['request'], 'need_media_for',{})
         )
         tpl_output = tpl.render(context, request)
@@ -59,11 +61,12 @@ def do_listing_header(parser, token):
 
 @register.simple_tag(takes_context=True)
 def render_listing_footer(context):
-    tpl = template.loader.get_template(app_settings.theme_template(app_settings.FOOTER_TEMPLATE))
+    template_name = str(ThemeTemplate('footer.html'))
+    tpl = template.loader.get_template(template_name)
     request = context.request
     context = context.flatten()
     context.update(
-        app_settings.context,
+        settings.django_listing_settings.context,
         need_media_for=getattr(context['request'],'need_media_for',{})
     )
     tpl_output = tpl.render(context, request)

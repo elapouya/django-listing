@@ -13,7 +13,7 @@ from django_listing import Column, InvalidData, ListingException, ModelColumns
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import gettext
 from django.middleware.csrf import get_token as get_csrf_token
-from .app_settings import app_settings
+from .theme_config import ThemeAttribute, ThemeTemplate
 
 __all__ = ['ActionsButtonsColumn',]
 
@@ -25,7 +25,7 @@ class ActionsButtonsColumn(Column):
     params_keys_suffixes = ('theme_li_class','theme_button_class', 'icon',
                             'text', 'title', 'has_icon', 'has_text' )
     buttons = 'move_up,move_down,view_object'
-    buttons_template = app_settings.theme_template('actions_buttons.html')
+    buttons_template = ThemeTemplate('actions_buttons.html')
     buttons_text = ''
     buttons_icon = ''
     buttons_title = ''
@@ -221,7 +221,7 @@ class ActionsButtonsColumn(Column):
     view_object_popup__icon = 'listing-icon-magnifier'
     view_object_popup__text = _('Details')
     view_object_popup__title = _('See details')
-    view_object_popup__template_name = app_settings.theme_template('view_object_popup.html')
+    view_object_popup__template_name = ThemeTemplate('view_object_popup.html')
     view_object_popup__layout = ''
     view_object_popup__label_ending = ' :'
     view_object_popup__display_empty = True
