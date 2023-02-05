@@ -47,5 +47,5 @@ class DjangoListingConfig(AppConfig):
                 'THEME parameter must contain either a string '
                 'either a class derivated from ThemeConfigBase'
             )
-
+        self.context.update(theme_config=self.theme_config)
         settings.django_listing_settings = self
