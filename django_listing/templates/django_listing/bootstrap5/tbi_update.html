@@ -1,0 +1,11 @@
+{% load django_listing %}
+{% get_uniq_id as uniq_id %}
+<div class="btn-group-sm me-2 toolbar_item {{ item.css_class }}" role="group">
+    <button id="toolbar-item-{{ uniq_id }}-update-id"
+            type="submit"
+            name="action"
+            value="update"
+            class="button-action-update {{ item.theme_button_class }}">
+        {{ item.label }}
+    </button>
+</div>

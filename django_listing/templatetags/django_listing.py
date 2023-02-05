@@ -35,6 +35,11 @@ def underscore_to_dash(s):
     return s.replace('_','-')
 
 
+@register.filter()
+def theme_template(s):
+    return ThemeTemplate.get(s)
+
+
 class ListingHeaderNode(template.Node):
     def __init__(self, nodelist):
         self.nodelist = nodelist
