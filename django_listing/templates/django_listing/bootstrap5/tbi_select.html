@@ -4,17 +4,15 @@
     <form id="toolbar-item-{{ uniq_id }}-form-id" class="form-inline">
         {% gethiddens_listing listing without=item.select_name %}
         {% if item.label %}
-            <label class="sr-only" for="toolbar-item-{{ uniq_id }}-select-id">{{ item.label }}</label>
+            <label class="visually-hidden" for="toolbar-item-{{ uniq_id }}-select-id">{{ item.label }}</label>
         {% endif %}
         <div class="input-group input-group-sm mr-sm-2">
         {% if item.label %}
-            <div class="input-group-prepend">
-                <div class="input-group-text">{{ item.label }}</div>
-            </div>
+            <span class="input-group-text">{{ item.label }}</span>
         {% endif %}
             <select id="toolbar-item-{{ uniq_id }}-select-id"
                     name="{{ item.select_name}}{{ listing.suffix }}"
-                    class="listing-nav custom-select form-control pr-4"
+                    class="listing-nav custom-select form-select pr-4"
                     {% if not listing.accept_ajax and not item.has_submit_button %}
                     onchange="document.getElementById('toolbar-item-{{ uniq_id }}-form-id').submit()"
                     {% endif %}

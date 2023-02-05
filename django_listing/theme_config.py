@@ -26,9 +26,12 @@ class ThemeConfigMeta(type):
         return config
 
 class ThemeConfigBase(metaclass=ThemeConfigMeta):
-    theme_name = 'default'
+    theme_name = 'default'  # to select the right directories for templates and django_listing.css
+    theme_fallback_name = 'default'  # to compute fallback directory path to search templates if not existing in theme directory
 
-    theme_listing_class = 'django-listing'
+    # css classes
+    theme_class = 'standard-theme'  # the one to select a css theme inside django_listing.css
+    theme_listing_class = 'django-listing'  # do not modify
     theme_action_button_class = 'btn btn-primary'
     theme_action_button_cancel_icon = ''
     theme_action_button_edit_icon = ''
@@ -90,16 +93,37 @@ class ThemeTemplate(str):
     def __init__(self, template_name):
         self.template_name = template_name
 
+    @classmethod
+    def get(cls, template_name):
+        path = os.path.join(
+            settings.django_listing_settings.name,
+            settings.django_listing_settings.theme_config.theme_name,
+            template_name
+        )
+        full_path = os.path.join(
+            settings.django_listing_settings.path,
+            'templates',
+            path,
+        )
+        if not os.path.exists(full_path):
+            path = os.path.join(
+                settings.django_listing_settings.name,
+                settings.django_listing_settings.theme_config.theme_fallback_name,
+                template_name
+            )
+        print(path)
+        return path
+
     def __get__(self, obj, objtype):
-        return self.__str__()
+        return self.get(self.template_name)
 
     def __str__(self):
-        return os.path.join(
-            'django_listing',
-            settings.django_listing_settings.theme_config.theme_name,
-            self.template_name
-        )
+        return self.get(self.template_name)
 
 
 class ThemeConfigBoostrap4(ThemeConfigBase):
     theme_name = 'bootstrap4'
+
+
+class ThemeConfigBoostrap5(ThemeConfigBase):
+    theme_name = 'bootstrap5'

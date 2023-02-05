@@ -41,7 +41,7 @@ class ListingHeaderNode(template.Node):
 
     def render(self, context):
         remaining_output = self.nodelist.render(context)
-        template_name = str(ThemeTemplate('header.html'))
+        template_name = ThemeTemplate.get('header.html')
         tpl = template.loader.get_template(template_name)
         request = context.request
         context = context.flatten()
@@ -61,7 +61,7 @@ def do_listing_header(parser, token):
 
 @register.simple_tag(takes_context=True)
 def render_listing_footer(context):
-    template_name = str(ThemeTemplate('footer.html'))
+    template_name = ThemeTemplate.get('footer.html')
     tpl = template.loader.get_template(template_name)
     request = context.request
     context = context.flatten()

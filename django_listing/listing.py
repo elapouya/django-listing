@@ -375,7 +375,6 @@ class Listing(ListingBase):
     sort = None
     sortable = True
     suffix = None
-    theme = 'standard-theme'
     toolbar = None
     toolbar_placement = 'both'
     unsortable = True
@@ -384,6 +383,7 @@ class Listing(ListingBase):
 
     params_keys = set()  # keep it here in the class not in __init__()
 
+    theme_class = ThemeAttribute('theme_class')
     theme_listing_class = ThemeAttribute('theme_listing_class')
     theme_action_button_class = ThemeAttribute('theme_action_button_class')
     theme_action_button_cancel_icon = ThemeAttribute('theme_action_button_cancel_icon')
@@ -758,7 +758,7 @@ class Listing(ListingBase):
         has_bottom_toolbar = ( self.has_toolbar and
                                self.toolbar_placement in ['bottom','both'] )
         listing_container_class = '{} {}'.format(
-            self.theme_container_class, self.theme)
+            self.theme_container_class, self.theme_class)
         if self.accept_ajax:
             listing_container_class += ' django-listing-ajax'
         if self.can_edit:
