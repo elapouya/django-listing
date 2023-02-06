@@ -49,6 +49,7 @@ class ThemeConfigBase(metaclass=ThemeConfigMeta):
     theme_button_disabled_class = 'disabled'
     theme_button_active_class = 'active'
     theme_div_row_container_class = ''
+    theme_row_class = 'row-container'
 
     column_theme_header_class = ''
     column_theme_cell_class = ''
@@ -127,3 +128,5 @@ class ThemeConfigBoostrap4(ThemeConfigBase):
 
 class ThemeConfigBoostrap5(ThemeConfigBase):
     theme_name = 'bootstrap5'
+
+    theme_row_class = 'row-container d-grid d-lg-table-row'

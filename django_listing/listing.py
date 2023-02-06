@@ -314,7 +314,7 @@ class Listing(ListingBase):
     datetimepicker_datetime_format = 'Y-m-d H:i'
     datetimepicker_time_format = 'H:i'
     div_template_name = ThemeTemplate('div_row.html')
-    row_attrs = {'class':'row-container'}
+    row_attrs = {}
     edit_on_demand = False
     editable = False
     editable_columns = set()
@@ -402,6 +402,7 @@ class Listing(ListingBase):
     theme_button_disabled_class = ThemeAttribute('theme_button_disabled_class')
     theme_button_active_class = ThemeAttribute('theme_button_active_class')
     theme_div_row_container_class = ThemeAttribute('theme_div_row_container_class')
+    theme_row_class = ThemeAttribute('theme_row_class')
 
     def __init__(self, data=None, **kwargs):
         super().__init__(data,**kwargs)
@@ -680,7 +681,7 @@ class Listing(ListingBase):
                 self.row_attrs = HTMLAttributes(
                     self.row_attrs )
             self.row_attrs.add(
-                'class',{self.theme_div_row_container_class})
+                'class', {self.theme_div_row_container_class, self.theme_row_class})
             self.selected_columns = self.columns.select(self.select_columns,
                                                         self.exclude_columns)
             self.can_edit_columns=[ c for c in self.selected_columns if c.can_edit ]
@@ -1058,3 +1059,4 @@ class Listing(ListingBase):
 
 class DivListing(Listing):
     listing_template_name = ThemeTemplate('listing_div.html')
+    theme_row_class = 'row-container'
