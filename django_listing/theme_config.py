@@ -112,7 +112,6 @@ class ThemeTemplate(str):
                 settings.django_listing_settings.theme_config.theme_fallback_name,
                 template_name
             )
-        print(path)
         return path
 
     def __get__(self, obj, objtype):
