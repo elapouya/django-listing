@@ -425,6 +425,8 @@ class Column(metaclass=ColumnMeta):
             value = rec.get(self.data_key)
             if value is None:
                 value = self.get_default_value(rec)
+        if hasattr(self, 'choices'):
+            value = self.choices.get(value, value)
         return value
 
     def get_cell_exported_value(self,rec):
