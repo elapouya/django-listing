@@ -58,6 +58,7 @@ function djlst_load_listing_url(nav_obj, url) {
             } else {
                 $(this).children(":first").unwrap();
             }
+            $(document).trigger( "djlst_ajax_loaded", [ listing_target ] );
         } // to avoid cascade of listing container divs
     );
     return false;
