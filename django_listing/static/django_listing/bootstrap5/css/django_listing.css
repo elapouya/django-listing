@@ -394,6 +394,10 @@ div.django-listing-container.standard-theme table.django-listing th {
     vertical-align: text-bottom;
 }
 
+div.django-listing-container th {
+    cursor: default;
+}
+
 div.django-listing-container.standard-theme table.django-listing th.sortable a {
     padding-right: 20px;
     display: block;
