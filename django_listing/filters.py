@@ -20,7 +20,7 @@ from .theme_config import ThemeAttribute, ThemeTemplate
 
 __all__ = ['FILTERS_PARAMS_KEYS', 'FILTER_QUERYSTRING_PREFIX', 'Filters',
            'Filter', 'IntegerFilter', 'ChoiceFilter', 'MultipleChoiceFilter',
-           'DateFilter', 'DateTimeFilter', 'TimeFilter']
+           'DateFilter', 'DateTimeFilter', 'TimeFilter', 'BooleanFilter']
 
 # Declare keys only for "Filters" object
 FILTERS_KEYS = {
@@ -426,6 +426,38 @@ class TimeFilter(Filter):
     widget_attrs = {'class': 'form-control edit-timecolumn'}
 
 
+class BooleanFilter(Filter):
+    from_model_field_classes = (models.BooleanField,)
+    form_field_class = forms.ChoiceField
+    true_msg = gettext_lazy('Yes')
+    false_msg = gettext_lazy('No')
+    indifferent_msg = gettext_lazy('Indifferent')
+
+    def get_form_field_widget(self, field_class):
+        if self.input_type == 'radio':
+            return forms.RadioSelect(
+                attrs={'class':'multiple-radios'}
+            )
+        elif self.input_type == 'radioinline':
+            return forms.RadioSelect(
+                attrs={'class':'multiple-radios inline'}
+            )
+        else:
+            return forms.Select(
+                attrs={'class': 'form-select'}
+            )
+        return super().get_form_field_widget(field_class)
+
+    def get_form_field_params(self):
+        params = super().get_form_field_params()
+        params['choices'] = [
+            ('', self.indifferent_msg),
+            ('True', self.true_msg),
+            ('False', self.false_msg),
+        ]
+        return params
+
+
 class ChoiceFilter(Filter):
     form_field_class = forms.ChoiceField
     form_field_keys = 'choices'
@@ -443,6 +475,10 @@ class ChoiceFilter(Filter):
         elif self.input_type == 'radioinline':
             return forms.RadioSelect(
                 attrs={'class':'multiple-radios inline'})
+        else:
+            return forms.Select(
+                attrs={'class': 'form-select'}
+            )
         return super().get_form_field_widget(field_class)
 
     def get_form_field_params(self):
