@@ -972,3 +972,19 @@ form.dropzone.dz-drag-hover {
     stroke: #444444;
     stroke-opacity: 1;
 }
+
+#filters-form .multiple-radios {
+    border: 1px solid lightgrey;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+#filters-form .multiple-radios.inline {
+    padding: 2px 5px 2px 0px;
+    display: flex;
+}
+
+#filters-form .multiple-radios.inline input {
+    display: inline-block;
+    margin-left: 10px;
+}
