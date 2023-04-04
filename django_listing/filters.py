@@ -31,7 +31,7 @@ FILTERS_KEYS = {
 # Declare keys for "Filter" object (not "Filters" with an ending 's')
 FILTERS_PARAMS_KEYS = {
     'name', 'filter_key', 'input_type', 'widget_attrs', 'model_field',
-    'no_choice_msg', 'key_type',
+    'no_choice_msg', 'key_type', 'word_search',
 }
 
 # Declare keys for django form fields
@@ -266,6 +266,7 @@ class Filter(metaclass=FilterMeta):
     widget_attrs = {'class': 'form-control'}
     no_choice_msg = gettext_lazy('- No filtering -')
     help_text = None
+    word_search = False
 
     def __init__(self, *args, **kwargs):
         self.init_args = args
@@ -359,7 +360,12 @@ class Filter(metaclass=FilterMeta):
         if not self.value:
             return qs
         cleaned_value = cleaned_data.get(self.input_name + self.listing.suffix)
-        return qs.filter(**{self.filter_key:cleaned_value})
+        if self.word_search and isinstance(cleaned_value, str):
+            words = filter(None, cleaned_value.split())
+            for word in words:
+                qs = qs.filter(**{self.filter_key: word})
+            return qs
+        return qs.filter(**{self.filter_key: cleaned_value})
 
     def filter_sequence(self, seq):
         if not self.value:
