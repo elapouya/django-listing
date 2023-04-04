@@ -99,9 +99,12 @@ class Filters(list):
         if isinstance(self.form_layout, str):
             # transform layout string into list of lists of lists
             self.form_layout = re.sub(r'\s', '', self.form_layout)
-            filters.form_layout = list(map(lambda s:list(map(
-                lambda t:(t.split('|')+[None,None,None])[:4],s.split(','))),
-                self.form_layout.split(';')))
+            filters.form_layout = list(map(
+                lambda s: list(map(
+                    lambda t: (t.split('|') + [None, None, None])[:4],
+                    filter(None, s.split(',')))),
+                filter(None, self.form_layout.split(';'))
+            ))
         for filtr in self:
             if not isinstance(filtr,Filter):
                 # understand, filtr is a string
@@ -200,7 +203,7 @@ class Filters(list):
         query_fields = [ (FILTER_QUERYSTRING_PREFIX + f.name) for f in self]
         return self.listing.get_url(without=query_fields)
 
-    def get_form_field(self,name):
+    def get_form_field(self, name):
         filter = self.get(name)
         if filter is None:
             raise InvalidFilters(
