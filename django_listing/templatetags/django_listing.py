@@ -246,6 +246,11 @@ def filters_form_field(listing, name):
 
 
 @register.simple_tag()
+def filters_form_field_container_attrs(listing, name):
+    return mark_safe(listing.filters.get_form_field_container_attrs(name))
+
+
+@register.simple_tag()
 def filters_add_row(listing, row):
     if listing.filters is None:
         listing.filters = row

@@ -10,7 +10,8 @@
             {% for field_name,_,ending,_ in row %}
                 {% filters_form_field listing field_name as field %}
                 {% if field %}
-                    <div class="form-field {{ filters.theme_field_class }}{% if field.errors %} errors{% endif %}">
+{#                    <div class="form-field {{ filters.theme_field_class }}{% if field.errors %} errors{% endif %}">#}
+                    <div {% filters_form_field_container_attrs listing field_name %}>
                         {% if field.errors %}<span class="listing-icon-attention"></span> {{ field.errors }}{% endif %}
                         <div class="label_input">
                             {{ field.label_tag }} {{ field }}

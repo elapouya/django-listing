@@ -550,8 +550,9 @@ form.listing-form div.form-row {
 }
 
 form.listing-form div.form-field {
-    width: 100%;
+    flex-shrink: 10;
     margin: 5px;
+    width: 100%;
 }
 
 div.django-listing-container div.form-field.errors,
@@ -620,6 +621,7 @@ form.listing-form div.form-field span.ending {
 form.listing-form div.form-field p.help {
     font-size: 9px;
     color: #888888;
+    margin-bottom: 0;
 }
 
 div.django-listing-container div.form-field ul.multiple-checkboxes,

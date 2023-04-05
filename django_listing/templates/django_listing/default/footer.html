@@ -9,7 +9,7 @@
         });
     });
 </script>
-<script src="{% static 'django_listing/js/django_listing.js' %}"></script>
+<script src="{% static 'django_listing/js/django_listing.js' %}?{{ STATIC_FILES_VERSION }}"></script>
 
 {% if need_media_for.datetimepicker and DATETIMEPICKER_JS_URL %}
     {% block django_listing_datepicker %}

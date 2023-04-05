@@ -31,7 +31,7 @@ FILTERS_KEYS = {
 # Declare keys for "Filter" object (not "Filters" with an ending 's')
 FILTERS_PARAMS_KEYS = {
     'name', 'filter_key', 'input_type', 'widget_attrs', 'model_field',
-    'no_choice_msg', 'key_type', 'word_search',
+    'no_choice_msg', 'key_type', 'word_search', 'container_attrs', 'shrink_width',
 }
 
 # Declare keys for django form fields
@@ -211,6 +211,15 @@ class Filters(list):
             )
         return self.form()[filter.input_name + self.listing.suffix]
 
+    def get_form_field_container_attrs(self, name):
+        filter = self.get(name)
+        if filter is None:
+            raise InvalidFilters(
+                _('Cannot find filter "{name}" definition').format(name=name)
+            )
+        form_field = self.form()[filter.input_name + self.listing.suffix]
+        return filter.get_form_field_container_attrs(form_field)
+
     def get_context(self):
         ctx = RenderContext(
             self.listing.global_context,
@@ -252,6 +261,8 @@ class Filter(metaclass=FilterMeta):
     from_model_field_order = 100
     from_model_field_classes = ()
     form_field_class = forms.CharField
+    container_attrs = {'class': 'form-field'}
+    shrink_width = None
     form_field_keys = None
     params_keys = None
     name = None
@@ -271,7 +282,7 @@ class Filter(metaclass=FilterMeta):
     def __init__(self, *args, **kwargs):
         self.init_args = args
         self.init_kwargs = kwargs
-        init_dicts_from_class(self, ['widget_attrs'])
+        init_dicts_from_class(self, ['widget_attrs', 'form_field_attrs'])
 
     def bind_to_listing(self, listing):
         self.init(listing, *self.init_args, **self.init_kwargs)
@@ -299,6 +310,19 @@ class Filter(metaclass=FilterMeta):
             label,*_ = self.name.split('__')
             label = label.replace('_',' ').title()
         return label
+
+    def get_form_field_container_attrs(self, form_field):
+        attrs = HTMLAttributes(self.container_attrs)
+        attrs.add('class', {
+            'col-'+self.name,
+            'cls-'+self.__class__.__name__.lower(),
+            # self.listing.filters.theme_field_class,
+        })
+        if self.shrink_width:
+            attrs.add('style', f'flex-shrink: {self.shrink_width}')
+        if form_field.errors:
+            attrs.add('class', {'errors'})
+        return attrs
 
     def set_kwargs(self, **kwargs):
         # If filters_<filterclass>_<params> exists in listing attributes :
@@ -440,7 +464,7 @@ class BooleanFilter(Filter):
     form_field_class = forms.ChoiceField
     true_msg = gettext_lazy('Yes')
     false_msg = gettext_lazy('No')
-    indifferent_msg = gettext_lazy('Indifferent')
+    indifferent_msg = gettext_lazy('Indiff.')
 
     def get_form_field_widget(self, field_class):
         if self.input_type == 'radio':

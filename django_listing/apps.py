@@ -29,6 +29,8 @@ class DjangoListingConfig(AppConfig):
         from django.conf import settings
         from django_listing.theme_config import ThemeConfigMeta, ThemeConfigBase
         from .exceptions import InvalidListingConfiguration
+        from django_listing import __version__
+        import time
 
         if hasattr(settings, 'DJANGO_LISTING'):
             for k,v in settings.DJANGO_LISTING.items():
@@ -47,8 +49,12 @@ class DjangoListingConfig(AppConfig):
                 'THEME parameter must contain either a string '
                 'either a class derivated from ThemeConfigBase'
             )
+        STATIC_FILES_VERSION = __version__
+        if settings.DEBUG:
+            STATIC_FILES_VERSION += f"_{time.perf_counter()}"
         self.context.update(
             theme_config=self.theme_config,
-            STATIC_URL = settings.STATIC_URL,
+            STATIC_URL=settings.STATIC_URL,
+            STATIC_FILES_VERSION=STATIC_FILES_VERSION,
         )
         settings.django_listing_settings = self
