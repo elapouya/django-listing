@@ -107,9 +107,23 @@ class Columns(list):
         if select_cols_name is None:
             select_cols_name = self.names()
         exclude_cols_name = exclude_cols_name or []
-        return [ self.get(c.strip())
-                 for c in select_cols_name
-                 if c not in exclude_cols_name and c in self.name2col ]
+        cols = []
+        for col_name in select_cols_name:
+            if isinstance(col_name, (tuple, list)):
+                col_name, header = col_name
+            elif ':' in col_name:
+                col_name, header = col_name.split(':', maxsplit=1)
+            else:
+                header = None
+            col_name = col_name.replace('.', '__')
+            if col_name not in exclude_cols_name and col_name in self.name2col:
+                col = self.get(col_name.strip())
+                if col:
+                    if header:
+                        col.header = header
+                    cols.append(col)
+        return cols
+
 
     def bind_to_listing(self, listing):
         cols = Columns(params=self._params)
@@ -126,6 +140,23 @@ class Columns(list):
                 col = copy.deepcopy(col)
             col.bind_to_listing(listing)
             cols.append(col)
+
+        # Auto-add foreign-key columns specified in select_columns
+        select_cols_name = listing.select_columns or []
+        if isinstance(select_cols_name, str):
+            select_cols_name = list(map(str.strip, select_cols_name.split(',')))
+        for col_name in select_cols_name:
+            if isinstance(col_name, (tuple, list)):
+                col_name = col_name[0]
+            else:
+                col_name = re.sub(':.*$', '', col_name)
+            if '.' in col_name:
+                col_name = col_name.replace('.', '__')
+                data_key = col_name.replace('__', '.')
+                col = Column(col_name, data_key=data_key)
+                col.bind_to_listing(listing)
+                cols.append(col)
+
         cols.name2col = { c.name : c for c in cols if isinstance(c,Column) }
         cols.listing = listing
         return cols
@@ -149,8 +180,8 @@ class ModelColumns(Columns):
         # when not yet initialized, column name is in init_args[0]
         name2col = OrderedDict( (c.name or c.init_args[0],c) for c in cols )
         for f in model._meta.get_fields():
-            if not isinstance(f, (models.ManyToManyRel,models.ManyToOneRel)):
-                header = getattr(f,'verbose_name',f.name)
+            if not isinstance(f, (models.ManyToManyRel, models.ManyToOneRel)):
+                header = getattr(f, 'verbose_name', f.name.capitalize())
                 if f.name in name2col:
                     col = name2col.pop(f.name)
                     model_cols.append(col)
@@ -335,7 +366,7 @@ class Column(metaclass=ColumnMeta):
         if self.data_key is None:
             self.data_key = self.name
         if self.sort_key is None:
-            self.sort_key = self.data_key
+            self.sort_key = self.data_key.replace('.', '__')
         if isinstance(self.aggregation,str):
             self.aggregation = AggregationMeta.get_instance(self.aggregation,self)
         if isinstance(self.theme_header_class,str):

@@ -7,7 +7,7 @@
 import collections
 from .exceptions import *
 from django.db.models.query import QuerySet
-from django.db.models import F
+from django.db.models import F, Model
 from django.utils.safestring import mark_safe
 from django.db import models
 from django.utils.translation import gettext as _
@@ -288,7 +288,7 @@ class Record:
                 obj = obj[key]
             else:
                 key, *filter = key.split('|',1)
-                for subkey in key.split('.'):
+                for subkey in re.split(r'\.|__', key):
                     op = None
                     if '|' in subkey:
                         subkey, op = subkey.split('|')
@@ -303,10 +303,10 @@ class Record:
                         obj = obj()
                 if obj is not None and filter:
                     filter = filter[0]
-                    filter_name, *params = filter.split(':')
-                    params = tuple(map(lambda s:s.replace('__C__',':'), params))
+                    filter_name, *params = re.split(r'(?<!\\):', filter)
+                    params = tuple(map(lambda s: re.sub(r'\\:', ':', s), params))
                     obj = self.get_filter(obj, filter_name, params)
-        except (IndexError, AttributeError, TypeError, KeyError):
+        except (IndexError, AttributeError, TypeError, KeyError, models.ObjectDoesNotExist):
             return default
         return obj
 
