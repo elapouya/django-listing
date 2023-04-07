@@ -3,7 +3,7 @@
 #
 # @author: Eric Lapouyade
 #
-
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django import forms
 from django.template import loader
@@ -307,8 +307,15 @@ class Filter(metaclass=FilterMeta):
     def get_label(self):
         label = self.label
         if label is None:
-            label,*_ = self.name.split('__')
-            label = label.replace('_',' ').title()
+            try:
+                label = (
+                    self.listing.model._meta.get_field(self.name).verbose_name
+                )
+            except FieldDoesNotExist:
+                pass
+        if not label:
+            label, *_ = self.name.split('__')
+            label = label.replace('_', ' ').capitalize()
         return label
 
     def get_form_field_container_attrs(self, form_field):
