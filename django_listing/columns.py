@@ -181,7 +181,10 @@ class ModelColumns(Columns):
         name2col = OrderedDict( (c.name or c.init_args[0],c) for c in cols )
         for f in model._meta.get_fields():
             if not isinstance(f, (models.ManyToManyRel, models.ManyToOneRel)):
-                header = getattr(f, 'verbose_name', f.name.capitalize())
+                if not hasattr(listing, f'{f.name}__header'):
+                    header = getattr(f, 'verbose_name', f.name.capitalize())
+                else:
+                    header = getattr(listing, f'{f.name}__header')
                 if f.name in name2col:
                     col = name2col.pop(f.name)
                     model_cols.append(col)
@@ -211,7 +214,10 @@ class ModelColumns(Columns):
             model_field = model._meta.get_field(name)
             if not model_field:
                 return None
-            header = getattr(model_field, 'verbose_name', model_field.name)
+            if not hasattr(listing, f'{model_field.name}__header'):
+                header = getattr(model_field, 'verbose_name', model_field.name)
+            else:
+                header = getattr(listing, f'{model_field.name}__header')
             col = cls.create_column(model_field, header=header, **kwargs)
             col.bind_to_listing(listing)
             return col
