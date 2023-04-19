@@ -150,11 +150,12 @@ class ListingForm:
             self.buttons = list(map(str.strip,buttons.split(',')))
 
     def datetimepicker_init(self):
-        self.listing.need_media_for('datetimepicker')
-        self.listing.add_footer_dict_list('datetimepickers', dict(
-            listing=self.listing,
-            div_id=self.id
-        ))
+        if self.listing.use_datetimepicker:
+            self.listing.need_media_for('datetimepicker')
+            self.listing.add_footer_dict_list('datetimepickers', dict(
+                listing=self.listing,
+                div_id=self.id
+            ))
 
     def create_form_from_layout(self):
         fields = {}

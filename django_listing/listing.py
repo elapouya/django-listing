@@ -90,7 +90,7 @@ LISTING_PARAMS_KEYS = {
     'action_button_cancel_label', 'action_button_edit_label',
     'action_button_update_label', 'action_button_upload_label',
     'action_footer_template_name', 'action_header_template_name',
-    'has_footer_action_buttons', 'edit_on_demand',
+    'has_footer_action_buttons', 'edit_on_demand', 'use_datetimepicker',
 }
 
 LISTING_VARIATIONS_KEYS = LISTING_PARAMS_KEYS | {'get_url'}
@@ -378,6 +378,7 @@ class Listing(ListingBase):
     toolbar = None
     toolbar_placement = 'both'
     unsortable = True
+    use_datetimepicker = False
     variation = None
     variations = None
 
@@ -598,11 +599,12 @@ class Listing(ListingBase):
             self._initialized = True
 
     def datetimepicker_init(self):
-        self.need_media_for('datetimepicker')
-        self.add_footer_dict_list('datetimepickers', dict(
-            listing=self,
-            div_id=self.id
-        ))
+        if self.use_datetimepicker:
+            self.need_media_for('datetimepicker')
+            self.add_footer_dict_list('datetimepickers', dict(
+                listing=self,
+                div_id=self.id
+            ))
 
     def dropzone_init(self):
         self.need_media_for('dropzone')

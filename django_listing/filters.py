@@ -139,12 +139,13 @@ class Filters(list):
         return filters
 
     def datetimepicker_init(self):
-        self.listing.need_media_for('datetimepicker')
-        self.listing.add_onready_snippet(f"""
-            $('#{self.id} .edit-datecolumn').datetimepicker({{timepicker:false, format:'{self.listing.datetimepicker_date_format}'}});
-            $('#{self.id} .edit-datetimecolumn').datetimepicker({{format:'{self.listing.datetimepicker_datetime_format}'}});
-            $('#{self.id} .edit-timecolumn').datetimepicker({{datepicker:false, format:'{self.listing.datetimepicker_time_format}'}});
-            """)
+        if self.listing.use_datetimepicker:
+            self.listing.need_media_for('datetimepicker')
+            self.listing.add_onready_snippet(f"""
+                $('#{self.id} .edit-datecolumn').datetimepicker({{timepicker:false, format:'{self.listing.datetimepicker_date_format}'}});
+                $('#{self.id} .edit-datetimecolumn').datetimepicker({{format:'{self.listing.datetimepicker_datetime_format}'}});
+                $('#{self.id} .edit-timecolumn').datetimepicker({{datepicker:false, format:'{self.listing.datetimepicker_time_format}'}});
+                """)
 
     def create_filter(self, name, listing):
         if isinstance(name,str):
@@ -451,19 +452,19 @@ class IntegerFilter(Filter):
 class DateFilter(Filter):
     from_model_field_classes = (models.DateField,)
     form_field_class = forms.DateField
-    widget_attrs = {'class': 'form-control edit-datecolumn'}
+    widget_attrs = {'class': 'form-control edit-datecolumn', 'type': 'date'}
 
 
 class DateTimeFilter(Filter):
     from_model_field_classes = (models.DateTimeField,)
     form_field_class = forms.DateTimeField
-    widget_attrs = {'class': 'form-control edit-datetimecolumn'}
+    widget_attrs = {'class': 'form-control edit-datetimecolumn', 'type': 'datetime-local'}
 
 
 class TimeFilter(Filter):
     from_model_field_classes = (models.TimeField,)
     form_field_class = forms.TimeField
-    widget_attrs = {'class': 'form-control edit-timecolumn'}
+    widget_attrs = {'class': 'form-control edit-timecolumn', 'type': 'time'}
 
 
 class BooleanFilter(Filter):
