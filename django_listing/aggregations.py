@@ -50,7 +50,7 @@ class AggregationMeta(type):
 
 class Aggregation(metaclass=AggregationMeta):
     footer_tpl = None
-    value_tpl = _('{value}')
+    value_tpl = '{value}'
     params_keys = None
 
     def __init__(self, column, global_aggregation=False):

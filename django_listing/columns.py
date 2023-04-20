@@ -372,7 +372,10 @@ class Column(metaclass=ColumnMeta):
         if self.data_key is None:
             self.data_key = self.name
         if self.sort_key is None:
-            self.sort_key = self.data_key.replace('.', '__')
+            if isinstance(self.data_key, str):
+                self.sort_key = self.data_key.replace('.', '__')
+            else:
+                self.sort_key = 0
         if isinstance(self.aggregation,str):
             self.aggregation = AggregationMeta.get_instance(self.aggregation,self)
         if isinstance(self.theme_header_class,str):
