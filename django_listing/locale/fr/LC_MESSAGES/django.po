@@ -223,7 +223,7 @@ msgstr "Editer"
 #: django_listing/listing.py:301
 msgctxt "action button"
 msgid "Update"
-msgstr "Rafraichir"
+msgstr "Mettre à jour"
 
 #: django_listing/listing.py:302
 msgctxt "action button"

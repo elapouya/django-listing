@@ -534,7 +534,11 @@ div.django-listing-container td.type-bool  {
 
 div.django-listing-container td.type-bool input {
     margin: auto;
-    width: inherit;
+}
+
+div.django-listing-container td.cls-checkboxcolumn,
+div.django-listing-container td.cls-booleancolumn div.form-field {
+    text-align: center;
 }
 
 td.render-error {

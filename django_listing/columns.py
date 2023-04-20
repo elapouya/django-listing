@@ -51,6 +51,7 @@ COLUMNS_PARAMS_KEYS = {
     'time_format', 'input_type', 'theme_header_class', 'theme_cell_class',
     'theme_footer_class', 'theme_header_icon', 'widget_attrs',
     'theme_form_widget_class','theme_button_class','no_choice_msg',
+    'theme_form_select_widget_class', 'theme_form_checkbox_widget_class',
 }
 
 COLUMNS_FORM_FIELD_KEYS = {
@@ -343,6 +344,8 @@ class Column(metaclass=ColumnMeta):
     theme_cell_class = ThemeAttribute('column_theme_cell_class')
     theme_footer_class = ThemeAttribute('column_theme_footer_class')
     theme_form_widget_class = ThemeAttribute('column_theme_form_widget_class')
+    theme_form_select_widget_class = ThemeAttribute('column_theme_form_select_widget_class')
+    theme_form_checkbox_widget_class = ThemeAttribute('column_theme_form_checkbox_widget_class')
     theme_button_class = ThemeAttribute('column_theme_button_class')
 
     def __init__(self, *args, **kwargs):
@@ -386,6 +389,10 @@ class Column(metaclass=ColumnMeta):
             self.theme_footer_class = set(self.theme_footer_class.split())
         if isinstance(self.theme_form_widget_class,str):
             self.theme_form_widget_class = set(self.theme_form_widget_class.split())
+        if isinstance(self.theme_form_select_widget_class,str):
+            self.theme_form_select_widget_class = set(self.theme_form_select_widget_class.split())
+        if isinstance(self.theme_form_checkbox_widget_class,str):
+            self.theme_form_checkbox_widget_class = set(self.theme_form_checkbox_widget_class.split())
         if isinstance(self.theme_button_class,str):
             self.theme_button_class = set(self.theme_button_class.split())
 
@@ -740,6 +747,11 @@ class BooleanColumn(Column):
     def get_value_tpl(self, rec, ctx, value):
         return self.true_tpl if value else self.false_tpl
 
+    def get_form_field_widget(self, field_class):
+        wiget_attrs = HTMLAttributes(self.widget_attrs)
+        wiget_attrs.add('class', 'form-check-input')
+        return forms.CheckboxInput(attrs=wiget_attrs)
+
 
 class IntegerColumn(Column):
     from_model_field_classes = (models.IntegerField,)
@@ -777,13 +789,17 @@ class ChoiceColumn(Column):
         return params
 
     def get_form_field_widget(self, field_class):
+        widget_attrs = HTMLAttributes(self.widget_attrs)
         if self.input_type == 'radio':
-            return forms.RadioSelect(
-                attrs={'class':'multiple-radios'})
+            widget = forms.RadioSelect
+            widget_attrs.add('class', 'multiple-radios')
         elif self.input_type == 'radioinline':
-            return forms.RadioSelect(
-                attrs={'class':'multiple-radios inline'})
-        return super().get_form_field_widget(field_class)
+            widget = forms.RadioSelect
+            widget_attrs.add('class', 'multiple-radios inline')
+        else:
+            widget = forms.Select
+            widget_attrs.add('class', self.theme_form_select_widget_class)
+        return widget(attrs=widget_attrs)
 
 
 class MultipleChoiceColumn(Column):
@@ -859,6 +875,7 @@ class CheckboxColumn(Column):
         attrs = HTMLAttributes(self.widget_attrs)
         attrs.add('type','checkbox')
         attrs.add('name',self.name)
+        attrs.add('class',self.theme_form_checkbox_widget_class)
         # If a value is set at definition time : take it
         # otherwise : take cell value
         if self.cell_value is not None:
@@ -893,7 +910,7 @@ class SelectColumn(Column):
     def get_value_tpl(self,rec, ctx, value):
         attrs = HTMLAttributes(self.widget_attrs)
         attrs.add('name',self.name)
-        attrs.add('class',self.theme_form_widget_class)
+        attrs.add('class',self.theme_form_select_widget_class)
         # If a value is set at definition time : take it
         # otherwise : take cell value
         if self.cell_value is not None:
