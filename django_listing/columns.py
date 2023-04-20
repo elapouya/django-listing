@@ -534,12 +534,15 @@ class Column(metaclass=ColumnMeta):
         if callable(header_attrs):
             header_attrs = header_attrs(ctx)
         attrs = HTMLAttributes(header_attrs)
-        if self.sortable:
-            attrs.add('class',self.listing.theme_sortable_class)
+        if self.sortable and self.listing.sortable:
+            attrs.add('class', self.listing.theme_sortable_class)
             asc = self.listing.columns_sort_ascending.get(self.name)
             if asc is not None:
+                attrs.add('class', self.listing.theme_sorted_class)
                 attrs.add('class', self.listing.theme_sort_asc_class if asc else
                                    self.listing.theme_sort_desc_class)
+        else:
+            attrs.add('class', 'not-sortable')
         attrs.add('class', {'col-'+self.name} | self.theme_header_class)
         return attrs
 

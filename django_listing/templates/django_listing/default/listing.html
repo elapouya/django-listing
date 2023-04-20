@@ -6,6 +6,12 @@
          ajax_url="{{ listing.get_url }}"
          {% if listing.selection_menu_id %}selection-menu-id="{{ listing.selection_menu_id }}"{% endif %}
     >
+    <style>
+        @media (max-width: 767.98px) {
+          {% for style in listing.get_localized_small_device_styles %}{{ style }}
+          {% endfor %}
+        }
+    </style>
     <div class="listing-spinner"><span class="{{ listing.theme_spinner_icon }}"></span></div>
 
         {% if listing.row_form_errors %}

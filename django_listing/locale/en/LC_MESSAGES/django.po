@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-02 15:14+0000\n"
+"POT-Creation-Date: 2023-04-20 10:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,45 +18,45 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: django_listing/actions_buttons_column.py:151
+#: django_listing/actions_buttons_column.py:153
 msgid "Move up"
 msgstr ""
 
-#: django_listing/actions_buttons_column.py:152
+#: django_listing/actions_buttons_column.py:154
 msgid "Change order up"
 msgstr ""
 
-#: django_listing/actions_buttons_column.py:180
+#: django_listing/actions_buttons_column.py:182
 msgid "Move down"
 msgstr ""
 
-#: django_listing/actions_buttons_column.py:181
+#: django_listing/actions_buttons_column.py:183
 msgid "Change order down"
 msgstr ""
 
-#: django_listing/actions_buttons_column.py:209
-#: django_listing/actions_buttons_column.py:220
+#: django_listing/actions_buttons_column.py:211
+#: django_listing/actions_buttons_column.py:222
 msgid "Details"
 msgstr ""
 
-#: django_listing/actions_buttons_column.py:210
-#: django_listing/actions_buttons_column.py:221
+#: django_listing/actions_buttons_column.py:212
+#: django_listing/actions_buttons_column.py:223
 msgid "See details"
 msgstr ""
 
-#: django_listing/actions_buttons_column.py:226
+#: django_listing/actions_buttons_column.py:228
 msgid "Not set"
 msgstr ""
 
-#: django_listing/actions_buttons_column.py:253
+#: django_listing/actions_buttons_column.py:255
 msgid "You must specify a layout in view_object_popup__layout"
 msgstr ""
 
-#: django_listing/actions_buttons_column.py:256
+#: django_listing/actions_buttons_column.py:258
 msgid "Object id not specified !"
 msgstr ""
 
-#: django_listing/actions_buttons_column.py:295
+#: django_listing/actions_buttons_column.py:297
 msgid "*** Not a valid column name ***"
 msgstr ""
 
@@ -95,189 +95,209 @@ msgid ""
 "f}"
 msgstr ""
 
-#: django_listing/columns.py:120
+#: django_listing/columns.py:134
 #, python-brace-format
 msgid ""
 "column {col_id} of listing {listing} is not a Column instance (class = "
 "{colclass})"
 msgstr ""
 
-#: django_listing/columns.py:299
+#: django_listing/columns.py:336
 msgid "Please choose..."
 msgstr ""
 
-#: django_listing/columns.py:632
+#: django_listing/columns.py:673
 msgid "{} is not a valid django forms field class"
 msgstr ""
 
-#: django_listing/columns.py:642
+#: django_listing/columns.py:683
 msgid "{} is not a valid django forms widget class"
 msgstr ""
 
-#: django_listing/columns.py:674 django_listing/filters.py:376
+#: django_listing/columns.py:715 django_listing/filters.py:439
 #, python-brace-format
 msgid ""
 "Cannot find choices from model for filter \"{name}\", Please specify the "
 "choices to display"
 msgstr ""
 
-#: django_listing/columns.py:678 django_listing/filters.py:380
+#: django_listing/columns.py:719 django_listing/filters.py:443
 #, python-brace-format
 msgid "Please specify the choices to display for filter \"{name}\""
 msgstr ""
 
-#: django_listing/columns.py:688
+#: django_listing/columns.py:729
 msgid "True"
 msgstr ""
 
-#: django_listing/columns.py:689
+#: django_listing/columns.py:730
 msgid "False"
 msgstr ""
 
-#: django_listing/columns.py:1086
+#: django_listing/columns.py:1127
 msgid "Total"
 msgstr ""
 
-#: django_listing/columns.py:1088
+#: django_listing/columns.py:1129
 #, python-brace-format
 msgid "<td{attrs}>Grand Total:<br>{value}</td>"
 msgstr ""
 
-#: django_listing/columns.py:1097
+#: django_listing/columns.py:1138
 msgid "Min"
 msgstr ""
 
-#: django_listing/columns.py:1099
+#: django_listing/columns.py:1140
 #, python-brace-format
 msgid "<td{attrs}>Overall Min:<br>{value}</td>"
 msgstr ""
 
-#: django_listing/columns.py:1107
+#: django_listing/columns.py:1148
 msgid "Max"
 msgstr ""
 
-#: django_listing/columns.py:1109
+#: django_listing/columns.py:1150
 #, python-brace-format
 msgid "<td{attrs}>Overall Max:<br>{value}</td>"
 msgstr ""
 
-#: django_listing/columns.py:1118
+#: django_listing/columns.py:1159
 msgid "Average"
 msgstr ""
 
-#: django_listing/columns.py:1123
+#: django_listing/columns.py:1164
 msgid "<td{attrs}>Overall avg:<br>{value:.{col.footer_precision}f}</td>"
-msgstr ""
-
-#: django_listing/filters.py:55
-msgctxt "Filters form"
-msgid "Reset"
 msgstr ""
 
 #: django_listing/filters.py:56
 msgctxt "Filters form"
+msgid "Reset"
+msgstr ""
+
+#: django_listing/filters.py:57
+msgctxt "Filters form"
 msgid "Filter"
 msgstr ""
 
-#: django_listing/filters.py:206
+#: django_listing/filters.py:211 django_listing/filters.py:219
 #, python-brace-format
 msgid "Cannot find filter \"{name}\" definition"
 msgstr ""
 
-#: django_listing/filters.py:262
+#: django_listing/filters.py:279
 msgid "- No filtering -"
 msgstr ""
 
-#: django_listing/filters.py:467
+#: django_listing/filters.py:473
+msgid "Yes"
+msgstr ""
+
+#: django_listing/filters.py:474
+msgid "No"
+msgstr ""
+
+#: django_listing/filters.py:475
+msgid "Indiff."
+msgstr ""
+
+#: django_listing/filters.py:566
 msgid "Use CTRL+click to select/deselect multiple choices"
 msgstr ""
 
-#: django_listing/listing.py:293
+#: django_listing/listing.py:299
 msgctxt "action button"
 msgid "Cancel"
 msgstr ""
 
-#: django_listing/listing.py:294
+#: django_listing/listing.py:300
 msgctxt "action button"
 msgid "Edit"
 msgstr ""
 
-#: django_listing/listing.py:295
+#: django_listing/listing.py:301
 msgctxt "action button"
 msgid "Update"
 msgstr ""
 
-#: django_listing/listing.py:296
+#: django_listing/listing.py:302
 msgctxt "action button"
 msgid "Upload"
 msgstr ""
 
-#: django_listing/listing.py:321
+#: django_listing/listing.py:327
 msgid "Nothing to display"
 msgstr ""
 
-#: django_listing/listing.py:499
+#: django_listing/listing.py:510
 msgid "Please configure at least one column in your listing"
 msgstr ""
 
-#: django_listing/listing.py:576
+#: django_listing/listing.py:587
 msgid "record"
 msgstr ""
 
-#: django_listing/listing_form.py:94
-msgctxt "Listing form"
-msgid "Reset"
+#: django_listing/listing.py:900
+msgid "Sort by:"
+msgstr "Sort by:"
+
+#: django_listing/listing.py:901 django_listing/listing.py:914
+msgid ":"
 msgstr ""
 
 #: django_listing/listing_form.py:95
 msgctxt "Listing form"
+msgid "Reset"
+msgstr ""
+
+#: django_listing/listing_form.py:96
+msgctxt "Listing form"
 msgid "Add"
 msgstr ""
 
-#: django_listing/listing_form.py:161
+#: django_listing/listing_form.py:163
 msgid "You must specify a list of columns names in the form layout"
 msgstr ""
 
-#: django_listing/listing_form.py:168
+#: django_listing/listing_form.py:170
 #, python-brace-format
 msgid ""
 "In the {form_name} layout you specified the field \"{field_name}\" but there "
 "is no existing listing column with that name"
 msgstr ""
 
-#: django_listing/paginators.py:33
+#: django_listing/paginators.py:34
 #, python-brace-format
 msgctxt "paginator"
 msgid "Page {page_number} of {nb_pages}"
 msgstr ""
 
-#: django_listing/paginators.py:35
+#: django_listing/paginators.py:36
 #, python-brace-format
 msgctxt "paginator"
 msgid "{row_first}-{row_last} of {nb_rows}"
 msgstr ""
 
-#: django_listing/paginators.py:37
+#: django_listing/paginators.py:38
 msgctxt "paginator"
 msgid "Previous"
 msgstr ""
 
-#: django_listing/paginators.py:38
+#: django_listing/paginators.py:39
 msgctxt "paginator"
 msgid "Next"
 msgstr ""
 
-#: django_listing/paginators.py:40
+#: django_listing/paginators.py:41
 msgctxt "paginator"
 msgid "First"
 msgstr ""
 
-#: django_listing/paginators.py:41
+#: django_listing/paginators.py:42
 msgctxt "paginator"
 msgid "Last"
 msgstr ""
 
-#: django_listing/paginators.py:52
+#: django_listing/paginators.py:53
 #, python-brace-format
 msgctxt "paginator"
 msgid "Go to page {goto_form}"
@@ -300,7 +320,7 @@ msgstr ""
 msgid "Listing data must be a sequence or a QuerySet."
 msgstr ""
 
-#: django_listing/templates/django_listing/empty_listing.html:4
+#: django_listing/templates/django_listing/default/empty_listing.html:4
 #, python-format
 msgid "There is no %(record_label)s to display."
 msgstr ""

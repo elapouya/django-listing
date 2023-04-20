@@ -515,12 +515,14 @@ div.django-listing-container.standard-theme td.cls-totalcolumn {
     font-weight: bold;
 }
 
-div.django-listing-container td.type-str.cls-filesizecolumn,
-div.django-listing-container td.type-int,
-div.django-listing-container td.type-float,
-div.django-listing-container td.agg-minmax,
-div.django-listing-container td.agg-minmaxavg {
-    text-align: right;
+@media (min-width: 768px) {
+    div.django-listing-container td.type-str.cls-filesizecolumn,
+    div.django-listing-container td.type-int,
+    div.django-listing-container td.type-float,
+    div.django-listing-container td.agg-minmax,
+    div.django-listing-container td.agg-minmaxavg {
+        text-align: right;
+    }
 }
 
 div.django-listing-container td.type-bool  {

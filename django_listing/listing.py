@@ -91,6 +91,8 @@ LISTING_PARAMS_KEYS = {
     'action_button_update_label', 'action_button_upload_label',
     'action_footer_template_name', 'action_header_template_name',
     'has_footer_action_buttons', 'edit_on_demand', 'use_datetimepicker',
+    'small_device_header_style', 'is_small_device_localized',
+    'small_device_max_width', 'theme_sorted_class',
 }
 
 LISTING_VARIATIONS_KEYS = LISTING_PARAMS_KEYS | {'get_url'}
@@ -339,6 +341,7 @@ class Listing(ListingBase):
     has_toolbar = False
     has_upload = False
     id = None
+    is_small_device_localized = False
     link_object_columns = None
     row_form_base_class = ListingBaseForm
     listing_form_base_class = ListingBaseForm
@@ -372,6 +375,8 @@ class Listing(ListingBase):
     selection_multiple = False
     selection_overlay_template_name = ThemeTemplate('selection_overlay.html')
     selection_position = 'hidden'  # left, right or hidden
+    small_device_max_width = '767.98px'
+    small_device_header_style = 'font-weight: bold'
     sort = None
     sortable = True
     suffix = None
@@ -397,6 +402,7 @@ class Listing(ListingBase):
     theme_sort_none_icon = ThemeAttribute('theme_sort_none_icon')
     theme_spinner_icon = ThemeAttribute('theme_spinner_icon')
     theme_sortable_class = ThemeAttribute('theme_sortable_class')
+    theme_sorted_class = ThemeAttribute('theme_sorted_class')
     theme_sort_asc_class = ThemeAttribute('theme_sort_asc_class')
     theme_sort_desc_class = ThemeAttribute('theme_sort_desc_class')
     theme_button_class = ThemeAttribute('theme_button_class')
@@ -755,6 +761,9 @@ class Listing(ListingBase):
         out = template.render(ctx)
         return out
 
+    def get_listing_css_id(self):
+        return str(self.id).replace('_','-')
+
     def get_listing_context(self):
         has_top_toolbar = ( self.has_toolbar and
                             self.toolbar_placement in ['top','both'] )
@@ -880,6 +889,34 @@ class Listing(ListingBase):
             return rendered_columns
         else:
             return []
+
+    def get_localized_small_device_styles(self):
+        styles = [
+            (
+                "#{listing_css_id} th:before {{"
+                'content:"{sort_msg}";'
+                "}}"
+            ).format(
+                listing_css_id=self.get_listing_css_id(),
+                sort_msg=_("Sort by:"),
+                two_dots=_(":"),
+            )
+        ]
+        for col in self.selected_columns:
+            style = (
+                "#{listing_css_id} td.col-{col_name}:before {{"
+                'content:"{header}{two_dots} ";'
+                "{sd_style};"
+                "}}"
+            ).format(
+                listing_css_id=self.get_listing_css_id(),
+                col_name=col.name,
+                header=col.get_header_value(),
+                two_dots=_(":"),
+                sd_style=self.small_device_header_style,
+            )
+            styles.append(style)
+        return styles
 
     def footer_columns(self):
         if self.has_footer:

@@ -43,6 +43,7 @@ class ThemeConfigBase(metaclass=ThemeConfigMeta):
     theme_sort_none_icon = ''
     theme_spinner_icon = 'animate-spin listing-icon-spin2'
     theme_sortable_class = 'sortable'
+    theme_sorted_class = 'sorted'
     theme_sort_asc_class = 'asc'
     theme_sort_desc_class = 'desc'
     theme_button_class = 'btn btn-primary'
