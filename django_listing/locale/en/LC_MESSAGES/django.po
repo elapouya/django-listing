@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-20 10:44+0000\n"
+"POT-Creation-Date: 2023-04-21 13:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,11 +64,6 @@ msgstr ""
 msgid "Unknown \"{}\" aggregation, choose one of these : {}"
 msgstr ""
 
-#: django_listing/aggregations.py:53
-#, python-brace-format
-msgid "{value}"
-msgstr ""
-
 #: django_listing/aggregations.py:136
 #, python-brace-format
 msgid "Total :<br>{value}"
@@ -95,77 +90,77 @@ msgid ""
 "f}"
 msgstr ""
 
-#: django_listing/columns.py:134
+#: django_listing/columns.py:136
 #, python-brace-format
 msgid ""
 "column {col_id} of listing {listing} is not a Column instance (class = "
 "{colclass})"
 msgstr ""
 
-#: django_listing/columns.py:336
+#: django_listing/columns.py:338
 msgid "Please choose..."
 msgstr ""
 
-#: django_listing/columns.py:673
+#: django_listing/columns.py:693
 msgid "{} is not a valid django forms field class"
 msgstr ""
 
-#: django_listing/columns.py:683
+#: django_listing/columns.py:703
 msgid "{} is not a valid django forms widget class"
 msgstr ""
 
-#: django_listing/columns.py:715 django_listing/filters.py:439
+#: django_listing/columns.py:735 django_listing/filters.py:439
 #, python-brace-format
 msgid ""
 "Cannot find choices from model for filter \"{name}\", Please specify the "
 "choices to display"
 msgstr ""
 
-#: django_listing/columns.py:719 django_listing/filters.py:443
+#: django_listing/columns.py:739 django_listing/filters.py:443
 #, python-brace-format
 msgid "Please specify the choices to display for filter \"{name}\""
 msgstr ""
 
-#: django_listing/columns.py:729
+#: django_listing/columns.py:749
 msgid "True"
 msgstr ""
 
-#: django_listing/columns.py:730
+#: django_listing/columns.py:750
 msgid "False"
 msgstr ""
 
-#: django_listing/columns.py:1127
+#: django_listing/columns.py:1159
 msgid "Total"
 msgstr ""
 
-#: django_listing/columns.py:1129
+#: django_listing/columns.py:1161
 #, python-brace-format
 msgid "<td{attrs}>Grand Total:<br>{value}</td>"
 msgstr ""
 
-#: django_listing/columns.py:1138
+#: django_listing/columns.py:1170
 msgid "Min"
 msgstr ""
 
-#: django_listing/columns.py:1140
+#: django_listing/columns.py:1172
 #, python-brace-format
 msgid "<td{attrs}>Overall Min:<br>{value}</td>"
 msgstr ""
 
-#: django_listing/columns.py:1148
+#: django_listing/columns.py:1180
 msgid "Max"
 msgstr ""
 
-#: django_listing/columns.py:1150
+#: django_listing/columns.py:1182
 #, python-brace-format
 msgid "<td{attrs}>Overall Max:<br>{value}</td>"
 msgstr ""
 
-#: django_listing/columns.py:1159
+#: django_listing/columns.py:1191
 msgid "Average"
 msgstr ""
 
-#: django_listing/columns.py:1164
+#: django_listing/columns.py:1196
 msgid "<td{attrs}>Overall avg:<br>{value:.{col.footer_precision}f}</td>"
 msgstr ""
 
@@ -228,19 +223,23 @@ msgstr ""
 msgid "Nothing to display"
 msgstr ""
 
-#: django_listing/listing.py:510
+#: django_listing/listing.py:511
 msgid "Please configure at least one column in your listing"
 msgstr ""
 
-#: django_listing/listing.py:587
+#: django_listing/listing.py:575
+msgid "[CANNOT_EDIT_IN_AJAX]"
+msgstr "Cannot edit a listing in ajax mode, please remove accept_ajax=True"
+
+#: django_listing/listing.py:596
 msgid "record"
 msgstr ""
 
-#: django_listing/listing.py:900
+#: django_listing/listing.py:909
 msgid "Sort by:"
 msgstr "Sort by:"
 
-#: django_listing/listing.py:901 django_listing/listing.py:914
+#: django_listing/listing.py:910 django_listing/listing.py:923
 msgid ":"
 msgstr ""
 

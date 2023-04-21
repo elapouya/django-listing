@@ -481,6 +481,10 @@ class Column(metaclass=ColumnMeta):
             value = self.choices.get(value, value)
         return value
 
+    def get_cell_form_value(self, rec):
+        value = rec.get(self.data_key)
+        return value
+
     def get_cell_exported_value(self,rec):
         val = self.get_cell_value(rec)
         if not isinstance(val,(int, float, datetime.datetime,

@@ -568,9 +568,17 @@ class Listing(ListingBase):
             else:
                 self.page_context = context
 
+    def validate_parameters(self):
+        if self.editable and self.accept_ajax:
+            if self.row_form_errors is None:
+                self.row_form_errors = []
+            self.row_form_errors.append(_('[CANNOT_EDIT_IN_AJAX]'))
+            self.editable = False
+
     def init(self, data, context=None, **kwargs):
         if not self.is_initialized():
             self.set_kwargs(**kwargs)
+            self.validate_parameters()
             if data is None:
                 data = self.model or self.columns.get_model()
             if isinstance(data,type) and issubclass(data, Model):
@@ -1052,11 +1060,12 @@ class Listing(ListingBase):
         return {}
 
     def get_formset_initial_values(self):
-        return [ {c.name:c.get_cell_value(rec)
+        initial_values = [ {c.name:c.get_cell_form_value(rec)
                  for c in (self.can_edit_columns+self.selected_hidden_columns)}
                  for rec in self.records.current_page()
                  if not self.editing_row_pk or rec.pk == self.editing_row_pk
                ]
+        return initial_values
 
     def get_formset(self):
         if not self._formset:

@@ -82,7 +82,7 @@ class ListingViewMixin:
             response = self.manage_listing_post(request, *args, **kwargs)
             if response:
                 return response
-            return HttpResponseRedirect('.')
+            return self.get(self, request, *args, **kwargs)
         except ListingException as e:
             return HttpResponseServerError(e)
 
