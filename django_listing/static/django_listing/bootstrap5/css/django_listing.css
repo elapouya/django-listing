@@ -1008,3 +1008,11 @@ form.dropzone.dz-drag-hover {
         display: none;
     }
 }
+
+div.form-check-input {
+    width: inherit;
+    height: inherit;
+    background: none;
+    border: none;
+    margin: 0;
+}

@@ -58,6 +58,7 @@ class ThemeConfigBase(metaclass=ThemeConfigMeta):
     column_theme_form_widget_class = 'form-control form-control-sm'
     column_theme_form_select_widget_class = 'form-control form-control-sm'
     column_theme_form_checkbox_widget_class = 'form-control form-control-sm'
+    column_theme_form_radio_widget_class = 'form-control form-control-sm'
     column_theme_button_class = 'btn btn-primary btn-sm'
 
     paginator_theme_first_last_has_icon = True
@@ -135,4 +136,5 @@ class ThemeConfigBoostrap5(ThemeConfigBase):
 
     column_theme_form_select_widget_class = 'form-select form-select-sm'
     column_theme_form_checkbox_widget_class = 'form-check-input'
+    column_theme_form_radio_widget_class = 'form-check-input'
 

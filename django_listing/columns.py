@@ -52,6 +52,7 @@ COLUMNS_PARAMS_KEYS = {
     'theme_footer_class', 'theme_header_icon', 'widget_attrs',
     'theme_form_widget_class','theme_button_class','no_choice_msg',
     'theme_form_select_widget_class', 'theme_form_checkbox_widget_class',
+    'theme_form_radio_widget_class',
 }
 
 COLUMNS_FORM_FIELD_KEYS = {
@@ -346,6 +347,7 @@ class Column(metaclass=ColumnMeta):
     theme_form_widget_class = ThemeAttribute('column_theme_form_widget_class')
     theme_form_select_widget_class = ThemeAttribute('column_theme_form_select_widget_class')
     theme_form_checkbox_widget_class = ThemeAttribute('column_theme_form_checkbox_widget_class')
+    theme_form_radio_widget_class = ThemeAttribute('column_theme_form_radio_widget_class')
     theme_button_class = ThemeAttribute('column_theme_button_class')
 
     def __init__(self, *args, **kwargs):
@@ -393,6 +395,8 @@ class Column(metaclass=ColumnMeta):
             self.theme_form_select_widget_class = set(self.theme_form_select_widget_class.split())
         if isinstance(self.theme_form_checkbox_widget_class,str):
             self.theme_form_checkbox_widget_class = set(self.theme_form_checkbox_widget_class.split())
+        if isinstance(self.theme_form_radio_widget_class,str):
+            self.theme_form_radio_widget_class = set(self.theme_form_radio_widget_class.split())
         if isinstance(self.theme_button_class,str):
             self.theme_button_class = set(self.theme_button_class.split())
 
@@ -420,9 +424,10 @@ class Column(metaclass=ColumnMeta):
                 setattr(self,k,getattr(self.listing,listing_key))
         # col__param has higher priority than columns_param,
         # so getting col__params after columns_params
-        for k, v in self.listing.__class__.__dict__.items():
+        for k in dir(self.listing):
             start_key = f'{self.name}__'
             if k.startswith(start_key):
+                v = getattr(self.listing, k)
                 setattr(self, k[len(start_key):], v)
         for k, v in kwargs.items():
             if k in COLUMNS_PARAMS_KEYS:
@@ -792,9 +797,11 @@ class ChoiceColumn(Column):
         widget_attrs = HTMLAttributes(self.widget_attrs)
         if self.input_type == 'radio':
             widget = forms.RadioSelect
+            widget_attrs.add('class', self.theme_form_radio_widget_class)
             widget_attrs.add('class', 'multiple-radios')
         elif self.input_type == 'radioinline':
             widget = forms.RadioSelect
+            widget_attrs.add('class', self.theme_form_radio_widget_class)
             widget_attrs.add('class', 'multiple-radios inline')
         else:
             widget = forms.Select
