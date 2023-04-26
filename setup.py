@@ -35,6 +35,7 @@ def get_version(pkg):
         return m.group(1)
     raise RuntimeError("Unable to find __version__ string in %s." % path)
 
+#print(find_packages(exclude=['showcase', 'docs']))
 
 setup(name='django-listing',
       version=get_version('django_listing'),
@@ -61,7 +62,7 @@ setup(name='django-listing',
       author='Eric Lapouyade',
       author_email='elapouya@gmail.com',
       license='GPLv3+',
-      packages=['django_listing'],
+      packages=find_packages(exclude=['showcase', 'docs']),
       include_package_data=True,
       install_requires=['django>=2', 'tablib'],
       extras_require={
