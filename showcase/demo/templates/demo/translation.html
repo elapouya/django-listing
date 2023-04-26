@@ -1,0 +1,27 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block example %}
+    <h2>Translation</h2>
+    <p>Have a look at <code>demo/templates/demo/translation.html</code> and
+        <code>TranslationListingView</code> in <code>demo/views.py</code> and
+        <code>demo/models.py</code> (where strings has been marked with <code>gettext_lazy as _</code>)
+
+        to see how examples are coded</p>
+
+    {% get_available_languages as LANGUAGES %}
+    <ul>
+    {% for lang_code,lang_name in LANGUAGES %}
+        {% language lang_code %}
+         <li><a href="{% url "translation" %}">
+             {{ lang_name }}
+         </a></li>
+        {% endlanguage %}
+    {% endfor %}
+    </ul>
+
+    {% render_listing per_page=5 %}
+    <br><br>
+
+{% endblock %}

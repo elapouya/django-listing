@@ -1,0 +1,13 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block example %}
+    <h2>Filters (Search form)</h2>
+    <div class="list-group col-md-6 offset-md-3 django-listing-menu">
+        <a class="list-group-item list-group-item-action" href="{% url "filters_1" %}">
+            <b>Python side example</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "filters_2" %}">
+            <b>Template side example</b></a>
+    </div>
+{% endblock %}

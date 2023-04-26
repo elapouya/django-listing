@@ -1,0 +1,19 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block example %}
+    <h2>Selectable listing</h2>
+    <div class="list-group col-md-6 offset-md-3 django-listing-menu">
+        <a class="list-group-item list-group-item-action" href="{% url "selectable1" %}">
+            <b>Simple selection</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "selectable2" %}">
+            <b>Multiple selections</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "selectable3" %}">
+            <b>Selection via checkboxes</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "selectable4" %}">
+            <b>Selection for DIV listings</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "selectable5" %}">
+            <b>DIV listings with hover selection activation</b></a>
+    </div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block example %}
+    <h2>Speed tests</h2>
+    <div class="list-group col-md-6 offset-md-3 django-listing-menu">
+        <a class="list-group-item list-group-item-action" href="{% url "speed_test_1" %}">
+            <b>django-listing</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "speed_test_2" %}">
+            <b>django-table2</b></a>
+    </div>
+{% endblock %}

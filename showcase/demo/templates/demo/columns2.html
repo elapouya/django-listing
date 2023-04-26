@@ -1,0 +1,26 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+
+{% block example %}
+    <h2><a href="{% url 'columns' %}">Columns</a> : Relations columns</h2>
+    <p>Have a look at <code>demo/templates/demo/columns2.html</code> and
+        <code>ColumnsListingView</code> in
+        <code>demo/views.py</code> and listings in <code>demo/listings.py</code>
+        to see how examples are coded</p>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>One-to-many column</h3>
+    {% render_listing OneToManyListing Company per_page=5 %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Many-to-many column</h3>
+    {% render_listing ManyToManyListing Employee per_page=5 %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3 id="foreign-column">ForeignKey Column</h3>
+    {% render_listing ForeignKeyListing per_page=5 anchor_hash="foreign-column" %}
+    <br><br>
+
+{% endblock %}

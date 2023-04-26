@@ -1,0 +1,9 @@
+{% load i18n %}
+{% load django_listing %}
+<a href="/robohash/{{ rec.first_name|cut:" " }}{{ rec.last_name|cut:" " }}/?width=800&height=800">
+    <img style="margin-top:10px"
+         src="/robohash/{{ rec.first_name|cut:" " }}{{ rec.last_name|cut:" " }}/?width=340&height=340">
+</a><br>
+<b>{% trans "First name" %} :</b> {{ rec.first_name }}<br>
+<b>{% trans "Last name" %} :</b> {{ rec.last_name }}<br>
+<b>{% trans "Age" %} :</b> {{ rec.age }}

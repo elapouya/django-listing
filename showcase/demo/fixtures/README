@@ -1,0 +1,5 @@
+# Generated with :
+../../manage.py dumpdata --indent 4 auth.user auth.group demo --natural-foreign > initial_data.json
+
+# Reload like this :
+../../manage.py loaddata initial_data.json

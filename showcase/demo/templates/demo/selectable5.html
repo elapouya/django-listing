@@ -1,0 +1,81 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block example %}
+    <h2><a href="{% url 'selectable' %}">Selectable listing</a> : DIV listings with hover selection activation</h2>
+    <p>Have a look at <code>demo/templates/demo/selectable4.html</code> and
+        <code>SelectableListing4View</code> in <code>demo/views.py</code> to see how examples are
+        coded</p>
+
+    <h3>One div by row (unique selection) :</h3>
+    <p>Note that when you are in select mode (<code>selectable = selecting = True</code>),
+    by default, you cannot click on anything inside each rows (for example, here
+    you cannot click on thumbnail). This is because in css file for div.selection-overlay
+        height and width has been set to 100%. Have a look at <a href="">this example</a> to have
+    and hybrid solution.</p>
+    <form method="post">{% csrf_token %}
+
+    <div id="divrows-sel-menu" class="listing-selection-menu clearfix" menu-display-mode="slide">
+        <div class="float-left">
+            <a class="listing-menu-close menu-icon" title="Close"><span class="listing-icon-cancel-1"></span></a>
+            <span class="selected_items ml-3"
+                  none="No employee selected"
+                  one="1 employee selected"></span>
+            </div>
+        <div class="float-right">
+            <button type="submit" class="submit-icon" name="action" value="share" title="Share"><span class="listing-icon-share"></span></button>
+            <button type="button" class="submit-icon" name="action" value="add" title="Add new employee" data-bs-toggle="popover" data-placement="top" data-content="Not implemented in the demo"><span class="listing-icon-plus-1"></span></button>
+            <button type="submit" class="submit-icon" name="action" value="delete" title="Delete"><span class="listing-icon-trash"></span></button>
+            <a class="menu-dropdown"  href="#" id="detailedDropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="listing-icon-v-ellipsis-2"></span></a>
+            <div class="dropdown-menu" aria-labelledby="detailedDropdownMenuLink">
+              <a class="dropdown-item" href="#">Nothing for this demo</a>
+            </div>
+        </div>
+    </div>
+
+    {% render_listing divrows_listing  selection_menu_id="divrows-sel-menu" %}
+    </form>
+
+    <br><br>
+    <h3>Many divs by row (multiple selection) :</h3>
+
+    <form method="post">{% csrf_token %}
+
+    <div id="thumb-sel-menu" class="listing-selection-menu clearfix" menu-display-mode="fade">
+        <div class="float-left">
+            <a class="listing-menu-close menu-icon" title="Close"><span class="listing-icon-cancel-1"></span></a>
+            <span class="selected_items ml-3"
+                  none="No employee selected"
+                  one="1 employee selected"
+                  many="{nb} employees selected"></span>
+            </div>
+        <div class="float-right">
+            <button type="button" class="btn btn-primary btn-sm" listing-action="select-all" listing-target="{{ thumbnails_listing.id }}">Select All</button>
+            <button type="button" class="btn btn-primary btn-sm" listing-action="unselect-all" listing-target="{{ thumbnails_listing.id }}">Unselect All</button>
+            <button type="submit" class="submit-icon" name="action" value="share" title="Share"><span class="listing-icon-share"></span></button>
+            <button type="button" class="submit-icon" name="action" value="add" title="Add new employee" data-bs-toggle="popover" data-placement="top" data-content="Not implemented in the demo"><span class="listing-icon-plus-1"></span></button>
+            <button type="submit" class="submit-icon" name="action" value="delete" title="Delete"><span class="listing-icon-trash"></span></button>
+            <a class="menu-dropdown"  href="#" id="thumbDropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="listing-icon-v-ellipsis-2"></span></a>
+            <div class="dropdown-menu" aria-labelledby="thumbDropdownMenuLink">
+              <a class="dropdown-item" href="#">Nothing for this demo</a>
+            </div>
+        </div>
+    </div>
+
+    {% render_listing thumbnails_listing selection_menu_id="thumb-sel-menu" %}
+    </form>
+
+    {% with posted_listing.get_selected_rows as selected_rows %}
+        {% if selected_rows %}
+            <br><br>
+            <h3>Selected Rows :</h3>
+            {{ selected_rows }}
+            <br><br>
+            <h3>POST data : </h3>
+            <pre>
+{{ post_data }}
+            </pre>
+        {% endif %}
+    {% endwith %}
+{% endblock %}

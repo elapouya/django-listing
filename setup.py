@@ -35,7 +35,6 @@ def get_version(pkg):
         return m.group(1)
     raise RuntimeError("Unable to find __version__ string in %s." % path)
 
-print(find_packages(exclude=['docs.*','docs']))
 
 setup(name='django-listing',
       version=get_version('django_listing'),
@@ -51,18 +50,18 @@ setup(name='django-listing',
           "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
           "Programming Language :: Python",
           "Programming Language :: Python :: 3",
-          "Programming Language :: Python :: 3.6",
           "Programming Language :: Python :: 3.7",
           "Programming Language :: Python :: 3.8",
           "Programming Language :: Python :: 3.9",
           "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
       ],
       keywords='table, datatable, listing, data grid',
       url='https://github.com/elapouya/django-listing',
       author='Eric Lapouyade',
       author_email='elapouya@gmail.com',
       license='GPLv3+',
-      packages=find_packages(exclude=['docs.*', 'example.*', 'example', 'docs']),
+      packages=['django_listing'],
       include_package_data=True,
       install_requires=['django>=2', 'tablib'],
       extras_require={

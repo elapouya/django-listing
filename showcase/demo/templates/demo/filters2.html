@@ -1,0 +1,31 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block example %}
+    <h2>Filters</h2>
+    <p>Have a look at <code>demo/templates/demo/filters2.html</code> and
+        <code>FiltersView</code> in <code>demo/views.py</code> to see how examples are coded</p>
+
+
+    <h3>Create a filter form at django template side</h3>
+
+    {# First step is to create the listing (will be rendered later) #}
+    {% create_listing_begin as listing %}
+    {# Note :  Do not use at the same time 'setopt_listing listing filters=' and 'filters_add_row', better use second one if you have many filters #}
+    {# Note2 : Django-listing will auto detected Filters classes to use based on the Django model you are using #}
+    {% filters_add_row listing 'age__gte|Age from,age__lte|to,salary__gte|Salary between,salary__lte|and' %}
+    {% filters_add_row listing 'first_name__icontains,last_name__icontains' %}
+    {% filters_add_row listing 'marital_status,gender__in|||checkboxinline' %}
+    {% setopt_filter listing 'first_name__icontains' help_text='Case insensitive' %}
+    {% setopt_filter_html_attr listing 'last_name__icontains' 'widget_attrs' 'placeholder' '- No filtering -' %}
+    {% setopt_listing listing per_page=5 exclude_columns="interests" %}
+    {% create_listing_end listing Employee %}
+
+    {# Render the filter form for the listing #}
+    {% render_filters_form listing %}
+
+    {# Render the listing it self #}
+    {% render_listing listing %}
+
+{% endblock %}

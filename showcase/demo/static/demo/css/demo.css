@@ -1,0 +1,300 @@
+body {
+    font-size: 14px;
+    font-family: "Roboto", sans-serif;
+    /*font-weight: 300;*/
+    background-color: #f8f8f8;
+}
+
+.django-listing {
+    background-color: #ffffff;
+}
+
+.django-listing.listing-employeethumbnailslisting,
+.django-listing.listing-toolbaremployeethumbnailslisting,
+.django-listing.listing-toolbaremployeebigthumbnailslisting {
+    background-color: inherit;
+}
+
+div.listing-container td {
+    vertical-align: top;
+}
+
+
+div.django-listing-container div.row-container.thumbnail {
+    display: inline-block;
+    width:135px;
+    height:200px;
+    vertical-align: top;
+    padding: 0px 10px;
+}
+
+div.django-listing-container div.row-container.thumbnail:hover {
+    background-color: #dddddd;
+}
+
+div.django-listing-container div.row-container.upload-thumbnail {
+    display: inline-block;
+    width:160px;
+    height:160px;
+    vertical-align: top;
+    padding: 5px 5px;
+}
+
+div.django-listing-container div.thumbnail-container {
+    padding: 0;
+}
+
+div.django-listing-container div.row-container.upload-thumbnail:hover {
+    background-color: #29a745;
+}
+
+div.django-listing-container div.row-container.big-thumbnail {
+    display: inline-block;
+    width:360px;
+    height:440px;
+    vertical-align: top;
+    padding: 0px 10px;
+}
+
+div.django-listing-container div.row-container.big-thumbnail:hover {
+    background-color: #dddddd;
+}
+
+div.django-listing-container div.row-container.big-thumbnail a,
+div.django-listing-container div.row-container.thumbnail a{
+    text-decoration: none;
+}
+
+table.django-listing > tfoot {
+    border-top: 2px solid #2aa745;
+}
+
+.django-listing td.col-column12, .django-listing td.col-interests {
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.row-container.thumbnail img {
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.row-container.big-thumbnail img {
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+h1 img {
+    padding: 20px 0;
+    max-width: 60%;
+}
+
+.list-4-cols {
+    -moz-column-count: 4;
+    -moz-column-gap: 20px;
+    -webkit-column-count: 4;
+    -webkit-column-gap: 20px;
+    column-count: 4;
+    column-gap: 20px;
+    list-style: none;
+}
+
+h2 {
+    font-size: 2rem;
+    border-bottom: 2px solid #29a745;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+h2 a:hover {
+    text-decoration: none;
+}
+
+h3 {
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
+h3::before {
+    content: '\e848';
+    color: #29a745;
+    font-family: "django_listing";
+    margin-right: 6px;
+}
+
+code {
+    color: #217f39;
+}
+
+a, .page-link {
+    color: #29a745;
+}
+
+a:hover, .page-link:hover {
+    color: #217f39;
+}
+
+.page-item.active .page-link  {
+    background-color: #29a745;
+    border-color: #29a745;
+}
+
+.page-link:focus {
+    box-shadow: 0 0 0 0.2rem rgba(41, 167, 69, 0.25);
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(41, 167, 69, 0.25);
+    border-color: #29a745;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #29a745;
+    border-color: #29a745;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #217f39;
+    border-color: #217f39;
+}
+
+.btn-primary:focus, .btn-primary:active,
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.show>.btn-primary.dropdown-toggle, .btn-primary:not(:disabled):not(.disabled):active:focus {
+    box-shadow: 0 0 0 0.2rem rgba(41, 167, 69, 0.25);
+    color: #fff;
+    background-color: #217f39;
+    border-color: #217f39;
+}
+
+form.listing-form {
+    border: 2px solid #2aa745;
+    border-radius: 6px;
+    padding: 20px;
+}
+
+.django-listing-menu a:hover {
+    background-color: #217f39;
+    color: #fff;
+}
+
+.django-listing-editing td.col-age input {
+    width:52px;
+}
+
+.django-listing-editing td.col-address textarea {
+    width:200px;
+}
+
+.django-listing-editing td.col-salary input {
+    width:82px;
+}
+
+.django-listing-editing td.col-marital_status select {
+    width:110px;
+    padding-left: 2px;
+    padding-right: 0;
+}
+
+div.django-listing-container div.row-container.selected div.selection-overlay div.checkbox {
+    color: #fff;
+}
+
+.listing-selection-menu {
+    display: none;
+    background-color: #29a745;
+    color: #ffffff;
+    font-size: 20px;
+    padding: 4px 20px;
+}
+
+a.menu-dropdown {
+    color: white;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+    background-color: #29a745;
+}
+
+select option[selected], select option:hover {
+    background-color: #29a745;
+    color: #ffffff;
+}
+
+select {
+    border-color: #29a745;
+}
+
+form span.asteriskField {
+  color: #29a745;
+  padding-left: 5px;
+}
+
+div.listing-spinner {
+    color: #29a745;
+    font-size: 32px;
+}
+
+table.object-popup {
+    width: 100%;
+}
+
+table.object-popup td.section {
+    padding-bottom: 5px;
+}
+
+table.object-popup th {
+    width: 50px;
+    white-space: nowrap;
+}
+
+table.object-popup td.section span {
+    text-decoration: none;
+    border-bottom: 2px solid #29a745;
+    display: block;
+}
+
+.dropzone .dz-preview .dz-details .dz-size {
+    margin-bottom: 2em;
+}
+
+.dropzone .dz-preview .dz-details .dz-filename {
+    font-size: 9px;
+}
+
+.dropzone .dz-preview.dz-file-preview .dz-image {
+    border-radius: 8px;
+    background: #999;
+    background: linear-gradient(to bottom,#eee,#29a745);
+}
+
+.dropzone .dz-preview.dz-file-preview .dz-progress::after {
+    content: 'Optimizing...';
+    font-size: 14px;
+}
+
+.dropzone .dz-preview.dz-file-preview .dz-progress {
+    background: none;
+    overflow: initial;
+    padding-left: 4px;
+}
+
+.form-select:focus {
+    box-shadow: 0 0 0 0.2rem rgba(41, 167, 69, 0.25);
+    border-color: #29a745;
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(41, 167, 69, 0.25);
+    border-color: #29a745;
+}
+
+.form-check-input:checked {
+    background-color: #29a745;
+    border-color: #29a745;
+}
+
+td.col-gender > div.form-field {
+    width: 90px;
+}

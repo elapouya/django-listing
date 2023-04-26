@@ -1,0 +1,32 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block example %}
+    <h2><a href="{% url 'editable' %}">Editable listing</a> :  Simple edit</h2>
+    <p>Have a look at <code>demo/templates/demo/editable1.html</code> and
+        <code>EditableListing1View</code> in <code>demo/views.py</code>
+        to see how examples are coded</p>
+
+    {% render_listing %}
+
+    {% with posted_listing.get_formset as formset %}
+        {% if formset.is_valid %}
+            <br><br>
+            <h3>Modified listing : </h3>
+            {% render_listing formset.cleaned_data exclude_columns='id' %}
+            <br><br>
+            <h3>formset.cleaned_data : </h3>
+            <pre>
+            {% for row in formset.cleaned_data %}{{ row }}
+            {% endfor %}
+            </pre>
+
+            <br><br>
+            <h3>POST data : </h3>
+            <pre>
+{{ post_data }}
+            </pre>
+        {% endif %}
+    {% endwith %}
+{% endblock %}

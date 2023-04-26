@@ -1,0 +1,194 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-06-02 14:29+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: demo/models.py:18 demo/models.py:35
+msgid "Name"
+msgstr "Nom"
+
+#: demo/models.py:19 demo/models.py:53 demo/templates/demo/div_row.html:14
+msgid "Address"
+msgstr ""
+
+#: demo/models.py:20
+msgid "City"
+msgstr "Ville"
+
+#: demo/models.py:21
+msgid "Country"
+msgstr "Pays"
+
+#: demo/models.py:22
+msgid "Phone"
+msgstr "Téléphone"
+
+#: demo/models.py:23
+msgid "e-mail"
+msgstr "Mèl"
+
+#: demo/models.py:24
+msgid "Web site"
+msgstr "Site web"
+
+#: demo/models.py:36
+msgid "Description"
+msgstr ""
+
+#: demo/models.py:44
+msgid "Male"
+msgstr "Homme"
+
+#: demo/models.py:45
+msgid "Female"
+msgstr "Femme"
+
+#: demo/models.py:48
+msgid "Married"
+msgstr "Marié"
+
+#: demo/models.py:49
+msgid "Unmarried"
+msgstr "Célibataire"
+
+#: demo/models.py:51 demo/templates/demo/big_thumbnails.html:7
+#: demo/templates/demo/div_row.html:11 demo/templates/demo/thumbnails.html:8
+msgid "First name"
+msgstr "Prénom"
+
+#: demo/models.py:52 demo/templates/demo/big_thumbnails.html:8
+#: demo/templates/demo/div_row.html:12 demo/templates/demo/thumbnails.html:9
+msgid "Last name"
+msgstr "Nom de famille"
+
+#: demo/models.py:54 demo/templates/demo/big_thumbnails.html:9
+#: demo/templates/demo/div_row.html:13 demo/templates/demo/thumbnails.html:10
+msgid "Age"
+msgstr ""
+
+#: demo/models.py:55 demo/templates/demo/div_row.html:17
+msgid "Designation"
+msgstr "Poste"
+
+#: demo/models.py:56 demo/templates/demo/div_row.html:18
+msgid "Salary"
+msgstr "Salaire"
+
+#: demo/models.py:58
+msgid "Joined on"
+msgstr "Entré en"
+
+#: demo/models.py:59 demo/templates/demo/div_row.html:20
+msgid "Gender"
+msgstr "Genre"
+
+#: demo/models.py:62 demo/templates/demo/div_row.html:19
+msgid "Marital status"
+msgstr "Status marital"
+
+#: demo/models.py:65 demo/templates/demo/div_row.html:29
+msgid "Interests"
+msgstr "Intérêts"
+
+#: demo/models.py:67 demo/templates/demo/div_row.html:23
+msgid "Company"
+msgstr "Société"
+
+#: demo/models.py:68
+msgid "Rank"
+msgstr ""
+
+#: demo/settings.py:136
+msgid "English"
+msgstr "Anglais"
+
+#: demo/settings.py:137
+msgid "French"
+msgstr "Français"
+
+#: demo/templates/demo/div_row.html:24
+msgid "Company address"
+msgstr "Adresse de la société"
+
+#: demo/templates/demo/div_row.html:25
+msgid "Company City"
+msgstr "Ville de la société"
+
+#: demo/views.py:206 demo/views.py:381 demo/views.py:431
+msgid " and "
+msgstr " et "
+
+#: demo/views.py:318
+msgid ""
+"Just to test the method "
+"<tt>manage_listing_companies_listing_row_form_clean()</tt> : do not use "
+"\"Twiyo\" in column \"Name\""
+msgstr ""
+
+#: demo/views.py:385
+msgid "You didn't select any row, action : {}"
+msgstr ""
+
+#: demo/views.py:389
+msgid "You selected row {}, action : {}"
+msgstr ""
+
+#: demo/views.py:435
+msgid "Listing {} : You didn't select any row, action : {}"
+msgstr ""
+
+#: demo/views.py:439
+msgid "Listing {} : You selected row {}, action : {}"
+msgstr ""
+
+#: demo/views.py:495
+msgid "Listing : \"{}\", action : {}, You didn't select any row"
+msgstr ""
+
+#: demo/views.py:500
+msgid "<b>Listing :</b> \"{}\", <b>action :</b> {}, <b>rows :</b> {}"
+msgstr ""
+
+#: demo/views.py:526
+#, python-brace-format
+msgid "<b>{first_name} {last_name}</b> already exists"
+msgstr ""
+
+#: demo/views.py:533
+msgid "Age must be between 0 and 130."
+msgstr ""
+
+#~ msgctxt "paginator"
+#~ msgid "Page {page_number} of {nb_pages}"
+#~ msgstr "Page {page_number} sur {nb_pages}"
+
+#~ msgctxt "paginator"
+#~ msgid "Previous"
+#~ msgstr "Précédent"
+
+#~ msgctxt "paginator"
+#~ msgid "Next"
+#~ msgstr "Suivant"
+
+#~ msgctxt "paginator"
+#~ msgid "First"
+#~ msgstr "Début"
+
+#~ msgctxt "paginator"
+#~ msgid "Last"
+#~ msgstr "Fin"

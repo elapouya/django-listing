@@ -1,0 +1,54 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+
+{% block example %}
+    <h2>Aggregation</h2>
+    <p>Have a look at <code>demo/templates/demo/aggregation.html</code> and
+        <code>demo/views.py</code> and listings in <code>demo/listings.py</code>
+        to see how examples are coded</p>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Total on all columns (page level aggregation)</h3>
+    {% render_listing Aggregation1Listing numbers_matrix %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Total, average, min and max on chosen columns (page level aggregation)</h3>
+    {% render_listing Aggregation2Listing numbers_matrix %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Computed columns (total, min, max, avg) are also automatically aggregated in footer (page level aggregation)</h3>
+    {% render_listing Aggregation3Listing numbers_matrix %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Aggregation on a model at template side (page level aggregation)</h3>
+    {% create_listing_begin as listing4 %}
+    {% setopt_listing listing4 select_columns='first_name,last_name,age,salary,designation' %}
+    {% setopt_listing listing4 has_footer=True %}
+    {% setopt_column listing4 'age' aggregation='minmax' %}
+    {% setopt_column listing4 'salary' aggregation='minmaxavg' %}
+    {% setopt_column listing4 'salary' footer_value_tpl='{min_val} - {max_val}<br>(Avg : {avg_val:.0f})' %}
+    {% create_listing_end listing4 Employee %}
+    {% render_listing listing4 %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Same but with GLOBAL aggregation (the whole dateset is used, not only the actual page)</h3>
+    {% create_listing_begin as listing4 %}
+    {% setopt_listing listing4 select_columns='first_name,last_name,age,salary,designation' %}
+    {% setopt_listing listing4 has_footer=True %}
+    {% setopt_column listing4 'age' aggregation='global_minmax' %}
+    {% setopt_column listing4 'salary' aggregation='global_minmaxavg' %}
+    {% setopt_column listing4 'salary' footer_value_tpl='{min_val} - {max_val}<br>(Avg : {avg_val:.0f})' %}
+    {% create_listing_end listing4 Employee %}
+    {% render_listing listing4 %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>List of lists data and global aggregation</h3>
+    {% render_listing Aggregation5Listing numbers_matrix per_page=5 %}
+    <br><br>
+
+{% endblock %}

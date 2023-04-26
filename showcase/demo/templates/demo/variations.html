@@ -1,0 +1,34 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+
+{% block example %}
+    <h2>Variations</h2>
+    <p>"Variations" are the possibility to display different listings with
+        the same data and at the same place depending on the user choice.
+        Usually, it is for displaying different arrangements, for example :
+    <ul>
+        <li>One variation to display a data grid</li>
+        <li>One variation to display data and thumbnails arranged into
+            div-rows
+        </li>
+        <li>One variation to display only thumbnails</li>
+    </ul>
+    The main interest is that in views.py you are still using a single listing class.
+    you do not have to create specific python code, django-listing will manage variations.
+    see the code in <code>demo/templates/demo/variations.html</code> and
+    <code>VariationsListingView</code> in
+    <code>demo/views.py</code> and <code>EmployeeVariationsListing</code>
+    in <code>demo/listings.py</code>
+    </p>
+    <h3>Example :</h3>
+    <ul class="mini-toolbar">
+        <li><a href="{% geturl_listing listing variation=0 %}">Grid</a></li>
+        <li><a href="{% geturl_listing listing variation=1 %}">With
+            thumbnail</a></li>
+        <li><a href="{% geturl_listing listing variation=2 %}">Only
+            thumbnail</a></li>
+    </ul>
+    {% render_listing listing %}
+    <p><br><br><b>NOTE :</b> The images are generated with the django application :
+    <a href="https://github.com/elapouya/django-robohash-svg" target="_blank">django-robohash-svg</a></p>
+{% endblock %}

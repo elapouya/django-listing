@@ -1,0 +1,303 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+
+{% block example %}
+    <h2>Basic usage</h2>
+    <p>There are many listings on this page : do not hesitate to scroll down.
+        You can click on column titles to sort the corresponding listing</p>
+    <p>To reduce the page length, all listings has the option <code>per_page=5</code>
+        to have only 5 items displayed per listing.</p>
+    <p>Click on <i>See code</i> buttons to see what would be the code to reproduce the listing.</p>
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Create a listing from a django model
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#basic1" aria-expanded="false">
+             See code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="basic1">
+    in settings.py :
+    <pre><code class="language-python">
+    INSTALLED_APPS = [
+        ...
+        "django_listing",
+        ...
+    ]
+    </code></pre>
+    in urls.py :
+    <pre><code class="language-python">
+    from .views import *
+
+    urlpatterns = [
+    ...
+    path('basic_usage/', BasicUsageListingView.as_view(),
+         name='basic_usage'),
+    ...
+    ]
+    </code></pre>
+    in views.py :
+    <pre><code class="language-python">
+    from django.views.generic import TemplateView
+    from demo.models import Employee
+
+    class BasicUsageListingView(TemplateView):
+        template_name = 'demo/basic_usage.html'
+        extra_context = dict(employees_as_model=Employee) # See 'Employee' definition in "Read me first" at home page.
+    </code></pre>
+    in the template 'demo/basic_usage.html' :
+    <pre><code class="language-django">
+    {% load django_listing %}
+    &lt;html&gt;
+    &lt;head&gt;
+    ...
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css&quot;/&gt;
+
+    {% render_listing_header %}
+    ...
+    &lt;/head&gt;
+    &lt;body&gt;
+    ...
+    {% render_listing employees_as_model per_page=5 %}
+    ...
+    &lt;script src=&quot;http://code.jquery.com/jquery-3.3.1.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js&quot;&gt;&lt;/script&gt;
+
+    {% render_listing_footer %}
+    &lt;/body&gt;
+    &lt;/html&gt;
+    </code></pre>
+    <b>Note : </b>jquery, popper, bootstrap and datetimepicker javascripts are not mandatory for basic listings<br>
+    <b>Note 2 : </b>django-listing includes and css+js declarations are usually put in a base template (see demo/templates/demo/index.html)
+    <br><br>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing employees_as_model per_page=5 %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <p id="example-2">You can exclude the "ID", "Rank" and "Interests" columns by using the option <code>exclude_columns="id,interests,rank"</code>
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#basic2" aria-expanded="false">
+             See code
+        </button>
+    </p>
+    {% verbatim %}
+    <div class="collapse" id="basic2">
+    in the template 'demo/basic_usage.html' :
+    <pre><code class="language-django">
+    {% load django_listing %}
+    ...
+    {% render_listing employees_as_model per_page=5 exclude_columns="id,interests,rank" %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing employees_as_model per_page=5 exclude_columns="id,interests,rank" anchor_hash="example-2" %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <p id="example-3">Or select just some of them by using the option <code>select_columns="age,first_name,last_name,address ..."</code><br>
+        Columns will be rendered in the same order as specified.
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#basic3" aria-expanded="false">
+             See code
+        </button>
+    </p>
+    {% verbatim %}
+    <div class="collapse" id="basic3">
+    in the template 'demo/basic_usage.html' :
+    <pre><code class="language-django">
+    {% load django_listing %}
+    ...
+    {% render_listing employees_as_model per_page=5 select_columns="age,first_name,last_name,address" %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing employees_as_model per_page=5 select_columns="age,first_name,last_name,address" anchor_hash="example-3" %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <p id="example-4">As it is a listing from a Django model, each row correspond to an object.
+        To get a link to the corresponding object on columns "First name" and "Last name",
+        use the option <code>link_object_columns="first_name,last_name"</code><br>
+        The link will be the one given by <code>get_absolute_url()</code> method that one should always implement in a Django model
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#basic3-1" aria-expanded="false">
+             See code
+        </button>
+    </p>
+    {% verbatim %}
+    <div class="collapse" id="basic3-1">
+    in the template 'demo/basic_usage.html' :
+    <pre><code class="language-django">
+    {% load django_listing %}
+    ...
+    {% render_listing employees_as_model per_page=5 select_columns="age,first_name,last_name,address" link_object_columns="first_name,last_name" %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing employees_as_model per_page=5 select_columns="age,first_name,last_name,address" link_object_columns="first_name,last_name" anchor_hash="example-4" %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3 id="example-5">Create a listing from a django QuerySet
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#basic4" aria-expanded="false">
+             See code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="basic4">
+    in views.py :
+    <pre><code class="language-python">
+    class BasicUsageListingView(TemplateView):
+        template_name = 'demo/basic_usage.html'
+
+        def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            context.update(employees_as_query_set=Employee.objects.all()) # Could be any queryset you want, here all employees.
+            return context
+
+    </code></pre>
+    in the template 'demo/basic_usage.html' :
+    <pre><code class="language-django">
+    {% load django_listing %}
+    ...
+    {% render_listing employees_as_query_set per_page=5 exclude_columns="id,interests,rank" %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    <p>"id", "rank" and "interests" columns has been excluded to have a smaller listing : </p>
+    {% render_listing employees_as_query_set per_page=5 exclude_columns="id,interests,rank" anchor_hash="example-5" %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3 id="example-6">Create a listing from a list of dicts
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#basic5" aria-expanded="false">
+             See code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="basic5">
+    in views.py :
+    <pre><code class="language-python">
+    class BasicUsageListingView(TemplateView):
+        template_name = 'demo/basic_usage.html'
+
+        def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            context.update(employees_as_list_of_dicts=employees) # See 'employees' definition in "Read me first" at home page.
+            return context
+
+    </code></pre>
+    in the template 'demo/basic_usage.html' :
+    <pre><code class="language-django">
+    {% load django_listing %}
+    ...
+    {% render_listing employees_as_list_of_dicts per_page=5 exclude_columns="interests,rank" %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    <p>django_listing will use dict keys as columns title,
+        "interests" and "rank" columns have been excluded to have a smaller listing : </p>
+    {% render_listing employees_as_list_of_dicts per_page=5 exclude_columns="interests,rank" anchor_hash="example-6" %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3 id="example-7">Create a listing from a list of lists
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#basic6" aria-expanded="false">
+             See code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="basic6">
+    in views.py :
+    <pre><code class="language-python">
+    class BasicUsageListingView(TemplateView):
+        template_name = 'demo/basic_usage.html'
+
+        def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            # creating a list of lists from 'employees' list of dicts
+            context.update(employees_as_list_of_lists=[ list(e.values()) for e in employees ])
+            return context
+
+    </code></pre>
+    in the template 'demo/basic_usage.html' :
+    <pre><code class="language-django">
+    {% load django_listing %}
+    ...
+    {% render_listing employees_as_list_of_lists per_page=5 %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    <p>Note : You can add some column names : see <a href="{% url "advanced_usage" %}">Advanced usage</a></p>
+    {% render_listing employees_as_list_of_lists per_page=5 anchor_hash="example-7" %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <p id="example-8">You can also remove the table header, use option <code>has_header=False</code> :
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#basic7" aria-expanded="false">
+             See code
+        </button>
+    </p>
+    {% verbatim %}
+    <div class="collapse" id="basic7">
+    in the template 'demo/basic_usage.html' :
+    <pre><code class="language-django">
+    {% load django_listing %}
+    ...
+    {% render_listing employees_as_list_of_lists per_page=5 has_header=False %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing employees_as_list_of_lists per_page=5 has_header=False anchor_hash="example-8" %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3 id="example-9">Create a listing from a simple list of strings
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#basic8" aria-expanded="false">
+             See code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="basic8">
+    in views.py :
+    <pre><code class="language-python">
+    class BasicUsageListingView(TemplateView):
+        template_name = 'demo/basic_usage.html'
+
+        def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            # Build a simple list of strings from employees list of dicts
+            context.update(employees_as_simple_list_of_strings=[
+                '{first_name} {last_name}'.format(**e) for e in employees ],)
+            return context
+
+    </code></pre>
+    in the template 'demo/basic_usage.html' :
+    <pre><code class="language-django">
+    {% load django_listing %}
+    ...
+    {% render_listing employees_as_simple_list_of_strings per_page=5 columns_headers="Employees name" %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing employees_as_simple_list_of_strings per_page=5 columns_headers="Employees name" anchor_hash="example-9" %}
+    <br><br>
+
+{% endblock %}

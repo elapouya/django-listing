@@ -1,0 +1,18 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+
+{% block example %}
+    <h2><a href="{% url 'speed_test' %}">Speed tests</a> : Django-listing</h2>
+
+    <p>This is a speed test page to compare speed with django-table2.<br>
+        The goal is to display a page with a listing of 25 rows x 12 columns.
+        The data come from SQLite.<br>
+        On an Intel Core i9 with <code>gunicorn -w 8</code> and <code>ab -n 1000 -c 10</code> :
+    </p>
+    <p>
+        <b>django-listing</b> : Requests per second: 584 [#/sec] (mean)<br>
+        <b>django-table2</b> : Requests per second: 275 [#/sec] (mean)
+    </p>
+
+    {% render_listing %}
+{% endblock %}

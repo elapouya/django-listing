@@ -1,0 +1,32 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block example %}
+    <h2><a href="{% url 'selectable' %}">Selectable listing</a> : Multiple selections</h2>
+    <p>Have a look at <code>demo/templates/demo/selectable2.html</code> and
+        <code>SelectableListing2View</code> in <code>demo/views.py</code> to see how examples are
+        coded</p>
+
+    <form method="post">{% csrf_token %}
+        {% render_listing listing %}
+        <div class="text-center">
+            <button type="submit" name="action" value="action1" class="btn btn-primary">Action 1</button>
+            <button type="submit" name="action" value="action2" class="btn btn-primary">Action 2</button>
+            <button type="submit" name="action" value="action3" class="btn btn-primary">Action 3</button>
+        </div>
+    </form>
+
+    {% with listing.get_selected_rows as selected_rows %}
+        {% if selected_rows %}
+            <br><br>
+            <h3>Selected Rows :</h3>
+            {{ selected_rows }}
+            <br><br>
+            <h3>POST data : </h3>
+            <pre>
+{{ post_data }}
+            </pre>
+        {% endif %}
+    {% endwith %}
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block example %}
+    <h2><a href="{% url 'editable' %}">Editable listing</a> : On demand edition activation</h2>
+    <p>Have a look at <code>demo/templates/demo/editable3.html</code> and
+        <code>EditableListing3View</code> in <code>demo/views.py</code> to see how examples are
+        coded</p>
+
+    <h3>Click on 'Edit' to activate the whole listing page edition</h3>
+
+    {% render_listing employees_listing anchor_hash="body-top" %}
+
+    <br><br><br>
+
+    <h3 id="example-2">User can dynamically restrict edition on some columns</h3>
+    <p>Note:<br>
+        <code>editing</code> and <code>editing_columns</code> can be set at user level
+        (in querystring).<br>
+        <code>editable</code> and <code>editable_columns</code> can only be set by the developper.<br>
+    To be modifiable, a column must be 'editable' and 'editing', the listing must be also 'editable' and 'editing'
+    (There are 4 conditions to be able to edit a column).<br>
+    If not specified, <code>editing=True</code> if <code>editable=True</code>.
+
+    </p>
+
+    {% render_listing companies_listing anchor_hash="example-2" %}
+
+    {% with posted_listing.get_formset as formset %}
+        {% if formset.is_valid %}
+            <br><br>
+            <h3>Modified listing ({{ posted_listing.id }}) : </h3>
+            {% render_listing formset.cleaned_data exclude_columns='id' %}
+            <br><br>
+            <h3>formset.cleaned_data : </h3>
+            <pre>
+            {% for row in formset.cleaned_data %}{{ row }}
+            {% endfor %}
+            </pre>
+
+            <br><br>
+            <h3>POST data : </h3>
+            <pre>
+{{ post_data }}
+            </pre>
+        {% endif %}
+    {% endwith %}
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block example %}
+    <h2><a href="{% url 'selectable' %}">Selectable listing</a> : Selection via checkboxes</h2>
+    <p>Have a look at <code>demo/templates/demo/selectable3.html</code> and
+        <code>SelectableListing3View</code> in <code>demo/views.py</code> to see how examples are
+        coded</p>
+
+    <h3>Unique selection and checkbox at left :</h3>
+    <form method="post">{% csrf_token %}
+        {% render_listing employees_listing %}
+        <div class="text-center">
+            <button type="submit" name="action" value="action1" class="btn btn-primary">Action 1</button>
+            <button type="submit" name="action" value="action2" class="btn btn-primary">Action 2</button>
+            <button type="submit" name="action" value="action3" class="btn btn-primary">Action 3</button>
+        </div>
+    </form>
+
+    <br><br>
+    <h3>Multiple selection and checkbox at right :</h3>
+    <form method="post">{% csrf_token %}
+        <button type="button" class="btn btn-primary btn-sm mb-1" listing-action="select-all" listing-target="{{ companies_listing.id }}">Select All</button>
+        <button type="button" class="btn btn-primary btn-sm mb-1" listing-action="unselect-all" listing-target="{{ companies_listing.id }}">Unselect All</button>
+        {% render_listing companies_listing %}
+        <div class="text-center">
+            <button type="submit" name="action" value="action1" class="btn btn-primary">Action 1</button>
+            <button type="submit" name="action" value="action2" class="btn btn-primary">Action 2</button>
+            <button type="submit" name="action" value="action3" class="btn btn-primary">Action 3</button>
+        </div>
+    </form>
+
+    {% with posted_listing.get_selected_rows as selected_rows %}
+        {% if selected_rows %}
+            <br><br>
+            <h3>Selected Rows :</h3>
+            {{ selected_rows }}
+            <br><br>
+            <h3>POST data : </h3>
+            <pre>
+{{ post_data }}
+            </pre>
+        {% endif %}
+    {% endwith %}
+
+    <p><br><br><b>NOTE :</b> The images are generated with the django application :
+        <a href="https://github.com/elapouya/django-robohash-svg" target="_blank">django-robohash-svg</a></p>
+
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+
+{% block example %}
+    <h2>Ajax</h2>
+    <p>Listing interaction can be done through ajax requests for a better user
+        experience. Add the attribute <code>accept_ajax = True</code> in your listing
+        class/instance parameters. You must create listing
+        instance(s) at view side (not in template) by using methods
+        <code>get_listing_instance() or get_listing_instance_xxx()</code>.</p>
+
+    <p>Have a look at <code>demo/templates/demo/ajax.html</code> and
+        <code>AjaxListingView</code> in <code>demo/views.py</code></p>
+
+    <p><b>Note :</b> When ajax is activated, normal navigation is still available for old browsers
+        and crawlers.
+        So it is "SEO" safe to use ajax mode in django-listing.</p>
+    <p><b>Note2 :</b> Ensure you have
+        {% verbatim %}<tt>{% include "django_listing/footer.html" %}</tt>{% endverbatim %}
+        at the end of your template just before &lt;body&gt;.</p>
+    <h3>Example :</h3>
+    {% render_listing listing1 %}
+
+    <br><br><br>
+
+    {% render_listing listing2 %}
+
+    <br><br><br>
+
+    {% render_listing listing_with_toolbars_and_variations %}
+
+    <br>
+    <h3>This is useful in a modal popup :</h3>
+    <!-- Button trigger modal -->
+    <div class="text-center">
+        <div class="input-group">
+            <span class="input-group-text">Employee</span>
+            <input id="employee-selected" type="text" class="form-control" placeholder="Employee" aria-label="Employee" style="width: 537px;">
+            <span class="input-group-text">PK</span>
+            <input id="employee-selected-pk" type="text" class="form-control" placeholder="Should be hidden">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#listingInModal">
+              Listing in a modal...
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="listingInModal" tabindex="-1" aria-labelledby="listingInModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="listingInModalLabel">Listing in modal</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              {% render_listing listing4 %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}

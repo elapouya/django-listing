@@ -1,0 +1,14 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+
+{% block example %}
+    <h2>Upload</h2>
+    <p>You can upload images with drag & drop, django-listing includes views to manage upload and actions, the setup is very simple</p>
+    <p>It uses Dropzone.js, django-listing automatically add dropzone CSS and JS. Urls can be customized in settings.py</p>
+    <p>Have a look at <code>demo/templates/demo/upload.html</code>, <code>UploadListingView</code> in
+        <code>demo/views.py</code> and <code>UploadListing</code> in <code>demo/listings.py</code>
+        to see how examples are coded</p>
+
+    {% render_listing %}
+
+{% endblock %}

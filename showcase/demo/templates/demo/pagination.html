@@ -1,0 +1,385 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+
+{% block example %}
+    <h2>Pagination</h2>
+    <p>You can parameter the paginator displayed below a listing</p>
+    <p>Have a look at <code>demo/templates/demo/pagination.html</code>, <code>PaginationListingView</code> in
+        <code>demo/views.py</code> and <code>xxxPaginationListing</code> in <code>demo/listings.py</code>
+        to see how examples are coded</p>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Default paginator
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#pagination1" aria-expanded="false">
+             see code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="pagination1">
+    in listings.py :
+
+    <pre><code class="language-python">
+    class PaginationListing(Listing):
+        columns = Columns(
+            Column('first_name'),
+            Column('last_name'),
+            Column('address'),
+            Column('age'),
+        )
+        per_page = 5
+    </code></pre>
+    in views.py :
+    <pre><code class="language-python">
+    class PaginationListingView(ListingView):
+        template_name = 'demo/pagination.html'
+        context_classes = (PaginationListing,) # to have access to PaginationListing in the template
+        extra_context = dict(employees=employees)
+    </code></pre>
+    in the template 'demo/pagination.html' :
+    <pre><code class="language-django">
+    {% render_listing PaginationListing employees %}
+    </code></pre>
+    <br><br>
+    <div class="alert alert-primary" role="alert">
+        <h4>Note</h4>
+        It is not mandatory to create a listing class all the time :
+        You can use the <code>{% render_listing ... %}</code> tag without specifying
+        a listing class if you specify the data and the relevant parameters.<br>
+        A shorter version of the above code would be :
+        <hr>
+
+    in views.py :
+    <pre><code class="language-python">
+    class PaginationListingView(ListingView):
+        template_name = 'demo/pagination.html'
+        extra_context=dict(employees=employees)
+    </code></pre>
+    in the template 'demo/pagination.html' :
+    <pre><code class="language-django">
+    {% render_listing employees select_columns="first_name,last_name,address,age" per_page=5 %}
+    </code></pre>
+    </div>
+
+    </div>
+    {% endverbatim %}
+
+    {% render_listing employees select_columns="first_name,last_name,address,age" per_page=5 %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>No paginator
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#pagination2" aria-expanded="false">
+             see code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="pagination2">
+    in the template 'demo/pagination.html' :
+    <pre><code class="language-django">
+    {% render_listing PaginationListing employees has_paginator=False %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing PaginationListing employees has_paginator=False %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Paginator with editable page number
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#pagination3" aria-expanded="false">
+             see code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="pagination3">
+    in the template 'demo/pagination.html' :
+    <pre><code class="language-django">
+    {% render_listing PaginationListing employees paginator_has_editable_page_info=True %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing PaginationListing employees paginator_has_editable_page_info=True %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Paginator with a goto page part
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#pagination4" aria-expanded="false">
+             see code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="pagination4">
+    in the template 'demo/pagination.html' :
+    <pre><code class="language-django">
+    {% render_listing PaginationListing employees paginator_has_goto_page=True %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing PaginationListing employees paginator_has_goto_page=True %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Paginator with parts order changed
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#pagination5" aria-expanded="false">
+             see code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="pagination5">
+    in the template 'demo/pagination.html' :
+    <pre><code class="language-django">
+    {% render_listing PaginationListing employees paginator_parts_order='rowinfo;prev,next;pageinfo' paginator_has_row_info=True %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    <p>There are 3 sections : row informations then prev + next buttons section then pageinfo section.</p>
+    {% render_listing PaginationListing employees paginator_parts_order='rowinfo;prev,next;pageinfo' paginator_has_row_info=True %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Paginator with first and last buttons
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#pagination6" aria-expanded="false">
+             see code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="pagination6">
+    in the template 'demo/pagination.html' :
+    <pre><code class="language-django">
+    {% render_listing PaginationListing employees paginator_has_first_last=True %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing PaginationListing employees paginator_has_first_last=True %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Paginator with first and last buttons AND fast page jump buttons
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#pagination7" aria-expanded="false">
+             see code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="pagination7">
+        use <i>multiple line declaration syntax</i> in the template 'demo/pagination.html' :
+    <pre><code class="language-django">
+    {% create_listing_begin PaginationListing as listing %}
+    {% setopt_listing listing paginator_has_first_last=True %}
+    {% setopt_listing listing paginator_fast_page_step=5 %}
+    {% create_listing_end listing employees %}
+    {% render_listing listing %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% create_listing_begin PaginationListing as listing %}
+    {% setopt_listing listing paginator_has_first_last=True %}
+    {% setopt_listing listing paginator_fast_page_step=5 %}
+    {% create_listing_end listing employees %}
+    {% render_listing listing %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Paginator with first and last buttons, fast page jump buttons and ONLY ICONS in nav buttons
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#pagination8" aria-expanded="false">
+             see code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="pagination8">
+    in listings.py :
+
+    <pre><code class="language-python">
+    # see definition of 'PaginationListing' in the first example of this page.
+    class NoTextButtonPaginationListing(PaginationListing):
+        paginator_class = NoTextButtonPaginator
+        paginator_has_first_last = True
+        paginator_fast_page_step = 5
+    </code></pre>
+    in views.py :
+    <pre><code class="language-python">
+    class PaginationListingView(ListingView):
+        template_name = 'demo/pagination.html'
+        context_classes = (NoTextButtonPaginationListing,)
+        extra_context = dict(employees=employees)
+    </code></pre>
+    in the template 'demo/pagination.html' :
+    <pre><code class="language-django">
+    {% render_listing NoTextButtonPaginationListing employees %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing NoTextButtonPaginationListing employees %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Paginator with first and last buttons, fast page jump buttons and NO ICONS in nav buttons
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#pagination9" aria-expanded="false">
+             see code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="pagination9">
+    in listings.py :
+
+    <pre><code class="language-python">
+    # see definition of 'PaginationListing' in the first example of this page.
+    class NoIconButtonPaginationListing(PaginationListing):
+        paginator_class = NoIconButtonPaginator
+        paginator_has_first_last = True
+        paginator_fast_page_step = 5
+    </code></pre>
+    in views.py :
+    <pre><code class="language-python">
+    class PaginationListingView(ListingView):
+        template_name = 'demo/pagination.html'
+        context_classes = (NoIconButtonPaginationListing,)
+        extra_context = dict(employees=employees)
+    </code></pre>
+    in the template 'demo/pagination.html' :
+    <pre><code class="language-django">
+    {% render_listing NoIconButtonPaginationListing employees %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing NoIconButtonPaginationListing employees %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>... with customized buttons
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#pagination10" aria-expanded="false">
+             see code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="pagination10">
+    in listings.py :
+
+    <pre><code class="language-python">
+    # see definition of 'PaginationListing' in the first example of this page.
+    class CustomButtonsPaginationListing(PaginationListing):
+        # go to http://localhost:8000/fonticons/ to see icons name
+        paginator_has_first_last = True
+        paginator_fast_page_prev_tpl = 'Previous {step} pages'
+        paginator_fast_page_next_tpl = 'Next {step} pages'
+        paginator_fast_page_step = 10
+        paginator_theme_fast_page_has_icon = False
+        paginator_theme_next_icon = 'listing-icon-right'
+        paginator_theme_prev_icon = 'listing-icon-left'
+        paginator_prev_text = 'Previous page'
+        paginator_next_text = 'Next page'
+        paginator_theme_first_icon = 'listing-icon-to-start-alt'
+        paginator_theme_last_icon = 'listing-icon-to-end-alt'
+        paginator_first_text = 'First page'
+        paginator_last_text = 'Last page'
+    </code></pre>
+    in views.py :
+    <pre><code class="language-python">
+    class PaginationListingView(ListingView):
+        template_name = 'demo/pagination.html'
+        context_classes = (CustomButtonsPaginationListing,)
+        extra_context = dict(employees=employees)
+    </code></pre>
+    in the template 'demo/pagination.html' :
+    <pre><code class="language-django">
+    {% render_listing CustomButtonsPaginationListing employees %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    <p> (see <code>listings.CustomButtonsPaginationListing</code>)</p>
+    {% render_listing CustomButtonsPaginationListing employees %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Paginator with first and last buttons and page scale (9 pages), No page info
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#pagination11" aria-expanded="false">
+             see code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="pagination11">
+    in the template 'demo/pagination.html' :
+    <pre><code class="language-django">
+    {% render_listing PaginationListing employees paginator_has_first_last=True paginator_page_scale_size=9 paginator_has_page_info=False %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing PaginationListing employees paginator_has_first_last=True paginator_page_scale_size=9 paginator_has_page_info=False %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Paginator with page scale (5 pages) and ellipsis (3 pages) BUT no pagination info and no prev and next buttons,
+        on first display the listing will go directly to page 33
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#pagination12" aria-expanded="false">
+             see code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="pagination12">
+    in listings.py :
+
+    <pre><code class="language-python">
+    # see definition of 'PaginationListing' in the first example of this page.
+    class EllipsisPaginationListing(PaginationListing):
+        paginator_has_prev_next = False
+        paginator_page_scale_size = 5
+        paginator_page_scale_ellipsis = 3
+        paginator_has_page_info = False
+        page = 33
+    </code></pre>
+    in views.py :
+    <pre><code class="language-python">
+    class PaginationListingView(ListingView):
+        template_name = 'demo/pagination.html'
+        context_classes = (EllipsisPaginationListing,)
+        extra_context = dict(employees=employees)
+    </code></pre>
+    in the template 'demo/pagination.html' :
+    <pre><code class="language-django">
+    {% render_listing EllipsisPaginationListing employees %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing EllipsisPaginationListing employees %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Paginator in table footer
+        <button class="btn btn-success btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#pagination13" aria-expanded="false">
+             see code
+        </button>
+    </h3>
+    {% verbatim %}
+    <div class="collapse" id="pagination13">
+    in the template 'demo/pagination.html' :
+    <pre><code class="language-django">
+    {% render_listing PaginationListing employees paginator_has_first_last=True paginator_page_scale_size=9 paginator_has_page_info=False paginator_in_footer=True %}
+    </code></pre>
+    </div>
+    {% endverbatim %}
+
+    {% render_listing PaginationListing employees paginator_has_first_last=True paginator_page_scale_size=9 paginator_has_page_info=False paginator_in_footer=True %}
+    <br><br>
+
+
+{% endblock %}

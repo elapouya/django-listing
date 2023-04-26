@@ -1,0 +1,36 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+
+{% block example %}
+    <h2>Toolbar</h2>
+    <p>You can add at the top and/or bottom of your listing a toolbar with different items.</p>
+    <p>Have a look at <code>demo/templates/demo/toolbar.html</code>, <code>ToolbarListingView</code> in
+        <code>demo/views.py</code> and <code>xxxToolbarListing</code> in <code>demo/listings.py</code>
+        to see how examples are coded</p>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Toolbar items (toolbar defined at python side)</h3>
+    {% render_listing ToolbarListing Employee %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Toolbar items (toolbar defined at template side),
+        use dropdowns instead of selects, toolbar only at the top,
+        an icon in export dropdown button</h3>
+    {% create_listing_begin NoToolbarListing as listing2 %}
+    {% setopt_listing listing2 toolbar='exportdropdown,sortdropdown,variations,perpagedropdown' %}
+    {% setopt_listing listing2 toolbar_placement='top' %}
+    {% setopt_listing listing2 exclude_columns='interests' %}
+    {% setopt_toolbar_item listing2 'variations' labels='Listing,Detailed,Thumbnails,Big thumbnails' %}
+    {% setopt_toolbar_item listing2 'variations' icons='listing-icon-menu-2,listing-icon-th-list-4,listing-icon-th-3,listing-icon-th-large-2' %}
+    {% setopt_toolbar_item listing2 'sortdropdown' choices='first_name:First name A-Z,-first_name:First name Z-A,age:Youngest first,-age:Oldest first' %}
+    {% setopt_toolbar_item listing2 'exportdropdown' label='<span class="listing-icon-table"></span>' %}
+    {% create_listing_end listing2 Employee %}
+
+    {% render_listing listing2 %}
+
+    <br><br>
+    <p><b>NOTE :</b> The images are generated with the django application :
+        <a href="https://github.com/elapouya/django-robohash-svg" target="_blank">django-robohash-svg</a></p>
+
+{% endblock %}

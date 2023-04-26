@@ -1,0 +1,15 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block example %}
+    <h2>Filters</h2>
+    <p>Have a look at <code>demo/templates/demo/filters1.html</code> and
+        <code>FiltersView</code> in <code>demo/views.py</code> to see how examples are coded</p>
+
+    <h3>Create a filter form at python side</h3>
+    {% render_filters_form listing %}
+
+    {% render_listing listing %}
+
+{% endblock %}

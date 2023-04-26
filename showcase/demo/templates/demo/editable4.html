@@ -1,0 +1,13 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block example %}
+    <h2><a href="{% url 'editable' %}">Editable listing</a> :  Edit with toolbar</h2>
+    <p>Have a look at <code>demo/templates/demo/editable4.html</code> and
+        <code>EditableListing4View</code> in <code>demo/views.py</code>
+        to see how examples are coded</p>
+
+    {% render_listing update_listing %}
+
+{% endblock %}

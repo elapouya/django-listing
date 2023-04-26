@@ -1,0 +1,31 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+
+{% block example %}
+    <h2>Div listing</h2>
+    <p>Django-listing is able to create listings made only with <code>&lt;div&gt;</code> tags.
+        This is the best way to have rich rows, or several records on the same row (thumbnail listing).
+    </p>
+    <p>To do that, you must set in your listing class attribute
+        <code>template_name='django_listing/listing_div.html'</code> OR
+        subclass <code>DivListing</code></p>
+    <p>Then, each row will be rendered following another template specified in
+        <code>div_template_name</code> attribute.
+        Here, look at <code>demo/templates/demo/div_row.html</code> template
+    </p>
+    <h3>One div by row :</h3>
+    {% render_listing EmployeeDivListing Employee per_page=5 %}
+
+    <h3>Many divs by row :</h3>
+    <p>You can have many divs/records in a same row, just resize the container
+        so you can put many within the listing width.<br>
+        Specify a <code>display: inline-block; width=...; height=...;</code>
+        on the container.</p>
+    <p>In this example,
+        <code>div_template_name='demo/templates/demo/thumbnail.html'</code>,
+    the template displays only a picture, first_name, last_name and age.
+    </p>
+    {% render_listing EmployeeThumbnailsListing Employee per_page=16 %}
+    <p><b>NOTE :</b> The images are generated with the django application :
+        <a href="https://github.com/elapouya/django-robohash-svg" target="_blank">django-robohash-svg</a></p>
+{% endblock %}

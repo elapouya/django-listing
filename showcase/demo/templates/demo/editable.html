@@ -1,0 +1,16 @@
+{% extends "demo/index.html" %}
+{% load i18n %}
+
+{% block example %}
+    <h2>Editable listing</h2>
+    <div class="list-group col-md-6 offset-md-3 django-listing-menu">
+        <a class="list-group-item list-group-item-action" href="{% url "editable1" %}">
+            <b>Simple edit</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "editable2" %}">
+            <b>Multiple editable listings on the same page</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "editable3" %}">
+            <b>On demand edition activation</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "editable4" %}">
+            <b>Using toobar</b></a>
+    </div>
+{% endblock %}

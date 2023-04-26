@@ -1,0 +1,17 @@
+{% extends "demo/index.html" %}
+
+{% block example %}
+    <h2>Columns</h2>
+    <div class="list-group col-md-6 offset-md-3 django-listing-menu">
+        <a class="list-group-item list-group-item-action" href="{% url "columns1" %}">
+            <b>Standard columns</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "columns2" %}">
+            <b>Relations columns</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "columns3" %}">
+            <b>Aggregation columns</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "columns4" %}">
+            <b>Input and custom columns</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "columns5" %}">
+            <b>Actions column</b></a>
+    </div>
+{% endblock %}

@@ -1,3 +1,7 @@
+0.0.17 (2023-04-26)
+-------------------
+- Add showcase with many demo pages see showcase/README.rst
+
 0.0.14 (2022-10-24)
 -------------------
 - Fix bad form closing

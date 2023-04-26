@@ -1,0 +1,88 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+
+{% block example %}
+    <h2>Advanced usage</h2>
+    <p>Have a look at <code>demo/templates/demo/advanced_usage.html</code> and
+        <code>AdvancedUsageListingView</code> in
+        <code>demo/views.py</code> and <code>EmployeeListing</code> in <code>demo/listings.py</code>
+        to see how examples are coded</p>
+    <p>There are many listings on this page : do not hesitate to scroll down.
+        You can click on column titles to sort the corresponding listing</p>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Create a listing from a Custom listing class and a custom list of
+        dicts</h3>
+    <p>Here a list of <b>female employees</b>, with only some columns and 5
+        records per page. In the paginator, the "Previous"
+        button is not displayed any more on first page (In listing class, was
+        added : <code>per_page=5</code> and
+        <code>paginator_hide_disabled_buttons=True</code>)
+    </p>
+    {% render_listing EmployeeListing females_as_list_of_dicts %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Create a listing from a Custom listing class and a custom QuerySet</h3>
+    <p>Here a list of <b>male employees</b>, same listing class than previous
+        listing.</p>
+    {% render_listing EmployeeListing males_as_query_set %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Create a listing from a custom listing with model columns and simple
+        table bootstrap look</h3>
+    <p>Note : The bootstrap css/fs files are in the whole web site.</p>
+    {% render_listing EmployeeModelListing all_employees %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Create a listing from a python listing instance created at view side</h3>
+    {% render_listing listing_instance %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Customize headers, and columns directly from the template</h3>
+    {% verbatim %}
+    <p>Here the data is a simple python list of lists :
+        You can add some column headers, just add the following listing option :</p>
+    <p><code>
+    {% setopt_listing listing columns_headers="First name,Last name,Address,Age,Designation,Salary" %}
+    </code></p>
+    <p>If you do not specify all columns name, "ColumnN" will be used instead.
+        for listings where columns names are not given (this is the case for list of lists data),
+    they are automatically calculated from the header by putting it in lower-case
+        and using underscore as space.
+        In this example, calculated columns names are :
+        <code>first_name,last_name,address,age,designation,salary,column7,column8,column9,column10,column11,column12</code></p>
+    <p>You can customize some columns directly in the template :
+        here the date format has been changed in the column "joined" and
+        the marital status in column9 has been prefixed with "is". Column12 (interests) has been removed.
+        For that, use these tags :</p>
+    <p><code>
+    {% setopt_listing listing exclude_columns="column12" %}<br>
+    {% setopt_column listing "joined" datetime_format="F Y" %}<br>
+    {% setopt_column listing "column9" value_tpl="is&nbsp;{value}" %}<br>
+    {% setopt_listing listing exclude_columns="column12" %}<br>
+    </code></p>
+    {% endverbatim %}
+
+    {% create_listing_begin as listing %}
+    {% setopt_listing listing per_page=5 %}
+    {% setopt_listing listing columns_headers="First name,Last name,Address,Age,Designation,Salary" %}
+    {% setopt_listing listing exclude_columns="column12" %}
+    {% setopt_column listing "joined" datetime_format="F Y" %}
+    {% setopt_column listing "column9" value_tpl="is&nbsp;{value}" %}
+    {% create_listing_end listing employees_as_list_of_lists %}
+    {% render_listing listing %}
+    <br><br>
+
+    <h3>Force the listing to be sorted</h3>
+    <p>By default, the listing is unsorted. The user can click a column once to sort one way
+    , twice to sort the other way and a third time get the the listing unsorted.</p>
+    <p>To force a listing to be sorted all the time, specify a sorting (will be the default one)
+    and set the listing parameter : <code>unsortable=False</code></p>
+
+    {% render_listing EmployeeListing all_employees sort='age' unsortable=False %}
+
+{% endblock %}

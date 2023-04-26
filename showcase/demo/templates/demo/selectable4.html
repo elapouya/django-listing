@@ -1,0 +1,55 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block example %}
+    <h2><a href="{% url 'selectable' %}">Selectable listing</a> : Selection for DIV listings</h2>
+    <p>Have a look at <code>demo/templates/demo/selectable4.html</code> and
+        <code>SelectableListing4View</code> in <code>demo/views.py</code> to see how examples are
+        coded</p>
+
+    <h3>One div by row (unique selection) :</h3>
+    <p>Note that when you are in select mode (<code>selectable = selecting = True</code>),
+    by default, you cannot click on anything inside each rows (for example, here
+    you cannot click on thumbnail). This is because in css file for div.selection-overlay
+        height and width has been set to 100%. Have a look at <a href="">this example</a> to have
+    and hybrid solution.</p>
+    <form method="post">{% csrf_token %}
+        {% render_listing divrows_listing %}
+        <div class="text-center">
+            <button type="submit" name="action" value="action1" class="btn btn-primary">Action 1</button>
+            <button type="submit" name="action" value="action2" class="btn btn-primary">Action 2</button>
+            <button type="submit" name="action" value="action3" class="btn btn-primary">Action 3</button>
+        </div>
+    </form>
+    <br><br>
+    <h3>Many divs by row (multiple selection) :</h3>
+
+    <form method="post">{% csrf_token %}
+        <button type="button" class="btn btn-primary btn-sm mb-1" listing-action="select-all" listing-target="{{ thumbnails_listing.id }}">Select All</button>
+        <button type="button" class="btn btn-primary btn-sm mb-1" listing-action="unselect-all" listing-target="{{ thumbnails_listing.id }}">Unselect All</button>
+    {% render_listing thumbnails_listing %}
+        <div class="text-center">
+            <button type="submit" name="action" value="action1" class="btn btn-primary">Action 1</button>
+            <button type="submit" name="action" value="action2" class="btn btn-primary">Action 2</button>
+            <button type="submit" name="action" value="action3" class="btn btn-primary">Action 3</button>
+        </div>
+    </form>
+
+    {% with posted_listing.get_selected_rows as selected_rows %}
+        {% if selected_rows %}
+            <br><br>
+            <h3>Selected Rows :</h3>
+            {{ selected_rows }}
+            <br><br>
+            <h3>POST data : </h3>
+            <pre>
+{{ post_data }}
+            </pre>
+        {% endif %}
+    {% endwith %}
+
+    <p><br><br><b>NOTE :</b> The images are generated with the django application :
+        <a href="https://github.com/elapouya/django-robohash-svg" target="_blank">django-robohash-svg</a></p>
+
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+
+{% block example %}
+    <h2><a href="{% url 'columns' %}">Columns</a> : Standard columns</h2>
+    <p>Have a look at <code>demo/templates/demo/columns1.html</code> and
+        <code>ColumnsListingView</code> in
+        <code>demo/views.py</code> and listings in <code>demo/listings.py</code>
+        to see how examples are coded</p>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Boolean columns</h3>
+    {% render_listing BoolColumnsListing BooleanModel %}
+    <br><br>
+
+    <h3>Boolean and Choices columns with centered images</h3>
+    {% render_listing BoolChoicesImgColumnsListing Employee per_page=5 %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Date/Datetime/Time columns</h3>
+    {% render_listing DatetimeListing Employee per_page=5 %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>Link to object column</h3>
+    {% render_listing LinkObjectListing Employee per_page=5 %}
+    <br><br>
+
+    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <h3>email, url and file Columns</h3>
+    <p>There are auto-detected from the given model. <br>
+        <b>Note :</b> <i>company_twiyo.svg</i> file has been renamed in the upload dir for testing,
+        that is why it has been detected has missing and the css class "missing" has been applied to the link</p>
+    {% create_listing_begin as urllisting %}
+    {% setopt_listing urllisting per_page=5 exclude_columns="id" %}
+    {% setopt_column urllisting "logo" value_tpl='{rec[logo.name|basename]}' %}
+    {% setopt_column urllisting "logo" href_tpl="/robohash/{name}?height=800&width=800" %}
+    {% setopt_column urllisting "logo" header="Logo filename" %}
+    {% create_listing_end urllisting Company %}
+
+    {% render_listing urllisting %}
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+{% load static %}
+
+{% block example %}
+    <h2>Font icons</h2>
+    <p>Here a list of icons included into django-listing :
+    </p>
+    <ul class="list-4-cols">
+    {% for icon in icons %}
+        <li><span class="{{ icon }} {% if "spin" in icon %}animate-spin{% endif %}"></span> {{ icon }}</li>
+    {% endfor %}
+    </ul>
+    <p>Do not forget to declare django_listing css in your header :</p>
+    <code>
+        &lt;link rel="stylesheet" href="{% templatetag openblock %} static "django_listing/css/django_listing.css" {% templatetag closeblock %}"&gt;
+    </code>
+    <br><br>
+    <p>Then you can display an icon in your templates by adding :</p>
+    <code>
+        &lt;span class="the_icon_name"&gt;&lt;/span&gt;
+    </code>
+    <br><br>
+    <p>If you want to animate the icon (spinner), add the <code>animate-spin</code> class :</p>
+    <code>
+        &lt;span class="listing-icon-spin6 animate-spin"&gt;&lt;/span&gt;
+    </code>
+    <br><br><br>
+    <h2>SVG icons</h2>
+    <p>To be used in toolbar when using export tool :</p>
+    <p>
+        <img width="80" src="{% static "django_listing/bootstrap5/icons/csv.svg" %}">
+        <img width="80" src="{% static "django_listing/bootstrap5/icons/dbf.svg" %}">
+        <img width="80" src="{% static "django_listing/bootstrap5/icons/html.svg" %}">
+        <img width="80" src="{% static "django_listing/bootstrap5/icons/json.svg" %}">
+        <img width="80" src="{% static "django_listing/bootstrap5/icons/ods.svg" %}">
+        <img width="80" src="{% static "django_listing/bootstrap5/icons/pdf.svg" %}">
+        <img width="80" src="{% static "django_listing/bootstrap5/icons/tsv.svg" %}">
+        <img width="80" src="{% static "django_listing/bootstrap5/icons/xls.svg" %}">
+        <img width="80" src="{% static "django_listing/bootstrap5/icons/xlsx.svg" %}">
+    </p>
+    <p>If you want to use them in your templates, use this syntax :</p>
+    <code>
+        &lt;img width="80" src="{% templatetag openblock %} static "django_listing/&lt;THEME&gt;/icons/xxx.svg" {% templatetag closeblock %}"&gt;
+    </code>
+    <br><br><br>
+
+{% endblock %}

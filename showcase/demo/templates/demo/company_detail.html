@@ -1,0 +1,17 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+
+{% block example %}
+    <h2>Company detail</h2>
+    <p>
+    <b>Name :</b> {{ object.name }}<br>
+    <b>Address : </b>{{ object.address }}<br>
+    <b>City : </b>{{ object.city }}<br>
+    <b>Country : </b>{{ object.country }}<br>
+    <b>Phone : </b>{{ object.phone }}<br>
+    <b>email : </b>{{ object.email }}<br>
+    <b>Web site : </b><a href="http://google.com/search?q={{ object.name }}">{{ object.website }}</a><br>
+    <b>Logo : </b><img src="/media/{{ object.logo }}"><br>
+    </p>
+
+{% endblock %}

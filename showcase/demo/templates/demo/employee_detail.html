@@ -1,0 +1,21 @@
+{% extends "demo/index.html" %}
+{% load django_listing %}
+
+{% block example %}
+    <h2>Employee details</h2>
+    <p>
+    <b>First Name :</b> {{ object.first_name }}<br>
+    <b>Last Name : </b>{{ object.last_name }}<br>
+    <b>Address : </b>{{ object.address }}<br>
+    <b>Age : </b>{{ object.age }}<br>
+    <b>Designation : </b>{{ object.designation }}<br>
+    <b>Salary : </b>{{ object.salary }}<br>
+    <b>Joined on : </b>{{ object.joined }}<br>
+    <b>Gender : </b>{{ object.gender }}<br>
+    <b>Marital status : </b>{{ object.marital_status }}<br>
+    <b>Have a car : </b>{{ object.have_car }}<br>
+    <b>Interests : </b>{% for i in object.interests.all %}{{ i }},{% endfor %}<br>
+    <b>Company : </b>{{ object.company.name }}<br>
+    </p>
+
+{% endblock %}

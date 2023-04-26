@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "django_listing_showcase"
+version = "0.1.0"
+description = ""
+authors = ["Eric Lapouyade"]
+readme = "README.rst"
+#packages = [{include = "demo"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+django = "^4.2"
+django-extensions = "^3.2.1"
+django-robohash-svg = "^0.9.5"
+django-tables2 = "^2.5.3"
+gunicorn = "^20.1.0"
+whitenoise = "^6.4.0"
+django-imagekit = "^4.1.0"
+openpyxl = "^3.1.2"
+markuppy = "^1.14"
+odfpy = "^1.4.1"
+django-modals = "^0.0.1"
+django-better-image = "^0.0.4"
+django-listing = {path = "..", develop = true}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
