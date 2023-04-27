@@ -1016,3 +1016,7 @@ div.form-check-input {
     border: none;
     margin: 0;
 }
+
+div.django-listing-container .table-striped>tbody>tr.selected>* {
+    color: white;
+}

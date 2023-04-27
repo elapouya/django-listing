@@ -206,15 +206,17 @@ function djlst_deactivate_selection(e) {
 function djlst_selection_menu_update(e) {
     var listing = e.closest("div.django-listing-selecting");
     var selection_menu_id = listing.attr('selection-menu-id');
-    var selection_menu = $('#'+selection_menu_id);
-    var selected_items = selection_menu.find('span.selected_items')
-    var count = listing.find('.row-container.selected').length;
-    if (count == 0) {
-        selected_items.text(selected_items.attr('none'));
-    } else if (count == 1) {
-        selected_items.text(selected_items.attr('one'));
-    } else {
-        selected_items.text(selected_items.attr('many').replace('{nb}',count));
+    if (selection_menu_id) {
+        var selection_menu = $('#' + selection_menu_id);
+        var selected_items = selection_menu.find('span.selected_items')
+        var count = listing.find('.row-container.selected').length;
+        if (count == 0) {
+            selected_items.text(selected_items.attr('none'));
+        } else if (count == 1) {
+            selected_items.text(selected_items.attr('one'));
+        } else {
+            selected_items.text(selected_items.attr('many').replace('{nb}', count));
+        }
     }
 }
 
