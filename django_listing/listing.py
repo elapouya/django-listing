@@ -4,99 +4,171 @@
 # @author: Eric Lapouyade
 #
 
-from django.utils.translation import gettext as _
-from django.utils.translation import gettext_lazy, pgettext_lazy
-from django.utils.translation import to_locale
-from django.http import QueryDict
-from django.template import loader
-from django.db.models import Model
-from django.db.models.query import QuerySet
-from django.conf import settings
-from django import forms
-from django.core.exceptions import ValidationError
-from django.forms.fields import FileField
-from django.middleware.csrf import get_token as get_csrf_token
-from urllib.parse import urlsplit, urlunsplit
-
-from .theme_config import ThemeAttribute, ThemeTemplate
-from .exceptions import *
-from .record import RecordManager
-from .html_attributes import HTMLAttributes
-from .context import RenderContext
-from .paginators import Paginator, PAGINATOR_PARAMS_KEYS
-from .columns import ( ModelColumns, SequenceColumns, COLUMNS_PARAMS_KEYS,
-                       SelectionColumn, )
-from .toolbar import Toolbar, TOOLBAR_PARAMS_KEYS
-from .filters import Filters, FILTERS_PARAMS_KEYS
-from .utils import init_dicts_from_class
-from .listing_form import ListingForm, LISTING_FORM_PARAMS_KEYS, ListingBaseForm
-from django_listing import EXPORT_FORMATS
-import tablib
 import collections
 import logging
 import pprint
+from urllib.parse import urlsplit, urlunsplit
+
+import tablib
+from django import forms
+from django.conf import settings
+from django.db.models import Model
+from django.db.models.query import QuerySet
+from django.http import QueryDict
+from django.middleware.csrf import get_token as get_csrf_token
+from django.template import loader
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy, pgettext_lazy
+
+from django_listing import EXPORT_FORMATS
+
+from .columns import COLUMNS_PARAMS_KEYS, ModelColumns, SelectionColumn, SequenceColumns
+from .context import RenderContext
+from .exceptions import *
+from .filters import FILTERS_PARAMS_KEYS, Filters
+from .html_attributes import HTMLAttributes
+from .listing_form import LISTING_FORM_PARAMS_KEYS, ListingBaseForm
+from .paginators import PAGINATOR_PARAMS_KEYS, Paginator
+from .record import RecordManager
+from .theme_config import ThemeAttribute, ThemeTemplate
+from .toolbar import TOOLBAR_PARAMS_KEYS, Toolbar
+from .utils import init_dicts_from_class
+
 pp = pprint.PrettyPrinter(indent=4)
 
-__all__ = ['ListingVariations', 'Listing', 'DivListing', 'logger']
+__all__ = ["ListingVariations", "Listing", "DivListing", "logger"]
 
-logger = logging.getLogger('django_listing')
+logger = logging.getLogger("django_listing")
 
 LISTING_ROWS_PER_PAGE = 20
 LISTING_ROWS_PER_PAGE_MAX = 500
-LISTING_SUFFIX_REQUEST_DATA_FIELD = '_listing_suffix_data'
-LISTING_SUFFIX_PATTERN = '_{}'
-LISTING_SELECTION_INPUT_NAME_KEY = 'selected_rows'
-LISTING_SELECTION_CHECKBOX_NAME = 'selection_checkbox'
-LISTING_SELECTION_HOVER_CSS_CLASS = 'hover'
-LISTING_SELECTOR_CSS_CLASS = 'row-selector'
+LISTING_SUFFIX_REQUEST_DATA_FIELD = "_listing_suffix_data"
+LISTING_SUFFIX_PATTERN = "_{}"
+LISTING_SELECTION_INPUT_NAME_KEY = "selected_rows"
+LISTING_SELECTION_CHECKBOX_NAME = "selection_checkbox"
+LISTING_SELECTION_HOVER_CSS_CLASS = "hover"
+LISTING_SELECTOR_CSS_CLASS = "row-selector"
 
 # only these parameters are allowed in the query string.
 LISTING_QUERY_STRING_KEYS = {
-    'sort','page','per_page','variation', 'select_columns', 'theme', 'export',
-    'editing_columns', 'editing_row_pk', 'editing', 'selecting'
+    "editing",
+    "editing_columns",
+    "editing_row_pk",
+    "export",
+    "page",
+    "per_page",
+    "select_columns",
+    "selecting",
+    "sort",
+    "theme",
+    "variation",
 }
-LISTING_QUERY_STRING_INT_KEYS = {
-    'page','per_page','variation', 'editing_row_pk'
-}
+LISTING_QUERY_STRING_INT_KEYS = {"page", "per_page", "variation", "editing_row_pk"}
 LISTING_NOT_PERSISTENT_QUERY_STRING_KEYS = set()
 
 # Only these attributes can be modified outside the class (in django templates,
 # views, listings instances ...)
 LISTING_PARAMS_KEYS = {
-    'sort','page','per_page', 'per_page_max', 'orphans', 'export', 'name',
-    'allow_empty_first_page', 'empty_table_msg', 'attrs',
-    'paginator_class', 'variation', 'suffix', 'div_rows', 'row_inner_div_tpl',
-    'variations', 'global_context','data', 'has_header',
-    'has_footer', 'has_paginator', 'select_columns', 'exclude_columns',
-    'theme_sort_asc_icon', 'theme_sort_desc_icon', 'theme_sort_none_icon',
-    'theme_sortable_class', 'theme_sort_asc_class', 'theme_sort_desc_class',
-    'columns_headers', 'theme', 'id', 'listing_template_name',
-    'div_row_template_name', 'toolbar', 'toolbar_placement', 'ajax_request',
-    'ajax_part', 'accept_ajax', 'div_template_name', 'sortable', 'unsortable',
-    'filters', 'theme_button_active_class', 'theme_button_disabled_class',
-    'empty_listing_template_name', 'record_label', 'footer_template_name',
-    'editable_columns', 'editing_columns', 'editing_row_pk', 'editable', 'editing',
-    'editing_hidden_columns', 'row_form_base_class', 'datetimepicker_date_format',
-    'datetimepicker_datetime_format', 'datetimepicker_time_format',
-    'save_to_database', 'primary_key', 'selectable', 'selecting',
-    'selection_multiple', 'selection_position', 'selection_key',
-    'row_attrs', 'theme_div_row_container_class', 'selection_mode',
-    'selection_overlay_template_name', 'selection_menu_id',
-    'onready_snippet','footer_snippet', 'selection_initial', 'form',
-    'link_object_columns', 'anchor_hash', 'theme_spinner_icon', 'has_upload',
-    'theme_action_button_class',
-    'theme_action_button_cancel_icon', 'theme_action_button_edit_icon',
-    'theme_action_button_update_icon', 'theme_action_button_upload_icon',
-    'action_button_cancel_label', 'action_button_edit_label',
-    'action_button_update_label', 'action_button_upload_label',
-    'action_footer_template_name', 'action_header_template_name',
-    'has_footer_action_buttons', 'edit_on_demand', 'use_datetimepicker',
-    'small_device_header_style', 'is_small_device_localized',
-    'small_device_max_width', 'theme_sorted_class',
+    "accept_ajax",
+    "action_button_cancel_label",
+    "action_button_edit_label",
+    "action_button_update_label",
+    "action_button_upload_label",
+    "action_footer_template_name",
+    "action_header_template_name",
+    "ajax_part",
+    "ajax_request",
+    "allow_empty_first_page",
+    "anchor_hash",
+    "attrs",
+    "columns_headers",
+    "data",
+    "datetimepicker_date_format",
+    "datetimepicker_datetime_format",
+    "datetimepicker_time_format",
+    "div_row_template_name",
+    "div_rows",
+    "div_template_name",
+    "edit_on_demand",
+    "editable",
+    "editable_columns",
+    "editing",
+    "editing_columns",
+    "editing_hidden_columns",
+    "editing_row_pk",
+    "empty_listing_template_name",
+    "empty_table_msg",
+    "exclude_columns",
+    "export",
+    "filters",
+    "footer_snippet",
+    "footer_template_name",
+    "form",
+    "global_context",
+    "has_footer",
+    "has_footer_action_buttons",
+    "has_header",
+    "has_paginator",
+    "has_upload",
+    "id",
+    "is_small_device_localized",
+    "link_object_columns",
+    "listing_template_name",
+    "name",
+    "onready_snippet",
+    "orphans",
+    "page",
+    "paginator_class",
+    "per_page",
+    "per_page_max",
+    "primary_key",
+    "record_label",
+    "row_attrs",
+    "row_form_base_class",
+    "row_inner_div_tpl",
+    "save_to_database",
+    "select_columns",
+    "selectable",
+    "selecting",
+    "selection_initial",
+    "selection_key",
+    "selection_menu_id",
+    "selection_mode",
+    "selection_multiple",
+    "selection_overlay_template_name",
+    "selection_position",
+    "small_device_header_style",
+    "small_device_max_width",
+    "sort",
+    "sortable",
+    "suffix",
+    "theme",
+    "theme_action_button_cancel_icon",
+    "theme_action_button_class",
+    "theme_action_button_edit_icon",
+    "theme_action_button_update_icon",
+    "theme_action_button_upload_icon",
+    "theme_button_active_class",
+    "theme_button_disabled_class",
+    "theme_div_row_container_class",
+    "theme_sort_asc_class",
+    "theme_sort_asc_icon",
+    "theme_sort_desc_class",
+    "theme_sort_desc_icon",
+    "theme_sort_none_icon",
+    "theme_sortable_class",
+    "theme_sorted_class",
+    "theme_spinner_icon",
+    "toolbar",
+    "toolbar_placement",
+    "unsortable",
+    "use_datetimepicker",
+    "variation",
+    "variations",
 }
 
-LISTING_VARIATIONS_KEYS = LISTING_PARAMS_KEYS | {'get_url'}
-LISTING_FORMSET_PREFIX = 'listing'
+LISTING_VARIATIONS_KEYS = LISTING_PARAMS_KEYS | {"get_url"}
+LISTING_FORMSET_PREFIX = "listing"
 
 
 class ListingBase:
@@ -107,7 +179,7 @@ class ListingBase:
         self.stored_filters_params = {}
         self.stored_form_params = {}
 
-    def transfert_params_from(self,listing):
+    def transfert_params_from(self, listing):
         self.stored_params = listing.stored_params
         self.stored_columns_params = listing.stored_columns_params
         self.stored_toolbar_items_params = listing.stored_toolbar_items_params
@@ -123,66 +195,66 @@ class ListingBase:
     def store_html_attr(self, listing_attr, html_attr, value):
         html_params = self.stored_params.get(listing_attr)
         if html_params is None:
-            self.stored_params[listing_attr] = HTMLAttributes({html_attr:value})
+            self.stored_params[listing_attr] = HTMLAttributes({html_attr: value})
         else:
-            html_params.add(html_attr,value)
+            html_params.add(html_attr, value)
 
     def store_column_kwargs(self, name, **kwargs):
-        self.stored_columns_params.setdefault(name,{}).update(kwargs)
+        self.stored_columns_params.setdefault(name, {}).update(kwargs)
 
     def store_column_html_attr(self, name, col_attr, html_attr, value):
         col_params = self.stored_columns_params.get(name)
         if col_params is None:
-            param = {col_attr:HTMLAttributes({html_attr:value})}
-            self.store_column_kwargs(name,**param)
+            param = {col_attr: HTMLAttributes({html_attr: value})}
+            self.store_column_kwargs(name, **param)
         else:
-            html_params = col_params.setdefault(html_attr,HTMLAttributes())
-            html_params.add(html_attr,value)
+            html_params = col_params.setdefault(html_attr, HTMLAttributes())
+            html_params.add(html_attr, value)
 
     def store_toolbar_item_html_attr(self, name, tbi_attr, html_attr, value):
         tbi_params = self.stored_toolbar_items_params.get(name)
         if tbi_params is None:
-            param = {tbi_attr:HTMLAttributes({html_attr:value})}
-            self.store_toolbar_item_kwargs(name,**param)
+            param = {tbi_attr: HTMLAttributes({html_attr: value})}
+            self.store_toolbar_item_kwargs(name, **param)
         else:
-            html_params = tbi_params.setdefault(html_attr,HTMLAttributes())
-            html_params.add(html_attr,value)
+            html_params = tbi_params.setdefault(html_attr, HTMLAttributes())
+            html_params.add(html_attr, value)
 
     def get_column_kwargs(self, name):
         return self.stored_columns_params.get(name)
 
     def store_toolbar_item_kwargs(self, name, **kwargs):
-        self.stored_toolbar_items_params.setdefault(name,{}).update(kwargs)
+        self.stored_toolbar_items_params.setdefault(name, {}).update(kwargs)
 
     def get_toolbar_item_kwargs(self, name):
         return self.stored_toolbar_items_params.get(name)
 
     def store_filter_kwargs(self, name, **kwargs):
-        self.stored_filters_params.setdefault(name,{}).update(kwargs)
+        self.stored_filters_params.setdefault(name, {}).update(kwargs)
 
     def store_filter_html_attr(self, name, filter_attr, html_attr, value):
         filter_params = self.stored_filters_params.get(name)
         if filter_params is None:
-            param = {filter_attr:HTMLAttributes({html_attr:value})}
-            self.store_filter_kwargs(name,**param)
+            param = {filter_attr: HTMLAttributes({html_attr: value})}
+            self.store_filter_kwargs(name, **param)
         else:
-            html_params = filter_params.setdefault(html_attr,HTMLAttributes())
-            html_params.add(html_attr,value)
+            html_params = filter_params.setdefault(html_attr, HTMLAttributes())
+            html_params.add(html_attr, value)
 
     def get_filter_kwargs(self, name):
         return self.stored_filters_params.get(name)
 
     def store_form_kwargs(self, name, **kwargs):
-        self.stored_form_params.setdefault(name,{}).update(kwargs)
+        self.stored_form_params.setdefault(name, {}).update(kwargs)
 
     def store_form_html_attr(self, name, form_attr, html_attr, value):
         form_params = self.stored_form_params.get(name)
         if form_params is None:
-            param = {form_attr:HTMLAttributes({html_attr:value})}
-            self.store_form_kwargs(name,**param)
+            param = {form_attr: HTMLAttributes({html_attr: value})}
+            self.store_form_kwargs(name, **param)
         else:
-            html_params = form_params.setdefault(html_attr,HTMLAttributes())
-            html_params.add(html_attr,value)
+            html_params = form_params.setdefault(html_attr, HTMLAttributes())
+            html_params.add(html_attr, value)
 
     def get_form_kwargs(self, name):
         return self.stored_form_params.get(name)
@@ -222,7 +294,7 @@ class ListingVariations(ListingBase):
             self.listing.set_attr(attr, value)
         else:
             # postpone to when listing will be created
-            self.store_kwargs(**{attr:value})
+            self.store_kwargs(**{attr: value})
 
     def is_initialized(self):
         if self.listing:
@@ -243,7 +315,7 @@ class ListingVariations(ListingBase):
             request = context.request
             if self.suffix is None:
                 self.suffix = Listing.get_suffix(request, self)
-            variation = request.GET.get('variation'+self.suffix)
+            variation = request.GET.get("variation" + self.suffix)
             if variation and variation.isdigit():
                 variation = int(variation)
                 if variation >= len(self.variations_classes) or variation < 0:
@@ -260,8 +332,8 @@ class ListingVariations(ListingBase):
             if self.id:
                 listing.id = self.id
             # Copy variations class attributes to listing instance
-            for k,v in self.__class__.__dict__.items():
-                if not k.startswith('_') and not getattr(listing,k,None):
+            for k, v in self.__class__.__dict__.items():
+                if not k.startswith("_") and not getattr(listing, k, None):
                     setattr(listing, k, v)
             listing.transfert_params_from(self)
             listing.set_kwargs()
@@ -296,26 +368,26 @@ class ListingVariations(ListingBase):
 class Listing(ListingBase):
     accept_ajax = False
     action = None
-    action_button_cancel_label = pgettext_lazy('action button','Cancel')
-    action_button_edit_label = pgettext_lazy('action button','Edit')
-    action_button_update_label = pgettext_lazy('action button','Update')
-    action_button_upload_label = pgettext_lazy('action button','Upload')
+    action_button_cancel_label = pgettext_lazy("action button", "Cancel")
+    action_button_edit_label = pgettext_lazy("action button", "Edit")
+    action_button_update_label = pgettext_lazy("action button", "Update")
+    action_button_upload_label = pgettext_lazy("action button", "Upload")
     action_col = None
-    action_footer_template_name = ThemeTemplate('action_footer.html')
-    action_header_template_name = ThemeTemplate('action_header.html')
+    action_footer_template_name = ThemeTemplate("action_footer.html")
+    action_header_template_name = ThemeTemplate("action_header.html")
     ajax_part = None
     allow_empty_first_page = True
     anchor_hash = None
-    attrs = {'class':'table table-hover table-bordered table-striped table-sm'}
+    attrs = {"class": "table table-hover table-bordered table-striped table-sm"}
     can_edit = False
     can_select = False
     columns = None
     columns_headers = None
     data = None
-    datetimepicker_date_format = 'Y-m-d'
-    datetimepicker_datetime_format = 'Y-m-d H:i'
-    datetimepicker_time_format = 'H:i'
-    div_template_name = ThemeTemplate('div_row.html')
+    datetimepicker_date_format = "Y-m-d"
+    datetimepicker_datetime_format = "Y-m-d H:i"
+    datetimepicker_time_format = "H:i"
+    div_template_name = ThemeTemplate("div_row.html")
     row_attrs = {}
     edit_on_demand = False
     editable = False
@@ -324,8 +396,8 @@ class Listing(ListingBase):
     editing_columns = None
     editing_row_pk = None
     editing_hidden_columns = None
-    empty_table_msg = gettext_lazy('Nothing to display')
-    empty_listing_template_name = ThemeTemplate('empty_listing.html')
+    empty_table_msg = gettext_lazy("Nothing to display")
+    empty_listing_template_name = ThemeTemplate("empty_listing.html")
     exclude_columns = None
     export = None
     filters = None
@@ -345,9 +417,9 @@ class Listing(ListingBase):
     link_object_columns = None
     row_form_base_class = ListingBaseForm
     listing_form_base_class = ListingBaseForm
-    listing_template_name = ThemeTemplate('listing.html')
+    listing_template_name = ThemeTemplate("listing.html")
     model = None
-    name = 'listing'
+    name = "listing"
     onready_snippet = None
     orphans = 0
     page = 1
@@ -357,7 +429,7 @@ class Listing(ListingBase):
     per_page = LISTING_ROWS_PER_PAGE
     per_page_max = LISTING_ROWS_PER_PAGE_MAX
     posted_columns = None
-    primary_key = 'id'
+    primary_key = "id"
     records_class = RecordManager
     record_label = None
     row_form_errors = None
@@ -369,19 +441,19 @@ class Listing(ListingBase):
     selected_hidden_columns = None
     selecting = None
     selection_initial = None
-    selection_key = 'id'
+    selection_key = "id"
     selection_menu_id = None
-    selection_mode = 'default'  # default, overlay, hover
+    selection_mode = "default"  # default, overlay, hover
     selection_multiple = False
-    selection_overlay_template_name = ThemeTemplate('selection_overlay.html')
-    selection_position = 'hidden'  # left, right or hidden
-    small_device_max_width = '767.98px'
-    small_device_header_style = 'font-weight: bold'
+    selection_overlay_template_name = ThemeTemplate("selection_overlay.html")
+    selection_position = "hidden"  # left, right or hidden
+    small_device_max_width = "767.98px"
+    small_device_header_style = "font-weight: bold"
     sort = None
     sortable = True
     suffix = None
     toolbar = None
-    toolbar_placement = 'both'
+    toolbar_placement = "both"
     unsortable = True
     use_datetimepicker = False
     variation = None
@@ -389,30 +461,30 @@ class Listing(ListingBase):
 
     params_keys = set()  # keep it here in the class not in __init__()
 
-    theme_class = ThemeAttribute('theme_class')
-    theme_listing_class = ThemeAttribute('theme_listing_class')
-    theme_action_button_class = ThemeAttribute('theme_action_button_class')
-    theme_action_button_cancel_icon = ThemeAttribute('theme_action_button_cancel_icon')
-    theme_action_button_edit_icon = ThemeAttribute('theme_action_button_edit_icon')
-    theme_action_button_update_icon = ThemeAttribute('theme_action_button_update_icon')
-    theme_action_button_upload_icon = ThemeAttribute('theme_action_button_upload_icon')
-    theme_container_class = ThemeAttribute('theme_container_class')
-    theme_sort_asc_icon = ThemeAttribute('theme_sort_asc_icon')
-    theme_sort_desc_icon = ThemeAttribute('theme_sort_desc_icon')
-    theme_sort_none_icon = ThemeAttribute('theme_sort_none_icon')
-    theme_spinner_icon = ThemeAttribute('theme_spinner_icon')
-    theme_sortable_class = ThemeAttribute('theme_sortable_class')
-    theme_sorted_class = ThemeAttribute('theme_sorted_class')
-    theme_sort_asc_class = ThemeAttribute('theme_sort_asc_class')
-    theme_sort_desc_class = ThemeAttribute('theme_sort_desc_class')
-    theme_button_class = ThemeAttribute('theme_button_class')
-    theme_button_disabled_class = ThemeAttribute('theme_button_disabled_class')
-    theme_button_active_class = ThemeAttribute('theme_button_active_class')
-    theme_div_row_container_class = ThemeAttribute('theme_div_row_container_class')
-    theme_row_class = ThemeAttribute('theme_row_class')
+    theme_class = ThemeAttribute("theme_class")
+    theme_listing_class = ThemeAttribute("theme_listing_class")
+    theme_action_button_class = ThemeAttribute("theme_action_button_class")
+    theme_action_button_cancel_icon = ThemeAttribute("theme_action_button_cancel_icon")
+    theme_action_button_edit_icon = ThemeAttribute("theme_action_button_edit_icon")
+    theme_action_button_update_icon = ThemeAttribute("theme_action_button_update_icon")
+    theme_action_button_upload_icon = ThemeAttribute("theme_action_button_upload_icon")
+    theme_container_class = ThemeAttribute("theme_container_class")
+    theme_sort_asc_icon = ThemeAttribute("theme_sort_asc_icon")
+    theme_sort_desc_icon = ThemeAttribute("theme_sort_desc_icon")
+    theme_sort_none_icon = ThemeAttribute("theme_sort_none_icon")
+    theme_spinner_icon = ThemeAttribute("theme_spinner_icon")
+    theme_sortable_class = ThemeAttribute("theme_sortable_class")
+    theme_sorted_class = ThemeAttribute("theme_sorted_class")
+    theme_sort_asc_class = ThemeAttribute("theme_sort_asc_class")
+    theme_sort_desc_class = ThemeAttribute("theme_sort_desc_class")
+    theme_button_class = ThemeAttribute("theme_button_class")
+    theme_button_disabled_class = ThemeAttribute("theme_button_disabled_class")
+    theme_button_active_class = ThemeAttribute("theme_button_active_class")
+    theme_div_row_container_class = ThemeAttribute("theme_div_row_container_class")
+    theme_row_class = ThemeAttribute("theme_row_class")
 
     def __init__(self, data=None, **kwargs):
-        super().__init__(data,**kwargs)
+        super().__init__(data, **kwargs)
         self.request = None
         self.parsed_url = None
         self.page_context = None
@@ -423,7 +495,7 @@ class Listing(ListingBase):
         self.editing_really_hidden_columns = set()
         self.can_edit_columns = []
         self.col_cell_renderers = {}
-        init_dicts_from_class(self,['global_context','attrs','row_attrs'])
+        init_dicts_from_class(self, ["global_context", "attrs", "row_attrs"])
         self._initialized = False
         self._render_initialized = False
         self._formset = None
@@ -441,24 +513,23 @@ class Listing(ListingBase):
     def get_params_keys(cls):
         if not Listing.params_keys:
             Listing.params_keys = set(LISTING_PARAMS_KEYS)
+            Listing.params_keys.update({"columns_%s" % k for k in COLUMNS_PARAMS_KEYS})
             Listing.params_keys.update(
-                {'columns_%s' % k for k in COLUMNS_PARAMS_KEYS})
+                {"paginator_%s" % k for k in PAGINATOR_PARAMS_KEYS}
+            )
+            Listing.params_keys.update({"toolbar_%s" % k for k in TOOLBAR_PARAMS_KEYS})
+            Listing.params_keys.update({"filters_%s" % k for k in FILTERS_PARAMS_KEYS})
             Listing.params_keys.update(
-                {'paginator_%s' % k for k in PAGINATOR_PARAMS_KEYS})
-            Listing.params_keys.update(
-                {'toolbar_%s' % k for k in TOOLBAR_PARAMS_KEYS})
-            Listing.params_keys.update(
-                {'filters_%s' % k for k in FILTERS_PARAMS_KEYS})
-            Listing.params_keys.update(
-                {'form_%s' % k for k in LISTING_FORM_PARAMS_KEYS})
+                {"form_%s" % k for k in LISTING_FORM_PARAMS_KEYS}
+            )
         return Listing.params_keys
 
     def set_kwargs(self, **kwargs):
         self.store_kwargs(**kwargs)
         params_keys = self.get_params_keys()
         for k, v in self.stored_params.items():
-            if k in params_keys or ('__' in k and not k.startswith('__')):
-                setattr(self,k,v)
+            if k in params_keys or ("__" in k and not k.startswith("__")):
+                setattr(self, k, v)
         self.stored_params = {}
 
     def have_to_refresh(self):
@@ -468,74 +539,77 @@ class Listing(ListingBase):
         self._have_to_refresh = True
 
     def add_onready_snippet(self, snippet):
-        if not hasattr(self.request,'django_listing_onready_snippets'):
+        if not hasattr(self.request, "django_listing_onready_snippets"):
             self.request.django_listing_onready_snippets = []
         if snippet not in self.request.django_listing_onready_snippets:
             self.request.django_listing_onready_snippets.append(snippet)
 
     def add_header_snippet(self, snippet):
-        if not hasattr(self.request,'django_listing_header_snippets'):
+        if not hasattr(self.request, "django_listing_header_snippets"):
             self.request.django_listing_header_snippets = []
         if snippet not in self.request.django_listing_header_snippets:
             self.request.django_listing_header_snippets.append(snippet)
 
     def add_footer_dict_list(self, key, dct):
-        if not hasattr(self.request,'django_listing_footer_dict_list'):
+        if not hasattr(self.request, "django_listing_footer_dict_list"):
             self.request.django_listing_footer_dict_list = {}
         dict_list = self.request.django_listing_footer_dict_list.setdefault(key, [])
         dict_list.append(dct)
 
     def add_footer_snippet(self, snippet):
-        if not hasattr(self.request,'django_listing_footer_snippets'):
+        if not hasattr(self.request, "django_listing_footer_snippets"):
             self.request.django_listing_footer_snippets = []
         if snippet not in self.request.django_listing_footer_snippets:
             self.request.django_listing_footer_snippets.append(snippet)
 
     def need_media_for(self, feature_name):
-        if not hasattr(self.request, 'need_media_for'):
+        if not hasattr(self.request, "need_media_for"):
             self.request.need_media_for = {}
         self.request.need_media_for[feature_name] = True
 
     def create_missing_columns(self):
         if self.columns is None:
-            if isinstance(self.columns_headers,str):
-                self.columns_headers = self.columns_headers.split(',')
+            if isinstance(self.columns_headers, str):
+                self.columns_headers = self.columns_headers.split(",")
             if self.model:
                 self.columns = ModelColumns(
-                    self.model, listing=self,
-                    link_object_columns=self.link_object_columns )
-            elif self.data and isinstance(self.data,collections.abc.Sequence):
-                self.columns = SequenceColumns(self.data, self.columns_headers,
-                                               listing=self)
+                    self.model,
+                    listing=self,
+                    link_object_columns=self.link_object_columns,
+                )
+            elif self.data and isinstance(self.data, collections.abc.Sequence):
+                self.columns = SequenceColumns(
+                    self.data, self.columns_headers, listing=self
+                )
         if not self.columns:
-            raise InvalidListing(_('Please configure at least one column '
-                                   'in your listing'))
+            raise InvalidListing(
+                _("Please configure at least one column " "in your listing")
+            )
         if self.selectable:
-            if self.selection_position == 'left':
-                self.columns.insert(
-                    0,
-                    SelectionColumn(LISTING_SELECTION_CHECKBOX_NAME)
-                )
-            elif self.selection_position == 'right':
-                self.columns.append(
-                    SelectionColumn(LISTING_SELECTION_CHECKBOX_NAME)
-                )
+            if self.selection_position == "left":
+                self.columns.insert(0, SelectionColumn(LISTING_SELECTION_CHECKBOX_NAME))
+            elif self.selection_position == "right":
+                self.columns.append(SelectionColumn(LISTING_SELECTION_CHECKBOX_NAME))
 
     def create_missing_toolbar_items(self):
         if self.toolbar is None:
             return
-        if not isinstance(self,Toolbar):
+        if not isinstance(self, Toolbar):
             self.toolbar = Toolbar(self.toolbar)
 
     def create_missing_filters(self):
         if self.filters is None:
             return
-        if isinstance(self.filters,str):
+        if isinstance(self.filters, str):
             # if filters attribute is a string, it means a layout was declared,
             # so we have to extract filters names
             form_layout = self.filters
-            filters_name = list(map(lambda s:s.split('|')[0].strip(),
-                sum(map(lambda s:s.split(','),form_layout.split(';')),[])))
+            filters_name = list(
+                map(
+                    lambda s: s.split("|")[0].strip(),
+                    sum(map(lambda s: s.split(","), form_layout.split(";")), []),
+                )
+            )
             self.filters = Filters(*filters_name)
             self.filters.form_layout = form_layout
 
@@ -572,7 +646,7 @@ class Listing(ListingBase):
         if self.editable and self.accept_ajax:
             if self.row_form_errors is None:
                 self.row_form_errors = []
-            self.row_form_errors.append(_('[CANNOT_EDIT_IN_AJAX]'))
+            self.row_form_errors.append(_("[CANNOT_EDIT_IN_AJAX]"))
             self.editable = False
 
     def init(self, data, context=None, **kwargs):
@@ -581,19 +655,19 @@ class Listing(ListingBase):
             self.validate_parameters()
             if data is None:
                 data = self.model or self.columns.get_model()
-            if isinstance(data,type) and issubclass(data, Model):
+            if isinstance(data, type) and issubclass(data, Model):
                 self.model = data
                 data = self.model.objects.all()
-            elif isinstance(data,Model):
+            elif isinstance(data, Model):
                 self.model = type(data)
                 data = self.model.objects.all()
-            elif isinstance(data,QuerySet):
+            elif isinstance(data, QuerySet):
                 self.model = data.model
             if self.record_label is None:
                 if self.model:
                     self.record_label = self.model.__name__.lower()
                 else:
-                    self.record_label = _('record')
+                    self.record_label = _("record")
             self.data = data
             self.create_missing_filters()
             if self.filters:
@@ -608,34 +682,37 @@ class Listing(ListingBase):
             if self.toolbar:
                 self.toolbar = self.toolbar.bind_to_listing(self)
             self.col_cell_renderers = {
-                col: getattr(self, 'render_{}'.format(col.name), col.render_cell)
-                for col in self.columns}
+                col: getattr(self, "render_{}".format(col.name), col.render_cell)
+                for col in self.columns
+            }
             self._initialized = True
 
     def datetimepicker_init(self):
         if self.use_datetimepicker:
-            self.need_media_for('datetimepicker')
-            self.add_footer_dict_list('datetimepickers', dict(
-                listing=self,
-                div_id=self.id
-            ))
+            self.need_media_for("datetimepicker")
+            self.add_footer_dict_list(
+                "datetimepickers", dict(listing=self, div_id=self.id)
+            )
 
     def dropzone_init(self):
-        self.need_media_for('dropzone')
-        dz_suffix = self.suffix[1:] if isinstance(self.suffix, str) else ''
-        dz_camel_name = f'actionForm{dz_suffix}'
-        self.add_footer_dict_list('dropzones', dict(
-            listing=self,
-            dz_camel_name=dz_camel_name,
-            options=settings.django_listing_settings.DROPZONE_PARAMS,
-        ))
+        self.need_media_for("dropzone")
+        dz_suffix = self.suffix[1:] if isinstance(self.suffix, str) else ""
+        dz_camel_name = f"actionForm{dz_suffix}"
+        self.add_footer_dict_list(
+            "dropzones",
+            dict(
+                listing=self,
+                dz_camel_name=dz_camel_name,
+                options=settings.django_listing_settings.DROPZONE_PARAMS,
+            ),
+        )
 
     def global_context_init(self):
         self.global_context.update(settings.django_listing_settings.context)
-        if self.request and ( self.can_edit or self.has_upload ):
-            self.global_context['csrf_token'] = get_csrf_token(self.request)
+        if self.request and (self.can_edit or self.has_upload):
+            self.global_context["csrf_token"] = get_csrf_token(self.request)
 
-    def render_init(self,context):
+    def render_init(self, context):
         if not self._render_initialized:
             self.manage_page_context(context)
             self.normalize_params()
@@ -643,7 +720,8 @@ class Listing(ListingBase):
                 col.render_init()
             if isinstance(self.editable_columns, str):
                 self.editable_columns = set(
-                    map(str.strip, self.editable_columns.split(',')))
+                    map(str.strip, self.editable_columns.split(","))
+                )
             if self.editing_hidden_columns is None:
                 if self.model and self.primary_key in self.columns.names():
                     self.editing_hidden_columns = {self.primary_key}
@@ -651,75 +729,82 @@ class Listing(ListingBase):
                     self.editing_hidden_columns = set()
             if isinstance(self.editing_hidden_columns, str):
                 self.editing_hidden_columns = set(
-                    map(str.strip, self.editing_hidden_columns.split(',')))
+                    map(str.strip, self.editing_hidden_columns.split(","))
+                )
             if self.editing is None:
                 self.editing = True
             if self.editing_columns is None:
-                self.editing_columns = 'all'
-            if isinstance(self.editing, str) and self.editing.lower() == 'false':
+                self.editing_columns = "all"
+            if isinstance(self.editing, str) and self.editing.lower() == "false":
                 self.editing = False
             if isinstance(self.editing_columns, str):
                 self.editing_columns = set(
-                    map(str.strip, self.editing_columns.split(',')))
+                    map(str.strip, self.editing_columns.split(","))
+                )
             self.columns.editing_init()
             self.can_edit = self.editable and self.editing
-            if ( isinstance(self.selecting, str) and
-                 self.selecting.lower() == 'false' ):
+            if isinstance(self.selecting, str) and self.selecting.lower() == "false":
                 self.selecting = False
             if self.selecting is None:
                 self.selecting = True
             self.can_select = self.selectable and self.selecting
-            self.has_hidden_selection = ( self.selectable and
-                                          self.selecting and
-                                          self.selection_position == 'hidden')
+            self.has_hidden_selection = (
+                self.selectable
+                and self.selecting
+                and self.selection_position == "hidden"
+            )
             is_exporting = self.export_data()
             if is_exporting:
-                return 'Sending listing export file...'
+                return "Sending listing export file..."
             self.columns_sort_ascending = {}
             self.columns_sort_list = []
             if self.sort:
-                for col_name in map(str.strip,self.sort.split(',')):
+                for col_name in map(str.strip, self.sort.split(",")):
                     ascending = True
-                    if col_name.startswith('-'):
+                    if col_name.startswith("-"):
                         col_name = col_name[1:]
                         ascending = False
                     self.columns_sort_list.append(col_name)
                     self.columns_sort_ascending[col_name] = ascending
-            if not isinstance(self.attrs,HTMLAttributes):
+            if not isinstance(self.attrs, HTMLAttributes):
                 self.attrs = HTMLAttributes(self.attrs)
-            html_class = 'listing-'+self.__class__.__name__.lower()
-            self.attrs.add('class', {html_class, self.theme_listing_class})
+            html_class = "listing-" + self.__class__.__name__.lower()
+            self.attrs.add("class", {html_class, self.theme_listing_class})
             if self.variation is not None:
-                self.attrs.add('class','variation-{}'.format(self.variation))
+                self.attrs.add("class", "variation-{}".format(self.variation))
             if not self.id:
-                self.id = '{}{}-id'.format(html_class,self.suffix)
-            if not isinstance(self.row_attrs,HTMLAttributes):
-                self.row_attrs = HTMLAttributes(
-                    self.row_attrs )
+                self.id = "{}{}-id".format(html_class, self.suffix)
+            if not isinstance(self.row_attrs, HTMLAttributes):
+                self.row_attrs = HTMLAttributes(self.row_attrs)
             self.row_attrs.add(
-                'class', {self.theme_div_row_container_class, self.theme_row_class})
-            self.selected_columns = self.columns.select(self.select_columns,
-                                                        self.exclude_columns)
-            self.can_edit_columns=[ c for c in self.selected_columns if c.can_edit ]
-            self.can_edit_columns_names=set( c.name for c in self.can_edit_columns )
-            self.editing_really_hidden_columns = \
+                "class", {self.theme_div_row_container_class, self.theme_row_class}
+            )
+            self.selected_columns = self.columns.select(
+                self.select_columns, self.exclude_columns
+            )
+            self.can_edit_columns = [c for c in self.selected_columns if c.can_edit]
+            self.can_edit_columns_names = set(c.name for c in self.can_edit_columns)
+            self.editing_really_hidden_columns = (
                 self.editing_hidden_columns - self.can_edit_columns_names
-            self.selected_hidden_columns = \
-                self.columns.select(self.editing_really_hidden_columns)
+            )
+            self.selected_hidden_columns = self.columns.select(
+                self.editing_really_hidden_columns
+            )
             if self.can_edit:
                 self.datetimepicker_init()
             if self.has_upload:
                 self.dropzone_init()
             if self.can_edit or self.can_select or self.form or self.has_upload:
-                self.add_form_input_hiddens(listing_id=self.id,
-                                            listing_suffix=self.suffix)
+                self.add_form_input_hiddens(
+                    listing_id=self.id, listing_suffix=self.suffix
+                )
             if self.onready_snippet:
                 self.add_onready_snippet(self.onready_snippet)
             if self.footer_snippet:
                 self.add_footer_snippet(self.footer_snippet)
-            if not isinstance(self.selection_initial,list):
+            if not isinstance(self.selection_initial, list):
                 self.selection_initial = [self.selection_initial]
-            self.selection_has_overlay = self.selection_mode in ['overlay', 'hover']
+            self.selection_has_overlay = self.selection_mode in ["overlay", "hover"]
             self.global_context_init()
             self.records.compute_current_page_records()
             self._render_initialized = True
@@ -735,29 +820,34 @@ class Listing(ListingBase):
             export_format = self.export.upper()
             if export_format in EXPORT_FORMATS:
                 headers = self.exported_headers()
-                if export_format == 'DBF':
-                    headers = list(map(lambda h:h[:10],headers))
+                if export_format == "DBF":
+                    headers = list(map(lambda h: h[:10], headers))
                 data = tablib.Dataset()
                 data.headers = headers
                 for row in self.exported_rows():
                     data.append(row)
                 self.request.export_data = data.export(export_format.lower())
-                self.request.export_filename = '{}.{}'.format(self.name,
-                                                          self.export.lower())
-        return hasattr(self.request,'export_data')
+                self.request.export_filename = "{}.{}".format(
+                    self.name, self.export.lower()
+                )
+        return hasattr(self.request, "export_data")
 
     def django_listing_info(self):
-        if hasattr(self, 'request'):
-            if self.request.GET.get('__django_listing_info__'):
-                out = '<b><u>django-listing informations :</u></b><br>'
+        if hasattr(self, "request"):
+            if self.request.GET.get("__django_listing_info__"):
+                out = "<b><u>django-listing informations :</u></b><br>"
                 import django_listing
-                out += f'django-listing version : {django_listing.__version__}<br>'
+
+                out += f"django-listing version : {django_listing.__version__}<br>"
                 import django
-                out += f'django version : {django.__version__}<br>'
+
+                out += f"django version : {django.__version__}<br>"
                 import tablib
-                out += f'tablib version : {tablib.__version__}<br>'
+
+                out += f"tablib version : {tablib.__version__}<br>"
                 import sys
-                out += f'Python version : {sys.version.split()[0]}<br>'
+
+                out += f"Python version : {sys.version.split()[0]}<br>"
                 return out
 
     def render_template(self):
@@ -770,33 +860,36 @@ class Listing(ListingBase):
         return out
 
     def get_listing_css_id(self):
-        return str(self.id).replace('_','-')
+        return str(self.id).replace("_", "-")
 
     def get_listing_context(self):
-        has_top_toolbar = ( self.has_toolbar and
-                            self.toolbar_placement in ['top','both'] )
-        has_bottom_toolbar = ( self.has_toolbar and
-                               self.toolbar_placement in ['bottom','both'] )
-        listing_container_class = '{} {}'.format(
-            self.theme_container_class, self.theme_class)
+        has_top_toolbar = self.has_toolbar and self.toolbar_placement in ["top", "both"]
+        has_bottom_toolbar = self.has_toolbar and self.toolbar_placement in [
+            "bottom",
+            "both",
+        ]
+        listing_container_class = "{} {}".format(
+            self.theme_container_class, self.theme_class
+        )
         if self.accept_ajax:
-            listing_container_class += ' django-listing-ajax'
+            listing_container_class += " django-listing-ajax"
         if self.can_edit:
-            listing_container_class += ' django-listing-editing'
+            listing_container_class += " django-listing-editing"
         if self.can_select:
-            listing_container_class += ' django-listing-selecting'
+            listing_container_class += " django-listing-selecting"
             if self.selection_multiple:
-                listing_container_class += ' selection_multiple'
+                listing_container_class += " selection_multiple"
             else:
-                listing_container_class += ' selection_unique'
-            listing_container_class += \
-                ' selection_position_{}'.format(self.selection_position)
+                listing_container_class += " selection_unique"
+            listing_container_class += " selection_position_{}".format(
+                self.selection_position
+            )
         if self.has_upload:
-            listing_container_class += ' has_upload'
-        sel_css_class = ( LISTING_SELECTOR_CSS_CLASS
-                          if self.selection_has_overlay else '' )
-        hover_css_class = ( LISTING_SELECTION_HOVER_CSS_CLASS
-                          if self.selection_mode == 'hover' else '' )
+            listing_container_class += " has_upload"
+        sel_css_class = LISTING_SELECTOR_CSS_CLASS if self.selection_has_overlay else ""
+        hover_css_class = (
+            LISTING_SELECTION_HOVER_CSS_CLASS if self.selection_mode == "hover" else ""
+        )
         ctx = RenderContext(
             self.global_context,
             self.page_context.flatten(),
@@ -816,13 +909,13 @@ class Listing(ListingBase):
         return ctx
 
     def add_form_input_hiddens(self, **kwargs):
-        for name,value in kwargs.items():
-            self.form_input_hiddens.append((name,value))
+        for name, value in kwargs.items():
+            self.form_input_hiddens.append((name, value))
 
-    def add_edit_form_hidden_field(self,field_instance):
+    def add_edit_form_hidden_field(self, field_instance):
         self.editing_hidden_form_fields.append(field_instance)
 
-    def aggregate(self,rec):
+    def aggregate(self, rec):
         for col in self.selected_columns:
             if col.aggregation:
                 col.aggregation.aggregate(rec)
@@ -869,11 +962,11 @@ class Listing(ListingBase):
             yield row
 
     def exported_headers(self):
-        return [ str(c.get_header_value()) for c in self.columns ]
+        return [str(c.get_header_value()) for c in self.columns]
 
     def exported_rows(self):
         for rec in self.records.export():
-            yield [ c.get_cell_exported_value(rec) for c in self.columns ]
+            yield [c.get_cell_exported_value(rec) for c in self.columns]
 
     def get_rendered_cells(self, rec):
         rendered_columns = []
@@ -900,11 +993,7 @@ class Listing(ListingBase):
 
     def get_localized_small_device_styles(self):
         styles = [
-            (
-                "#{listing_css_id} th:before {{"
-                'content:"{sort_msg}";'
-                "}}"
-            ).format(
+            ("#{listing_css_id} th:before {{" 'content:"{sort_msg}";' "}}").format(
                 listing_css_id=self.get_listing_css_id(),
                 sort_msg=_("Sort by:"),
                 two_dots=_(":"),
@@ -940,37 +1029,37 @@ class Listing(ListingBase):
             return []
 
     def get_url(self, context=None, without=None, anchor_hash=None, **kwargs):
-        """ Get listing url with some updated parameters if needed
+        """Get listing url with some updated parameters if needed
         Note : Do not remove 'context=None' because needed by listing variations
         """
         querystring = QueryDict(self.parsed_url.query, mutable=True)
-        for k,v in kwargs.items():
-            if not isinstance(v,str):
+        for k, v in kwargs.items():
+            if not isinstance(v, str):
                 v = str(v)
             if k in LISTING_QUERY_STRING_KEYS:
                 k += self.suffix
             querystring[k] = v
         del_keys = LISTING_NOT_PERSISTENT_QUERY_STRING_KEYS - set(kwargs.keys())
         if without:
-            if isinstance(without,str):
-                without=without.split(',')
+            if isinstance(without, str):
+                without = without.split(",")
             del_keys = del_keys | set(without)
         for k in del_keys:
             k += self.suffix
             if k in querystring:
                 del querystring[k]
         fragment = anchor_hash or self.anchor_hash
-        return urlunsplit(self.parsed_url._replace(
-                            query=querystring.urlencode(),
-                            fragment=fragment))
+        return urlunsplit(
+            self.parsed_url._replace(query=querystring.urlencode(), fragment=fragment)
+        )
 
     def get_hiddens(self, without=None):
         hiddens = QueryDict(self.parsed_url.query, mutable=True)
         if without:
-            if isinstance(without,str):
-                without = list(map(str.strip,without.split(',')))
-            without = list(map(lambda s:s.strip()+self.suffix,without))
-            if isinstance(without,(list,tuple)):
+            if isinstance(without, str):
+                without = list(map(str.strip, without.split(",")))
+            without = list(map(lambda s: s.strip() + self.suffix, without))
+            if isinstance(without, (list, tuple)):
                 for k in without:
                     if k in hiddens:
                         del hiddens[k]
@@ -978,46 +1067,52 @@ class Listing(ListingBase):
 
     def get_hiddens_html(self, without=None):
         hiddens = self.get_hiddens(without)
-        out = ['<input type="hidden" name="{name}" value="{value}">'.format(
-            name=name,
-            value=value
-        ) for name, value in hiddens.items()]
-        return ''.join(out)
+        out = [
+            '<input type="hidden" name="{name}" value="{value}">'.format(
+                name=name, value=value
+            )
+            for name, value in hiddens.items()
+        ]
+        return "".join(out)
 
     @classmethod
     def get_suffix_request_data(cls, request):
         if not hasattr(request, LISTING_SUFFIX_REQUEST_DATA_FIELD):
-            setattr(request,LISTING_SUFFIX_REQUEST_DATA_FIELD, {
-                'listings_suffixes' : {},
-                'counter' : 0,
-        })
-        return getattr(request,LISTING_SUFFIX_REQUEST_DATA_FIELD)
+            setattr(
+                request,
+                LISTING_SUFFIX_REQUEST_DATA_FIELD,
+                {
+                    "listings_suffixes": {},
+                    "counter": 0,
+                },
+            )
+        return getattr(request, LISTING_SUFFIX_REQUEST_DATA_FIELD)
 
     @classmethod
     def get_suffix(cls, request, listing):
-        listing = getattr(listing,'variations',None) or listing
+        listing = getattr(listing, "variations", None) or listing
         data = cls.get_suffix_request_data(request)
-        suffix = data['listings_suffixes'].get(listing)
+        suffix = data["listings_suffixes"].get(listing)
         if suffix is None:
-            counter = data['counter']
-            suffixes = data['listings_suffixes'].values()
+            counter = data["counter"]
+            suffixes = data["listings_suffixes"].values()
             while True:
                 if counter == 0:
-                    suffix = ''
+                    suffix = ""
                 else:
                     suffix = LISTING_SUFFIX_PATTERN.format(counter)
                 if suffix not in suffixes:
-                    data['listings_suffixes'][listing] = suffix
+                    data["listings_suffixes"][listing] = suffix
                     break
                 counter += 1
-            data['counter'] = counter + 1
+            data["counter"] = counter + 1
         return suffix
 
     @classmethod
     def set_suffix(cls, request, listing, suffix):
-        listing = getattr(listing,'variations',None) or listing
+        listing = getattr(listing, "variations", None) or listing
         data = cls.get_suffix_request_data(request)
-        data['listings_suffixes'][listing] = suffix
+        data["listings_suffixes"][listing] = suffix
         listing.suffix = suffix
 
     def extract_params(self):
@@ -1042,17 +1137,17 @@ class Listing(ListingBase):
         if self.per_page < -1 or self.per_page == 0:
             self.per_page = self.__class__.per_page
 
-    def get_row_attrs(self,rec):
+    def get_row_attrs(self, rec):
         attrs = HTMLAttributes(self.row_attrs)  # create a copy
         if rec.pk:
-            attrs.add('data-pk',str(rec.pk))
-        attrs.add('class','odd' if rec.get_index() % 2 else 'even')
+            attrs.add("data-pk", str(rec.pk))
+        attrs.add("class", "odd" if rec.get_index() % 2 else "even")
         if self.can_select:
             if not self.selection_has_overlay:
-                attrs.add('class',LISTING_SELECTOR_CSS_CLASS)
+                attrs.add("class", LISTING_SELECTOR_CSS_CLASS)
             selection_value = rec.get(self.selection_key)
             if self.selection_initial and selection_value in self.selection_initial:
-                attrs.add('class', 'selected')
+                attrs.add("class", "selected")
                 rec._selected = True
         return attrs
 
@@ -1060,43 +1155,54 @@ class Listing(ListingBase):
         return {}
 
     def get_formset_initial_values(self):
-        initial_values = [ {c.name:c.get_cell_form_value(rec)
-                 for c in (self.can_edit_columns+self.selected_hidden_columns)}
-                 for rec in self.records.current_page()
-                 if not self.editing_row_pk or rec.pk == self.editing_row_pk
-               ]
+        initial_values = [
+            {
+                c.name: c.get_cell_form_value(rec)
+                for c in (self.can_edit_columns + self.selected_hidden_columns)
+            }
+            for rec in self.records.current_page()
+            if not self.editing_row_pk or rec.pk == self.editing_row_pk
+        ]
         return initial_values
 
     def get_formset(self):
         if not self._formset:
             post_data = None
             post_files = None
-            if self.request.method == 'POST':
-                posted_listing_id = self.request.POST.get('listing_id', '')
+            if self.request.method == "POST":
+                posted_listing_id = self.request.POST.get("listing_id", "")
                 if posted_listing_id == self.id:
                     post_data = self.request.POST
                     post_files = self.request.FILES
-            fields = {c.name : c.create_hidden_form_field()
-                            for c in self.selected_hidden_columns}
-            fields.update({c.name : c.create_form_field()
-                       for c in self.can_edit_columns})
-            form_class = type('ListingRowForm{}'.format(self.suffix),
-                              (self.row_form_base_class,),
-                              {'base_fields': fields})
+            fields = {
+                c.name: c.create_hidden_form_field()
+                for c in self.selected_hidden_columns
+            }
+            fields.update(
+                {c.name: c.create_form_field() for c in self.can_edit_columns}
+            )
+            form_class = type(
+                "ListingRowForm{}".format(self.suffix),
+                (self.row_form_base_class,),
+                {"base_fields": fields},
+            )
             formset_class = forms.formset_factory(form_class, extra=0)
-            self._formset = formset_class(post_data, post_files,
+            self._formset = formset_class(
+                post_data,
+                post_files,
                 initial=self.get_formset_initial_values(),
-                prefix='{}{}'.format(LISTING_FORMSET_PREFIX, self.suffix)
+                prefix="{}{}".format(LISTING_FORMSET_PREFIX, self.suffix),
             )
             for form in self._formset:
                 form.listing = self
-                form.form_name = 'row_form'
+                form.form_name = "row_form"
         return self._formset
 
     def get_selected_rows(self):
         if self.request and self.request.POST:
             return self.request.POST.getlist(
-                LISTING_SELECTION_INPUT_NAME_KEY + self.suffix)
+                LISTING_SELECTION_INPUT_NAME_KEY + self.suffix
+            )
 
     def set_view(self, view):
         self._view = view
@@ -1106,5 +1212,5 @@ class Listing(ListingBase):
 
 
 class DivListing(Listing):
-    listing_template_name = ThemeTemplate('listing_div.html')
-    theme_row_class = 'row-container'
+    listing_template_name = ThemeTemplate("listing_div.html")
+    theme_row_class = "row-container"

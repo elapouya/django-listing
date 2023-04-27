@@ -5,13 +5,16 @@
 #
 
 import pprint
+
 pp = pprint.PrettyPrinter(indent=4)
 import types
 
-__all__ = ['RenderContext']
+__all__ = ["RenderContext"]
+
 
 def isgenerator(arg):
     return isinstance(arg, types.GeneratorType)
+
 
 # Simplistic context object : just a dict accessible with attribute notation
 class RenderContext(dict):
@@ -33,11 +36,11 @@ class RenderContext(dict):
                     self[key] = val
             # other types of postionnal arguments are not injected into the context
 
-
         for key, val in kwargs.items():
             self[key] = val
 
     def __getattr__(self, attr):
         return self[attr]
+
     def __setattr__(self, attr, value):
         self[attr] = value

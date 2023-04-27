@@ -17,54 +17,120 @@ from django.db import models
 from django.forms import widgets
 from django.template.defaultfilters import filesizeformat
 from django.utils import formats
+from django.utils.dateparse import parse_datetime
 from django.utils.encoding import force_str
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
 from django.utils.translation import gettext
-from django.utils.dateparse import parse_datetime
+from django.utils.translation import gettext_lazy as _
 
-from .aggregations import AggregationMeta, Aggregation
+from .aggregations import Aggregation, AggregationMeta
 from .context import RenderContext
 from .exceptions import *
 from .html_attributes import HTMLAttributes
 from .record import cache_in_record
+from .theme_config import ThemeAttribute
 from .utils import init_dicts_from_class
-from .theme_config import ThemeAttribute, ThemeTemplate
 
-__all__ = ['COLUMNS_PARAMS_KEYS', 'Columns', 'ModelColumns', 'SequenceColumns',
-           'Column', 'BooleanColumn', 'CheckboxColumn', 'ChoiceColumn',
-           'ManyColumn', 'DateColumn', 'DateTimeColumn', 'TimeColumn',
-           'LinkColumn', 'TotalColumn', 'AvgColumn', 'MaxColumn', 'MinColumn',
-           'MultipleChoiceColumn','ButtonColumn','InputColumn', 'FileSizeColumn',
-           'SelectColumn', 'ForeignKeyColumn', 'LinkObjectColumn', 'ListingMethodRef',
-           'ButtonLinkColumn', 'COLUMNS_FORM_FIELD_KEYS', 'JsonDateTimeColumn', ]
+__all__ = [
+    "AvgColumn",
+    "BooleanColumn",
+    "ButtonColumn",
+    "ButtonLinkColumn",
+    "CheckboxColumn",
+    "ChoiceColumn",
+    "Column",
+    "Columns",
+    "COLUMNS_FORM_FIELD_KEYS",
+    "COLUMNS_PARAMS_KEYS",
+    "DateColumn",
+    "DateTimeColumn",
+    "FileSizeColumn",
+    "ForeignKeyColumn",
+    "InputColumn",
+    "JsonDateTimeColumn",
+    "LinkColumn",
+    "LinkObjectColumn",
+    "ListingMethodRef",
+    "ManyColumn",
+    "MaxColumn",
+    "MinColumn",
+    "ModelColumns",
+    "MultipleChoiceColumn",
+    "SelectColumn",
+    "SequenceColumns",
+    "TimeColumn",
+    "TotalColumn",
+]
 
 COLUMNS_PARAMS_KEYS = {
-    'name', 'header', 'footer', 'data_key', 'cell_edit_tpl',
-    'cell_tpl', 'cell_attrs', 'value_tpl', 'cell_value', 'label',
-    'header_tpl', 'header_sortable_tpl',
-    'footer_tpl', 'footer_value_tpl', 'sort_key', 'sortable', 'header_attrs',
-    'footer_attrs', 'ascending_by_default', 'model_field',
-    'editable', 'default_value', 'form_field_class', 'form_field_widget_class',
-    'default_footer_value', 'aggregation', 'date_format', 'datetime_format',
-    'time_format', 'input_type', 'theme_header_class', 'theme_cell_class',
-    'theme_footer_class', 'theme_header_icon', 'widget_attrs',
-    'theme_form_widget_class','theme_button_class','no_choice_msg',
-    'theme_form_select_widget_class', 'theme_form_checkbox_widget_class',
-    'theme_form_radio_widget_class',
+    "aggregation",
+    "ascending_by_default",
+    "cell_attrs",
+    "cell_edit_tpl",
+    "cell_tpl",
+    "cell_value",
+    "data_key",
+    "date_format",
+    "datetime_format",
+    "default_footer_value",
+    "default_value",
+    "editable",
+    "footer",
+    "footer_attrs",
+    "footer_tpl",
+    "footer_value_tpl",
+    "form_field_class",
+    "form_field_widget_class",
+    "header",
+    "header_attrs",
+    "header_sortable_tpl",
+    "header_tpl",
+    "input_type",
+    "label",
+    "model_field",
+    "name",
+    "no_choice_msg",
+    "sort_key",
+    "sortable",
+    "theme_button_class",
+    "theme_cell_class",
+    "theme_footer_class",
+    "theme_form_checkbox_widget_class",
+    "theme_form_radio_widget_class",
+    "theme_form_select_widget_class",
+    "theme_form_widget_class",
+    "theme_header_class",
+    "theme_header_icon",
+    "time_format",
+    "value_tpl",
+    "widget_attrs",
 }
 
 COLUMNS_FORM_FIELD_KEYS = {
-    'max_length','min_length','strip','empty_value','label','required',
-    'label_suffix', 'initial', 'widget', 'help_text', 'error_messages',
-    'validators', 'localize', 'disabled','input_formats','min_value',
-    'max_value',
+    "disabled",
+    "empty_value",
+    "error_messages",
+    "help_text",
+    "initial",
+    "input_formats",
+    "label",
+    "label_suffix",
+    "localize",
+    "max_length",
+    "max_value",
+    "min_length",
+    "min_value",
+    "required",
+    "strip",
+    "validators",
+    "widget",
 }
 
 
 class ListingMethodRef:
-    """ Helper to reference a Listing method in column.cell_value instead of a lambda"""
+    """Helper to reference a Listing method in column.cell_value instead of a lambda"""
+
     def __init__(self, method_name):
         self.method_name = method_name
 
@@ -80,16 +146,16 @@ class Columns(list):
         self._params = params
         self.name2col = {}
         if cols:
-            if isinstance(cols[0],(list,tuple)):
+            if isinstance(cols[0], (list, tuple)):
                 cols = cols[0]
-            elif isinstance(cols[0],GeneratorType):
+            elif isinstance(cols[0], GeneratorType):
                 cols = list(cols[0])
         super().__init__(cols)
 
-    def get(self,name,default=None):
-        return self.name2col.get(name,default)
+    def get(self, name, default=None):
+        return self.name2col.get(name, default)
 
-    def exists(self,name):
+    def exists(self, name):
         return name in self.name2col
 
     def get_model(self):
@@ -99,13 +165,13 @@ class Columns(list):
         return self._params
 
     def names(self):
-        return [ c.name for c in self ]
+        return [c.name for c in self]
 
-    def select(self,select_cols_name=None, exclude_cols_name=None):
-        if isinstance(select_cols_name,str):
-            select_cols_name = list(map(str.strip,select_cols_name.split(',')))
-        if isinstance(exclude_cols_name,str):
-            exclude_cols_name = list(map(str.strip,exclude_cols_name.split(',')))
+    def select(self, select_cols_name=None, exclude_cols_name=None):
+        if isinstance(select_cols_name, str):
+            select_cols_name = list(map(str.strip, select_cols_name.split(",")))
+        if isinstance(exclude_cols_name, str):
+            exclude_cols_name = list(map(str.strip, exclude_cols_name.split(",")))
         if select_cols_name is None:
             select_cols_name = self.names()
         exclude_cols_name = exclude_cols_name or []
@@ -113,11 +179,11 @@ class Columns(list):
         for col_name in select_cols_name:
             if isinstance(col_name, (tuple, list)):
                 col_name, header = col_name
-            elif ':' in col_name:
-                col_name, header = col_name.split(':', maxsplit=1)
+            elif ":" in col_name:
+                col_name, header = col_name.split(":", maxsplit=1)
             else:
                 header = None
-            col_name = col_name.replace('.', '__')
+            col_name = col_name.replace(".", "__")
             if col_name not in exclude_cols_name and col_name in self.name2col:
                 col = self.get(col_name.strip())
                 if col:
@@ -126,17 +192,21 @@ class Columns(list):
                     cols.append(col)
         return cols
 
-
     def bind_to_listing(self, listing):
         cols = Columns(params=self._params)
-        for i,col in enumerate(self):
+        for i, col in enumerate(self):
             # check col is a Column instance
-            if not isinstance(col,Column):
+            if not isinstance(col, Column):
                 raise InvalidColumn(
-                    gettext('column {col_id} of listing {listing} is not '
-                             'a Column instance (class = {colclass})')
-                    .format(col_id=i, listing=listing.__class__.__name__,
-                            colclass=col.__class__.__name__))
+                    gettext(
+                        "column {col_id} of listing {listing} is not "
+                        "a Column instance (class = {colclass})"
+                    ).format(
+                        col_id=i,
+                        listing=listing.__class__.__name__,
+                        colclass=col.__class__.__name__,
+                    )
+                )
             # ensure there is one column instance per listing
             if not col.listing:
                 col = copy.deepcopy(col)
@@ -146,20 +216,20 @@ class Columns(list):
         # Auto-add foreign-key columns specified in select_columns
         select_cols_name = listing.select_columns or []
         if isinstance(select_cols_name, str):
-            select_cols_name = list(map(str.strip, select_cols_name.split(',')))
+            select_cols_name = list(map(str.strip, select_cols_name.split(",")))
         for col_name in select_cols_name:
             if isinstance(col_name, (tuple, list)):
                 col_name = col_name[0]
             else:
-                col_name = re.sub(':.*$', '', col_name)
-            if '.' in col_name:
-                col_name = col_name.replace('.', '__')
-                data_key = col_name.replace('__', '.')
+                col_name = re.sub(":.*$", "", col_name)
+            if "." in col_name:
+                col_name = col_name.replace(".", "__")
+                data_key = col_name.replace("__", ".")
                 col = Column(col_name, data_key=data_key)
                 col.bind_to_listing(listing)
                 cols.append(col)
 
-        cols.name2col = { c.name : c for c in cols if isinstance(c,Column) }
+        cols.name2col = {c.name: c for c in cols if isinstance(c, Column)}
         cols.listing = listing
         return cols
 
@@ -169,37 +239,44 @@ class Columns(list):
 
 
 class ModelColumns(Columns):
-    def __init__(self, model, *cols, params=None, listing=None,
-                 link_object_columns=None, **kwargs):
+    def __init__(
+        self,
+        model,
+        *cols,
+        params=None,
+        listing=None,
+        link_object_columns=None,
+        **kwargs,
+    ):
         if params is None:
             params = {}
         if not link_object_columns:
-            link_object_columns = ''
+            link_object_columns = ""
         if isinstance(link_object_columns, str):
-            link_object_columns = set(map(str.strip,link_object_columns.split(',')))
+            link_object_columns = set(map(str.strip, link_object_columns.split(",")))
 
         model_cols = []
         # when not yet initialized, column name is in init_args[0]
-        name2col = OrderedDict( (c.name or c.init_args[0],c) for c in cols )
+        name2col = OrderedDict((c.name or c.init_args[0], c) for c in cols)
         for f in model._meta.get_fields():
             if not isinstance(f, (models.ManyToManyRel, models.ManyToOneRel)):
-                if not hasattr(listing, f'{f.name}__header'):
-                    header = getattr(f, 'verbose_name', f.name.capitalize())
+                if not hasattr(listing, f"{f.name}__header"):
+                    header = getattr(f, "verbose_name", f.name.capitalize())
                 else:
-                    header = getattr(listing, f'{f.name}__header')
+                    header = getattr(listing, f"{f.name}__header")
                 if f.name in name2col:
                     col = name2col.pop(f.name)
                     model_cols.append(col)
                 else:
                     if f.name in link_object_columns:
-                        model_cols.append(LinkObjectColumn(
-                            f.name, model_field=f,
-                            header=header,**kwargs)
+                        model_cols.append(
+                            LinkObjectColumn(
+                                f.name, model_field=f, header=header, **kwargs
+                            )
                         )
                     else:
-                        model_cols.append(self.create_column(
-                            f,header=header,
-                            **kwargs)
+                        model_cols.append(
+                            self.create_column(f, header=header, **kwargs)
                         )
 
         super().__init__(*(model_cols + list(name2col.values())))
@@ -216,10 +293,10 @@ class ModelColumns(Columns):
             model_field = model._meta.get_field(name)
             if not model_field:
                 return None
-            if not hasattr(listing, f'{model_field.name}__header'):
-                header = getattr(model_field, 'verbose_name', model_field.name)
+            if not hasattr(listing, f"{model_field.name}__header"):
+                header = getattr(model_field, "verbose_name", model_field.name)
             else:
-                header = getattr(listing, f'{model_field.name}__header')
+                header = getattr(listing, f"{model_field.name}__header")
             col = cls.create_column(model_field, header=header, **kwargs)
             col.bind_to_listing(listing)
             return col
@@ -232,39 +309,37 @@ class ModelColumns(Columns):
         field_name = field.name
         for col_class in ColumnMeta.get_column_classes():
             if col_class is not Column:
-                col = col_class.from_model_field(field,**kwargs)
+                col = col_class.from_model_field(field, **kwargs)
                 if col:
                     return col
         return Column(field_name, model_field=field, **kwargs)
 
 
 class SequenceColumns(Columns):
-    def __init__(self, seq, columns_headers=None, params=None,
-                 listing=None, **kwargs):
+    def __init__(self, seq, columns_headers=None, params=None, listing=None, **kwargs):
         if params is None:
             params = {}
         first_row = seq[0]
         if not isinstance(first_row, (dict, list, tuple)):
-            for i,v in enumerate(seq):
+            for i, v in enumerate(seq):
                 seq[i] = [seq[i]]
             first_row = seq[0]
         cols = []
         if isinstance(first_row, dict):
-            if not isinstance(columns_headers,dict):
-                columns_headers={}
-            for k,v in first_row.items():
+            if not isinstance(columns_headers, dict):
+                columns_headers = {}
+            for k, v in first_row.items():
                 header = columns_headers.get(k)
                 cols.append(self.create_column(v, k, header=header, **kwargs))
         elif isinstance(first_row, (list, tuple)):
-            if not isinstance(columns_headers,(list, tuple)):
-                columns_headers=()
-            for i,v in enumerate(first_row):
+            if not isinstance(columns_headers, (list, tuple)):
+                columns_headers = ()
+            for i, v in enumerate(first_row):
                 if i < len(columns_headers) and columns_headers[i]:
                     header = columns_headers[i]
                 else:
-                    header = 'Column{}'.format(i + 1)
-                cols.append(self.create_column(v, header=header,
-                                               data_key=i, **kwargs))
+                    header = "Column{}".format(i + 1)
+                cols.append(self.create_column(v, header=header, data_key=i, **kwargs))
         super().__init__(*cols)
         if listing:
             for col in self:
@@ -272,14 +347,12 @@ class SequenceColumns(Columns):
         self._params = params
 
     @classmethod
-    def create_column(cls, value, name=None,
-                      header=None, data_key=None, **kwargs):
-        if isinstance(value,datetime.datetime):
-            return DateTimeColumn(name, header=header,
-                                  data_key=data_key, **kwargs)
-        elif isinstance(value,datetime.date):
-            return DateColumn(name, header=header,data_key=data_key, **kwargs)
-        return Column(name, header=header,data_key=data_key, **kwargs)
+    def create_column(cls, value, name=None, header=None, data_key=None, **kwargs):
+        if isinstance(value, datetime.datetime):
+            return DateTimeColumn(name, header=header, data_key=data_key, **kwargs)
+        elif isinstance(value, datetime.date):
+            return DateColumn(name, header=header, data_key=data_key, **kwargs)
+        return Column(name, header=header, data_key=data_key, **kwargs)
 
 
 class ColumnMeta(type):
@@ -287,24 +360,24 @@ class ColumnMeta(type):
 
     def __new__(mcs, name, bases, attrs):
         cls = super(ColumnMeta, mcs).__new__(mcs, name, bases, attrs)
-        ColumnMeta.column_classes.append((cls,cls.from_model_field_order))
+        ColumnMeta.column_classes.append((cls, cls.from_model_field_order))
         params_keys = cls.params_keys
-        if isinstance(params_keys,str):
-            params_keys = set(map(str.strip,params_keys.split(',')))
+        if isinstance(params_keys, str):
+            params_keys = set(map(str.strip, params_keys.split(",")))
         COLUMNS_PARAMS_KEYS.update(params_keys)
-        COLUMNS_PARAMS_KEYS.discard('')
+        COLUMNS_PARAMS_KEYS.discard("")
         form_field_keys = cls.form_field_keys
         if form_field_keys:
-            if isinstance(form_field_keys,str):
-                form_field_keys = set(map(str.strip,form_field_keys.split(',')))
+            if isinstance(form_field_keys, str):
+                form_field_keys = set(map(str.strip, form_field_keys.split(",")))
             COLUMNS_FORM_FIELD_KEYS.update(form_field_keys)
-            COLUMNS_FORM_FIELD_KEYS.discard('')
+            COLUMNS_FORM_FIELD_KEYS.discard("")
             COLUMNS_PARAMS_KEYS.update(COLUMNS_FORM_FIELD_KEYS)
         return cls
 
     @classmethod
     def get_column_classes(cls):
-        return [ t[0] for t in sorted(cls.column_classes,key=lambda x:x[1]) ]
+        return [t[0] for t in sorted(cls.column_classes, key=lambda x: x[1])]
 
 
 class Column(metaclass=ColumnMeta):
@@ -315,8 +388,8 @@ class Column(metaclass=ColumnMeta):
     cell_edit_tpl = None
     cell_value = None
     data_key = None
-    default_footer_value = ''
-    default_value = '-'
+    default_footer_value = ""
+    default_value = "-"
     editable = None
     editing = False
     footer = None
@@ -335,26 +408,40 @@ class Column(metaclass=ColumnMeta):
     listing = None
     model_field = None
     name = None
-    no_choice_msg = _('Please choose...')
-    params_keys = ''
+    no_choice_msg = _("Please choose...")
+    params_keys = ""
     sort_key = None
     sortable = True
-    value_tpl = '{value}'
+    value_tpl = "{value}"
 
-    theme_header_class = ThemeAttribute('column_theme_header_class')
-    theme_cell_class = ThemeAttribute('column_theme_cell_class')
-    theme_footer_class = ThemeAttribute('column_theme_footer_class')
-    theme_form_widget_class = ThemeAttribute('column_theme_form_widget_class')
-    theme_form_select_widget_class = ThemeAttribute('column_theme_form_select_widget_class')
-    theme_form_checkbox_widget_class = ThemeAttribute('column_theme_form_checkbox_widget_class')
-    theme_form_radio_widget_class = ThemeAttribute('column_theme_form_radio_widget_class')
-    theme_button_class = ThemeAttribute('column_theme_button_class')
+    theme_header_class = ThemeAttribute("column_theme_header_class")
+    theme_cell_class = ThemeAttribute("column_theme_cell_class")
+    theme_footer_class = ThemeAttribute("column_theme_footer_class")
+    theme_form_widget_class = ThemeAttribute("column_theme_form_widget_class")
+    theme_form_select_widget_class = ThemeAttribute(
+        "column_theme_form_select_widget_class"
+    )
+    theme_form_checkbox_widget_class = ThemeAttribute(
+        "column_theme_form_checkbox_widget_class"
+    )
+    theme_form_radio_widget_class = ThemeAttribute(
+        "column_theme_form_radio_widget_class"
+    )
+    theme_button_class = ThemeAttribute("column_theme_button_class")
 
     def __init__(self, *args, **kwargs):
         self.init_args = args
         self.init_kwargs = kwargs
-        init_dicts_from_class(self, ['cell_attrs', 'header_attrs', 'cell_attrs',
-                                     'footer_attrs', 'widget_attrs'])
+        init_dicts_from_class(
+            self,
+            [
+                "cell_attrs",
+                "header_attrs",
+                "cell_attrs",
+                "footer_attrs",
+                "widget_attrs",
+            ],
+        )
 
     def bind_to_listing(self, listing):
         self.init(listing, *self.init_args, **self.init_kwargs)
@@ -364,40 +451,46 @@ class Column(metaclass=ColumnMeta):
 
     def init(self, listing, name=None, **kwargs):
         self.set_listing(listing)
-        header = kwargs.get('header')
+        header = kwargs.get("header")
         if name:
-            self.name = re.sub(r'\W', '', name)
+            self.name = re.sub(r"\W", "", name)
         if self.name is None:
             if header:
-                self.name = re.sub(r'\W', '', header.strip().replace(' ', '_').lower())
+                self.name = re.sub(r"\W", "", header.strip().replace(" ", "_").lower())
             else:
-                self.name = 'noname'
+                self.name = "noname"
         self.set_kwargs(**kwargs)
         self.apply_template_kwargs()
         if self.data_key is None:
             self.data_key = self.name
         if self.sort_key is None:
             if isinstance(self.data_key, str):
-                self.sort_key = self.data_key.replace('.', '__')
+                self.sort_key = self.data_key.replace(".", "__")
             else:
                 self.sort_key = 0
-        if isinstance(self.aggregation,str):
-            self.aggregation = AggregationMeta.get_instance(self.aggregation,self)
-        if isinstance(self.theme_header_class,str):
+        if isinstance(self.aggregation, str):
+            self.aggregation = AggregationMeta.get_instance(self.aggregation, self)
+        if isinstance(self.theme_header_class, str):
             self.theme_header_class = set(self.theme_header_class.split())
-        if isinstance(self.theme_cell_class,str):
+        if isinstance(self.theme_cell_class, str):
             self.theme_cell_class = set(self.theme_cell_class.split())
-        if isinstance(self.theme_footer_class,str):
+        if isinstance(self.theme_footer_class, str):
             self.theme_footer_class = set(self.theme_footer_class.split())
-        if isinstance(self.theme_form_widget_class,str):
+        if isinstance(self.theme_form_widget_class, str):
             self.theme_form_widget_class = set(self.theme_form_widget_class.split())
-        if isinstance(self.theme_form_select_widget_class,str):
-            self.theme_form_select_widget_class = set(self.theme_form_select_widget_class.split())
-        if isinstance(self.theme_form_checkbox_widget_class,str):
-            self.theme_form_checkbox_widget_class = set(self.theme_form_checkbox_widget_class.split())
-        if isinstance(self.theme_form_radio_widget_class,str):
-            self.theme_form_radio_widget_class = set(self.theme_form_radio_widget_class.split())
-        if isinstance(self.theme_button_class,str):
+        if isinstance(self.theme_form_select_widget_class, str):
+            self.theme_form_select_widget_class = set(
+                self.theme_form_select_widget_class.split()
+            )
+        if isinstance(self.theme_form_checkbox_widget_class, str):
+            self.theme_form_checkbox_widget_class = set(
+                self.theme_form_checkbox_widget_class.split()
+            )
+        if isinstance(self.theme_form_radio_widget_class, str):
+            self.theme_form_radio_widget_class = set(
+                self.theme_form_radio_widget_class.split()
+            )
+        if isinstance(self.theme_button_class, str):
             self.theme_button_class = set(self.theme_button_class.split())
 
     def render_init(self):
@@ -406,44 +499,48 @@ class Column(metaclass=ColumnMeta):
     def editing_init(self):
         # editable attribute can be set via 'editable_columns'
         # only if not already set in the final column class
-        if self.editable is None and {'all',self.name} & self.listing.editable_columns:
+        if self.editable is None and {"all", self.name} & self.listing.editable_columns:
             self.editable = True
-        if {'all',self.name} & self.listing.editing_columns:
+        if {"all", self.name} & self.listing.editing_columns:
             self.editing = True
-        self.can_edit = ( self.editable and self.editing and
-                          self.listing.editable and self.listing.editing )
+        self.can_edit = (
+            self.editable
+            and self.editing
+            and self.listing.editable
+            and self.listing.editing
+        )
 
     def set_kwargs(self, **kwargs):
         # if parameters given in columns : apply them
-        for k, v in self.listing.columns.get_params().get(self.name,{}).items():
+        for k, v in self.listing.columns.get_params().get(self.name, {}).items():
             if k in COLUMNS_PARAMS_KEYS:
                 setattr(self, k, v)
         for k in COLUMNS_PARAMS_KEYS | COLUMNS_FORM_FIELD_KEYS:
-            listing_key = 'columns_{}'.format(k)
-            if hasattr(self.listing,listing_key):
-                setattr(self,k,getattr(self.listing,listing_key))
+            listing_key = "columns_{}".format(k)
+            if hasattr(self.listing, listing_key):
+                setattr(self, k, getattr(self.listing, listing_key))
         # col__param has higher priority than columns_param,
         # so getting col__params after columns_params
         for k in dir(self.listing):
-            start_key = f'{self.name}__'
+            start_key = f"{self.name}__"
             if k.startswith(start_key):
                 v = getattr(self.listing, k)
-                setattr(self, k[len(start_key):], v)
+                setattr(self, k[len(start_key) :], v)
         for k, v in kwargs.items():
             if k in COLUMNS_PARAMS_KEYS:
-                setattr(self,k,v)
+                setattr(self, k, v)
 
     def apply_template_kwargs(self):
         kwargs = self.listing.get_column_kwargs(self.name)
         if kwargs:
             for k, v in kwargs.items():
                 if k in COLUMNS_PARAMS_KEYS:
-                    if isinstance(v,dict):
-                        prev_value = getattr(self,k,None)
-                        if isinstance(prev_value,dict):
+                    if isinstance(v, dict):
+                        prev_value = getattr(self, k, None)
+                        if isinstance(prev_value, dict):
                             prev_value.update(v)
                             continue
-                    setattr(self,k,v)
+                    setattr(self, k, v)
 
     @classmethod
     def from_model_field(cls, field, **kwargs):
@@ -455,10 +552,15 @@ class Column(metaclass=ColumnMeta):
         if callable(cell_attrs):
             cell_attrs = cell_attrs(rec, ctx, value)
         attrs = HTMLAttributes(cell_attrs)
-        attrs.add('class', {'col-'+self.name,
-                           'type-'+type(value).__name__,
-                           'cls-'+self.__class__.__name__.lower()
-                           } | self.theme_cell_class)
+        attrs.add(
+            "class",
+            {
+                "col-" + self.name,
+                "type-" + type(value).__name__,
+                "cls-" + self.__class__.__name__.lower(),
+            }
+            | self.theme_cell_class,
+        )
         return attrs
 
     def get_default_value(self, rec):
@@ -477,7 +579,7 @@ class Column(metaclass=ColumnMeta):
             value = rec.get(self.data_key)
             if value is None:
                 value = self.get_default_value(rec)
-        if hasattr(self, 'choices'):
+        if hasattr(self, "choices"):
             value = self.choices.get(value, value)
         return value
 
@@ -485,10 +587,11 @@ class Column(metaclass=ColumnMeta):
         value = rec.get(self.data_key)
         return value
 
-    def get_cell_exported_value(self,rec):
+    def get_cell_exported_value(self, rec):
         val = self.get_cell_value(rec)
-        if not isinstance(val,(int, float, datetime.datetime,
-                               datetime.date,datetime.time)):
+        if not isinstance(
+            val, (int, float, datetime.datetime, datetime.date, datetime.time)
+        ):
             return force_str(val)
         return val
 
@@ -500,24 +603,28 @@ class Column(metaclass=ColumnMeta):
         form_field = rec.get_form()[self.name]
         errors = form_field.errors
         if errors:
-            html = ('<div class="form-field errors"><span class='
-                     '"listing-icon-attention"></span>{errors}{form_field}</div>').format(
-                     errors=errors, form_field=form_field)
+            html = (
+                '<div class="form-field errors"><span class='
+                '"listing-icon-attention"></span>{errors}{form_field}</div>'
+            ).format(errors=errors, form_field=form_field)
         else:
             html = ('<div class="form-field">{form_field}</div>').format(
-                    form_field=form_field)
+                form_field=form_field
+            )
         return html
 
     def get_cell_context(self, rec, value):
-        if isinstance(value,str):
+        if isinstance(value, str):
             value = conditional_escape(value)
-        return RenderContext(self.listing.global_context,
-                             rec.get_format_ctx(),
-                             value,  # if value is a dict it will be merged (see RenderContext)
-                             value=value,  # if value is not a dict it will have the key 'value' in the context
-                             rec=rec,
-                             listing=self.listing,
-                             col=self)
+        return RenderContext(
+            self.listing.global_context,
+            rec.get_format_ctx(),
+            value,  # if value is a dict it will be merged (see RenderContext)
+            value=value,  # if value is not a dict it will have the key 'value' in the context
+            rec=rec,
+            listing=self.listing,
+            col=self,
+        )
 
     def get_edit_value_tpl(self, rec, ctx, value):
         return self.render_form_field(rec)
@@ -535,7 +642,7 @@ class Column(metaclass=ColumnMeta):
         else:
             cell_tpl = self.cell_tpl
             value_tpl = self.get_value_tpl(rec, ctx, value)
-        tpl = cell_tpl or '<td{attrs}>%s</td>'
+        tpl = cell_tpl or "<td{attrs}>%s</td>"
         return tpl % value_tpl
 
     def render_cell(self, rec):
@@ -554,26 +661,30 @@ class Column(metaclass=ColumnMeta):
             header_attrs = header_attrs(ctx)
         attrs = HTMLAttributes(header_attrs)
         if self.sortable and self.listing.sortable:
-            attrs.add('class', self.listing.theme_sortable_class)
+            attrs.add("class", self.listing.theme_sortable_class)
             asc = self.listing.columns_sort_ascending.get(self.name)
             if asc is not None:
-                attrs.add('class', self.listing.theme_sorted_class)
-                attrs.add('class', self.listing.theme_sort_asc_class if asc else
-                                   self.listing.theme_sort_desc_class)
+                attrs.add("class", self.listing.theme_sorted_class)
+                attrs.add(
+                    "class",
+                    self.listing.theme_sort_asc_class
+                    if asc
+                    else self.listing.theme_sort_desc_class,
+                )
         else:
-            attrs.add('class', 'not-sortable')
-        attrs.add('class', {'col-'+self.name} | self.theme_header_class)
+            attrs.add("class", "not-sortable")
+        attrs.add("class", {"col-" + self.name} | self.theme_header_class)
         return attrs
 
     def get_header_value(self):
         if self.header:
             if callable(self.header):
                 # call to lambda function with column and listing as arguments
-                header_value = self.header(self,self.listing)
+                header_value = self.header(self, self.listing)
             else:
                 header_value = self.header
         else:
-            header_value = self.name.replace('_', ' ').title()
+            header_value = self.name.replace("_", " ").title()
         return header_value
 
     def get_header_context(self):
@@ -581,14 +692,18 @@ class Column(metaclass=ColumnMeta):
         icon = None
         if self.sortable and self.listing.sortable:
             actual_ascending = self.listing.columns_sort_ascending.get(self.name)
-            ascending = not self.ascending_by_default \
-                        if actual_ascending is None \
-                        else actual_ascending
-            sort_param = '{}{}'.format('-' if ascending else '',self.name)
-            if ( actual_ascending is not None
-                 and actual_ascending != self.ascending_by_default
-                 and self.listing.unsortable ):
-                sort_url = self.listing.get_url(without='sort')
+            ascending = (
+                not self.ascending_by_default
+                if actual_ascending is None
+                else actual_ascending
+            )
+            sort_param = "{}{}".format("-" if ascending else "", self.name)
+            if (
+                actual_ascending is not None
+                and actual_ascending != self.ascending_by_default
+                and self.listing.unsortable
+            ):
+                sort_url = self.listing.get_url(without="sort")
             else:
                 sort_url = self.listing.get_url(sort=sort_param)
             asc = self.listing.columns_sort_ascending.get(self.name)
@@ -599,7 +714,7 @@ class Column(metaclass=ColumnMeta):
             else:
                 icon = self.listing.theme_sort_desc_icon
             if icon:
-                icon = ' ' + icon
+                icon = " " + icon
         value = self.get_header_value()
         if isinstance(value, str):
             value = conditional_escape(value)
@@ -610,15 +725,17 @@ class Column(metaclass=ColumnMeta):
             sort_url=sort_url,
             icon=icon,
             listing=self.listing,
-            col=self)
+            col=self,
+        )
 
     def get_header_template(self, ctx):
         if ctx.sort_url:
             return self.header_sortable_tpl or (
-                   '<th{attrs}><a class="listing-nav" href="{sort_url}">{value}'
-                   '<span class="sorting{icon}"></span></a></th>')
+                '<th{attrs}><a class="listing-nav" href="{sort_url}">{value}'
+                '<span class="sorting{icon}"></span></a></th>'
+            )
         else:
-            return self.header_tpl or '<th{attrs}>{value}</th>'
+            return self.header_tpl or "<th{attrs}>{value}</th>"
 
     def render_header(self):
         ctx = self.get_header_context()
@@ -631,16 +748,21 @@ class Column(metaclass=ColumnMeta):
         if callable(footer_attrs):
             footer_attrs = footer_attrs(ctx)
         attrs = HTMLAttributes(footer_attrs)
-        attrs.add('class',{'col-'+self.name,
-                           'type-'+type(value).__name__,
-                           'cls-'+self.__class__.__name__.lower()
-                           } | self.theme_footer_class )
+        attrs.add(
+            "class",
+            {
+                "col-" + self.name,
+                "type-" + type(value).__name__,
+                "cls-" + self.__class__.__name__.lower(),
+            }
+            | self.theme_footer_class,
+        )
         return attrs
 
     def get_footer_value(self):
         if callable(self.footer):
             # call to lambda function with column and listing as arguments
-            footer_value = self.footer(self,self.listing)
+            footer_value = self.footer(self, self.listing)
         else:
             footer_value = self.footer
         if footer_value is None:
@@ -655,17 +777,19 @@ class Column(metaclass=ColumnMeta):
             value,  # if value is a dict it will be merged (see RenderContext)
             value=value,  # if value is not a dict it will have the key 'value' in the context
             listing=self.listing,
-            col=self)
+            col=self,
+        )
 
     def get_footer_value_tpl(self, ctx, value):
-        footer_value_tpl = self.footer_value_tpl or '{value}'
+        footer_value_tpl = self.footer_value_tpl or "{value}"
         if callable(footer_value_tpl):
             footer_value_tpl = footer_value_tpl(ctx, value)
         return footer_value_tpl
 
     def get_footer_template(self, ctx, value):
-        return self.footer_tpl or '<td{attrs}>%s</td>' % \
-                    self.get_footer_value_tpl(ctx, value)
+        return self.footer_tpl or "<td{attrs}>%s</td>" % self.get_footer_value_tpl(
+            ctx, value
+        )
 
     def render_footer(self):
         if isinstance(self.aggregation, Aggregation):
@@ -680,8 +804,11 @@ class Column(metaclass=ColumnMeta):
             return '<td class="render-error">{}</td>'.format(e)
 
     def get_form_field_params(self, have_empty_choice=False):
-        params = { p:getattr(self,p) for p in COLUMNS_FORM_FIELD_KEYS
-                   if getattr(self,p,None) is not None }
+        params = {
+            p: getattr(self, p)
+            for p in COLUMNS_FORM_FIELD_KEYS
+            if getattr(self, p, None) is not None
+        }
         return params
 
     def get_form_field_class(self):
@@ -690,8 +817,10 @@ class Column(metaclass=ColumnMeta):
             cls = getattr(forms, cls, None)
             if cls is None:
                 raise InvalidColumn(
-                    gettext('{} is not a valid django forms field class')
-                    .format(self.form_field_class))
+                    gettext("{} is not a valid django forms field class").format(
+                        self.form_field_class
+                    )
+                )
         return cls
 
     def get_form_field_widget(self, field_class):
@@ -700,10 +829,12 @@ class Column(metaclass=ColumnMeta):
             cls = getattr(widgets, cls, None)
             if cls is None:
                 raise InvalidColumn(
-                    gettext('{} is not a valid django forms widget class')
-                    .format(self.form_field_widget_class))
-        widget_attrs=HTMLAttributes(self.widget_attrs)
-        widget_attrs.add('class',self.theme_form_widget_class)
+                    gettext("{} is not a valid django forms widget class").format(
+                        self.form_field_widget_class
+                    )
+                )
+        widget_attrs = HTMLAttributes(self.widget_attrs)
+        widget_attrs.add("class", self.theme_form_widget_class)
         return cls(attrs=widget_attrs)
 
     def create_form_field(self, have_empty_choice=False):
@@ -723,32 +854,40 @@ class Column(metaclass=ColumnMeta):
         field = cls(widget=widget, **params)
         return field
 
-    def set_params_choices(self,params):
-        if not params.get('choices'):
-            if getattr(self,'model_field',None):
-                params['choices'] = self.model_field.choices
+    def set_params_choices(self, params):
+        if not params.get("choices"):
+            if getattr(self, "model_field", None):
+                params["choices"] = self.model_field.choices
             elif self.listing.model:
                 try:
                     model = self.listing.model
-                    params['choices'] = model._meta.get_field(self.name).choices
+                    params["choices"] = model._meta.get_field(self.name).choices
                 except (models.FieldDoesNotExist, AttributeError):
-                    raise InvalidFilters(_('Cannot find choices from model '
-                        'for filter "{name}", Please specify the choices to '
-                        'display').format(name=self.name))
+                    raise InvalidFilters(
+                        _(
+                            "Cannot find choices from model "
+                            'for filter "{name}", Please specify the choices to '
+                            "display"
+                        ).format(name=self.name)
+                    )
             else:
-                raise InvalidFilters(_('Please specify the choices to display '
-                    'for filter "{name}"').format(name = self.name ))
+                raise InvalidFilters(
+                    _(
+                        "Please specify the choices to display " 'for filter "{name}"'
+                    ).format(name=self.name)
+                )
+
 
 class TextColumn(Column):
     from_model_field_classes = (models.TextField,)
     form_field_widget_class = widgets.Textarea
-    widget_attrs = {'rows':'3'}
+    widget_attrs = {"rows": "3"}
 
 
 class BooleanColumn(Column):
-    true_tpl = _('True')
-    false_tpl = _('False')
-    params_keys = 'true_tpl,false_tpl'
+    true_tpl = _("True")
+    false_tpl = _("False")
+    params_keys = "true_tpl,false_tpl"
     from_model_field_classes = (models.BooleanField, models.NullBooleanField)
     form_field_class = forms.BooleanField
     required = False
@@ -758,7 +897,7 @@ class BooleanColumn(Column):
 
     def get_form_field_widget(self, field_class):
         wiget_attrs = HTMLAttributes(self.widget_attrs)
-        wiget_attrs.add('class', 'form-check-input')
+        wiget_attrs.add("class", "form-check-input")
         return forms.CheckboxInput(attrs=wiget_attrs)
 
 
@@ -768,191 +907,195 @@ class IntegerColumn(Column):
 
 
 class ChoiceColumn(Column):
-    choices={}
-    params_keys = 'choices'
+    choices = {}
+    params_keys = "choices"
     from_model_field_order = 50
     form_field_class = forms.ChoiceField
 
     def init(self, *args, **kwargs):
         super().init(*args, **kwargs)
-        if not isinstance(self.choices,dict):
+        if not isinstance(self.choices, dict):
             self.choices = OrderedDict(self.choices)
 
     @classmethod
     def from_model_field(cls, field, **kwargs):
-        if hasattr(field, 'choices') and field.choices:
-            return ChoiceColumn(field.name,
-                                model_field=field,
-                                choices=OrderedDict(field.choices),
-                                **kwargs)
+        if hasattr(field, "choices") and field.choices:
+            return ChoiceColumn(
+                field.name,
+                model_field=field,
+                choices=OrderedDict(field.choices),
+                **kwargs,
+            )
 
-    def get_value_tpl(self,rec, ctx, value):
-        return self.choices.get(value,value)
+    def get_value_tpl(self, rec, ctx, value):
+        return self.choices.get(value, value)
 
     def get_form_field_params(self, have_empty_choice=False):
         params = super().get_form_field_params()
         self.set_params_choices(params)
-        if have_empty_choice and self.input_type not in ('radio','radioinline'):
-            params['choices'] = [ ('', self.no_choice_msg) ] + \
-                                list(params['choices'])
+        if have_empty_choice and self.input_type not in ("radio", "radioinline"):
+            params["choices"] = [("", self.no_choice_msg)] + list(params["choices"])
         return params
 
     def get_form_field_widget(self, field_class):
         widget_attrs = HTMLAttributes(self.widget_attrs)
-        if self.input_type == 'radio':
+        if self.input_type == "radio":
             widget = forms.RadioSelect
-            widget_attrs.add('class', self.theme_form_radio_widget_class)
-            widget_attrs.add('class', 'multiple-radios')
-        elif self.input_type == 'radioinline':
+            widget_attrs.add("class", self.theme_form_radio_widget_class)
+            widget_attrs.add("class", "multiple-radios")
+        elif self.input_type == "radioinline":
             widget = forms.RadioSelect
-            widget_attrs.add('class', self.theme_form_radio_widget_class)
-            widget_attrs.add('class', 'multiple-radios inline')
+            widget_attrs.add("class", self.theme_form_radio_widget_class)
+            widget_attrs.add("class", "multiple-radios inline")
         else:
             widget = forms.Select
-            widget_attrs.add('class', self.theme_form_select_widget_class)
+            widget_attrs.add("class", self.theme_form_select_widget_class)
         return widget(attrs=widget_attrs)
 
 
 class MultipleChoiceColumn(Column):
-    choices={}
-    params_keys = 'choices'
+    choices = {}
+    params_keys = "choices"
     from_model_field_order = 90
     form_field_class = forms.MultipleChoiceField
 
     def init(self, *args, **kwargs):
         super().init(*args, **kwargs)
-        if not isinstance(self.choices,dict):
+        if not isinstance(self.choices, dict):
             self.choices = OrderedDict(self.choices)
 
     @classmethod
     def from_model_field(cls, field, **kwargs):
-        if hasattr(field, 'choices') and field.choices:
-            return MultipleChoiceColumn(field.name,
-                                model_field=field,
-                                choices=OrderedDict(field.choices),
-                                **kwargs)
+        if hasattr(field, "choices") and field.choices:
+            return MultipleChoiceColumn(
+                field.name,
+                model_field=field,
+                choices=OrderedDict(field.choices),
+                **kwargs,
+            )
 
-    def get_cell_value(self,rec):
+    def get_cell_value(self, rec):
         value = super().get_cell_value(rec)
-        return self.choices.get(value,value)
+        return self.choices.get(value, value)
 
     def get_form_field_params(self, have_empty_choice=False):
         params = super().get_form_field_params()
         self.set_params_choices(params)
-        if have_empty_choice and self.input_type not in ('checkbox','checkboxinline'):
-            params['choices'] = [ ('', self.no_choice_msg) ] + \
-                                list(params['choices'])
+        if have_empty_choice and self.input_type not in ("checkbox", "checkboxinline"):
+            params["choices"] = [("", self.no_choice_msg)] + list(params["choices"])
         return params
 
     def get_form_field_widget(self, field_class):
-        if self.input_type == 'checkbox':
+        if self.input_type == "checkbox":
+            return forms.CheckboxSelectMultiple(attrs={"class": "multiple-checkboxes"})
+        elif self.input_type == "checkboxinline":
             return forms.CheckboxSelectMultiple(
-                attrs={'class':'multiple-checkboxes'})
-        elif self.input_type == 'checkboxinline':
-            return forms.CheckboxSelectMultiple(
-                attrs={'class':'multiple-checkboxes inline'})
+                attrs={"class": "multiple-checkboxes inline"}
+            )
         return super().get_form_field_widget(field_class)
 
 
 class ManyColumn(Column):
-    many_separator = ', '
-    params_keys = 'many_separator,cell_map,cell_filter,cell_reduce'
+    many_separator = ", "
+    params_keys = "many_separator,cell_map,cell_filter,cell_reduce"
     from_model_field_classes = (models.ManyToManyField,)
     editable = False
 
-    def get_cell_value(self,rec):
+    def get_cell_value(self, rec):
         value = super().get_cell_value(rec)
         value = self.cell_filter(value)
-        value = map(self.cell_map,value)
+        value = map(self.cell_map, value)
         value = self.cell_reduce(value)
         return value
 
-    def cell_filter(self,value):
-        if isinstance(value,models.Manager):
+    def cell_filter(self, value):
+        if isinstance(value, models.Manager):
             value = value.all()
         return value
 
-    def cell_map(self,value):
+    def cell_map(self, value):
         return force_str(value)
 
-    def cell_reduce(self,value):
+    def cell_reduce(self, value):
         return self.many_separator.join(value)
 
 
 class CheckboxColumn(Column):
     sortable = False
 
-    def get_value_tpl(self,rec, ctx, value):
+    def get_value_tpl(self, rec, ctx, value):
         attrs = HTMLAttributes(self.widget_attrs)
-        attrs.add('type','checkbox')
-        attrs.add('name',self.name)
-        attrs.add('class',self.theme_form_checkbox_widget_class)
+        attrs.add("type", "checkbox")
+        attrs.add("name", self.name)
+        attrs.add("class", self.theme_form_checkbox_widget_class)
         # If a value is set at definition time : take it
         # otherwise : take cell value
         if self.cell_value is not None:
             value = self.cell_value
         if value:
-            attrs.set('checked')
-        return '<input{}>'.format(attrs)
+            attrs.set("checked")
+        return "<input{}>".format(attrs)
 
 
 class ButtonColumn(Column):
-    label = 'Button'
+    label = "Button"
     sortable = False
 
-    def get_value_tpl(self,rec, ctx, value):
+    def get_value_tpl(self, rec, ctx, value):
         attrs = HTMLAttributes(self.widget_attrs)
-        attrs.add('type','button')
-        attrs.add('name',self.name)
-        attrs.add('class',self.theme_button_class)
-        return '<button{attrs}>{label}</button>'.format(
-            attrs=attrs,label=conditional_escape(self.label))
+        attrs.add("type", "button")
+        attrs.add("name", self.name)
+        attrs.add("class", self.theme_button_class)
+        return "<button{attrs}>{label}</button>".format(
+            attrs=attrs, label=conditional_escape(self.label)
+        )
 
 
 class SelectColumn(Column):
     sortable = False
-    choices={}
+    choices = {}
 
     def init(self, *args, **kwargs):
         super().init(*args, **kwargs)
-        if not isinstance(self.choices,dict):
+        if not isinstance(self.choices, dict):
             self.choices = OrderedDict(self.choices)
 
-    def get_value_tpl(self,rec, ctx, value):
+    def get_value_tpl(self, rec, ctx, value):
         attrs = HTMLAttributes(self.widget_attrs)
-        attrs.add('name',self.name)
-        attrs.add('class',self.theme_form_select_widget_class)
+        attrs.add("name", self.name)
+        attrs.add("class", self.theme_form_select_widget_class)
         # If a value is set at definition time : take it
         # otherwise : take cell value
         if self.cell_value is not None:
             value = self.cell_value
-        options = [ '<option value="{key}"{sel}>{val}</option>\n'
-            .format( key=k,
-                     val=conditional_escape(v),
-                     sel=' selected' if value==k else '')
-            for k,v in self.choices.items() ]
-        return '<select{}>\n{}</select>'.format(attrs, options)
+        options = [
+            '<option value="{key}"{sel}>{val}</option>\n'.format(
+                key=k, val=conditional_escape(v), sel=" selected" if value == k else ""
+            )
+            for k, v in self.choices.items()
+        ]
+        return "<select{}>\n{}</select>".format(attrs, options)
 
 
 class InputColumn(Column):
-    widget_attrs = {'type':'text'}
+    widget_attrs = {"type": "text"}
     sortable = False
 
-    def get_value_tpl(self,rec, ctx, value):
+    def get_value_tpl(self, rec, ctx, value):
         attrs = HTMLAttributes(self.widget_attrs)
-        attrs.add('name',self.name)
-        attrs.add('class',self.theme_form_widget_class)
-        return '<input{attrs}>'.format(attrs=attrs)
+        attrs.add("name", self.name)
+        attrs.add("class", self.theme_form_widget_class)
+        return "<input{attrs}>".format(attrs=attrs)
 
 
 class DateColumn(Column):
     date_format = settings.DATE_FORMAT
-    params_keys = 'date_format'
+    params_keys = "date_format"
     from_model_field_classes = (models.DateField,)
     form_field_class = forms.DateField
-    widget_attrs = {'class': 'edit-datecolumn', 'autocomplete':'off'}
+    widget_attrs = {"class": "edit-datecolumn", "autocomplete": "off"}
 
-    def get_cell_value(self,rec):
+    def get_cell_value(self, rec):
         value = super().get_cell_value(rec)
         if isinstance(value, datetime.date):
             return formats.date_format(value, self.date_format)
@@ -961,11 +1104,11 @@ class DateColumn(Column):
 
 class DateTimeColumn(Column):
     datetime_format = settings.DATETIME_FORMAT
-    params_keys = 'datetime_format'
+    params_keys = "datetime_format"
     from_model_field_classes = (models.DateTimeField,)
-    widget_attrs = {'class': 'edit-datetimecolumn', 'autocomplete':'off'}
+    widget_attrs = {"class": "edit-datetimecolumn", "autocomplete": "off"}
 
-    def get_cell_value(self,rec):
+    def get_cell_value(self, rec):
         value = super().get_cell_value(rec)
         if isinstance(value, datetime.date):  # date also match datetime
             return formats.date_format(value, self.datetime_format)
@@ -974,19 +1117,21 @@ class DateTimeColumn(Column):
 
 class JsonDateTimeColumn(Column):
     datetime_format = settings.DATETIME_FORMAT
-    params_keys = 'datetime_format'
+    params_keys = "datetime_format"
 
-    def get_cell_value(self,rec):
+    def get_cell_value(self, rec):
         value = super().get_cell_value(rec)
         if isinstance(value, str):
-            value = parse_datetime(value) or value  # convert json date to datetime object
+            value = (
+                parse_datetime(value) or value
+            )  # convert json date to datetime object
         if isinstance(value, datetime.date):  # date also match datetime
             return formats.date_format(value, self.datetime_format)
         return value
 
 
 class FileSizeColumn(Column):
-    def get_cell_value(self,rec):
+    def get_cell_value(self, rec):
         value = super().get_cell_value(rec)
         if isinstance(value, (int, float)):
             return filesizeformat(value)
@@ -995,9 +1140,9 @@ class FileSizeColumn(Column):
 
 class TimeColumn(Column):
     time_format = settings.TIME_FORMAT
-    params_keys = 'time_format'
+    params_keys = "time_format"
     from_model_field_classes = (models.TimeField,)
-    widget_attrs = {'class': 'edit-timecolumn', 'autocomplete':'off'}
+    widget_attrs = {"class": "edit-timecolumn", "autocomplete": "off"}
 
     def get_cell_value(self, rec):
         value = super().get_cell_value(rec)
@@ -1007,12 +1152,12 @@ class TimeColumn(Column):
 
 
 class LinkColumn(Column):
-    params_keys = 'link_attrs,href_tpl,no_link'
+    params_keys = "link_attrs,href_tpl,no_link"
     href_tpl = None
     no_link = False
     link_attrs = None
-    cell_tpl = '<td{attrs}><a{link_attrs}>%s</a></td>'
-    cell_edit_tpl = '<td{attrs}>%s</td>'
+    cell_tpl = "<td{attrs}><a{link_attrs}>%s</a></td>"
+    cell_edit_tpl = "<td{attrs}>%s</td>"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1034,7 +1179,7 @@ class LinkColumn(Column):
             href_tpl = href_tpl(rec, value)
         return href_tpl
 
-    def get_href(self,rec, ctx, value):
+    def get_href(self, rec, ctx, value):
         href_tpl = self.get_href_tpl(rec, value)
         if isinstance(href_tpl, str):
             return href_tpl.format(**ctx)
@@ -1044,16 +1189,16 @@ class LinkColumn(Column):
         ctx = super().get_cell_context(rec, value)
         ctx.link_attrs = self.get_link_attrs(rec, value)
         if not self.no_link:
-            ctx.link_attrs.add('href', self.get_href(rec, ctx, value))
+            ctx.link_attrs.add("href", self.get_href(rec, ctx, value))
         return ctx
 
 
 class ButtonLinkColumn(LinkColumn):
-    label = 'Button'
+    label = "Button"
 
     def get_link_attrs(self, rec, value):
         attrs = super().get_link_attrs(rec, value)
-        attrs.add('class', self.theme_button_class)
+        attrs.add("class", self.theme_button_class)
         return attrs
 
     def get_cell_value(self, rec):
@@ -1062,21 +1207,21 @@ class ButtonLinkColumn(LinkColumn):
 
 
 class URLColumn(LinkColumn):
-    href_tpl = '{value}'
+    href_tpl = "{value}"
     from_model_field_classes = (models.URLField,)
     form_field_widget_class = widgets.URLInput
-    params_keys = 'remove_proto'
+    params_keys = "remove_proto"
     remove_proto = True
 
     def get_cell_context(self, rec, value):
         ctx = super().get_cell_context(rec, value)
         if self.remove_proto and not self.can_edit:
-            ctx.value = re.sub('^.*?//','',ctx.value)
+            ctx.value = re.sub("^.*?//", "", ctx.value)
         return ctx
 
 
 class EmailColumn(LinkColumn):
-    href_tpl = 'mailto:{value}'
+    href_tpl = "mailto:{value}"
     from_model_field_classes = (models.EmailField,)
     form_field_widget_class = widgets.EmailInput
 
@@ -1090,7 +1235,7 @@ class LinkObjectColumn(LinkColumn):
 
 class ForeignKeyColumn(LinkColumn):
     from_model_field_classes = (models.ForeignKey,)
-    params_keys = 'no_foreignkey_link'
+    params_keys = "no_foreignkey_link"
     no_foreignkey_link = False
     editable = False
 
@@ -1108,10 +1253,10 @@ class ForeignKeyColumn(LinkColumn):
 class FileColumn(LinkColumn):
     from_model_field_classes = (models.FileField,)
     form_field_class = forms.FileField
-    params_keys = 'check_file, path_tpl, no_file_link'
+    params_keys = "check_file, path_tpl, no_file_link"
     check_file = True
     no_file_link = False
-    path_tpl = '{MEDIA_ROOT}/{value.name}'
+    path_tpl = "{MEDIA_ROOT}/{value.name}"
 
     def get_path_tpl(self, rec, ctx, value):
         path_tpl = self.path_tpl
@@ -1124,7 +1269,7 @@ class FileColumn(LinkColumn):
             return None
         url = None
         if self.check_file:
-            storage = getattr(value, 'storage', None)
+            storage = getattr(value, "storage", None)
             if storage:
                 if storage.exists(value.name):
                     if self.href_tpl:
@@ -1136,7 +1281,7 @@ class FileColumn(LinkColumn):
                 if os.path.exists(path):
                     url = super().get_href(rec, ctx, value)
             if not url:
-                ctx.link_attrs.add('class', 'missing')
+                ctx.link_attrs.add("class", "missing")
         return url
 
 
@@ -1144,7 +1289,7 @@ class ComputedColumnMixin:
     editable = False
     sortable = False
 
-    def get_row_numeric_values(self,rec):
+    def get_row_numeric_values(self, rec):
         values = []
         for col in self.listing.selected_columns:
             if not isinstance(col, ComputedColumnMixin):
@@ -1155,62 +1300,62 @@ class ComputedColumnMixin:
 
 
 class TotalColumn(ComputedColumnMixin, Column):
-    name = 'cc_total'  # 'cc' for computed column
-    header = _('Total')
-    aggregation = 'sum'  # aggregate rows
-    footer_tpl = _('<td{attrs}>Grand Total:<br>{value}</td>')
+    name = "cc_total"  # 'cc' for computed column
+    header = _("Total")
+    aggregation = "sum"  # aggregate rows
+    footer_tpl = _("<td{attrs}>Grand Total:<br>{value}</td>")
 
     @cache_in_record
-    def get_cell_value(self,rec):
+    def get_cell_value(self, rec):
         return sum(self.get_row_numeric_values(rec))  # aggregate columns
 
 
 class MinColumn(ComputedColumnMixin, Column):
-    name = 'cc_min_value'
-    header = _('Min')
-    aggregation = 'min'
-    footer_tpl = _('<td{attrs}>Overall Min:<br>{value}</td>')
+    name = "cc_min_value"
+    header = _("Min")
+    aggregation = "min"
+    footer_tpl = _("<td{attrs}>Overall Min:<br>{value}</td>")
 
-    def get_cell_value(self,rec):
+    def get_cell_value(self, rec):
         return min(self.get_row_numeric_values(rec))
 
 
 class MaxColumn(ComputedColumnMixin, Column):
-    name = 'cc_max_value'
-    header = _('Max')
-    aggregation = 'max'
-    footer_tpl = _('<td{attrs}>Overall Max:<br>{value}</td>')
+    name = "cc_max_value"
+    header = _("Max")
+    aggregation = "max"
+    footer_tpl = _("<td{attrs}>Overall Max:<br>{value}</td>")
 
-    def get_cell_value(self,rec):
+    def get_cell_value(self, rec):
         return max(self.get_row_numeric_values(rec))
 
 
 class AvgColumn(ComputedColumnMixin, Column):
-    params_keys = 'precision, footer_precision'
-    name = 'cc_average'
-    header = _('Average')
+    params_keys = "precision, footer_precision"
+    name = "cc_average"
+    header = _("Average")
     precision = 2
     footer_precision = 2
-    value_tpl = '{value:.{col.precision}f}'
-    aggregation = 'avg'
-    footer_tpl = _('<td{attrs}>Overall avg:<br>{value:.{col.footer_precision}f}</td>')
+    value_tpl = "{value:.{col.precision}f}"
+    aggregation = "avg"
+    footer_tpl = _("<td{attrs}>Overall avg:<br>{value:.{col.footer_precision}f}</td>")
 
-    def get_cell_value(self,rec):
+    def get_cell_value(self, rec):
         values = self.get_row_numeric_values(rec)
         if values:
-            return sum(values)/len(values)
+            return sum(values) / len(values)
         return self.default_value
 
 
 class SelectionColumn(Column):
     sortable = False
-    theme_header_icon = 'listing-icon-ok'
-    header_tpl = '<th{attrs}><span class={col.theme_header_icon}></span></th>'
+    theme_header_icon = "listing-icon-ok"
+    header_tpl = "<th{attrs}><span class={col.theme_header_icon}></span></th>"
 
     def get_cell_context(self, rec, value):
         context = super().get_cell_context(rec, value)
-        context['selection_value'] = rec.get(self.listing.selection_key)
-        context['checked'] = ' checked' if rec.is_selected() else ''
+        context["selection_value"] = rec.get(self.listing.selection_key)
+        context["checked"] = " checked" if rec.is_selected() else ""
         return context
 
     def get_value_tpl(self, rec, ctx, value):

@@ -4,31 +4,34 @@
 # @author: Eric Lapouyade
 #
 
-from django.db import models
 from django import forms
-from django.template import loader
-from django.utils.module_loading import import_string
-from django.utils.translation import gettext_lazy, pgettext_lazy
-from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
 from django.forms.fields import FileField
-import copy
-import re
+from django.template import loader
+from django.utils.translation import gettext as _
+from django.utils.translation import pgettext_lazy
+
 from .context import RenderContext
-from .html_attributes import HTMLAttributes
 from .exceptions import InvalidListingForm
+from .html_attributes import HTMLAttributes
+from .theme_config import ThemeTemplate
 from .utils import init_dicts_from_class
-from .theme_config import ThemeAttribute, ThemeTemplate
 
-
-__all__ = ['LISTING_FORM_PARAMS_KEYS', 'ListingForm']
+__all__ = ["LISTING_FORM_PARAMS_KEYS", "ListingForm"]
 
 # Declare keys only for "Filters" object
 LISTING_FORM_PARAMS_KEYS = {
-    'action', 'reset_label', 'submit_label', 'template_name',
-    'django_form_class', 'layout', 'attrs', 'buttons',
-    'ListingBaseForm',
+    "action",
+    "reset_label",
+    "submit_label",
+    "template_name",
+    "django_form_class",
+    "layout",
+    "attrs",
+    "buttons",
+    "ListingBaseForm",
 }
+
 
 class ListingBaseForm(forms.BaseForm):
     def _clean_fields(self):
@@ -37,7 +40,8 @@ class ListingBaseForm(forms.BaseForm):
                 value = self.get_initial_for_field(field, name)
             else:
                 value = field.widget.value_from_datadict(
-                    self.data, self.files, self.add_prefix(name))
+                    self.data, self.files, self.add_prefix(name)
+                )
             try:
                 if isinstance(field, FileField):
                     initial = self.get_initial_for_field(field, name)
@@ -49,13 +53,13 @@ class ListingBaseForm(forms.BaseForm):
                 method = None
                 view = self.listing.get_view()
                 if view:
-                    method_name = f'manage_listing_{view.listing.id[:-3]}_{self.form_name}_clean_{name}'
+                    method_name = f"manage_listing_{view.listing.id[:-3]}_{self.form_name}_clean_{name}"
                     method = getattr(view, method_name, None)
                     if not method:
-                        method_name = f'manage_listing_{self.form_name}_clean_{name}'
+                        method_name = f"manage_listing_{self.form_name}_clean_{name}"
                         method = getattr(view, method_name, None)
                 if not method:
-                    method_name = f'{self.form_name}_clean_{name}'
+                    method_name = f"{self.form_name}_clean_{name}"
                     method = getattr(self.listing, method_name, None)
                 if method:
                     value = method(self)
@@ -68,13 +72,15 @@ class ListingBaseForm(forms.BaseForm):
             method = None
             view = self.listing.get_view()
             if view:
-                method_name = f'manage_listing_{view.listing.id[:-3]}_{self.form_name}_clean'
+                method_name = (
+                    f"manage_listing_{view.listing.id[:-3]}_{self.form_name}_clean"
+                )
                 method = getattr(view, method_name, None)
                 if not method:
-                    method_name = f'manage_listing_{self.form_name}_clean'
+                    method_name = f"manage_listing_{self.form_name}_clean"
                     method = getattr(view, method_name, None)
             if not method:
-                method_name = f'{self.form_name}_clean'
+                method_name = f"{self.form_name}_clean"
                 method = getattr(self.listing, method_name, None)
             if method:
                 cleaned_data = method(self)
@@ -92,21 +98,26 @@ class ListingForm:
     action = None
     form_base_class = ListingBaseForm
     django_form_class = None
-    reset_label = pgettext_lazy('Listing form', 'Reset')
-    submit_label = pgettext_lazy('Listing form', 'Add')
-    template_name = ThemeTemplate('listing_form.html')
+    reset_label = pgettext_lazy("Listing form", "Reset")
+    submit_label = pgettext_lazy("Listing form", "Add")
+    template_name = ThemeTemplate("listing_form.html")
     layout = None
-    buttons = 'reset,submit'
-    name = 'listing_form'
-    attrs = {'class': 'listing-form'}
+    buttons = "reset,submit"
+    name = "listing_form"
+    attrs = {"class": "listing-form"}
 
     def __init__(self, action, name=None, *args, **kwargs):
         self.init_args = args
         self.init_kwargs = kwargs
-        self.name = name or f'{action}_form'
+        self.name = name or f"{action}_form"
         self.action = action
         self._form = None
-        init_dicts_from_class(self, ['attrs',])
+        init_dicts_from_class(
+            self,
+            [
+                "attrs",
+            ],
+        )
 
     def bind_to_listing(self, listing):
         self.init(listing, *self.init_args, **self.init_kwargs)
@@ -114,68 +125,69 @@ class ListingForm:
     def set_listing(self, listing):
         self.listing = listing
 
-    def set_kwargs(self,**kwargs):
+    def set_kwargs(self, **kwargs):
         for k in LISTING_FORM_PARAMS_KEYS:
-            listing_key = '{}_{}'.format(self.name, k)
+            listing_key = "{}_{}".format(self.name, k)
             if k in kwargs:
                 setattr(self, k, kwargs[k])
-            elif hasattr(self.listing,listing_key):
-                setattr(self,k,getattr(self.listing,listing_key))
+            elif hasattr(self.listing, listing_key):
+                setattr(self, k, getattr(self.listing, listing_key))
 
     def init(self, listing, *args, **kwargs):
         self.set_listing(listing)
         self.set_kwargs(**kwargs)
         if isinstance(self.layout, str):
             # transform layout string into list of lists
-            self.layout = list(map(lambda s:s.split(','),
-                                        self.layout.split(';')))
+            self.layout = list(map(lambda s: s.split(","), self.layout.split(";")))
         if self.layout:
-            layout_str = ';'.join(map(lambda l:','.join(l),self.layout))
+            layout_str = ";".join(map(lambda l: ",".join(l), self.layout))
             self.listing.add_form_input_hiddens(
-                listing_form_layout=layout_str,
-                listing_form_name=self.name
+                listing_form_layout=layout_str, listing_form_name=self.name
             )
         self.listing.add_form_input_hiddens(listing_id=self.listing.id)
-        if not isinstance(self.attrs,HTMLAttributes):
+        if not isinstance(self.attrs, HTMLAttributes):
             self.attrs = HTMLAttributes(self.attrs)
-        form_css_class = 'listing-' + self.name.replace('_','-')
-        self.attrs.add('class',form_css_class)
+        form_css_class = "listing-" + self.name.replace("_", "-")
+        self.attrs.add("class", form_css_class)
         if self.listing.accept_ajax:
-            self.attrs.add('class', f'django-{self.name}-ajax')
-        if 'id' not in self.attrs:
-            self.attrs.add('id',f'{form_css_class}{self.listing.suffix}')
-        self.id = self.attrs['id']
+            self.attrs.add("class", f"django-{self.name}-ajax")
+        if "id" not in self.attrs:
+            self.attrs.add("id", f"{form_css_class}{self.listing.suffix}")
+        self.id = self.attrs["id"]
         buttons = self.buttons
-        if isinstance(buttons,str):
-            self.buttons = list(map(str.strip,buttons.split(',')))
+        if isinstance(buttons, str):
+            self.buttons = list(map(str.strip, buttons.split(",")))
 
     def datetimepicker_init(self):
         if self.listing.use_datetimepicker:
-            self.listing.need_media_for('datetimepicker')
-            self.listing.add_footer_dict_list('datetimepickers', dict(
-                listing=self.listing,
-                div_id=self.id
-            ))
+            self.listing.need_media_for("datetimepicker")
+            self.listing.add_footer_dict_list(
+                "datetimepickers", dict(listing=self.listing, div_id=self.id)
+            )
 
     def create_form_from_layout(self):
         fields = {}
         if not self.layout:
-            raise InvalidListingForm(_('You must specify a list of columns '
-                                       'names in the form layout'))
+            raise InvalidListingForm(
+                _("You must specify a list of columns " "names in the form layout")
+            )
         for row in self.layout:
             for field_name in row:
                 col = self.listing.columns.get(field_name)
                 if not col:
                     raise InvalidListingForm(
-                        _('In the {form_name} layout you specified the field '
-                          '"{field_name}" but there is no existing listing '
-                          'column with that name')
-                        .format(form_name=self.name, field_name=field_name)
+                        _(
+                            "In the {form_name} layout you specified the field "
+                            '"{field_name}" but there is no existing listing '
+                            "column with that name"
+                        ).format(form_name=self.name, field_name=field_name)
                     )
                 fields[field_name] = col.create_form_field(have_empty_choice=True)
-        form_class = type('{}{}'.format(self.name, self.listing.suffix),
-                          (self.form_base_class,),
-                          {'base_fields': fields})
+        form_class = type(
+            "{}{}".format(self.name, self.listing.suffix),
+            (self.form_base_class,),
+            {"base_fields": fields},
+        )
         return form_class
 
     def get_form(self):
@@ -186,7 +198,7 @@ class ListingForm:
             self._form.form_name = self.name
         return self._form
 
-    def render_init(self,context):
+    def render_init(self, context):
         self.listing.manage_page_context(context)
         self.datetimepicker_init()
 

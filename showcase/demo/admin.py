@@ -5,28 +5,20 @@
 #
 
 from django.contrib import admin
+
 from .models import *
+
 
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('first_name',
-                    'last_name',
-                    'age',
-                    'designation',
-                    'salary',
-                    'joined')
+    list_display = ("first_name", "last_name", "age", "designation", "salary", "joined")
 
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('name',
-                    'address',
-                    'city',
-                    'country')
+    list_display = ("name", "address", "city", "country")
 
 
 @admin.register(BooleanModel)
 class BooleanModelAdmin(admin.ModelAdmin):
     pass
-
-

@@ -1,4 +1,9 @@
-__version__ = '0.0.17'
+""" django_listing root __init__.py file
+
+   isort:skip_file
+"""
+
+__version__ = '0.0.18'
 __author__ = "Eric Lapouyade"
 __copyright__ = "Copyright 2018, The Django listing Project"
 __credits__ = ["Eric Lapouyade"]

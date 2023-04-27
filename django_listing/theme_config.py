@@ -4,8 +4,11 @@
 # @author: Eric Lapouyade
 #
 import os
-from .exceptions import InvalidListingConfiguration
+
 from django.conf import settings
+
+from .exceptions import InvalidListingConfiguration
+
 
 class ThemeConfigMeta(type):
     themes_name_to_class = {}
@@ -19,65 +22,67 @@ class ThemeConfigMeta(type):
     def get_class(mcs, theme_name):
         config = mcs.themes_name_to_class.get(theme_name)
         if config is None:
-            themes = ', '.join(mcs.themes_name_to_class.keys())
+            themes = ", ".join(mcs.themes_name_to_class.keys())
             raise InvalidListingConfiguration(
                 f'Theme "{theme_name}" does not exist. Possible values : {themes}'
             )
         return config
 
+
 class ThemeConfigBase(metaclass=ThemeConfigMeta):
-    theme_name = 'default'  # to select the right directories for templates and django_listing.css
-    theme_fallback_name = 'default'  # to compute fallback directory path to search templates if not existing in theme directory
+    theme_name = "default"  # to select the right directories for templates and django_listing.css
+    theme_fallback_name = "default"  # to compute fallback directory path to search templates if not existing in theme directory
 
     # css classes
-    theme_class = 'standard-theme'  # the one to select a css theme inside django_listing.css
-    theme_listing_class = 'django-listing'  # do not modify
-    theme_action_button_class = 'btn btn-primary'
-    theme_action_button_cancel_icon = ''
-    theme_action_button_edit_icon = ''
-    theme_action_button_update_icon = ''
-    theme_action_button_upload_icon = ''
-    theme_container_class = 'django-listing-container'
-    theme_sort_asc_icon = 'listing-icon-angle-up'
-    theme_sort_desc_icon = 'listing-icon-angle-down'
-    theme_sort_none_icon = ''
-    theme_spinner_icon = 'animate-spin listing-icon-spin2'
-    theme_sortable_class = 'sortable'
-    theme_sorted_class = 'sorted'
-    theme_sort_asc_class = 'asc'
-    theme_sort_desc_class = 'desc'
-    theme_button_class = 'btn btn-primary'
-    theme_button_disabled_class = 'disabled'
-    theme_button_active_class = 'active'
-    theme_div_row_container_class = ''
-    theme_row_class = 'row-container'
+    theme_class = "theme-standard"
 
-    column_theme_header_class = ''
-    column_theme_cell_class = ''
-    column_theme_footer_class = ''
-    column_theme_form_widget_class = 'form-control form-control-sm'
-    column_theme_form_select_widget_class = 'form-control form-control-sm'
-    column_theme_form_checkbox_widget_class = 'form-control form-control-sm'
-    column_theme_form_radio_widget_class = 'form-control form-control-sm'
-    column_theme_button_class = 'btn btn-primary btn-sm'
+    theme_action_button_cancel_icon = ""
+    theme_action_button_class = "btn btn-primary"
+    theme_action_button_edit_icon = ""
+    theme_action_button_update_icon = ""
+    theme_action_button_upload_icon = ""
+    theme_button_active_class = "active"
+    theme_button_class = "btn btn-primary"
+    theme_button_disabled_class = "disabled"
+    theme_container_class = "django-listing-container"
+    theme_div_row_container_class = ""
+    theme_listing_class = "django-listing"  # do not modify
+    theme_row_class = "row-container"
+    theme_sort_asc_class = "asc"
+    theme_sort_asc_icon = "listing-icon-angle-up"
+    theme_sort_desc_class = "desc"
+    theme_sort_desc_icon = "listing-icon-angle-down"
+    theme_sort_none_icon = ""
+    theme_sortable_class = "sortable"
+    theme_sorted_class = "sorted"
+    theme_spinner_icon = "animate-spin listing-icon-spin2"
 
-    paginator_theme_first_last_has_icon = True
-    paginator_theme_first_last_has_text = True
-    paginator_theme_first_icon = 'listing-icon-to-start-1'
-    paginator_theme_last_icon = 'listing-icon-to-end-1'
+    column_theme_button_class = "btn btn-primary btn-sm"
+    column_theme_cell_class = ""
+    column_theme_footer_class = ""
+    column_theme_form_checkbox_widget_class = "form-control form-control-sm"
+    column_theme_form_radio_widget_class = "form-control form-control-sm"
+    column_theme_form_select_widget_class = "form-control form-control-sm"
+    column_theme_form_widget_class = "form-control form-control-sm"
+    column_theme_header_class = ""
+
+    paginator_theme_button_a_class = "page-link"
+    paginator_theme_button_li_class = "page-item"
+    paginator_theme_button_text_class = "button-text"
+    paginator_theme_fast_next_icon = "listing-icon-fast-forward"
     paginator_theme_fast_page_has_icon = True
     paginator_theme_fast_page_has_text = True
-    paginator_theme_fast_prev_icon = 'listing-icon-fast-backward'
-    paginator_theme_fast_next_icon = 'listing-icon-fast-forward'
+    paginator_theme_fast_prev_icon = "listing-icon-fast-backward"
+    paginator_theme_first_icon = "listing-icon-to-start-1"
+    paginator_theme_first_last_has_icon = True
+    paginator_theme_first_last_has_text = True
+    paginator_theme_last_icon = "listing-icon-to-end-1"
+    paginator_theme_next_icon = "listing-icon-right-dir"
+    paginator_theme_prev_icon = "listing-icon-left-dir"
     paginator_theme_prev_next_has_icon = True
     paginator_theme_prev_next_has_text = True
-    paginator_theme_prev_icon = 'listing-icon-left-dir'
-    paginator_theme_next_icon = 'listing-icon-right-dir'
-    paginator_theme_button_a_class = 'page-link'
-    paginator_theme_button_li_class = 'page-item'
-    paginator_theme_button_text_class = 'button-text'
 
-    toolbar_theme_button_class = 'btn btn-secondary'
+    toolbar_theme_button_class = "btn btn-secondary"
 
 
 class ThemeAttribute:
@@ -90,7 +95,7 @@ class ThemeAttribute:
             return getattr(config, self.attrname)
         except AttributeError as e:
             raise InvalidListingConfiguration(
-                f'{self.attrname} does not exist in {config.__module__}.{config.__qualname__}'
+                f"{self.attrname} does not exist in {config.__module__}.{config.__qualname__}"
             )
 
 
@@ -103,18 +108,18 @@ class ThemeTemplate(str):
         path = os.path.join(
             settings.django_listing_settings.name,
             settings.django_listing_settings.theme_config.theme_name,
-            template_name
+            template_name,
         )
         full_path = os.path.join(
             settings.django_listing_settings.path,
-            'templates',
+            "templates",
             path,
         )
         if not os.path.exists(full_path):
             path = os.path.join(
                 settings.django_listing_settings.name,
                 settings.django_listing_settings.theme_config.theme_fallback_name,
-                template_name
+                template_name,
             )
         return path
 
@@ -126,15 +131,16 @@ class ThemeTemplate(str):
 
 
 class ThemeConfigBoostrap4(ThemeConfigBase):
-    theme_name = 'bootstrap4'
+    theme_name = "bootstrap4"
+    theme_class = "theme-bootstrap4"
 
 
 class ThemeConfigBoostrap5(ThemeConfigBase):
-    theme_name = 'bootstrap5'
+    theme_name = "bootstrap5"
+    theme_class = "theme-bootstrap5"
 
-    theme_row_class = 'row-container d-grid d-lg-table-row'
+    theme_row_class = "row-container d-grid d-lg-table-row"
 
-    column_theme_form_select_widget_class = 'form-select form-select-sm'
-    column_theme_form_checkbox_widget_class = 'form-check-input'
-    column_theme_form_radio_widget_class = 'form-check-input'
-
+    column_theme_form_select_widget_class = "form-select form-select-sm"
+    column_theme_form_checkbox_widget_class = "form-check-input"
+    column_theme_form_radio_widget_class = "form-check-input"
