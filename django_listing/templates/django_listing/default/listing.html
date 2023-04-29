@@ -1,6 +1,6 @@
 {% load django_listing %}
 {% autoescape off %}
-    <div id="{{ listing.id|underscore_to_dash }}"
+    <div id="{{ listing.css_id }}"
          listing-suffix="{{ listing.suffix }}"
          class="{{ listing_container_class }}"
          ajax_url="{{ listing.get_url }}"

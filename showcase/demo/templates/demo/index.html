@@ -12,7 +12,7 @@
           crossorigin="anonymous">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static "demo/images/favicon.png" %}">
     {% render_listing_header %}
-    <link rel="stylesheet" href="{% static "demo/css/demo.css" %}">
+    <link rel="stylesheet" href="{% static "demo/css/demo.min.css" %}">
     <link rel="stylesheet" href="{% static "demo/css/prism.css" %}">
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700"
           rel="stylesheet">
@@ -114,6 +114,7 @@
         crossorigin="anonymous"></script>
 </body>
 <script src="{% static "demo/js/prism.js" %}"></script>
+<script src="{% static "demo/js/demo.min.js" %}"></script>
 {% render_listing_footer %}
 {% block endjavascript %}{% endblock %}
 

@@ -1,5 +1,5 @@
 {% extends "demo/index.html" %}
-{% load django_listing %}
+{% load django_listing static %}
 
 {% block example %}
     <h2>Company detail</h2>
@@ -11,7 +11,7 @@
     <b>Phone : </b>{{ object.phone }}<br>
     <b>email : </b>{{ object.email }}<br>
     <b>Web site : </b><a href="http://google.com/search?q={{ object.name }}">{{ object.website }}</a><br>
-    <b>Logo : </b><img src="/media/{{ object.logo }}"><br>
+    <b>Logo : </b><img src="/media/{{ object.logo }}" style="min-width:100px; min-height:100px;max-width:100px; max-height:100px;" alt="Company Logo" onerror="this.onerror=null;this.src='{% static "demo/images/no-image.svg" %}';"><br>
     </p>
 
 {% endblock %}

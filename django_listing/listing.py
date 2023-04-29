@@ -43,7 +43,7 @@ logger = logging.getLogger("django_listing")
 LISTING_ROWS_PER_PAGE = 20
 LISTING_ROWS_PER_PAGE_MAX = 500
 LISTING_SUFFIX_REQUEST_DATA_FIELD = "_listing_suffix_data"
-LISTING_SUFFIX_PATTERN = "_{}"
+LISTING_SUFFIX_PATTERN = "-{}"
 LISTING_SELECTION_INPUT_NAME_KEY = "selected_rows"
 LISTING_SELECTION_CHECKBOX_NAME = "selection_checkbox"
 LISTING_SELECTION_HOVER_CSS_CLASS = "hover"
@@ -774,6 +774,8 @@ class Listing(ListingBase):
                 self.attrs.add("class", "variation-{}".format(self.variation))
             if not self.id:
                 self.id = "{}{}-id".format(html_class, self.suffix)
+            self.css_id = self.id.replace("_", "-")
+            self.css_suffix = self.suffix.replace("_", "-")
             if not isinstance(self.row_attrs, HTMLAttributes):
                 self.row_attrs = HTMLAttributes(self.row_attrs)
             self.row_attrs.add(
