@@ -1,0 +1,629 @@
+div.django-listing-container {
+    th {
+        cursor: default;
+    }
+    table.django-listing th {
+        vertical-align: text-bottom;
+    }
+    table.django-listing th.sortable {
+        a {
+            padding-right: 20px;
+            display: block;
+            position: relative;
+            text-decoration: none;
+        }
+        span.sorting {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            bottom: 0px;
+            width: 20px;
+        }
+    }
+    table.django-listing {
+        margin: 0 0 6px 0;
+        width: 100%;
+        &.table-bordered {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            display: table;
+        }
+    }
+    div.django-listing {
+        div.div-row {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+        }
+        &.div-striped div.row-container:nth-of-type(odd) {
+            background: #e9e9e9;
+            &:hover{
+                background: #ccc;
+            }
+        }
+        &.div-bordered {
+            border: 1px solid #cccccc;
+        }
+    }
+    ul {
+        &.pagination {
+            justify-content: center;
+            align-items: center;
+            li {
+                &.scale_pages ul {
+                    padding: 0 10px;
+                    list-style: none;
+                    display: flex;
+                }
+                &.pagination-info {
+                    padding: 0 10px;
+                    form.goto-page {
+                        display:inline;
+                        input {
+                            width: 40px;
+                        }
+                    }
+                }
+                &.row-info {
+                    padding: 0 10px;
+                }
+                &.goto-page {
+                    padding: 0 10px;
+                }
+            }
+        }
+        &.pagination-groups {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 0;
+            > li {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            }
+        }
+    }
+    div.variationstoolbaritem {
+        ul {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        li {
+            list-style: none;
+        }
+    }
+    nav.toolbar label {
+        margin: 0;
+    }
+    .btn-toolbar {
+        select {
+            font-family: django_listing, arial;
+            vertical-align: middle;
+        }
+        .sortdropdowntoolbaritem a {
+            font-family: django_listing, arial;
+        }
+    }
+    td.cls-totalcolumn {
+        font-weight: bold;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+@media (min-width: 768px) {
+    div.django-listing-container td.type-str.cls-filesizecolumn,
+    div.django-listing-container td.type-int,
+    div.django-listing-container td.type-float,
+    div.django-listing-container td.agg-minmax,
+    div.django-listing-container td.agg-minmaxavg {
+        text-align: right;
+    }
+}
+
+div.django-listing-container td.type-bool  {
+    vertical-align: middle;
+}
+
+div.django-listing-container td.type-bool input {
+    margin: auto;
+}
+
+div.django-listing-container td.cls-checkboxcolumn,
+div.django-listing-container td.cls-booleancolumn div.form-field {
+    text-align: center;
+}
+
+td.render-error {
+    background-color: red;
+    color: white;
+    font-weight: bold;
+}
+
+form.listing-form {
+    margin: 10px 0 20px;
+}
+
+form.listing-form div.form-row {
+    flex-wrap: nowrap;
+}
+
+form.listing-form div.form-field {
+    flex-shrink: 10;
+    margin: 5px;
+    width: 100%;
+}
+
+div.django-listing-container div.form-field.errors,
+div.django-listing-container ul.listing-row-form-errors,
+form.listing-form div.form-field.errors {
+    background-color: rgba(255,0,0,.25);
+    padding:10px;
+    border: 1px solid red;
+    border-radius: 6px;
+    color: red;
+    font-weight: bold;
+}
+
+div.django-listing-container ul.listing-row-form-errors li {
+    list-style: none;
+}
+
+div.django-listing-container div.form-field.errors ul.errorlist,
+form.listing-form div.form-field.errors ul.errorlist {
+    list-style: none;
+    padding: 0;
+    display: inline;
+}
+
+
+form.listing-form div.form-field.errors ul.errorlist li {
+    display: inline;
+}
+
+div.django-listing-container div.form-field.errors input,
+form.listing-form div.form-field.errors input {
+    border-color: red;
+}
+
+form span.asteriskField {
+  color: #FF0000;
+  padding-left: 5px; }
+
+div.django-listing-container .bottom-toolbar {
+    margin-top: 10px;
+}
+
+div.django-listing-container div.form-field.errors input:focus,
+form.listing-form div.form-field.errors input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+}
+
+form.listing-form div.form-field label {
+    margin-bottom: .1em;
+}
+
+form.listing-form div.form-field.inline div.label_input {
+    display: flex;
+}
+
+form.listing-form div.form-field.inline label {
+    white-space: nowrap;
+    margin: auto 5px auto 0;
+}
+
+form.listing-form div.form-field span.ending {
+    white-space: nowrap;
+    margin: auto 4px;
+}
+
+form.listing-form div.form-field p.help {
+    font-size: 9px;
+    color: #888888;
+    margin-bottom: 0;
+}
+
+div.django-listing-container div.form-field ul.multiple-checkboxes,
+form.listing-form div.form-field ul.multiple-checkboxes {
+    list-style: none;
+    padding-left: 10px;
+}
+
+div.django-listing-container div.form-field ul.multiple-checkboxes input,
+form.listing-form div.form-field ul.multiple-checkboxes input {
+    vertical-align: middle;
+}
+
+div.django-listing-container div.form-field ul.multiple-checkboxes.inline,
+form.listing-form div.form-field ul.multiple-checkboxes.inline {
+    display: flex;
+}
+
+div.django-listing-container div.form-field ul.multiple-checkboxes.inline li,
+form.listing-form div.form-field ul.multiple-checkboxes.inline li {
+    margin-right: 10px;
+}
+
+div.django-listing-container div.form-field ul.multiple-radios,
+form.listing-form div.form-field ul.multiple-radios {
+    list-style: none;
+    padding-left: 10px;
+}
+
+div.django-listing-container div.form-field ul.multiple-radios li,
+form.listing-form div.form-field ul.multiple-radios li {
+    white-space: nowrap;
+}
+
+div.django-listing-container div.form-field ul.multiple-radios input,
+form.listing-form div.form-field ul.multiple-radios input {
+    vertical-align: middle;
+}
+
+div.django-listing-container div.form-field ul.multiple-radios.inline,
+form.listing-form div.form-field ul.multiple-radios.inline {
+    display: flex;
+}
+
+div.django-listing-container div.form-field ul.multiple-radios.inline li,
+form.listing-form div.form-field ul.multiple-radios.inline li {
+    margin-right: 10px;
+}
+
+div.django-listing-container div.form-buttons,
+form.listing-form div.form-buttons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+div.django-listing-selecting.selection_position_hidden tr.selected {
+    background-color: #333333;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+div.django-listing-selecting.selection_position_hidden tr {
+    cursor: pointer;
+}
+
+div.django-listing-container thead th.col-selection_checkbox  {
+    vertical-align: middle;
+}
+
+div.django-listing-container div.row-container {
+    position: relative;
+}
+
+div.django-listing-container div.row-container div.selection-overlay {
+    position: absolute;
+    z-index: 999;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+}
+
+div.django-listing-container div.row-container div.selection-overlay div.checkbox {
+    margin: 2px;
+}
+
+div.django-listing-container div.row-container div.selection-overlay div.checkbox span.unselected-icon {
+    display: block;
+    opacity: 0.5;
+}
+
+div.django-listing-container div.row-container div.selection-overlay div.checkbox span.selected-icon {
+    display: none;
+}
+
+div.django-listing-container div.row-container.selected div.selection-overlay div.checkbox span.unselected-icon {
+    display: none;
+}
+
+div.django-listing-container div.row-container.selected div.selection-overlay div.checkbox span.selected-icon {
+    display: block;
+}
+
+div.django-listing-container div.row-container div.selection-overlay div.checkbox {
+    margin: 0px;
+    font-size: 28px;
+    opacity: 1;
+    cursor: pointer;
+    color: white;
+    text-shadow:
+       3px 3px 10px rgba(0, 0, 0, 0.5),
+     -1px -1px 1px #444444,
+      1px -1px 1px #444444,
+      -1px 1px 1px #444444,
+       1px 1px 1px #444444;
+}
+
+
+div.django-listing-container div.row-container div.selection-overlay.hover {
+    position: absolute;
+    z-index: 999;
+    height: initial;
+    width: initial;
+}
+
+div.django-listing-container div.row-container div.selection-overlay.hover div.checkbox {
+    margin: 2px;
+}
+
+div.django-listing-container div.row-container div.selection-overlay.hover div.checkbox span.unselected-icon {
+    display: none;
+}
+
+div.django-listing-container div.row-container:hover div.selection-overlay.hover div.checkbox span.unselected-icon {
+    display: block;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+div.django-listing-container div.row-container:hover div.selection-overlay.hover div.checkbox span.unselected-icon:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+div.django-listing-container div.row-container div.selection-overlay.hover div.checkbox span.selected-icon {
+    display: none;
+}
+
+div.django-listing-container div.row-container.selected div.selection-overlay.hover div.checkbox span.unselected-icon {
+    display: none;
+}
+
+div.django-listing-container div.row-container.selected div.selection-overlay.hover div.checkbox span.selected-icon {
+    display: block;
+    cursor: pointer;
+}
+
+div.thumbnail.row-container {
+    padding: 0;
+}
+
+div.thumbnail-container {
+    padding-left: 10px;
+}
+
+div.listing-selection-menu .menu-icon {
+    font-weight: normal;
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+div.listing-selection-menu button {
+    margin: 0 5px;
+}
+
+div.listing-selection-menu a {
+    cursor: pointer;
+}
+
+.listing-selection-menu {
+    display: none;
+    background-color: #666666;
+    color: #ffffff;
+    font-size: 20px;
+    padding: 4px 20px;
+}
+
+.listing-selection-menu button.submit-icon {
+    border: none;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.listing-selection-menu button.submit-icon:focus {
+    outline: none;
+}
+
+ul.errorlist.nonfield {
+    background-color: #fbb;
+    color: red;
+    padding: 10px;
+    border: 1px solid red;
+    border-radius: 4px;
+}
+
+ul.errorlist.nonfield li {
+    list-style: none;
+}
+
+ul.actions-buttons {
+    margin: 0;
+    padding: 0;
+}
+
+ul.actions-buttons li {
+    list-style: none;
+    display: inline;
+    margin: 1px 2px;
+}
+
+ul.actions-buttons li button, ul.actions-buttons li a {
+    padding: 0 1px 1px 0;
+    font-size: 12px;
+}
+
+ul.actions-buttons li button.disabled, ul.actions-buttons li a.disabled {
+    background-color: #aaa;
+    border-color: #aaa;
+}
+
+ul.actions-buttons li button span.text,ul.actions-buttons li a span.text {
+    padding: 0 2px;
+}
+
+.django-listing-container {
+    position: relative;
+}
+
+.django-listing-container div.listing-spinner {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.django-listing-container.spinning .django-listing {
+    opacity: 0.3;
+}
+
+.django-listing-container.spinning div.listing-spinner {
+    display: block;
+    opacity: 1;
+    z-index: 1000;
+}
+
+div.listing-spinner {
+    font-size: 32px;
+}
+
+table.object-popup td {
+    padding-right: 10px;
+}
+
+table.object-popup td.section {
+    padding-top: 10px;
+}
+
+table.object-popup td.section span {
+    font-weight: bold;
+    font-size: 125%;
+    text-decoration: underline;
+}
+
+table.object-popup th {
+    vertical-align: top;
+}
+
+.empty-listing-upload-button {
+    text-align: center;
+}
+
+.empty-listing-upload-drop-here {
+    text-align: center;
+    margin: 16px;
+    color: #8d8d8d;
+}
+
+empty-listing-upload-accepted-files {
+    text-align: center;
+    margin: 16px;
+    font-style: italic;
+}
+
+form.dropzone .dz-preview.dz-image-preview {
+    background: none;
+}
+
+form.dropzone {
+    min-height: 150px;
+    border: none;
+    background: none;
+    padding: initial;
+    position: relative;
+}
+
+form.dropzone .dz-preview .dz-image {
+    border-radius: 8px;
+}
+
+form.dropzone .drag-overlay {
+    background: #8888FFA0;
+    border: 3px dashed #4444FF;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    z-index: 10;
+    border-radius: 1rem;
+}
+
+form.dropzone.drag-over .drag-overlay {
+    display: flex;
+}
+
+form.dropzone .drag-overlay .overlay-inner {
+    margin: auto;
+    font-size: 6rem;
+    color: #FFFFFF;
+}
+
+form.dropzone.dz-drag-hover {
+    border: none;
+}
+
+.dz-success-mark svg path {
+    fill: #28a745;
+    fill-opacity: 1;
+    stroke: #444444;
+    stroke-opacity: 1;
+}
+
+.dz-error-mark svg g g {
+    fill: red;
+    fill-opacity: 1;
+    stroke: #444444;
+    stroke-opacity: 1;
+}
+
+#filters-form .multiple-radios {
+    border: 1px solid lightgrey;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+#filters-form .multiple-radios.inline {
+    padding: 2px 5px 2px 0px;
+    display: flex;
+}
+
+#filters-form .multiple-radios.inline input {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+@media (max-width: 767.97px) {
+    th {
+        display: inline-flex;
+    }
+    th:before {
+        padding-right: 5px;
+    }
+    th.not-sortable {
+        display: none;
+    }
+}
+
+div.form-check-input {
+    width: inherit;
+    height: inherit;
+    background: none;
+    border: none;
+    margin: 0;
+}
+
+div.django-listing-container .table-striped>tbody>tr.selected>* {
+    color: white;
+}

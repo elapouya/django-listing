@@ -11268,17 +11268,13 @@ body {
 .django-listing {
   background-color: #fff;
 }
-
-.django-listing.listing-employeethumbnailslisting,
-.django-listing.listing-toolbaremployeethumbnailslisting,
-.django-listing.listing-toolbaremployeebigthumbnailslisting {
+.django-listing.listing-employeethumbnailslisting, .django-listing.listing-toolbaremployeethumbnailslisting, .django-listing.listing-toolbaremployeebigthumbnailslisting {
   background-color: inherit;
 }
 
-div.listing-container td {
+div.django-listing-container td {
   vertical-align: top;
 }
-
 div.django-listing-container div.row-container.thumbnail {
   display: inline-block;
   width: 135px;
@@ -11286,11 +11282,12 @@ div.django-listing-container div.row-container.thumbnail {
   vertical-align: top;
   padding: 0px 10px;
 }
-
 div.django-listing-container div.row-container.thumbnail:hover {
   background-color: #d3a7f2;
 }
-
+div.django-listing-container div.row-container.thumbnail a {
+  text-decoration: none;
+}
 div.django-listing-container div.row-container.upload-thumbnail {
   display: inline-block;
   width: 160px;
@@ -11298,15 +11295,9 @@ div.django-listing-container div.row-container.upload-thumbnail {
   vertical-align: top;
   padding: 5px 5px;
 }
-
-div.django-listing-container div.thumbnail-container {
-  padding: 0;
-}
-
 div.django-listing-container div.row-container.upload-thumbnail:hover {
   background-color: #9122de;
 }
-
 div.django-listing-container div.row-container.big-thumbnail {
   display: inline-block;
   width: 360px;
@@ -11314,15 +11305,19 @@ div.django-listing-container div.row-container.big-thumbnail {
   vertical-align: top;
   padding: 0px 10px;
 }
+div.django-listing-container div.row-container.big-thumbnail a {
+  text-decoration: none;
+}
+div.django-listing-container div.row-container.selected div.selection-overlay div.checkbox {
+  color: #fff;
+}
+div.django-listing-container div.thumbnail-container {
+  padding: 0;
+}
 
 div.django-listing-container div.django-listing.div-hover div.row-container:hover,
 div.django-listing-container tr:hover {
   background-color: #d3a7f2;
-}
-
-div.django-listing-container div.row-container.big-thumbnail a,
-div.django-listing-container div.row-container.thumbnail a {
-  text-decoration: none;
 }
 
 table.django-listing > tfoot {
@@ -11407,16 +11402,13 @@ form.listing-form {
   background-color: #831ec9;
   color: #fff;
 }
-
-.django-listing-editing td.col-age input {
+.django-listing-menu td.col-age input {
   width: 52px;
 }
-
-.django-listing-editing td.col-address textarea {
+.django-listing-menu td.col-address textarea {
   width: 200px;
 }
-
-.django-listing-editing td.col-salary input {
+.django-listing-menu td.col-salary input {
   width: 82px;
 }
 
@@ -11424,10 +11416,6 @@ form.listing-form {
   width: 110px;
   padding-left: 2px;
   padding-right: 0;
-}
-
-div.django-listing-container div.row-container.selected div.selection-overlay div.checkbox {
-  color: #fff;
 }
 
 .listing-selection-menu {
@@ -11468,42 +11456,35 @@ div.listing-spinner {
 table.object-popup {
   width: 100%;
 }
-
 table.object-popup td.section {
   padding-bottom: 5px;
 }
-
-table.object-popup th {
-  width: 50px;
-  white-space: nowrap;
-}
-
 table.object-popup td.section span {
   text-decoration: none;
   border-bottom: 2px solid #9122de;
   display: block;
 }
+table.object-popup th {
+  width: 50px;
+  white-space: nowrap;
+}
 
 .dropzone .dz-preview .dz-details .dz-size {
   margin-bottom: 2em;
 }
-
 .dropzone .dz-preview .dz-details .dz-filename {
   font-size: 9px;
 }
-
 .dropzone .dz-preview.dz-file-preview .dz-image {
   border-radius: 8px;
   background: #999;
   background: linear-gradient(to bottom, #e9ecef, #9122de);
 }
-
 .dropzone .dz-preview.dz-file-preview .dz-progress::after {
   content: "Optimizing...";
   font-size: 14px;
 }
-
-.dropzone .dz-preview.dz-file-preview .dz-progress {
+.dropzone .dz-preview.dz-file-preview .dz-progress .dz-progress {
   background: none;
   overflow: initial;
   padding-left: 4px;
