@@ -1360,6 +1360,17 @@ class SelectionColumn(Column):
 
     def get_value_tpl(self, rec, ctx, value):
         if self.listing.selection_multiple:
-            return '<input type="checkbox" name="selected_rows{listing.suffix}" class="selection-box" value="{selection_value}"{checked}>'
+            widget_class = ' '.join(self.theme_form_checkbox_widget_class)
+            tpl = (
+                '<input type="checkbox" name="selected_rows{listing.suffix}" '
+                f'class="selection-box {widget_class}" '
+                'value="{selection_value}"{checked}>'
+            )
         else:
-            return '<input type="radio" name="selected_rows{listing.suffix}" class="selection-box" value="{selection_value}"{checked}>'
+            widget_class = ' '.join(self.theme_form_radio_widget_class)
+            tpl = (
+                '<input type="radio" name="selected_rows{listing.suffix}" '
+                f'class="selection-box {widget_class}" '
+                'value="{selection_value}"{checked}>'
+            )
+        return tpl

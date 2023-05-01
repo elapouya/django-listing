@@ -2,30 +2,53 @@ div.django-listing-container {
     th {
         cursor: default;
     }
-    table.django-listing th {
-        vertical-align: text-bottom;
-    }
-    table.django-listing th.sortable {
-        a {
-            padding-right: 20px;
-            display: block;
-            position: relative;
-            text-decoration: none;
-        }
-        span.sorting {
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            bottom: 0px;
-            width: 20px;
-        }
-    }
     table.django-listing {
         margin: 0 0 6px 0;
         width: 100%;
         &.table-bordered {
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
             display: table;
+        }
+        th {
+            vertical-align: text-bottom;
+            &.sortable {
+                a {
+                    padding-right: 20px;
+                    display: block;
+                    position: relative;
+                    text-decoration: none;
+                }
+
+                span.sorting {
+                    position: absolute;
+                    top: 0px;
+                    right: 0px;
+                    bottom: 0px;
+                    width: 20px;
+                }
+            }
+        }
+        td {
+            &.type-bool  {
+                vertical-align: middle;
+                input {
+                    margin: auto;
+                }
+            }
+            &.cls-checkboxcolumn,
+            &.cls-booleancolumn div.form-field {
+                text-align: center;
+            }
+            &.render-error {
+                background-color: red;
+                color: white;
+                font-weight: bold;
+            }
+        }
+    }
+    thead {
+        th.col-selection_checkbox  {
+            vertical-align: middle;
         }
     }
     div.django-listing {
@@ -101,6 +124,9 @@ div.django-listing-container {
     nav.toolbar label {
         margin: 0;
     }
+    .bottom-toolbar {
+        margin-top: 10px;
+    }
     .btn-toolbar {
         select {
             font-family: django_listing, arial;
@@ -113,17 +139,79 @@ div.django-listing-container {
     td.cls-totalcolumn {
         font-weight: bold;
     }
+    div.form-buttons {
+        text-align: center;
+        margin-top: 20px;
+    }
+    div.row-container {
+        position: relative;
+        div.selection-overlay {
+            position: absolute;
+            z-index: 999;
+            height: 100%;
+            width: 100%;
+            cursor: pointer;
+            div.checkbox {
+                margin: 0px;
+                font-size: 28px;
+                opacity: 1;
+                cursor: pointer;
+                color: white;
+                text-shadow:
+                   3px 3px 10px rgba(0, 0, 0, 0.5),
+                 -1px -1px 1px #444444,
+                  1px -1px 1px #444444,
+                  -1px 1px 1px #444444,
+                   1px 1px 1px #444444;
+                span.unselected-icon {
+                    display: block;
+                    opacity: 0.5;
+                }
+                span.selected-icon {
+                    display: none;
+                }
+            }
+        }
+        &.selected {
+            div.selection-overlay {
+                div.checkbox {
+                    span.unselected-icon {
+                        display: none;
+                    }
+                    span.selected-icon {
+                        display: block;
+                    }
+                }
+                &:hover {
+                    div.checkbox {
+                        span.unselected-icon {
+                            display: none;
+                        }
+                        span.selected-icon {
+                            cursor: pointer;
+                            display: block;
+                        }
+                    }
+                }
+            }
+        }
+        &:hover {
+            div.selection-overlay {
+                div.checkbox {
+                    span.unselected-icon {
+                        display: block;
+                        opacity: 0.5;
+                        cursor: pointer;
+                        &:hover {
+                            opacity: 1;
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
-
-
-
-
-
-
-
-
-
-
 
 @media (min-width: 768px) {
     div.django-listing-container td.type-str.cls-filesizecolumn,
@@ -135,261 +223,132 @@ div.django-listing-container {
     }
 }
 
-div.django-listing-container td.type-bool  {
-    vertical-align: middle;
-}
-
-div.django-listing-container td.type-bool input {
-    margin: auto;
-}
-
-div.django-listing-container td.cls-checkboxcolumn,
-div.django-listing-container td.cls-booleancolumn div.form-field {
-    text-align: center;
-}
-
-td.render-error {
-    background-color: red;
-    color: white;
-    font-weight: bold;
-}
-
 form.listing-form {
     margin: 10px 0 20px;
+    div.form-buttons {
+        text-align: center;
+        margin-top: 20px;
+    }
+    div.form-row {
+        flex-wrap: nowrap;
+    }
+    div.form-field {
+        flex-shrink: 10;
+        margin: 5px;
+        width: 100%;
+        label {
+            margin-bottom: .1em;
+        }
+        span.ending {
+            white-space: nowrap;
+            margin: auto 4px;
+        }
+        p.help {
+            font-size: 9px;
+            color: #888888;
+            margin-bottom: 0;
+        }
+        &.inline div.label_input {
+            display: flex;
+            label {
+                white-space: nowrap;
+                margin: auto 5px auto 0;
+            }
+        }
+        &.errors {
+            background-color: rgba(255,0,0,.25);
+            padding:10px;
+            border: 1px solid red;
+            border-radius: 6px;
+            color: red;
+            font-weight: bold;
+            input {
+                border-color: red;
+                &:focus {
+                    box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+                }
+            }
+        }
+    }
 }
 
-form.listing-form div.form-row {
-    flex-wrap: nowrap;
-}
-
-form.listing-form div.form-field {
-    flex-shrink: 10;
-    margin: 5px;
-    width: 100%;
-}
-
-div.django-listing-container div.form-field.errors,
-div.django-listing-container ul.listing-row-form-errors,
-form.listing-form div.form-field.errors {
-    background-color: rgba(255,0,0,.25);
-    padding:10px;
-    border: 1px solid red;
-    border-radius: 6px;
-    color: red;
-    font-weight: bold;
-}
-
-div.django-listing-container ul.listing-row-form-errors li {
-    list-style: none;
-}
-
-div.django-listing-container div.form-field.errors ul.errorlist,
-form.listing-form div.form-field.errors ul.errorlist {
-    list-style: none;
-    padding: 0;
-    display: inline;
-}
-
-
-form.listing-form div.form-field.errors ul.errorlist li {
-    display: inline;
-}
-
-div.django-listing-container div.form-field.errors input,
-form.listing-form div.form-field.errors input {
-    border-color: red;
+div.django-listing-container {
+    div.form-field.errors,
+    ul.listing-row-form-errors {
+        background-color: rgba(255,0,0,.25);
+        padding:10px;
+        border: 1px solid red;
+        border-radius: 6px;
+        color: red;
+        font-weight: bold;
+        text-align: left;
+        input {
+            border-color: red;
+            &:focus {
+                box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+            }
+        }
+        ul.errorlist {
+            list-style: none;
+            padding: 0;
+            display: inline;
+            li {
+                display: inline;
+                list-style: none;
+            }
+        }
+    }
 }
 
 form span.asteriskField {
-  color: #FF0000;
-  padding-left: 5px; }
-
-div.django-listing-container .bottom-toolbar {
-    margin-top: 10px;
-}
-
-div.django-listing-container div.form-field.errors input:focus,
-form.listing-form div.form-field.errors input:focus {
-    box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
-}
-
-form.listing-form div.form-field label {
-    margin-bottom: .1em;
-}
-
-form.listing-form div.form-field.inline div.label_input {
-    display: flex;
-}
-
-form.listing-form div.form-field.inline label {
-    white-space: nowrap;
-    margin: auto 5px auto 0;
-}
-
-form.listing-form div.form-field span.ending {
-    white-space: nowrap;
-    margin: auto 4px;
-}
-
-form.listing-form div.form-field p.help {
-    font-size: 9px;
-    color: #888888;
-    margin-bottom: 0;
+    color: #FF0000;
+    padding-left: 5px;
 }
 
 div.django-listing-container div.form-field ul.multiple-checkboxes,
 form.listing-form div.form-field ul.multiple-checkboxes {
     list-style: none;
     padding-left: 10px;
-}
-
-div.django-listing-container div.form-field ul.multiple-checkboxes input,
-form.listing-form div.form-field ul.multiple-checkboxes input {
-    vertical-align: middle;
-}
-
-div.django-listing-container div.form-field ul.multiple-checkboxes.inline,
-form.listing-form div.form-field ul.multiple-checkboxes.inline {
-    display: flex;
-}
-
-div.django-listing-container div.form-field ul.multiple-checkboxes.inline li,
-form.listing-form div.form-field ul.multiple-checkboxes.inline li {
-    margin-right: 10px;
+    input {
+        vertical-align: middle;
+    }
+    &.inline {
+        display: flex;
+        li {
+            margin-right: 10px;
+        }
+    }
 }
 
 div.django-listing-container div.form-field ul.multiple-radios,
 form.listing-form div.form-field ul.multiple-radios {
     list-style: none;
     padding-left: 10px;
+    li {
+        white-space: nowrap;
+    }
+    input {
+        vertical-align: middle;
+    }
+    &.inline {
+        display: flex;
+        li {
+            margin-right: 10px;
+        }
+    }
 }
 
-div.django-listing-container div.form-field ul.multiple-radios li,
-form.listing-form div.form-field ul.multiple-radios li {
-    white-space: nowrap;
-}
-
-div.django-listing-container div.form-field ul.multiple-radios input,
-form.listing-form div.form-field ul.multiple-radios input {
-    vertical-align: middle;
-}
-
-div.django-listing-container div.form-field ul.multiple-radios.inline,
-form.listing-form div.form-field ul.multiple-radios.inline {
-    display: flex;
-}
-
-div.django-listing-container div.form-field ul.multiple-radios.inline li,
-form.listing-form div.form-field ul.multiple-radios.inline li {
-    margin-right: 10px;
-}
-
-div.django-listing-container div.form-buttons,
-form.listing-form div.form-buttons {
-    text-align: center;
-    margin-top: 20px;
-}
-
-div.django-listing-selecting.selection_position_hidden tr.selected {
-    background-color: #333333;
-    color: #ffffff;
-    cursor: pointer;
-}
 
 div.django-listing-selecting.selection_position_hidden tr {
     cursor: pointer;
-}
-
-div.django-listing-container thead th.col-selection_checkbox  {
-    vertical-align: middle;
-}
-
-div.django-listing-container div.row-container {
-    position: relative;
-}
-
-div.django-listing-container div.row-container div.selection-overlay {
-    position: absolute;
-    z-index: 999;
-    height: 100%;
-    width: 100%;
-    cursor: pointer;
-}
-
-div.django-listing-container div.row-container div.selection-overlay div.checkbox {
-    margin: 2px;
-}
-
-div.django-listing-container div.row-container div.selection-overlay div.checkbox span.unselected-icon {
-    display: block;
-    opacity: 0.5;
-}
-
-div.django-listing-container div.row-container div.selection-overlay div.checkbox span.selected-icon {
-    display: none;
-}
-
-div.django-listing-container div.row-container.selected div.selection-overlay div.checkbox span.unselected-icon {
-    display: none;
-}
-
-div.django-listing-container div.row-container.selected div.selection-overlay div.checkbox span.selected-icon {
-    display: block;
-}
-
-div.django-listing-container div.row-container div.selection-overlay div.checkbox {
-    margin: 0px;
-    font-size: 28px;
-    opacity: 1;
-    cursor: pointer;
-    color: white;
-    text-shadow:
-       3px 3px 10px rgba(0, 0, 0, 0.5),
-     -1px -1px 1px #444444,
-      1px -1px 1px #444444,
-      -1px 1px 1px #444444,
-       1px 1px 1px #444444;
+    &.selected {
+        background-color: #333333;
+        color: #ffffff;
+        cursor: pointer;
+    }
 }
 
 
-div.django-listing-container div.row-container div.selection-overlay.hover {
-    position: absolute;
-    z-index: 999;
-    height: initial;
-    width: initial;
-}
-
-div.django-listing-container div.row-container div.selection-overlay.hover div.checkbox {
-    margin: 2px;
-}
-
-div.django-listing-container div.row-container div.selection-overlay.hover div.checkbox span.unselected-icon {
-    display: none;
-}
-
-div.django-listing-container div.row-container:hover div.selection-overlay.hover div.checkbox span.unselected-icon {
-    display: block;
-    opacity: 0.5;
-    cursor: pointer;
-}
-
-div.django-listing-container div.row-container:hover div.selection-overlay.hover div.checkbox span.unselected-icon:hover {
-    opacity: 1;
-    cursor: pointer;
-}
-
-div.django-listing-container div.row-container div.selection-overlay.hover div.checkbox span.selected-icon {
-    display: none;
-}
-
-div.django-listing-container div.row-container.selected div.selection-overlay.hover div.checkbox span.unselected-icon {
-    display: none;
-}
-
-div.django-listing-container div.row-container.selected div.selection-overlay.hover div.checkbox span.selected-icon {
-    display: block;
-    cursor: pointer;
-}
 
 div.thumbnail.row-container {
     padding: 0;
