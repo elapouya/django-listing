@@ -11316,6 +11316,7 @@ div.django-listing-container div.thumbnail-container {
 }
 
 div.django-listing-container div.django-listing.div-hover div.row-container:hover,
+div.django-listing-container div.django-listing.div-striped div.row-container:nth-of-type(odd):hover,
 div.django-listing-container tr:hover {
   background-color: #d3a7f2;
 }

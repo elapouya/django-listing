@@ -51,8 +51,8 @@
                   many="{nb} employees selected"></span>
             </div>
         <div class="float-right">
-            <button type="button" class="btn btn-primary btn-sm" listing-action="select-all" listing-target="{{ thumbnails_listing.id }}">Select All</button>
-            <button type="button" class="btn btn-primary btn-sm" listing-action="unselect-all" listing-target="{{ thumbnails_listing.id }}">Unselect All</button>
+            <button type="button" class="btn btn-primary btn-sm" listing-action="select-all" listing-target="{{ thumbnails_listing.css_id }}">Select All</button>
+            <button type="button" class="btn btn-primary btn-sm" listing-action="unselect-all" listing-target="{{ thumbnails_listing.css_id }}">Unselect All</button>
             <button type="submit" class="submit-icon" name="action" value="share" title="Share"><span class="listing-icon-share"></span></button>
             <button type="button" class="submit-icon" name="action" value="add" title="Add new employee" data-bs-toggle="popover" data-placement="top" data-content="Not implemented in the demo"><span class="listing-icon-plus-1"></span></button>
             <button type="submit" class="submit-icon" name="action" value="delete" title="Delete"><span class="listing-icon-trash"></span></button>

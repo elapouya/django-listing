@@ -866,6 +866,9 @@
     transform: rotate(359deg);
   }
 }
+div.django-listing-container {
+  position: relative;
+}
 div.django-listing-container th {
   cursor: default;
 }
@@ -1039,6 +1042,23 @@ div.django-listing-container div.row-container:hover div.selection-overlay div.c
   opacity: 1;
   cursor: pointer;
 }
+div.django-listing-container div.listing-spinner {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+}
+div.django-listing-container.spinning .django-listing {
+  opacity: 0.3;
+}
+div.django-listing-container.spinning div.listing-spinner {
+  display: block;
+  opacity: 1;
+  z-index: 1000;
+}
 
 @media (min-width: 768px) {
   div.django-listing-container td.type-str.cls-filesizecolumn,
@@ -1190,20 +1210,6 @@ div.thumbnail-container {
   padding-left: 10px;
 }
 
-div.listing-selection-menu .menu-icon {
-  font-weight: normal;
-  font-size: 16px;
-  vertical-align: middle;
-}
-
-div.listing-selection-menu button {
-  margin: 0 5px;
-}
-
-div.listing-selection-menu a {
-  cursor: pointer;
-}
-
 .listing-selection-menu {
   display: none;
   background-color: #666666;
@@ -1211,14 +1217,23 @@ div.listing-selection-menu a {
   font-size: 20px;
   padding: 4px 20px;
 }
-
+.listing-selection-menu .menu-icon {
+  font-weight: normal;
+  font-size: 16px;
+  vertical-align: middle;
+}
+.listing-selection-menu button {
+  margin: 0 5px;
+}
+.listing-selection-menu a {
+  cursor: pointer;
+}
 .listing-selection-menu button.submit-icon {
   border: none;
   background: none;
   color: inherit;
   cursor: pointer;
 }
-
 .listing-selection-menu button.submit-icon:focus {
   outline: none;
 }
@@ -1230,7 +1245,6 @@ ul.errorlist.nonfield {
   border: 1px solid red;
   border-radius: 4px;
 }
-
 ul.errorlist.nonfield li {
   list-style: none;
 }
@@ -1239,49 +1253,21 @@ ul.actions-buttons {
   margin: 0;
   padding: 0;
 }
-
 ul.actions-buttons li {
   list-style: none;
   display: inline;
   margin: 1px 2px;
 }
-
 ul.actions-buttons li button, ul.actions-buttons li a {
   padding: 0 1px 1px 0;
   font-size: 12px;
 }
-
 ul.actions-buttons li button.disabled, ul.actions-buttons li a.disabled {
   background-color: #aaa;
   border-color: #aaa;
 }
-
 ul.actions-buttons li button span.text, ul.actions-buttons li a span.text {
   padding: 0 2px;
-}
-
-.django-listing-container {
-  position: relative;
-}
-
-.django-listing-container div.listing-spinner {
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.django-listing-container.spinning .django-listing {
-  opacity: 0.3;
-}
-
-.django-listing-container.spinning div.listing-spinner {
-  display: block;
-  opacity: 1;
-  z-index: 1000;
 }
 
 div.listing-spinner {
@@ -1414,6 +1400,9 @@ div.form-check-input {
   margin: 0;
 }
 
+div.django-listing-container .table-striped > tbody > tr.selected {
+  background-color: black;
+}
 div.django-listing-container .table-striped > tbody > tr.selected > * {
   color: white;
 }
