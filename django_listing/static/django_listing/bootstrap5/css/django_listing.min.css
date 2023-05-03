@@ -1059,6 +1059,12 @@ div.django-listing-container.spinning div.listing-spinner {
   opacity: 1;
   z-index: 1000;
 }
+div.django-listing-container .table-striped > tbody > tr.selected {
+  background-color: black;
+}
+div.django-listing-container .table-striped > tbody > tr.selected > * {
+  color: white;
+}
 
 @media (min-width: 768px) {
   div.django-listing-container td.type-str.cls-filesizecolumn,
@@ -1277,17 +1283,14 @@ div.listing-spinner {
 table.object-popup td {
   padding-right: 10px;
 }
-
 table.object-popup td.section {
   padding-top: 10px;
 }
-
 table.object-popup td.section span {
   font-weight: bold;
   font-size: 125%;
   text-decoration: underline;
 }
-
 table.object-popup th {
   vertical-align: top;
 }
@@ -1319,11 +1322,9 @@ form.dropzone {
   padding: initial;
   position: relative;
 }
-
 form.dropzone .dz-preview .dz-image {
   border-radius: 8px;
 }
-
 form.dropzone .drag-overlay {
   background: rgba(136, 136, 255, 0.6274509804);
   border: 3px dashed #4444FF;
@@ -1336,29 +1337,24 @@ form.dropzone .drag-overlay {
   z-index: 10;
   border-radius: 1rem;
 }
-
-form.dropzone.drag-over .drag-overlay {
-  display: flex;
-}
-
 form.dropzone .drag-overlay .overlay-inner {
   margin: auto;
   font-size: 6rem;
   color: #FFFFFF;
 }
-
+form.dropzone.drag-over .drag-overlay {
+  display: flex;
+}
 form.dropzone.dz-drag-hover {
   border: none;
 }
-
-.dz-success-mark svg path {
+form.dropzone .dz-success-mark svg path {
   fill: #28a745;
   fill-opacity: 1;
   stroke: #444444;
   stroke-opacity: 1;
 }
-
-.dz-error-mark svg g g {
+form.dropzone .dz-error-mark svg g g {
   fill: red;
   fill-opacity: 1;
   stroke: #444444;
@@ -1370,18 +1366,16 @@ form.dropzone.dz-drag-hover {
   padding: 2px 5px;
   border-radius: 4px;
 }
-
-#filters-form .multiple-radios.inline {
+#filters-form .multiple-radios .multiple-radios.inline {
   padding: 2px 5px 2px 0px;
   display: flex;
 }
-
-#filters-form .multiple-radios.inline input {
+#filters-form .multiple-radios .multiple-radios.inline input {
   display: inline-block;
   margin-left: 10px;
 }
 
-@media (max-width: 767.97px) {
+@media (max-width: 767.98px) {
   th {
     display: inline-flex;
   }
@@ -1398,13 +1392,6 @@ div.form-check-input {
   background: none;
   border: none;
   margin: 0;
-}
-
-div.django-listing-container .table-striped > tbody > tr.selected {
-  background-color: black;
-}
-div.django-listing-container .table-striped > tbody > tr.selected > * {
-  color: white;
 }
 
 /*# sourceMappingURL=django_listing.css.map */
