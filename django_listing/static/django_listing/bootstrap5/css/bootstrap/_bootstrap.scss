@@ -4,11 +4,8 @@
 
 // scss-docs-start import-stack
 // Configuration
-
-// ELAP : comment these imports that are now imported from jgate.scss
-//@import "functions";
-//@import "variables";
-
+@import "functions";
+@import "variables";
 @import "maps";
 @import "mixins";
 @import "utilities";

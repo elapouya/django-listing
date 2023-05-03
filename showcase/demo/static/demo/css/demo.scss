@@ -1,5 +1,14 @@
-@import "bootstrap/functions";
-@import "variables";
+// Bootstrap variables
+$primary: #5fa35f;
+$dark: #2d375f;
+$font-family-sans-serif: Roboto, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+$font-size-base: 0.85rem;
+$dropdown-dark-bg: darken($dark, 5%);
+
 @import "bootstrap/bootstrap";
+
+// J-Gate variables
+$color-on-primary: $white;
+
 @import "dropzone";
 @import "main";

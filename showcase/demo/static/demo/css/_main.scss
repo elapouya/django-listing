@@ -2,9 +2,6 @@
  * Django-listing showcase demo custom SCSS
  */
 
-@import "variables";
-@import "bootstrap/mixins/breakpoints";
-
 body {
     background-color: $gray-100;
 }

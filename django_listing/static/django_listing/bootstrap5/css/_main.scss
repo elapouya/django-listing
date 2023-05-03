@@ -1,6 +1,3 @@
-@import "variables";
-@import "bootstrap/mixins/breakpoints";
-
 div.django-listing-container {
     position: relative;
     th {
@@ -538,7 +535,7 @@ form.dropzone {
     border: 1px solid lightgrey;
     padding: 2px 5px;
     border-radius: 4px;
-    .multiple-radios.inline {
+    &.inline {
         padding: 2px 5px 2px 0px;
         display: flex;
         input {
