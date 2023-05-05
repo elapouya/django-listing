@@ -1,3 +1,7 @@
+0.0.18 (2023-05-05)
+-------------------
+- Use scss to generate css files
+
 0.0.17 (2023-04-26)
 -------------------
 - Add showcase with many demo pages see showcase/README.rst

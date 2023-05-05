@@ -7,6 +7,12 @@ class DjangoListingConfig(AppConfig):
     verbose_name = "django-listing"
 
     THEME = "bootstrap4"
+    # AUTO_DECLARE_CSS : if False, developer must declare him self django_listing.min.css,
+    # datetimepicker.min.css, dropzone.min.css and other libs css
+    AUTO_DECLARE_CSS = True
+    # AUTO_DECLARE_JS : if False, developer must declare him self django_listing.min.css,
+    # datetimepicker.min.css, dropzone.min.css and other libs css
+    AUTO_DECLARE_JS = True
     DATETIMEPICKER_CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"
     DATETIMEPICKER_JS_URL = "https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"
     DROPZONE_CSS_URL = (

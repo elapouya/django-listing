@@ -162,4 +162,5 @@ DJANGO_LISTING = dict(
         maxThumbnailFilesize=40,
         parallelUploads=1,
     ),
+
 )

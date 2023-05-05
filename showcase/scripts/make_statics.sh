@@ -29,7 +29,7 @@ DEMO_MIN_JS=$JS_DIR/demo.min.js
 JS_COMPRESS="google-closure-compiler --language_out=ECMASCRIPT_2015"
 CSS_COMPRESS=csso
 SAAS=/usr/local/bin/sass
-MINIFY=false
+MINIFY=true
 
 if [[ -d $CSS_DIR ]]
 then
