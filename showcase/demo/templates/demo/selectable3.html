@@ -1,8 +1,8 @@
-{% extends "demo/index.html" %}
+{% extends "demo/base.html" %}
 {% load django_listing %}
 {% load i18n %}
 
-{% block example %}
+{% block body %}
     <h2><a href="{% url 'selectable' %}">Selectable listing</a> : Selection via checkboxes</h2>
     <p>Have a look at <code>demo/templates/demo/selectable3.html</code> and
         <code>SelectableListing3View</code> in <code>demo/views.py</code> to see how examples are

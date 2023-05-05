@@ -1,7 +1,7 @@
-{% extends "demo/index.html" %}
+{% extends "demo/base.html" %}
 {% load django_tables2 %}
 
-{% block example %}
+{% block body %}
     <h2><a href="{% url 'speed_test' %}">Speed tests</a> : Django-tables2</h2>
 
     <p>This is a speed test page to compare speed with django-table2.<br>

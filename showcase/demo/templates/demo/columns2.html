@@ -1,7 +1,7 @@
-{% extends "demo/index.html" %}
+{% extends "demo/base.html" %}
 {% load django_listing %}
 
-{% block example %}
+{% block body %}
     <h2><a href="{% url 'columns' %}">Columns</a> : Relations columns</h2>
     <p>Have a look at <code>demo/templates/demo/columns2.html</code> and
         <code>ColumnsListingView</code> in
