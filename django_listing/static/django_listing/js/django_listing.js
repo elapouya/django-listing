@@ -125,11 +125,18 @@ function djlst_multiple_row_select(e) {
 
 function djlst_unique_row_select(e) {
     var row=$(this).closest('.row-container');
-    row.siblings().removeClass('selected').find('input.row-select').removeAttr('name');
     var hidden=row.find('input.row-select').first();
-    row.addClass('selected');
-    hidden.attr('name',hidden.attr('select-name'));
-    row.find('input.selection-box').first().prop('checked',true);
+    if (row.hasClass('selected')) {
+        row.removeClass('selected');
+        hidden.removeAttr('name');
+        row.find('input.selection-box').first().prop('checked',false);
+    } else {
+        row.siblings().removeClass('selected').find('input.row-select').removeAttr('name');
+        row.addClass('selected');
+        hidden.attr('name', hidden.attr('select-name'));
+        row.find('input.selection-box').first().prop('checked', true);
+    }
+    djlst_selection_menu_update($(this));
 }
 
 

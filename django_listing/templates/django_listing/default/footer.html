@@ -10,7 +10,7 @@
     });
 </script>
 {% if AUTO_DECLARE_JS %}
-    <script src="{% static 'django_listing/js/django_listing.js' %}?{{ STATIC_FILES_VERSION }}"></script>
+    <script src="{% static 'django_listing/js/django_listing.min.js' %}?{{ STATIC_FILES_VERSION }}"></script>
 {% endif %}
 {% if need_media_for.datetimepicker and DATETIMEPICKER_JS_URL %}
     {% block django_listing_datepicker %}

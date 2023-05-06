@@ -1005,6 +1005,9 @@ div.django-listing-container div.row-container div.selection-overlay {
   width: 100%;
   cursor: pointer;
 }
+div.django-listing-container div.row-container div.selection-overlay.hover div.checkbox {
+  display: none;
+}
 div.django-listing-container div.row-container div.selection-overlay div.checkbox {
   margin: 0px;
   font-size: 28px;
@@ -1031,6 +1034,9 @@ div.django-listing-container div.row-container.selected div.selection-overlay:ho
 }
 div.django-listing-container div.row-container.selected div.selection-overlay:hover div.checkbox span.selected-icon {
   cursor: pointer;
+  display: block;
+}
+div.django-listing-container div.row-container:hover div.selection-overlay.hover div.checkbox {
   display: block;
 }
 div.django-listing-container div.row-container:hover div.selection-overlay div.checkbox span.unselected-icon {

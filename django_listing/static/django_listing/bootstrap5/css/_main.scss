@@ -152,6 +152,11 @@ div.django-listing-container {
             height: 100%;
             width: 100%;
             cursor: pointer;
+            &.hover {
+                div.checkbox {
+                    display: none;
+                }
+            }
             div.checkbox {
                 margin: 0px;
                 font-size: 28px;
@@ -198,6 +203,11 @@ div.django-listing-container {
         }
         &:hover {
             div.selection-overlay {
+                &.hover {
+                    div.checkbox {
+                        display: block;
+                    }
+                }
                 div.checkbox {
                     span.unselected-icon {
                         display: block;
