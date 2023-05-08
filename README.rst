@@ -54,7 +54,7 @@ To install the python envionment::
     cd showcase
     poetry install
 
-Check you are in `showcase/` directory, then start the Django from poetry environment::
+Check you are in ``showcase/`` directory, then start the Django from poetry environment::
 
     poetry run python manage.py runserver 8123
 
