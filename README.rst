@@ -62,12 +62,6 @@ A sqlite database is already included, you do not have to make any migration,
 just open your brower at http://localhost:8123
 
 
-Code
-....
-
-The demo code is available on github here : `django-listing-demo <https://github.com/elapouya/django-listing-demo>`_
-
-
 License
 -------
 Django-listing is licensed under the GPLv3 license for all open source applications.
