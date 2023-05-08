@@ -49,7 +49,7 @@ A demo is included in source code, you will need `poetry <https://python-poetry.
 
     curl -sSL https://install.python-poetry.org | python3 -
 
-To install the python envionment::
+To install the python envionment, go to django-listing source code root directory, then::
 
     cd showcase
     poetry install
