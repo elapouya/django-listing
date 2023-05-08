@@ -42,20 +42,25 @@ Django app for building HTML listings / tables, it includes many features :
 * django-listing is faster than django-table2
 
 
-Demo
-----
+Showcase
+--------
 
-If you have docker you can run the demo with this command::
+A demo is included in source code, you will need `poetry <https://python-poetry.org/docs/>`_ to install python environment::
 
-    docker run -p 8123:8123 elapouya/django-listing-demo
+    curl -sSL https://install.python-poetry.org | python3 -
 
-And then open your browser at this url : http://localhost:8123
+To install the python envionment::
 
-To install docker on Linux, just use this command::
+    cd showcase
+    poetry install
 
-    curl -sSL https://get.docker.com/ | sh
+Check you are in `showcase/` directory, then start the Django from poetry environment::
 
-Otherwise, you can upload from here : https://docs.docker.com/get-docker/
+    poetry run python manage.py runserver 8123
+
+A sqlite database is already included, you do not have to make any migration,
+just open your brower at http://localhost:8123
+
 
 Code
 ....
