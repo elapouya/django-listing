@@ -1355,12 +1355,9 @@ class LineNumberColumn(Column):
     start = 1
 
     def get_cell_value(self, rec):
-        return (
-            rec.get_listing().current_page.start_index()
-            + rec.get_index()
-            + self.start
-            - 1
-        )
+        current_page = getattr(rec.get_listing(), "current_page", None)
+        page_start = current_page.start_index() if current_page else 1
+        return page_start + rec.get_index() + self.start - 1
 
 
 class SelectionColumn(Column):
