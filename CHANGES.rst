@@ -1,3 +1,7 @@
+0.0.19 (2023-05-19)
+-------------------
+- Added LineNumberColumn()
+
 0.0.18 (2023-05-05)
 -------------------
 - Use scss to generate css files

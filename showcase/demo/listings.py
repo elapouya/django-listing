@@ -12,6 +12,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from django_listing import *
+from django_listing.columns import LineNumberColumn
 
 from .data import *
 from .models import *
@@ -186,6 +187,15 @@ class DatetimeListing(Listing):
             time_format="H:i:s",
             header="Now (time with sec)",
         ),
+    )
+
+
+class LineNumberListing(Listing):
+    columns = Columns(
+        LineNumberColumn(),
+        Column("first_name"),
+        Column("last_name"),
+        Column("address"),
     )
 
 

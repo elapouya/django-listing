@@ -134,6 +134,7 @@ class ColumnsListing1View(ListingView):
         BoolColumnsListing,
         BoolChoicesImgColumnsListing,
         DatetimeListing,
+        LineNumberListing,
         BooleanModel,
         LinkObjectListing,
         Employee,

@@ -93,6 +93,7 @@ COLUMNS_PARAMS_KEYS = {
     "no_choice_msg",
     "sort_key",
     "sortable",
+    "start",
     "theme_button_class",
     "theme_cell_class",
     "theme_footer_class",
@@ -1347,6 +1348,21 @@ class AvgColumn(ComputedColumnMixin, Column):
         return self.default_value
 
 
+class LineNumberColumn(Column):
+    name = "auto_line_number"
+    header = "#"
+    sortable = False
+    start = 1
+
+    def get_cell_value(self, rec):
+        return (
+            rec.get_listing().current_page.start_index()
+            + rec.get_index()
+            + self.start
+            - 1
+        )
+
+
 class SelectionColumn(Column):
     sortable = False
     theme_header_icon = "listing-icon-ok"
@@ -1360,14 +1376,14 @@ class SelectionColumn(Column):
 
     def get_value_tpl(self, rec, ctx, value):
         if self.listing.selection_multiple:
-            widget_class = ' '.join(self.theme_form_checkbox_widget_class)
+            widget_class = " ".join(self.theme_form_checkbox_widget_class)
             tpl = (
                 '<input type="checkbox" name="selected_rows{listing.suffix}" '
                 f'class="selection-box {widget_class}" '
                 'value="{selection_value}"{checked}>'
             )
         else:
-            widget_class = ' '.join(self.theme_form_radio_widget_class)
+            widget_class = " ".join(self.theme_form_radio_widget_class)
             tpl = (
                 '<input type="radio" name="selected_rows{listing.suffix}" '
                 f'class="selection-box {widget_class}" '
