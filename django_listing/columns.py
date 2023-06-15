@@ -249,43 +249,79 @@ class ModelColumns(Columns):
         link_object_columns=None,
         **kwargs,
     ):
-        if params is None:
-            params = {}
-        if not link_object_columns:
-            link_object_columns = ""
-        if isinstance(link_object_columns, str):
-            link_object_columns = set(map(str.strip, link_object_columns.split(",")))
+        self.model = model
+        self.cols = cols
+        self.params = params
+        self.listing = listing
+        self.link_object_columns = link_object_columns
+        self.kwargs = kwargs
+
+    def set_listing(self, listing):
+        self.listing = listing
+
+    def init(self):
+        if self.params is None:
+            self.params = {}
+        if not self.link_object_columns:
+            self.link_object_columns = ""
+        if isinstance(self.link_object_columns, str):
+            self.link_object_columns = set(
+                map(str.strip, self.link_object_columns.split(","))
+            )
 
         model_cols = []
         # when not yet initialized, column name is in init_args[0]
-        name2col = OrderedDict((c.name or c.init_args[0], c) for c in cols)
-        for f in model._meta.get_fields():
+        name2col = OrderedDict((c.name or c.init_args[0], c) for c in self.cols)
+        for f in self.model._meta.get_fields():
             if not isinstance(f, (models.ManyToManyRel, models.ManyToOneRel)):
-                if not hasattr(listing, f"{f.name}__header"):
+                if not hasattr(self.listing, f"{f.name}__header"):
                     header = getattr(f, "verbose_name", f.name.capitalize())
                 else:
-                    header = getattr(listing, f"{f.name}__header")
+                    header = getattr(self.listing, f"{f.name}__header")
+                col_class = getattr(self.listing, f"{f.name}__column_class", None)
+                if col_class and not issubclass(col_class, Column):
+                    raise InvalidColumn(
+                        f"{f.name}__override_class must be a class derived from "
+                        f"Column class"
+                    )
+                col_instance = getattr(self.listing, f"{f.name}__column_instance", None)
+                if col_instance and not isinstance(col_instance, Column):
+                    raise InvalidColumn(
+                        f"{f.name}__override_instance must be an instance of Column "
+                        f"class or a derived class"
+                    )
                 if f.name in name2col:
                     col = name2col.pop(f.name)
+                    col.header = header
                     model_cols.append(col)
                 else:
-                    if f.name in link_object_columns:
+                    if col_instance:
+                        col_instance.header = header
+                        col_instance.model_field = f
+                        model_cols.append(col_instance)
+                    elif col_class:
+                        model_cols.append(
+                            col_class(
+                                f.name, model_field=f, header=header, **self.kwargs
+                            )
+                        )
+                    elif f.name in self.link_object_columns:
                         model_cols.append(
                             LinkObjectColumn(
-                                f.name, model_field=f, header=header, **kwargs
+                                f.name, model_field=f, header=header, **self.kwargs
                             )
                         )
                     else:
                         model_cols.append(
-                            self.create_column(f, header=header, **kwargs)
+                            self.create_column(f, header=header, **self.kwargs)
                         )
 
         super().__init__(*(model_cols + list(name2col.values())))
-        if listing:
+        if self.listing:
             for col in self:
-                col.set_listing(listing)
-        self._model = model
-        self._params = params
+                col.set_listing(self.listing)
+        self._model = self.model
+        self._params = self.params
 
     @classmethod
     def create_column_name(cls, listing, name, **kwargs):
@@ -318,34 +354,46 @@ class ModelColumns(Columns):
 
 class SequenceColumns(Columns):
     def __init__(self, seq, columns_headers=None, params=None, listing=None, **kwargs):
-        if params is None:
-            params = {}
-        first_row = seq[0]
+        self.seq = seq
+        self.columns_headers = columns_headers
+        self.params = params
+        self.listing = listing
+        self.kwargs = kwargs
+
+    def set_listing(self, listing):
+        self.listing = listing
+
+    def init(self):
+        if self.params is None:
+            self.params = {}
+        first_row = self.seq[0]
         if not isinstance(first_row, (dict, list, tuple)):
-            for i, v in enumerate(seq):
-                seq[i] = [seq[i]]
-            first_row = seq[0]
+            for i, v in enumerate(self.seq):
+                self.seq[i] = [self.seq[i]]
+            first_row = self.seq[0]
         cols = []
         if isinstance(first_row, dict):
-            if not isinstance(columns_headers, dict):
-                columns_headers = {}
+            if not isinstance(self.columns_headers, dict):
+                self.columns_headers = {}
             for k, v in first_row.items():
-                header = columns_headers.get(k)
-                cols.append(self.create_column(v, k, header=header, **kwargs))
+                header = self.columns_headers.get(k)
+                cols.append(self.create_column(v, k, header=header, **self.kwargs))
         elif isinstance(first_row, (list, tuple)):
-            if not isinstance(columns_headers, (list, tuple)):
-                columns_headers = ()
+            if not isinstance(self.columns_headers, (list, tuple)):
+                self.columns_headers = ()
             for i, v in enumerate(first_row):
-                if i < len(columns_headers) and columns_headers[i]:
-                    header = columns_headers[i]
+                if i < len(self.columns_headers) and self.columns_headers[i]:
+                    header = self.columns_headers[i]
                 else:
                     header = "Column{}".format(i + 1)
-                cols.append(self.create_column(v, header=header, data_key=i, **kwargs))
+                cols.append(
+                    self.create_column(v, header=header, data_key=i, **self.kwargs)
+                )
         super().__init__(*cols)
-        if listing:
+        if self.listing:
             for col in self:
-                col.set_listing(listing)
-        self._params = params
+                col.set_listing(self.listing)
+        self._params = self.params
 
     @classmethod
     def create_column(cls, value, name=None, header=None, data_key=None, **kwargs):

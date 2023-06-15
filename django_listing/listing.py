@@ -581,6 +581,9 @@ class Listing(ListingBase):
                 self.columns = SequenceColumns(
                     self.data, self.columns_headers, listing=self
                 )
+        if isinstance(self.columns, (ModelColumns, SequenceColumns)):
+            self.columns.set_listing(self)
+            self.columns.init()
         if not self.columns:
             raise InvalidListing(
                 _("Please configure at least one column " "in your listing")
