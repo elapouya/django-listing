@@ -417,6 +417,27 @@ files = [
 django = "*"
 
 [[package]]
+name = "django-autocomplete-light"
+version = "3.9.7"
+description = "Fresh autocompletes for Django"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-autocomplete-light-3.9.7.tar.gz", hash = "sha256:a34f192ac438c4df056dbfd399550799ddc631c4661960134ded924648770373"},
+]
+
+[package.dependencies]
+django = ">=3.2"
+six = "*"
+
+[package.extras]
+genericm2m = ["django-generic-m2m"]
+gfk = ["django-querysetsequence (>=0.11)"]
+nested = ["django-nested-admin (>=3.0.21)"]
+tags = ["django-taggit"]
+
+[[package]]
 name = "django-better-image"
 version = "0.0.4"
 description = "Better Django ImageField"
@@ -1453,4 +1474,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "3f58a675e5f1ba8fa5294145867834a3b5d4d431e08a2065a26f0326b64164b4"
+content-hash = "f72a521744ca4c7e5d0e8a474472f511cb86198ace094822a0392977b518afe0"
