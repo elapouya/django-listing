@@ -70,6 +70,8 @@ COLUMNS_PARAMS_KEYS = {
     "cell_edit_tpl",
     "cell_tpl",
     "cell_value",
+    "column_class",
+    "column_instance",
     "data_key",
     "date_format",
     "datetime_format",
@@ -1035,13 +1037,19 @@ class MultipleChoiceColumn(Column):
         return params
 
     def get_form_field_widget(self, field_class):
+        widget_attrs = HTMLAttributes(self.widget_attrs)
         if self.input_type == "checkbox":
-            return forms.CheckboxSelectMultiple(attrs={"class": "multiple-checkboxes"})
+            widget = forms.CheckboxSelectMultiple
+            widget_attrs.add("class", self.theme_form_radio_widget_class)
+            widget_attrs.add("class", "multiple-checkboxes")
         elif self.input_type == "checkboxinline":
-            return forms.CheckboxSelectMultiple(
-                attrs={"class": "multiple-checkboxes inline"}
-            )
-        return super().get_form_field_widget(field_class)
+            widget = forms.CheckboxSelectMultiple
+            widget_attrs.add("class", self.theme_form_radio_widget_class)
+            widget_attrs.add("class", "multiple-checkboxes inline")
+        else:
+            widget = forms.CheckboxInput
+            widget_attrs.add("class", self.theme_form_select_widget_class)
+        return widget(attrs=widget_attrs)
 
 
 class ManyColumn(Column):

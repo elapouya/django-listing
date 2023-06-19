@@ -90,8 +90,8 @@ class ThemeAttribute:
         self.attrname = attrname
 
     def __get__(self, obj, objtype):
-        config = settings.django_listing_settings.theme_config
         try:
+            config = settings.django_listing_settings.theme_config
             return getattr(config, self.attrname)
         except AttributeError as e:
             raise InvalidListingConfiguration(

@@ -1,3 +1,7 @@
+0.0.22 (2023-06-19)
+-------------------
+- improve radio and checkbox in filter form
+
 0.0.21 (2023-06-15)
 -------------------
 - fix ModelColumns

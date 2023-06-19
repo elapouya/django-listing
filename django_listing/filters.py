@@ -16,7 +16,7 @@ from django.utils.translation import gettext_lazy, pgettext_lazy
 from .context import RenderContext
 from .exceptions import InvalidFilters
 from .html_attributes import HTMLAttributes
-from .theme_config import ThemeTemplate
+from .theme_config import ThemeTemplate, ThemeAttribute
 from .utils import init_dicts_from_class
 
 __all__ = [
@@ -322,15 +322,40 @@ class Filter(metaclass=FilterMeta):
     input_type = None
     required = False
     listing = None
-    widget_attrs = {"class": "form-control"}
+    widget_attrs = None
     no_choice_msg = gettext_lazy("- No filtering -")
     help_text = None
     word_search = False
+
+    theme_form_widget_class = ThemeAttribute("column_theme_form_widget_class")
+    theme_form_select_widget_class = ThemeAttribute(
+        "column_theme_form_select_widget_class"
+    )
+    theme_form_checkbox_widget_class = ThemeAttribute(
+        "column_theme_form_checkbox_widget_class"
+    )
+    theme_form_radio_widget_class = ThemeAttribute(
+        "column_theme_form_radio_widget_class"
+    )
 
     def __init__(self, *args, **kwargs):
         self.init_args = args
         self.init_kwargs = kwargs
         init_dicts_from_class(self, ["widget_attrs", "form_field_attrs"])
+        if isinstance(self.theme_form_widget_class, str):
+            self.theme_form_widget_class = set(self.theme_form_widget_class.split())
+        if isinstance(self.theme_form_select_widget_class, str):
+            self.theme_form_select_widget_class = set(
+                self.theme_form_select_widget_class.split()
+            )
+        if isinstance(self.theme_form_checkbox_widget_class, str):
+            self.theme_form_checkbox_widget_class = set(
+                self.theme_form_checkbox_widget_class.split()
+            )
+        if isinstance(self.theme_form_radio_widget_class, str):
+            self.theme_form_radio_widget_class = set(
+                self.theme_form_radio_widget_class.split()
+            )
 
     def bind_to_listing(self, listing):
         self.init(listing, *self.init_args, **self.init_kwargs)
@@ -430,7 +455,9 @@ class Filter(metaclass=FilterMeta):
         return self.form_field_class
 
     def get_form_field_widget(self, field_class):
-        return field_class.widget(attrs=self.widget_attrs)
+        widget_attrs = HTMLAttributes(self.widget_attrs)
+        widget_attrs.add("class", self.theme_form_widget_class)
+        return field_class.widget(attrs=widget_attrs)
 
     def create_form_field(self):
         cls = self.get_form_field_class()
@@ -552,13 +579,9 @@ class BooleanFilter(Filter):
     indifferent_msg = gettext_lazy("Indiff.")
 
     def get_form_field_widget(self, field_class):
-        if self.input_type == "radio":
-            return forms.RadioSelect(attrs={"class": "multiple-radios"})
-        elif self.input_type == "radioinline":
-            return forms.RadioSelect(attrs={"class": "multiple-radios inline"})
-        else:
-            return forms.Select(attrs={"class": "form-select"})
-        return super().get_form_field_widget(field_class)
+        wiget_attrs = HTMLAttributes(self.widget_attrs)
+        wiget_attrs.add("class", "form-check-input")
+        return forms.CheckboxInput(attrs=wiget_attrs)
 
     def get_form_field_params(self):
         params = super().get_form_field_params()
@@ -581,13 +604,19 @@ class ChoiceFilter(Filter):
             return cls(name, model_field=field, label=field.verbose_name)
 
     def get_form_field_widget(self, field_class):
+        widget_attrs = HTMLAttributes(self.widget_attrs)
         if self.input_type == "radio":
-            return forms.RadioSelect(attrs={"class": "multiple-radios"})
+            widget = forms.RadioSelect
+            widget_attrs.add("class", self.theme_form_radio_widget_class)
+            widget_attrs.add("class", "multiple-radios")
         elif self.input_type == "radioinline":
-            return forms.RadioSelect(attrs={"class": "multiple-radios inline"})
+            widget = forms.RadioSelect
+            widget_attrs.add("class", self.theme_form_radio_widget_class)
+            widget_attrs.add("class", "multiple-radios inline")
         else:
-            return forms.Select(attrs={"class": "form-select"})
-        return super().get_form_field_widget(field_class)
+            widget = forms.Select
+            widget_attrs.add("class", self.theme_form_select_widget_class)
+        return widget(attrs=widget_attrs)
 
     def get_form_field_params(self):
         params = super().get_form_field_params()
@@ -615,13 +644,19 @@ class MultipleChoiceFilter(Filter):
             return cls(name, model_field=field, label=field.verbose_name)
 
     def get_form_field_widget(self, field_class):
+        widget_attrs = HTMLAttributes(self.widget_attrs)
         if self.input_type == "checkbox":
-            return forms.CheckboxSelectMultiple(attrs={"class": "multiple-checkboxes"})
+            widget = forms.CheckboxSelectMultiple
+            widget_attrs.add("class", self.theme_form_radio_widget_class)
+            widget_attrs.add("class", "multiple-checkboxes")
         elif self.input_type == "checkboxinline":
-            return forms.CheckboxSelectMultiple(
-                attrs={"class": "multiple-checkboxes inline"}
-            )
-        return super().get_form_field_widget(field_class)
+            widget = forms.CheckboxSelectMultiple
+            widget_attrs.add("class", self.theme_form_radio_widget_class)
+            widget_attrs.add("class", "multiple-checkboxes inline")
+        else:
+            widget = forms.CheckboxInput
+            widget_attrs.add("class", self.theme_form_select_widget_class)
+        return widget(attrs=widget_attrs)
 
     def get_form_field_params(self):
         params = super().get_form_field_params()
