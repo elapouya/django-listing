@@ -1,10 +1,14 @@
+0.0.23 (2023-06-19)
+-------------------
+- Fix choices widgets
+
 0.0.22 (2023-06-19)
 -------------------
-- improve radio and checkbox in filter form
+- Improve radio and checkbox in filter form
 
 0.0.21 (2023-06-15)
 -------------------
-- fix ModelColumns
+- Fix ModelColumns
 
 0.0.20 (2023-05-19)
 -------------------

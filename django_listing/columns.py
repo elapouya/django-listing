@@ -571,15 +571,17 @@ class Column(metaclass=ColumnMeta):
             if hasattr(self.listing, listing_key):
                 setattr(self, k, getattr(self.listing, listing_key))
         # col__param has higher priority than columns_param,
-        # so getting col__params after columns_params
+        # so getting col__params AFTER columns_params
+        for k, v in kwargs.items():
+            if k in COLUMNS_PARAMS_KEYS:
+                setattr(self, k, v)
+        # DO NOT swap with above for-loop, otherwise <col>__choices won't work
+        # See showcase BoolChoicesImgColumnsListing "gender" column
         for k in dir(self.listing):
             start_key = f"{self.name}__"
             if k.startswith(start_key):
                 v = getattr(self.listing, k)
                 setattr(self, k[len(start_key) :], v)
-        for k, v in kwargs.items():
-            if k in COLUMNS_PARAMS_KEYS:
-                setattr(self, k, v)
 
     def apply_template_kwargs(self):
         kwargs = self.listing.get_column_kwargs(self.name)

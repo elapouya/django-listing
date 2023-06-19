@@ -579,9 +579,19 @@ class BooleanFilter(Filter):
     indifferent_msg = gettext_lazy("Indiff.")
 
     def get_form_field_widget(self, field_class):
-        wiget_attrs = HTMLAttributes(self.widget_attrs)
-        wiget_attrs.add("class", "form-check-input")
-        return forms.CheckboxInput(attrs=wiget_attrs)
+        widget_attrs = HTMLAttributes(self.widget_attrs)
+        if self.input_type == "radio":
+            widget = forms.RadioSelect
+            widget_attrs.add("class", self.theme_form_radio_widget_class)
+            widget_attrs.add("class", "multiple-radios")
+        elif self.input_type == "radioinline":
+            widget = forms.RadioSelect
+            widget_attrs.add("class", self.theme_form_radio_widget_class)
+            widget_attrs.add("class", "multiple-radios inline")
+        else:
+            widget = forms.Select
+            widget_attrs.add("class", self.theme_form_select_widget_class)
+        return widget(attrs=widget_attrs)
 
     def get_form_field_params(self):
         params = super().get_form_field_params()
