@@ -163,9 +163,8 @@ class OneToManyListing(Listing):
 
 class ManyToManyListing(Listing):
     columns = Columns(
-        Column(
-            "employee", data_key="__str__", header="Employee's name"
-        ),  # See Employee.__str__() : Method got get object's verbose name for Django
+        Column("first_name"),
+        Column("last_name"),
         ManyColumn(
             "interests"
         ),  # use default cell_filter, cell_map and cell_reduce ( join list with ', ' )

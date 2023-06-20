@@ -1,3 +1,8 @@
+0.0.24 (2023-06-20)
+-------------------
+- Improve CSS for small device
+- Auto-detect many-to-many model fields if present in select_columns
+
 0.0.23 (2023-06-19)
 -------------------
 - Fix choices widgets

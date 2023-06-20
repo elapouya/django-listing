@@ -56,6 +56,7 @@ class ThemeConfigBase(metaclass=ThemeConfigMeta):
     theme_sortable_class = "sortable"
     theme_sorted_class = "sorted"
     theme_spinner_icon = "animate-spin listing-icon-spin2"
+    theme_localized_small_device_styles_width = "991px"
 
     column_theme_button_class = "btn btn-primary btn-sm"
     column_theme_cell_class = ""

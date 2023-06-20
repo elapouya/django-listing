@@ -7,7 +7,7 @@
          {% if listing.selection_menu_id %}selection-menu-id="{{ listing.selection_menu_id }}"{% endif %}
     >
     <style>
-        @media (max-width: 767.98px) {
+        @media (max-width: {{ listing.theme_localized_small_device_styles_width }}) {
           {% for style in listing.get_localized_small_device_styles %}{{ style }}
           {% endfor %}
         }

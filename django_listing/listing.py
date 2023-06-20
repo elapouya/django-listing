@@ -151,6 +151,7 @@ LISTING_PARAMS_KEYS = {
     "theme_button_active_class",
     "theme_button_disabled_class",
     "theme_div_row_container_class",
+    "theme_localized_small_device_styles_width",
     "theme_sort_asc_class",
     "theme_sort_asc_icon",
     "theme_sort_desc_class",
@@ -482,6 +483,9 @@ class Listing(ListingBase):
     theme_button_active_class = ThemeAttribute("theme_button_active_class")
     theme_div_row_container_class = ThemeAttribute("theme_div_row_container_class")
     theme_row_class = ThemeAttribute("theme_row_class")
+    theme_localized_small_device_styles_width = ThemeAttribute(
+        "theme_localized_small_device_styles_width"
+    )
 
     def __init__(self, data=None, **kwargs):
         super().__init__(data, **kwargs)
@@ -778,7 +782,8 @@ class Listing(ListingBase):
             if not self.id:
                 self.id = "{}{}-id".format(html_class, self.suffix)
             self.css_id = self.id.replace("_", "-")
-            self.css_suffix = self.suffix.replace("_", "-")
+            if isinstance(self.suffix, str):
+                self.css_suffix = self.suffix.replace("_", "-")
             if not isinstance(self.row_attrs, HTMLAttributes):
                 self.row_attrs = HTMLAttributes(self.row_attrs)
             self.row_attrs.add(

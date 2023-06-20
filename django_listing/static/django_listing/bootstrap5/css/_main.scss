@@ -249,7 +249,7 @@ div.django-listing-container {
     }
 }
 
-@include media-breakpoint-up(md)  {
+@include media-breakpoint-up(lg)  {
     div.django-listing-container td.type-str.cls-filesizecolumn,
     div.django-listing-container td.type-int,
     div.django-listing-container td.type-float,
@@ -555,7 +555,7 @@ form.dropzone {
     }
 }
 
-@include media-breakpoint-down(md)  {
+@include media-breakpoint-down(lg)  {
     th {
         display: inline-flex;
     }

@@ -274,8 +274,19 @@ class ModelColumns(Columns):
         model_cols = []
         # when not yet initialized, column name is in init_args[0]
         name2col = OrderedDict((c.name or c.init_args[0], c) for c in self.cols)
+        select_columns = []
+        if self.listing:
+            if isinstance(self.listing.select_columns, str):
+                select_columns = list(
+                    map(str.strip, self.listing.select_columns.split(","))
+                )
+            else:
+                select_columns = self.listing.select_columns or []
+
         for f in self.model._meta.get_fields():
-            if not isinstance(f, (models.ManyToManyRel, models.ManyToOneRel)):
+            if f.name in select_columns or not isinstance(
+                f, (models.ManyToManyRel, models.ManyToOneRel)
+            ):
                 if not hasattr(self.listing, f"{f.name}__header"):
                     header = getattr(f, "verbose_name", f.name.capitalize())
                 else:
@@ -1057,7 +1068,7 @@ class MultipleChoiceColumn(Column):
 class ManyColumn(Column):
     many_separator = ", "
     params_keys = "many_separator,cell_map,cell_filter,cell_reduce"
-    from_model_field_classes = (models.ManyToManyField,)
+    from_model_field_classes = (models.ManyToManyField, models.ManyToManyRel)
     editable = False
 
     def get_cell_value(self, rec):
