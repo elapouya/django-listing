@@ -1,3 +1,7 @@
+0.0.25 (2023-06-21)
+-------------------
+- Added edit and delete action buttons
+
 0.0.24 (2023-06-20)
 -------------------
 - Improve CSS for small device

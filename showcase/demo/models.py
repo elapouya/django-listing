@@ -80,6 +80,12 @@ class Employee(models.Model):
     def get_absolute_url(self):
         return reverse("employee_detail", args=[self.pk])
 
+    def get_edit_absolute_url(self):
+        return reverse("employee_detail", args=[self.pk])
+
+    def get_delete_absolute_url(self):
+        return reverse("employee_detail", args=[self.pk])
+
 
 # Just for testing that django-listing is able to recognize boolean fields...
 class BooleanModel(models.Model):

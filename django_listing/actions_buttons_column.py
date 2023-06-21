@@ -31,6 +31,7 @@ class ActionsButtonsColumn(Column):
         "buttons_text",
         "buttons_theme_button_class",
         "buttons_theme_li_class",
+        "buttons_method",
     )
     params_keys_suffixes = (
         "has_icon",
@@ -40,8 +41,9 @@ class ActionsButtonsColumn(Column):
         "theme_button_class",
         "theme_li_class",
         "title",
+        "method",
     )
-    buttons = "move_up,move_down,view_object"
+    buttons = "move_up,move_down,view_object,edit_object,delete_object"
     buttons_template = ThemeTemplate("actions_buttons.html")
     buttons_text = ""
     buttons_icon = ""
@@ -50,6 +52,7 @@ class ActionsButtonsColumn(Column):
     buttons_has_text = True
     buttons_theme_li_class = "action-item"
     buttons_theme_button_class = "btn btn-primary"
+    buttons_method = None
     actions_query_string_keys = {
         "action_col",
         "action_button",
@@ -244,6 +247,26 @@ class ActionsButtonsColumn(Column):
 
     def get_button_view_object_context(self, name, rec):
         return dict(type="link", url=rec.get_href())
+
+    # ---------------- EDIT OBJECT ----------------------------------------------
+    edit_object__icon = "listing-icon-pencil"
+    edit_object__text = _("Edit")
+    edit_object__title = _("Edit")
+    edit_object__method = "get_edit_absolute_url"
+
+    def get_button_edit_object_context(self, name, rec):
+        method = getattr(rec._obj, self.edit_object__method)
+        return dict(type="link", url=method())
+
+    # ---------------- DELETE OBJECT ----------------------------------------------
+    delete_object__icon = "listing-icon-trash-empty"
+    delete_object__text = _("Delete")
+    delete_object__title = _("Delete")
+    delete_object__method = "get_delete_absolute_url"
+
+    def get_button_delete_object_context(self, name, rec):
+        method = getattr(rec._obj, self.delete_object__method)
+        return dict(type="link", url=method())
 
     # ---------------- VIEW OBJECT POPUP ----------------------------------------
     view_object_popup__icon = "listing-icon-magnifier"

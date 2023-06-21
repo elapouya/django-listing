@@ -337,7 +337,10 @@ class ActionsColumnListing(Listing):
         Column("rank", header="Employee of the month rank"),
         ActionsButtonsColumn(
             "actions",
-            buttons="move_up,move_down,view_object,view_object_popup",
+            buttons=(
+                "move_up,move_down,view_object,view_object_popup,edit_object,"
+                "delete_object"
+            ),
             buttons_has_text=False,
             move_up__field="rank",
             move_down__field="rank",
