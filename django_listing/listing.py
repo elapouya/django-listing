@@ -123,6 +123,7 @@ LISTING_PARAMS_KEYS = {
     "per_page_max",
     "primary_key",
     "record_label",
+    "record_label_plural",
     "row_attrs",
     "row_form_base_class",
     "row_inner_div_tpl",
@@ -433,6 +434,7 @@ class Listing(ListingBase):
     primary_key = "id"
     records_class = RecordManager
     record_label = None
+    record_label_plural = None
     row_form_errors = None
     row_inner_div_tpl = None
     save_to_database = False
@@ -672,9 +674,14 @@ class Listing(ListingBase):
                 self.model = data.model
             if self.record_label is None:
                 if self.model:
-                    self.record_label = self.model.__name__.lower()
+                    self.record_label = self.model._meta.verbose_name
                 else:
                     self.record_label = _("record")
+            if self.record_label_plural is None:
+                if self.model:
+                    self.record_label_plural = self.model._meta.verbose_name_plural
+                else:
+                    self.record_label_plural = _("records")
             self.data = data
             self.create_missing_filters()
             if self.filters:

@@ -87,7 +87,7 @@ def initialize_listing(context, listing, data=None, *args, **kwargs):
         data = listing
         listing = Listing()
     # if there is data or a model is specified in columns (if exsiting)
-    if (data or listing.get_model()) and not listing.is_initialized():
+    if (data is not None or listing.get_model()) and not listing.is_initialized():
         listing.init(data, context=context, **kwargs)
     else:
         listing.set_kwargs(**kwargs)

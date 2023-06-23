@@ -336,7 +336,7 @@ msgstr "Les données pour un listing doit une séquence ou un QuerySet."
 #: django_listing/templates/django_listing/default/empty_listing.html:4
 #, python-format
 msgid "There is no %(record_label)s to display."
-msgstr "Il y a aucun %(record_label)s à afficher."
+msgstr "Il n'y a aucun %(record_label)s à afficher."
 
 #: django_listing/toolbar.py:178
 msgid "Sort by"
