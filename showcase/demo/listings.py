@@ -514,7 +514,7 @@ class FilterListing(Listing):
     )
     filters.form_layout = (
         "age1,age2,salary1,salary2,joined1,joined2;"
-        "company,first_name,last_name;"
+        "first_name,last_name,company;"
         "marital_status,gender"
     )
     filters.form_buttons = "submit,reset"

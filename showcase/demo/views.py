@@ -657,6 +657,4 @@ class CompanyAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
     def get_result_label(self, result):
-        return format_html(
-            "<b>{}</b><br><i>({}<br>{})</i>", result.name, result.city, result.country
-        )
+        return format_html("<b>{}</b><i>({})</i>", result.name, result.city)
