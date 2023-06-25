@@ -13,6 +13,7 @@ from django.utils.translation import gettext_lazy as _
 
 from django_listing import *
 from django_listing.columns import LineNumberColumn
+from django_listing.filters import ForeignKeyFilter, AutocompleteForeignKeyFilter
 
 from .data import *
 from .models import *
@@ -498,6 +499,14 @@ class FilterListing(Listing):
             help_text="Case insensitive",
         ),
         Filter("last_name", filter_key="last_name__icontains"),
+        # ForeignKeyFilter(
+        #     "company", order_by="name", format_label=lambda c: f"{c.name} ({c.city})"
+        # ),
+        AutocompleteForeignKeyFilter(
+            "company",
+            label="Company",
+            url="company-autocomplete",
+        ),
         ChoiceFilter("marital_status", input_type="radio", no_choice_msg="Indifferent"),
         # Note : By default filter_key = filter name if not specified
         MultipleChoiceFilter("gender", input_type="checkbox", label="Gender")
@@ -505,7 +514,7 @@ class FilterListing(Listing):
     )
     filters.form_layout = (
         "age1,age2,salary1,salary2,joined1,joined2;"
-        "first_name,last_name;"
+        "company,first_name,last_name;"
         "marital_status,gender"
     )
     filters.form_buttons = "submit,reset"

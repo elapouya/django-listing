@@ -7,6 +7,8 @@
     <meta charset="UTF-8">
     <title>Django-listing Tests / Examples</title>
     <link rel="icon" type="image/png" sizes="32x32" href="{% static "demo/images/favicon.png" %}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static "autocomplete_light/select2.css" %}">
     {% render_listing_header %}
     <link rel="stylesheet" href="{% static "demo/css/demo.min.css" %}">
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700"
@@ -110,8 +112,10 @@
 </body>
 <script src="{% static "demo/js/prism.js" %}"></script>
 <script src="{% static "demo/js/demo.min.js" %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{% static "autocomplete_light/select2.js" %}"></script>
+<script src="{% static "autocomplete_light/autocomplete_light.js" %}"></script>
 {% render_listing_footer %}
 {% block endjavascript %}{% endblock %}
-
 </body>
 </html>

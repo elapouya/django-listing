@@ -257,6 +257,8 @@ function djlst_view_object_popup(event) {
 
 $(document).ready(function () {
 
+    var select2_opened = false;
+
     $('form.listing-form').submit(function () {
         $(this).find('input[name]').filter(function () {
             return !this.value;
@@ -302,4 +304,24 @@ $(document).ready(function () {
         hidden.val(action);
         form.submit();
     });
+
+    $(document).on('select2:open', () => {
+        document.querySelector('.select2-search__field').focus();
+        select2_opened = true;
+    });
+
+    $("form").keyup(function(e) {
+        if (e.keyCode == 9) {
+            const target = $(e.target)
+            if (target.hasClass("select2-selection")) {
+                 if (! select2_opened) {
+                     target.closest(".select2").siblings("select").first().select2("open");
+                 }
+                 select2_opened = true;
+            } else {
+                select2_opened = false;
+            }
+        }
+    });
+
 });

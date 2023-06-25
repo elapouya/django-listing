@@ -8,8 +8,10 @@ import os
 import pprint
 import re
 
+from dal import autocomplete
 from django.conf import settings
 from django.contrib import messages
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -639,3 +641,22 @@ class EmployeeDetailView(DetailView):
 class CompanyDetailView(DetailView):
     model = Company
     template_name = "demo/company_detail.html"
+
+
+class CompanyAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # # Don't forget to filter out results depending on the visitor !
+        # if not self.request.user.is_authenticated:
+        #     return Company.objects.none()
+
+        qs = Company.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
+
+    def get_result_label(self, result):
+        return format_html(
+            "<b>{}</b><br><i>({}<br>{})</i>", result.name, result.city, result.country
+        )

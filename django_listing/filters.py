@@ -6,6 +6,7 @@
 import copy
 import re
 
+from dal import autocomplete
 from django import forms
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
@@ -24,10 +25,11 @@ __all__ = [
     "ChoiceFilter",
     "DateFilter",
     "DateTimeFilter",
-    "FILTERS_PARAMS_KEYS",
-    "FILTER_QUERYSTRING_PREFIX",
     "Filter",
+    "FILTER_QUERYSTRING_PREFIX",
     "Filters",
+    "FILTERS_PARAMS_KEYS",
+    "ForeignKeyFilter",
     "IntegerFilter",
     "MultipleChoiceFilter",
     "TimeFilter",
@@ -45,6 +47,7 @@ FILTERS_KEYS = {
 
 # Declare keys for "Filter" object (not "Filters" with an ending 's')
 FILTERS_PARAMS_KEYS = {
+    "format_label",
     "container_attrs",
     "filter_key",
     "input_type",
@@ -52,13 +55,16 @@ FILTERS_PARAMS_KEYS = {
     "model_field",
     "name",
     "no_choice_msg",
+    "order_by",
     "shrink_width",
     "widget_attrs",
     "word_search",
+    "url",
 }
 
 # Declare keys for django form fields
 FILTERS_FORM_FIELD_KEYS = {
+    "choices",
     "disabled",
     "empty_value",
     "error_messages",
@@ -316,7 +322,10 @@ class Filter(metaclass=FilterMeta):
     name = None
     label = None
     value = None
+    url = None
     filter_key = None
+    order_by = None
+    format_label = None
     key_type = None
     input_name = None
     input_type = None
@@ -373,6 +382,11 @@ class Filter(metaclass=FilterMeta):
         self.apply_template_kwargs()
         if self.filter_key is None:
             self.filter_key = self.name
+        if self.format_label is None:
+            self.format_label = lambda obj: str(obj)
+        elif isinstance(self.format_label, str):
+            field = str(self.format_label)
+            self.format_label = lambda obj: getattr(obj, field, "-")
         if self.input_name is None:
             self.input_name = FILTER_QUERYSTRING_PREFIX + self.name
         self.label = self.get_label()
@@ -682,3 +696,60 @@ class MultipleChoiceFilter(Filter):
 
     def extract_params(self, request_get_data):
         self.value = request_get_data.getlist(self.input_name + self.listing.suffix)
+
+
+class ForeignKeyFilter(Filter):
+    form_field_class = forms.ChoiceField
+
+    def get_form_field_widget(self, field_class):
+        widget_attrs = HTMLAttributes(self.widget_attrs)
+        widget = forms.Select
+        widget_attrs.add("class", self.theme_form_select_widget_class)
+        return widget(attrs=widget_attrs)
+
+    def get_choices_order(self):
+        return self.order_by
+
+    def get_related_qs(self):
+        related_model = self.listing.model._meta.get_field(
+            self.filter_key
+        ).related_model
+        qs = related_model.objects.all()
+        order_by = self.get_choices_order()
+        if order_by:
+            qs = qs.order_by(order_by)
+        return qs
+
+    def get_form_field_params(self):
+        params = super().get_form_field_params()
+        self.set_params_choices(params)
+        choices = [("", self.no_choice_msg)]
+        choices += [(obj.pk, self.format_label(obj)) for obj in self.get_related_qs()]
+        params["choices"] = choices
+        return params
+
+
+class AutocompleteForeignKeyFilter(Filter):
+    form_field_class = forms.ModelChoiceField
+
+    def get_form_field_params(self):
+        related_model = self.listing.model._meta.get_field(
+            self.filter_key
+        ).related_model
+        params = super().get_form_field_params()
+        params["required"] = False
+        params["queryset"] = related_model.objects.all()
+        return params
+
+    def get_form_field_widget(self, field_class):
+        widget_attrs = HTMLAttributes(self.widget_attrs)
+        widget_attrs.add("class", self.theme_form_select_widget_class)
+        if "data-placeholder" not in widget_attrs:
+            widget_attrs["data-placeholder"] = _("Select a value...")
+        widget_attrs["data-html"] = True
+        widget = autocomplete.ModelSelect2
+        if self.url is None:
+            raise InvalidFilters(
+                f"Please specify the url name to autocomplete view for {self.name}"
+            )
+        return widget(url=self.url, attrs=widget_attrs)

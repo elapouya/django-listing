@@ -13,6 +13,8 @@ from django_robohash.views import robohash
 
 from .views import *
 
+
+# fmt: off
 urlpatterns = i18n_patterns(
     path("", IndexView.as_view(), name="index"),
     path("admin/", admin.site.urls),
@@ -59,7 +61,10 @@ urlpatterns = i18n_patterns(
     path("show_company/<int:pk>/", CompanyDetailView.as_view(), name="company_detail"),
     # from django-robohash-svg django app
     path("robohash/<string>/", robohash, name="robohash"),
+    path("company-autocomplete/", CompanyAutocomplete.as_view(), name="company-autocomplete",
+    ),
 )
+# fmt: on
 
 
 if settings.DEBUG:
