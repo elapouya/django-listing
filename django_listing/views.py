@@ -73,6 +73,8 @@ class ListingViewMixin:
         self._formset_errors = {}
 
     def post(self, request, *args, **kwargs):
+        if hasattr(self, "get_object"):  # for DetailView that works only on GET
+            self.object = self.get_object()
         try:
             if is_ajax(request):
                 if "serialized_data" in request.POST:
