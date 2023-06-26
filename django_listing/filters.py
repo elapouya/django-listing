@@ -391,6 +391,8 @@ class Filter(metaclass=FilterMeta):
         if self.input_name is None:
             self.input_name = FILTER_QUERYSTRING_PREFIX + self.name
         self.label = self.get_label()
+        if self.help_text is None:
+            self.help_text = "&nbsp;"  # otherwise formfields may me not aligned vertically. keep align-items: flex-end; on row
 
     def get_label(self):
         label = self.label
