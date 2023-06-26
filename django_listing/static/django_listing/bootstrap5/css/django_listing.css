@@ -1090,6 +1090,7 @@ form.listing-form div.form-buttons {
 }
 form.listing-form div.form-row {
   flex-wrap: nowrap;
+  align-items: flex-end;
 }
 form.listing-form div.form-field {
   flex-shrink: 10;

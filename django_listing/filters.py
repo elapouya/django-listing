@@ -60,6 +60,7 @@ FILTERS_PARAMS_KEYS = {
     "widget_attrs",
     "word_search",
     "url",
+    "choices",
 }
 
 # Declare keys for django form fields
@@ -625,7 +626,9 @@ class ChoiceFilter(Filter):
     def from_model_field(cls, name, field):
         choices = getattr(field, "choices", None)
         if choices:
-            return cls(name, model_field=field, label=field.verbose_name)
+            return cls(
+                name, model_field=field, label=field.verbose_name, choices=choices
+            )
 
     def get_form_field_widget(self, field_class):
         widget_attrs = HTMLAttributes(self.widget_attrs)
