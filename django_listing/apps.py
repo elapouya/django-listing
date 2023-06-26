@@ -13,14 +13,12 @@ class DjangoListingConfig(AppConfig):
     # AUTO_DECLARE_JS : if False, developer must declare him self django_listing.min.css,
     # datetimepicker.min.css, dropzone.min.css and other libs css
     AUTO_DECLARE_JS = True
-    DATETIMEPICKER_CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"
-    DATETIMEPICKER_JS_URL = "https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"
-    DROPZONE_CSS_URL = (
-        "https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/dropzone.min.css"
+    DATETIMEPICKER_CSS_URL = "/static/django_listing/css/jquery.datetimepicker.min.css"
+    DATETIMEPICKER_JS_URL = (
+        "/static/django_listing/js/jquery.datetimepicker.full.min.js"
     )
-    DROPZONE_JS_URL = (
-        "https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/dropzone.js"
-    )
+    DROPZONE_CSS_URL = "/static/django_listing/css/dropzone.min.css"
+    DROPZONE_JS_URL = "/static/django_listing/js/dropzone.min.js"
     DROPZONE_PARAMS = dict(
         params={
             "force_action": "upload"
@@ -39,6 +37,15 @@ class DjangoListingConfig(AppConfig):
             });
             }"""
         ),
+    )
+    AUTOCOMPLETE_CSS_URLS = (
+        "/static/django_listing/css/select2.min.css",
+        "/static/autocomplete_light/select2.css",
+    )
+    AUTOCOMPLETE_JS_URLS = (
+        "/static/django_listing/js/select2.min.js",
+        "/static/autocomplete_light/select2.min.js",
+        "/static/autocomplete_light/autocomplete_light.min.js",
     )
 
     def ready(self):

@@ -1,3 +1,7 @@
+0.0.27 (2023-06-26)
+-------------------
+- Add ForeignKeyFilter and AutocompleteForeignKeyFilter
+
 0.0.26 (2023-06-21)
 -------------------
 - Added edit and delete action buttons

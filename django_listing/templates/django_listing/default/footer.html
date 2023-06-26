@@ -15,7 +15,7 @@
 {% if need_media_for.datetimepicker and DATETIMEPICKER_JS_URL %}
     {% block django_listing_datepicker %}
         {% if AUTO_DECLARE_JS %}
-            <script src="{{ DATETIMEPICKER_JS_URL }}"></script>
+            <script src="{{ DATETIMEPICKER_JS_URL }}?{{ STATIC_FILES_VERSION }}"></script>
         {% endif %}
         {% get_dict_list "datetimepickers" as dict_list %}
         <script type="text/javascript">
@@ -38,7 +38,7 @@
 
 {% if need_media_for.dropzone and DROPZONE_JS_URL %}
     {% if AUTO_DECLARE_JS %}
-        <script src="{{ DROPZONE_JS_URL }}"></script>
+        <script src="{{ DROPZONE_JS_URL }}?{{ STATIC_FILES_VERSION }}"></script>
     {% endif %}
     {% get_dict_list "dropzones" as dict_list %}
     <script type="text/javascript">
@@ -48,6 +48,16 @@
         {% endfor %}
     </script>
 
+{% endif %}
+
+{% if need_media_for.autocomplete and AUTOCOMPLETE_JS_URLS %}
+    {% block django_listing_autocomplete %}
+        {% if AUTO_DECLARE_JS %}
+            {% for url in AUTOCOMPLETE_JS_URLS %}
+                <script src="{{ url }}?{{ STATIC_FILES_VERSION }}"></script>
+            {% endfor %}
+        {% endif %}
+    {% endblock %}
 {% endif %}
 
 {% footer_snippets %}

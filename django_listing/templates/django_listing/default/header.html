@@ -13,5 +13,14 @@
         <link rel="stylesheet"
               href="{% static "django_listing" %}/{{ THEME }}/css/django_listing.min.css?{{ STATIC_FILES_VERSION }}">
     {% endif %}
+
+    {% if need_media_for.autocomplete and AUTOCOMPLETE_CSS_URLS %}
+        {% if AUTO_DECLARE_CSS %}
+            {% for url in AUTOCOMPLETE_CSS_URLS %}
+                <link rel="stylesheet" href="{{ url }}?{{ STATIC_FILES_VERSION }}"/>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+
     {% header_snippets %}
 {% endspaceless %}

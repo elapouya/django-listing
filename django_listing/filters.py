@@ -742,6 +742,7 @@ class AutocompleteForeignKeyFilter(Filter):
         return params
 
     def get_form_field_widget(self, field_class):
+        self.listing.need_media_for("autocomplete")
         widget_attrs = HTMLAttributes(self.widget_attrs)
         widget_attrs.add("class", self.theme_form_select_widget_class)
         if "data-placeholder" not in widget_attrs:
