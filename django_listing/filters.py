@@ -21,11 +21,13 @@ from .theme_config import ThemeTemplate, ThemeAttribute
 from .utils import init_dicts_from_class
 
 __all__ = [
+    "Filter",
+    "AutocompleteForeignKeyFilter",
+    "AutocompleteMultipleForeignKeyFilter",
     "BooleanFilter",
     "ChoiceFilter",
     "DateFilter",
     "DateTimeFilter",
-    "Filter",
     "FILTER_QUERYSTRING_PREFIX",
     "Filters",
     "FILTERS_PARAMS_KEYS",
@@ -50,6 +52,7 @@ FILTERS_PARAMS_KEYS = {
     "format_label",
     "container_attrs",
     "filter_key",
+    "field_name",
     "input_type",
     "key_type",
     "model_field",
@@ -201,7 +204,7 @@ class Filters(list):
 
     def create_filter(self, name, listing):
         if isinstance(name, str):
-            model_attr_name, *_ = name.split("__")
+            model_attr_name, *dummy = name.split("__")
             if issubclass(listing.model, models.Model):
                 field = listing.model._meta.get_field(model_attr_name)
                 if field:
@@ -325,6 +328,7 @@ class Filter(metaclass=FilterMeta):
     value = None
     url = None
     filter_key = None
+    field_name = None
     order_by = None
     format_label = None
     key_type = None
@@ -383,6 +387,8 @@ class Filter(metaclass=FilterMeta):
         self.apply_template_kwargs()
         if self.filter_key is None:
             self.filter_key = self.name
+        if self.field_name is None:
+            self.field_name, *dummy = self.filter_key.split("__")
         if self.format_label is None:
             self.format_label = lambda obj: str(obj)
         elif isinstance(self.format_label, str):
@@ -398,11 +404,11 @@ class Filter(metaclass=FilterMeta):
         label = self.label
         if label is None:
             try:
-                label = self.listing.model._meta.get_field(self.name).verbose_name
+                label = self.listing.model._meta.get_field(self.field_name).verbose_name
             except FieldDoesNotExist:
                 pass
         if not label:
-            label, *_ = self.name.split("__")
+            label, *dummy = self.name.split("__")
             label = label.replace("_", " ").capitalize()
         return label
 
@@ -545,7 +551,7 @@ class Filter(metaclass=FilterMeta):
             elif self.listing.model:
                 try:
                     model = self.listing.model
-                    params["choices"] = model._meta.get_field(self.name).choices
+                    params["choices"] = model._meta.get_field(self.field_name).choices
                 except (models.FieldDoesNotExist, AttributeError):
                     raise InvalidFilters(
                         _(
@@ -716,9 +722,7 @@ class ForeignKeyFilter(Filter):
         return self.order_by
 
     def get_related_qs(self):
-        related_model = self.listing.model._meta.get_field(
-            self.filter_key
-        ).related_model
+        related_model = self.listing.model._meta.get_field(self.field_key).related_model
         qs = related_model.objects.all()
         order_by = self.get_choices_order()
         if order_by:
@@ -736,10 +740,11 @@ class ForeignKeyFilter(Filter):
 
 class AutocompleteForeignKeyFilter(Filter):
     form_field_class = forms.ModelChoiceField
+    widget_class = autocomplete.ModelSelect2
 
     def get_form_field_params(self):
         related_model = self.listing.model._meta.get_field(
-            self.filter_key
+            self.field_name
         ).related_model
         params = super().get_form_field_params()
         params["required"] = False
@@ -753,9 +758,14 @@ class AutocompleteForeignKeyFilter(Filter):
         if "data-placeholder" not in widget_attrs:
             widget_attrs["data-placeholder"] = _("Select a value...")
         widget_attrs["data-html"] = True
-        widget = autocomplete.ModelSelect2
+        widget = self.widget_class
         if self.url is None:
             raise InvalidFilters(
                 f"Please specify the url name to autocomplete view for {self.name}"
             )
         return widget(url=self.url, attrs=widget_attrs)
+
+
+class AutocompleteMultipleForeignKeyFilter(AutocompleteForeignKeyFilter):
+    form_field_class = forms.ModelMultipleChoiceField
+    widget_class = autocomplete.ModelSelect2Multiple
