@@ -1,3 +1,7 @@
+0.0.28 (2023-06-27)
+-------------------
+- Add AutocompleteMultipleForeignKeyFilter
+
 0.0.27 (2023-06-26)
 -------------------
 - Add ForeignKeyFilter and AutocompleteForeignKeyFilter
