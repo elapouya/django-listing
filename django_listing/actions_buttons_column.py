@@ -12,7 +12,7 @@ from django.template import loader
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from django_listing import Column, ListingException, ModelColumns
+from django_listing import Column, ListingException, ModelColumns, InvalidColumn
 
 from .theme_config import ThemeTemplate
 
@@ -255,7 +255,12 @@ class ActionsButtonsColumn(Column):
     edit_object__method = "get_edit_absolute_url"
 
     def get_button_edit_object_context(self, name, rec):
-        method = getattr(rec._obj, self.edit_object__method)
+        method = getattr(rec._obj, self.edit_object__method, None)
+        if method is None:
+            raise InvalidColumn(
+                f"Please define the method {self.edit_object__method}() "
+                f"in class {rec._obj.__class__.__name__}"
+            )
         return dict(type="link", url=method())
 
     # ---------------- DELETE OBJECT ----------------------------------------------
@@ -265,7 +270,12 @@ class ActionsButtonsColumn(Column):
     delete_object__method = "get_delete_absolute_url"
 
     def get_button_delete_object_context(self, name, rec):
-        method = getattr(rec._obj, self.delete_object__method)
+        method = getattr(rec._obj, self.delete_object__method, None)
+        if method is None:
+            raise InvalidColumn(
+                f"Please define the method {self.delete_object__method}() "
+                f"in class {rec._obj.__class__.__name__}"
+            )
         return dict(type="link", url=method())
 
     # ---------------- VIEW OBJECT POPUP ----------------------------------------

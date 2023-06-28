@@ -407,9 +407,8 @@ class Filter(metaclass=FilterMeta):
                 label = self.listing.model._meta.get_field(self.field_name).verbose_name
             except FieldDoesNotExist:
                 pass
-        if not label:
-            label, *dummy = self.name.split("__")
-            label = label.replace("_", " ").capitalize()
+        if label is None:
+            label = self.field_name.replace("_", " ").capitalize()
         return label
 
     def get_form_field_container_attrs(self, form_field):

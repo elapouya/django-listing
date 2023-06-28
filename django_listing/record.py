@@ -302,7 +302,8 @@ class Record:
         return obj
 
     def get_href(self):
-        return self._obj.get_absolute_url()
+        if hasattr(self._obj, "get_absolute_url"):
+            return self._obj.get_absolute_url()
 
     def get(self, key, default=None):
         obj = self._obj
