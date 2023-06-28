@@ -773,7 +773,11 @@ class Listing(ListingBase):
             self.columns_sort_ascending = {}
             self.columns_sort_list = []
             if self.sort:
-                for col_name in map(str.strip, self.sort.split(",")):
+                if isinstance(self.sort, str):
+                    sort_list = map(str.strip, self.sort.split(","))
+                else:
+                    sort_list = self.sort
+                for col_name in sort_list:
                     ascending = True
                     if col_name.startswith("-"):
                         col_name = col_name[1:]

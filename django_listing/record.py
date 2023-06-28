@@ -184,7 +184,11 @@ class RecordManager:
                     order_prefix = "" if lsg.columns_sort_ascending[col_name] else "-"
                     col = lsg.columns.get(col_name)
                     if col:
-                        order_by.append(order_prefix + col.sort_key)
+                        if isinstance(col.sort_key, (tuple, list)):
+                            for sort_key in col.sort_key:
+                                order_by.append(order_prefix + sort_key)
+                        else:
+                            order_by.append(order_prefix + col.sort_key)
             # add a default sorting to avoid a Django 'UnorderedObjectListWarning'
             if not order_by:
                 order_by = ["pk"]
@@ -268,8 +272,13 @@ class Record:
     def get_format_ctx(self):
         return self._format_ctx
 
-    def format_str(self, str_to_format):
-        return str_to_format.format(**self._format_ctx)
+    def format_str(self, str_to_format, extra_context=None):
+        context = {**self._format_ctx}
+        obj = self.get_object()
+        context.update(rec_object=obj)
+        if hasattr(obj, "get_absolute_url"):
+            context.update(rec_object_url=obj.get_absolute_url())
+        return mark_safe(str_to_format.format(**context))
 
     def get_listing(self):
         return self._listing
