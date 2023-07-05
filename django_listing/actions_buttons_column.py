@@ -32,6 +32,7 @@ class ActionsButtonsColumn(Column):
         "buttons_theme_button_class",
         "buttons_theme_li_class",
         "buttons_method",
+        "buttons_url_func",
     )
     params_keys_suffixes = (
         "has_icon",
@@ -42,6 +43,7 @@ class ActionsButtonsColumn(Column):
         "theme_li_class",
         "title",
         "method",
+        "url_func",
     )
     buttons = "move_up,move_down,view_object,edit_object,delete_object"
     buttons_template = ThemeTemplate("actions_buttons.html")
@@ -53,6 +55,7 @@ class ActionsButtonsColumn(Column):
     buttons_theme_li_class = "action-item"
     buttons_theme_button_class = "btn btn-primary"
     buttons_method = None
+    buttons_url_func = None
     actions_query_string_keys = {
         "action_col",
         "action_button",
@@ -178,6 +181,19 @@ class ActionsButtonsColumn(Column):
             raise ListingException(f'Unknown "{self.action_button}" action.')
         return action_method(*args, **kwargs)
 
+    def build_url_func_params(self, rec):
+        listing = self.listing
+        if not listing.request:
+            raise ListingException("Listing requires Request object")
+        rm = listing.request.resolver_match
+        return [
+            listing,
+            rec.get_object(),
+            rm.url_name,
+            rm.args,
+            rm.kwargs,
+        ]
+
     # ---------------- MOVE UP --------------------------------------------------
     move_up__icon = "listing-icon-up-open"
     move_up__text = _("Move up")
@@ -244,39 +260,57 @@ class ActionsButtonsColumn(Column):
     view_object__icon = "listing-icon-magnifier"
     view_object__text = _("Details")
     view_object__title = _("See details")
+    view_object__url_func = None
 
     def get_button_view_object_context(self, name, rec):
-        return dict(type="link", url=rec.get_href())
+        if self.view_object__url_func:
+            return dict(
+                type="extlink",
+                url=self.view_object__url_func(*self.build_url_func_params(rec)),
+            )
+        return dict(type="extlink", url=rec.get_href())
 
     # ---------------- EDIT OBJECT ----------------------------------------------
     edit_object__icon = "listing-icon-pencil"
     edit_object__text = _("Edit")
     edit_object__title = _("Edit")
+    edit_object__url_func = None
     edit_object__method = "get_edit_absolute_url"
 
     def get_button_edit_object_context(self, name, rec):
-        method = getattr(rec._obj, self.edit_object__method, None)
+        if self.edit_object__url_func:
+            return dict(
+                type="extlink",
+                url=self.edit_object__url_func(*self.build_url_func_params(rec)),
+            )
+        method = getattr(rec.get_object(), self.edit_object__method, None)
         if method is None:
             raise InvalidColumn(
                 f"Please define the method {self.edit_object__method}() "
-                f"in class {rec._obj.__class__.__name__}"
+                f"in class {rec.get_object().__class__.__name__}"
             )
-        return dict(type="link", url=method())
+        return dict(type="extlink", url=method())
 
     # ---------------- DELETE OBJECT ----------------------------------------------
     delete_object__icon = "listing-icon-trash-empty"
     delete_object__text = _("Delete")
     delete_object__title = _("Delete")
+    delete_object__url_func = None
     delete_object__method = "get_delete_absolute_url"
 
     def get_button_delete_object_context(self, name, rec):
-        method = getattr(rec._obj, self.delete_object__method, None)
+        if self.delete_object__url_func:
+            return dict(
+                type="extlink",
+                url=self.delete_object__url_func(*self.build_url_func_params(rec)),
+            )
+        method = getattr(rec.get_object(), self.delete_object__method, None)
         if method is None:
             raise InvalidColumn(
                 f"Please define the method {self.delete_object__method}() "
-                f"in class {rec._obj.__class__.__name__}"
+                f"in class {rec.get_object().__class__.__name__}"
             )
-        return dict(type="link", url=method())
+        return dict(type="extlink", url=method())
 
     # ---------------- VIEW OBJECT POPUP ----------------------------------------
     view_object_popup__icon = "listing-icon-magnifier"

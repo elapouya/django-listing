@@ -1,3 +1,7 @@
+0.5.0 (2023-07-05)
+------------------
+- Add __url_func parameter for edit/delete/view action buttons
+
 0.0.28 (2023-06-27)
 -------------------
 - Add AutocompleteMultipleForeignKeyFilter
