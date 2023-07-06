@@ -1076,7 +1076,7 @@ class ManyColumn(Column):
         value = self.cell_filter(value)
         value = map(self.cell_map, value)
         value = self.cell_reduce(value)
-        return value
+        return mark_safe(value)
 
     def cell_filter(self, value):
         if isinstance(value, models.Manager):
@@ -1084,7 +1084,11 @@ class ManyColumn(Column):
         return value
 
     def cell_map(self, value):
-        return force_str(value)
+        label = force_str(value)
+        if hasattr(value, "get_absolute_url"):
+            url = value.get_absolute_url()
+            return f'<a href="{url}">{label}</a>'
+        return label
 
     def cell_reduce(self, value):
         return self.many_separator.join(value)

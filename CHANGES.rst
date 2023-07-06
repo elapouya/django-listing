@@ -1,3 +1,7 @@
+0.5.1 (2023-07-06)
+------------------
+- Add links in ManyColumn if get_absolute_url() exists on related objects
+
 0.5.0 (2023-07-05)
 ------------------
 - Add __url_func parameter for edit/delete/view action buttons
