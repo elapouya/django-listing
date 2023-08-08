@@ -1,3 +1,7 @@
+0.5.2 (2023-08-08)
+------------------
+- Update fr translations
+
 0.5.1 (2023-07-06)
 ------------------
 - Add links in ManyColumn if get_absolute_url() exists on related objects
