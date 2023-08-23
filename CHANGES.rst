@@ -1,3 +1,7 @@
+0.5.3 (2023-08-23)
+------------------
+- Add filter_queryset_method filter attribute
+
 0.5.2 (2023-08-08)
 ------------------
 - Update fr translations

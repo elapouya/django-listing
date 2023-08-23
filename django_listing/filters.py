@@ -64,6 +64,7 @@ FILTERS_PARAMS_KEYS = {
     "word_search",
     "url",
     "choices",
+    "filter_queryset_method",
 }
 
 # Declare keys for django form fields
@@ -340,6 +341,7 @@ class Filter(metaclass=FilterMeta):
     no_choice_msg = gettext_lazy("- No filtering -")
     help_text = None
     word_search = False
+    filter_queryset_method = None
 
     theme_form_widget_class = ThemeAttribute("column_theme_form_widget_class")
     theme_form_select_widget_class = ThemeAttribute(
@@ -492,6 +494,13 @@ class Filter(metaclass=FilterMeta):
         if not self.value:
             return qs
         cleaned_value = cleaned_data.get(self.input_name + self.listing.suffix)
+        if self.filter_queryset_method:
+            if isinstance(self.filter_queryset_method, str):
+                method = getattr(self.listing, self.filter_queryset_method, None)
+            else:
+                method = self.filter_queryset_method
+            if method:
+                return method(qs, cleaned_value)
         if self.word_search and isinstance(cleaned_value, str):
             words = filter(None, cleaned_value.split())
             for word in words:
