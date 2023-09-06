@@ -767,9 +767,6 @@ class Listing(ListingBase):
                 and self.selecting
                 and self.selection_position == "hidden"
             )
-            is_exporting = self.export_data()
-            if is_exporting:
-                return "Sending listing export file..."
             self.columns_sort_ascending = {}
             self.columns_sort_list = []
             if self.sort:
@@ -803,6 +800,9 @@ class Listing(ListingBase):
             self.selected_columns = self.columns.select(
                 self.select_columns, self.exclude_columns
             )
+            is_exporting = self.export_data()
+            if is_exporting:
+                return "Sending listing export file..."
             self.can_edit_columns = [c for c in self.selected_columns if c.can_edit]
             self.can_edit_columns_names = set(c.name for c in self.can_edit_columns)
             self.editing_really_hidden_columns = (
@@ -983,11 +983,11 @@ class Listing(ListingBase):
             yield row
 
     def exported_headers(self):
-        return [str(c.get_header_value()) for c in self.columns]
+        return [str(c.get_header_value()) for c in self.selected_columns]
 
     def exported_rows(self):
         for rec in self.records.export():
-            yield [c.get_cell_exported_value(rec) for c in self.columns]
+            yield [c.get_cell_exported_value(rec) for c in self.selected_columns]
 
     def get_rendered_cells(self, rec):
         rendered_columns = []

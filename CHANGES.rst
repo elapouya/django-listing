@@ -1,3 +1,7 @@
+0.5.4 (2023-09-06)
+------------------
+- Data Export works with active filters and ajax=True
+
 0.5.3 (2023-08-23)
 ------------------
 - Add filter_queryset_method filter attribute

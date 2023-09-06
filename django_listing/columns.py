@@ -32,6 +32,7 @@ from .record import cache_in_record
 from .theme_config import ThemeAttribute
 from .utils import init_dicts_from_class
 
+
 __all__ = [
     "AvgColumn",
     "BooleanColumn",
@@ -129,6 +130,8 @@ COLUMNS_FORM_FIELD_KEYS = {
     "validators",
     "widget",
 }
+
+EXPORT_XLSX_ILLEGAL_CHARACTERS_RE = re.compile(r"[\000-\010]|[\013-\014]|[\016-\037]")
 
 
 class ListingMethodRef:
@@ -653,8 +656,10 @@ class Column(metaclass=ColumnMeta):
 
     def get_cell_exported_value(self, rec):
         val = self.get_cell_value(rec)
+        if self.listing.export == "XLSX" and isinstance(val, str):
+            val = EXPORT_XLSX_ILLEGAL_CHARACTERS_RE.sub("?", val)
         if not isinstance(
-            val, (int, float, datetime.datetime, datetime.date, datetime.time)
+            val, (int, float, datetime.datetime, datetime.date, datetime.time, bool)
         ):
             return force_str(val)
         return val

@@ -161,8 +161,9 @@ class RecordManager:
                 rec.set_form(form)
 
     def export(self):
-        lsg = self.listing
-        for i, obj in enumerate(lsg.data):
+        qs = self.listing.data
+        qs = self.filter_queryset(qs)
+        for i, obj in enumerate(qs):
             yield Record(self.listing, obj, i)
 
     def filter_queryset(self, qs):

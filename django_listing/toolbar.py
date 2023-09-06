@@ -292,7 +292,7 @@ class PerPageDropdownToolbarItem(PerPageSelectToolbarItem):
 
 
 class ExportSelectToolbarItem(ToolbarItem):
-    template_name = ThemeTemplate("tbi_select.html")
+    template_name = ThemeTemplate("tbi_export.html")
     choices = [("", _("Choose..."))] + EXPORT_FORMATS
     has_submit_button = True
     label = "Export to "

@@ -3,13 +3,13 @@
    isort:skip_file
 """
 
-__version__ = "0.5.3"
+__version__ = "0.5.4"
 __author__ = "Eric Lapouyade"
 __copyright__ = "Copyright 2018, The Django listing Project"
 __credits__ = ["Eric Lapouyade"]
 __license__ = "Dual licensing"
 __maintainer__ = "Eric Lapouyade"
-__status__ = "Alpha"
+__status__ = "Beta"
 
 EXPORT_FORMATS = ["CSV", "DBF", "HTML", "JSON", "ODS", "TSV", "XLS", "XLSX", "YAML"]
 
