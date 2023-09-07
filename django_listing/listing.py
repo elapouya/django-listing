@@ -273,7 +273,7 @@ class ListingVariations(ListingBase):
 
     def __init__(self, data=None, **kwargs):
         super().__init__(data, **kwargs)
-        if data:
+        if data is not None:
             self.init(data, **kwargs)
         self.init_kwargs = kwargs
 
