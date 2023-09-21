@@ -5,11 +5,13 @@
 #
 import copy
 import re
+from datetime import timedelta
 
 from dal import autocomplete
 from django import forms
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
+from django.db.models import DateTimeField
 from django.template import loader
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy, pgettext_lazy
@@ -65,6 +67,7 @@ FILTERS_PARAMS_KEYS = {
     "url",
     "choices",
     "filter_queryset_method",
+    "add_one_day",
 }
 
 # Declare keys for django form fields
@@ -585,6 +588,17 @@ class DateFilter(Filter):
     from_model_field_classes = (models.DateField,)
     form_field_class = forms.DateField
     widget_attrs = {"class": "form-control edit-datecolumn", "type": "date"}
+    add_one_day = False  # useful for DateFilter on DateTimeField
+
+    def filter_queryset(self, qs, cleaned_data):
+        if not self.value:
+            return qs
+        if self.add_one_day:
+            data_key = self.input_name + self.listing.suffix
+            cleaned_value = cleaned_data.get(data_key)
+            if cleaned_value:
+                cleaned_data[data_key] = cleaned_value + timedelta(days=1)
+        return super().filter_queryset(qs, cleaned_data)
 
 
 class DateTimeFilter(Filter):

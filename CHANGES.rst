@@ -1,3 +1,7 @@
+0.5.6 (2023-09-21)
+------------------
+- Add add_one_day option on DateFilter
+
 0.5.5 (2023-09-07)
 ------------------
 - Fix unexpected SQL query with ListingVariations
