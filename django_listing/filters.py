@@ -563,7 +563,7 @@ class Filter(metaclass=FilterMeta):
                 try:
                     model = self.listing.model
                     params["choices"] = model._meta.get_field(self.field_name).choices
-                except (models.FieldDoesNotExist, AttributeError):
+                except AttributeError:
                     raise InvalidFilters(
                         _(
                             "Cannot find choices from model "
