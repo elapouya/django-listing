@@ -1,3 +1,7 @@
+0.5.8 (2023-09-22)
+------------------
+- Strip HTML tags on data exports
+
 0.5.7 (2023-09-21)
 ------------------
 - Fix exception management for Django 4

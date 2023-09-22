@@ -19,7 +19,7 @@ from django.template.defaultfilters import filesizeformat
 from django.utils import formats
 from django.utils.dateparse import parse_datetime
 from django.utils.encoding import force_str
-from django.utils.html import conditional_escape
+from django.utils.html import conditional_escape, strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -656,6 +656,7 @@ class Column(metaclass=ColumnMeta):
 
     def get_cell_exported_value(self, rec):
         val = self.get_cell_value(rec)
+        val = strip_tags(val)
         if self.listing.export == "XLSX" and isinstance(val, str):
             val = EXPORT_XLSX_ILLEGAL_CHARACTERS_RE.sub("?", val)
         if not isinstance(
