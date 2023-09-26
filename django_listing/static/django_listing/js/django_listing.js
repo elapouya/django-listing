@@ -305,8 +305,9 @@ $(document).ready(function () {
         form.submit();
     });
 
-    $(document).on('select2:open', () => {
-        document.querySelector('.select2-search__field').focus();
+    $(document).on('select2:open', function(e) {
+        let aria_owns = $(e.target).parent().find('.select2-selection').attr('aria-owns');
+        document.querySelector('input[aria-controls="' + aria_owns + '"]').focus();
         select2_opened = true;
     });
 

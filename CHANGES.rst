@@ -1,3 +1,7 @@
+0.5.9 (2023-09-26)
+------------------
+- Better focus when using Select2 widget
+
 0.5.8 (2023-09-22)
 ------------------
 - Strip HTML tags on data exports
