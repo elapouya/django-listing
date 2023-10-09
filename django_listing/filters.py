@@ -744,7 +744,9 @@ class ForeignKeyFilter(Filter):
         return self.order_by
 
     def get_related_qs(self):
-        related_model = self.listing.model._meta.get_field(self.field_key).related_model
+        related_model = self.listing.model._meta.get_field(
+            self.field_name
+        ).related_model
         qs = related_model.objects.all()
         order_by = self.get_choices_order()
         if order_by:
