@@ -1,3 +1,7 @@
+0.5.10 (2023-10-12)
+-------------------
+- Fix listing export for Excel
+
 0.5.9 (2023-09-26)
 ------------------
 - Better focus when using Select2 widget

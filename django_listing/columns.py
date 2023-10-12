@@ -654,11 +654,12 @@ class Column(metaclass=ColumnMeta):
         value = rec.get(self.data_key)
         return value
 
-    def get_cell_exported_value(self, rec):
+    def get_cell_exported_value(self, rec, keep_original_type=True):
         val = self.get_cell_value(rec)
-        val = strip_tags(val)
-        if self.listing.export == "XLSX" and isinstance(val, str):
-            val = EXPORT_XLSX_ILLEGAL_CHARACTERS_RE.sub("?", val)
+        if isinstance(val, str):
+            val = strip_tags(val)
+            if self.listing.export == "XLSX":
+                val = EXPORT_XLSX_ILLEGAL_CHARACTERS_RE.sub("?", val)
         if not isinstance(
             val, (int, float, datetime.datetime, datetime.date, datetime.time, bool)
         ):
@@ -1181,6 +1182,10 @@ class DateColumn(Column):
             return formats.date_format(value, self.date_format)
         return value
 
+    def get_cell_exported_value(self, rec, keep_original_type=True):
+        value = super().get_cell_value(rec)
+        return value
+
 
 class DateTimeColumn(Column):
     datetime_format = settings.DATETIME_FORMAT
@@ -1192,6 +1197,15 @@ class DateTimeColumn(Column):
         value = super().get_cell_value(rec)
         if isinstance(value, datetime.date):  # date also match datetime
             return formats.date_format(value, self.datetime_format)
+        return value
+
+    def get_cell_exported_value(self, rec, keep_original_type=True):
+        value = super().get_cell_value(rec)
+        if isinstance(value, datetime.date):
+            if keep_original_type:
+                value = value.replace(tzinfo=None)
+            else:
+                value = formats.date_format(value, self.datetime_format)
         return value
 
 
@@ -1207,6 +1221,18 @@ class JsonDateTimeColumn(Column):
             )  # convert json date to datetime object
         if isinstance(value, datetime.date):  # date also match datetime
             return formats.date_format(value, self.datetime_format)
+        return value
+
+    def get_cell_exported_value(self, rec, keep_original_type=True):
+        value = super().get_cell_value(rec)
+        if isinstance(value, str):
+            value = (
+                parse_datetime(value) or value
+            )  # convert json date to datetime object
+        if keep_original_type:
+            value = value.replace(tzinfo=None)
+        else:
+            value = formats.date_format(value, self.datetime_format)
         return value
 
 
@@ -1228,6 +1254,15 @@ class TimeColumn(Column):
         value = super().get_cell_value(rec)
         if isinstance(value, datetime.date):  # date also match datetime
             return formats.time_format(value, self.time_format)
+        return value
+
+    def get_cell_exported_value(self, rec, keep_original_type=True):
+        value = super().get_cell_value(rec)
+        if isinstance(value, datetime.date):
+            if keep_original_type:
+                value = value.replace(tzinfo=None)
+            else:
+                value = formats.time_format(value, self.time_format)
         return value
 
 

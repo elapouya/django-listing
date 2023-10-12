@@ -20,7 +20,11 @@ from django.template import loader
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy, pgettext_lazy
 
-from django_listing import EXPORT_FORMATS
+from django_listing import (
+    EXPORT_FORMATS,
+    EXPORT_FORMATS_KEEP_ORIGINAL_TYPE,
+    EXPORT_FORMATS_USE_COL_NAME,
+)
 
 from .columns import COLUMNS_PARAMS_KEYS, ModelColumns, SelectionColumn, SequenceColumns
 from .context import RenderContext
@@ -840,12 +844,14 @@ class Listing(ListingBase):
         if self.export:
             export_format = self.export.upper()
             if export_format in EXPORT_FORMATS:
-                headers = self.exported_headers()
+                use_col_name = export_format in EXPORT_FORMATS_USE_COL_NAME
+                headers = self.exported_headers(use_col_name)
                 if export_format == "DBF":
                     headers = list(map(lambda h: h[:10], headers))
                 data = tablib.Dataset()
                 data.headers = headers
-                for row in self.exported_rows():
+                keep_original_type = export_format in EXPORT_FORMATS_KEEP_ORIGINAL_TYPE
+                for row in self.exported_rows(keep_original_type):
                     data.append(row)
                 self.request.export_data = data.export(export_format.lower())
                 self.request.export_filename = "{}.{}".format(
@@ -982,12 +988,18 @@ class Listing(ListingBase):
             self.aggregate(rec)
             yield row
 
-    def exported_headers(self):
-        return [str(c.get_header_value()) for c in self.selected_columns]
+    def exported_headers(self, use_col_name=True):
+        if use_col_name:
+            return [c.name for c in self.selected_columns]
+        else:
+            return [str(c.get_header_value()) for c in self.selected_columns]
 
-    def exported_rows(self):
+    def exported_rows(self, keep_original_type=True):
         for rec in self.records.export():
-            yield [c.get_cell_exported_value(rec) for c in self.selected_columns]
+            yield [
+                c.get_cell_exported_value(rec, keep_original_type)
+                for c in self.selected_columns
+            ]
 
     def get_rendered_cells(self, rec):
         rendered_columns = []
