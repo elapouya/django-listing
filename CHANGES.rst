@@ -1,3 +1,7 @@
+0.5.11 (2023-19-12)
+-------------------
+- Improve foreign key column title
+
 0.5.10 (2023-10-12)
 -------------------
 - Fix listing export for Excel

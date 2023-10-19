@@ -291,7 +291,10 @@ class ModelColumns(Columns):
                 f, (models.ManyToManyRel, models.ManyToOneRel)
             ):
                 if not hasattr(self.listing, f"{f.name}__header"):
-                    header = getattr(f, "verbose_name", f.name.capitalize())
+                    if getattr(f, "related_model", None):
+                        header = f.related_model._meta.verbose_name
+                    else:
+                        header = getattr(f, "verbose_name", f.name.capitalize())
                 else:
                     header = getattr(self.listing, f"{f.name}__header")
                 col_class = getattr(self.listing, f"{f.name}__column_class", None)
