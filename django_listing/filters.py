@@ -503,6 +503,11 @@ class Filter(metaclass=FilterMeta):
             else:
                 method = self.filter_queryset_method
             if method:
+                if self.word_search and isinstance(cleaned_value, str):
+                    words = filter(None, cleaned_value.split())
+                    for word in words:
+                        qs = method(qs, word)
+                    return qs
                 return method(qs, cleaned_value)
         if self.word_search and isinstance(cleaned_value, str):
             words = filter(None, cleaned_value.split())

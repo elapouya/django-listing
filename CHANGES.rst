@@ -1,6 +1,7 @@
-0.5.11 (2023-19-12)
+0.5.12 (2023-19-12)
 -------------------
 - Improve foreign key column title
+- Fix word search with filter_queryset_method
 
 0.5.10 (2023-10-12)
 -------------------
