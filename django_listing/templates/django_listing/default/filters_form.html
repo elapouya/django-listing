@@ -39,6 +39,7 @@
             {% elif button == 'submit' %}
                 {% if filters.form_submit_label %}
                     <input type="submit"
+                           name="submit"
                            class="filters-nav btn btn-primary submit-button"
                            value="{{ filters.form_submit_label }}"/>
                 {% endif %}

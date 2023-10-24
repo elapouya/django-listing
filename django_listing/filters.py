@@ -68,6 +68,7 @@ FILTERS_PARAMS_KEYS = {
     "choices",
     "filter_queryset_method",
     "add_one_day",
+    "default_value",
 }
 
 # Declare keys for django form fields
@@ -223,19 +224,27 @@ class Filters(list):
     def extract_params(self):
         request_get_data = self.listing.request.GET
         for f in self:
-            f.extract_params(request_get_data)
+            if not request_get_data and f.default_value is not None:
+                f.value = f.default_value
+            else:
+                f.extract_params(request_get_data)
 
     def form(self):
         if not self._form:
             fields = {
                 f.input_name + self.listing.suffix: f.create_form_field() for f in self
             }
+            initial = {
+                f.input_name + self.listing.suffix: f.default_value
+                for f in self
+                if f.default_value is not None
+            }
             form_class = type(
                 "FilterForm{}".format(self.listing.suffix),
                 (FiltersBaseForm,),
                 {"base_fields": fields},
             )
-            self._form = form_class(self.listing.request.GET)
+            self._form = form_class(self.listing.request.GET or None, initial=initial)
         return self._form
 
     def get_hiddens_html(self):
@@ -345,6 +354,7 @@ class Filter(metaclass=FilterMeta):
     help_text = None
     word_search = False
     filter_queryset_method = None
+    default_value = None
 
     theme_form_widget_class = ThemeAttribute("column_theme_form_widget_class")
     theme_form_select_widget_class = ThemeAttribute(
@@ -493,10 +503,15 @@ class Filter(metaclass=FilterMeta):
         field = cls(widget=widget, **params)
         return field
 
-    def filter_queryset(self, qs, cleaned_data):
-        if not self.value:
-            return qs
-        cleaned_value = cleaned_data.get(self.input_name + self.listing.suffix)
+    def filter_queryset(self, qs, cleaned_data=None):
+        if cleaned_data is not None:
+            if not self.value:
+                return qs
+            cleaned_value = cleaned_data.get(self.input_name + self.listing.suffix)
+        else:
+            if self.default_value is None:
+                return qs
+            cleaned_value = self.default_value
         if self.filter_queryset_method:
             if isinstance(self.filter_queryset_method, str):
                 method = getattr(self.listing, self.filter_queryset_method, None)

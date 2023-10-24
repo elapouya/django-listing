@@ -1,4 +1,8 @@
-0.5.12 (2023-19-12)
+0.5.14 (2023-10-24)
+-------------------
+- Add default_value on Filter()
+
+0.5.12 (2023-10-19)
 -------------------
 - Improve foreign key column title
 - Fix word search with filter_queryset_method

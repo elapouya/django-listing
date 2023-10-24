@@ -169,9 +169,9 @@ class RecordManager:
     def filter_queryset(self, qs):
         if self.listing.filters:
             form = self.listing.filters.form()
-            if form.is_valid():
-                for filtr in self.listing.filters:
-                    qs = filtr.filter_queryset(qs, form.cleaned_data)
+            cleaned_data = form.cleaned_data if form.is_valid() else None
+            for filtr in self.listing.filters:
+                qs = filtr.filter_queryset(qs, cleaned_data)
         return qs
 
     def get_objs_from_queryset(self):
