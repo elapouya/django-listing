@@ -1,3 +1,8 @@
+0.5.15 (2023-10-26)
+-------------------
+- Improve get_absolute_url() usage
+- Improve default_value on Filter()
+
 0.5.14 (2023-10-24)
 -------------------
 - Add default_value on Filter()

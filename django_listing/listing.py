@@ -1088,6 +1088,10 @@ class Listing(ListingBase):
 
     def get_hiddens(self, without=None):
         hiddens = QueryDict(self.parsed_url.query, mutable=True)
+        if self.filters:
+            initial = self.filters.form().initial
+            if initial:
+                hiddens.update(initial)
         if without:
             if isinstance(without, str):
                 without = list(map(str.strip, without.split(",")))

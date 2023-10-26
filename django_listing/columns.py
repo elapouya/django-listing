@@ -1097,7 +1097,8 @@ class ManyColumn(Column):
         label = force_str(value)
         if hasattr(value, "get_absolute_url"):
             url = value.get_absolute_url()
-            return f'<a href="{url}">{label}</a>'
+            if url is not None:
+                return f'<a href="{url}">{label}</a>'
         return label
 
     def cell_reduce(self, value):
