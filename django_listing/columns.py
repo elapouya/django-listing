@@ -19,8 +19,8 @@ from django.template.defaultfilters import filesizeformat
 from django.utils import formats
 from django.utils.dateparse import parse_datetime
 from django.utils.encoding import force_str
-from django.utils.html import conditional_escape, strip_tags
-from django.utils.safestring import mark_safe
+from django.utils.html import conditional_escape, strip_tags, escape
+from django.utils.safestring import mark_safe, SafeData
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
@@ -109,6 +109,7 @@ COLUMNS_PARAMS_KEYS = {
     "time_format",
     "value_tpl",
     "widget_attrs",
+    "is_safe_value",
 }
 
 COLUMNS_FORM_FIELD_KEYS = {
@@ -481,6 +482,7 @@ class Column(metaclass=ColumnMeta):
     sort_key = None
     sortable = True
     value_tpl = "{value}"
+    is_safe_value = False  # to avoid XSS attack
 
     theme_header_class = ThemeAttribute("column_theme_header_class")
     theme_cell_class = ThemeAttribute("column_theme_cell_class")
@@ -1281,6 +1283,14 @@ class LinkColumn(Column):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def get_cell_value(self, rec):
+        value = super().get_cell_value(rec)
+        if self.is_safe_value:
+            return value
+        if isinstance(value, str):
+            value = escape(value)
+        return value
+
     def get_link_attrs(self, rec, value):
         link_attrs = self.link_attrs
         if isinstance(link_attrs, ListingMethodRef):
@@ -1357,6 +1367,13 @@ class ForeignKeyColumn(LinkColumn):
     params_keys = "no_foreignkey_link"
     no_foreignkey_link = False
     editable = False
+
+    def get_cell_value(self, rec):
+        value = super().get_cell_value(rec)
+        if self.is_safe_value:
+            return value
+        value = escape(str(value))
+        return value
 
     def get_href(self, rec, ctx, value):
         if self.no_foreignkey_link:

@@ -1,3 +1,7 @@
+0.5.16 (2023-11-27)
+-------------------
+- Fix XSS issues on ForeignKeyColumns and LinkColumn
+
 0.5.15 (2023-10-26)
 -------------------
 - Improve get_absolute_url() usage
