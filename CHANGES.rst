@@ -1,3 +1,7 @@
+0.5.17 (2023-11-28)
+-------------------
+- Add FloatFilter
+
 0.5.16 (2023-11-27)
 -------------------
 - Fix XSS issues on ForeignKeyColumns and LinkColumn

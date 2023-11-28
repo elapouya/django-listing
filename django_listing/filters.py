@@ -35,6 +35,7 @@ __all__ = [
     "FILTERS_PARAMS_KEYS",
     "ForeignKeyFilter",
     "IntegerFilter",
+    "FloatFilter",
     "MultipleChoiceFilter",
     "TimeFilter",
 ]
@@ -602,6 +603,11 @@ class Filter(metaclass=FilterMeta):
 class IntegerFilter(Filter):
     from_model_field_classes = (models.IntegerField,)
     form_field_class = forms.IntegerField
+
+
+class FloatFilter(Filter):
+    from_model_field_classes = (models.FloatField,)
+    form_field_class = forms.FloatField
 
 
 class DateFilter(Filter):
