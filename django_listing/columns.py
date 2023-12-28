@@ -71,6 +71,9 @@ COLUMNS_PARAMS_KEYS = {
     "cell_edit_tpl",
     "cell_tpl",
     "cell_value",
+    "cell_with_filter_link",
+    "cell_with_filter_name",
+    "cell_with_filter_tpl",
     "column_class",
     "column_instance",
     "data_key",
@@ -85,11 +88,13 @@ COLUMNS_PARAMS_KEYS = {
     "footer_value_tpl",
     "form_field_class",
     "form_field_widget_class",
+    "has_cell_filter",
     "header",
     "header_attrs",
     "header_sortable_tpl",
     "header_tpl",
     "input_type",
+    "is_safe_value",
     "label",
     "model_field",
     "name",
@@ -99,6 +104,7 @@ COLUMNS_PARAMS_KEYS = {
     "start",
     "theme_button_class",
     "theme_cell_class",
+    "theme_cell_with_filter_icon",
     "theme_footer_class",
     "theme_form_checkbox_widget_class",
     "theme_form_radio_widget_class",
@@ -109,7 +115,6 @@ COLUMNS_PARAMS_KEYS = {
     "time_format",
     "value_tpl",
     "widget_attrs",
-    "is_safe_value",
 }
 
 COLUMNS_FORM_FIELD_KEYS = {
@@ -456,6 +461,9 @@ class Column(metaclass=ColumnMeta):
     cell_tpl = None
     cell_edit_tpl = None
     cell_value = None
+    cell_with_filter_link = None
+    cell_with_filter_name = None
+    cell_with_filter_tpl = None
     data_key = None
     default_footer_value = ""
     default_value = "-"
@@ -469,6 +477,7 @@ class Column(metaclass=ColumnMeta):
     form_field_keys = None
     from_model_field_classes = []
     from_model_field_order = 100
+    has_cell_filter = False
     header = None
     header_sortable_tpl = None
     header_tpl = None
@@ -498,6 +507,7 @@ class Column(metaclass=ColumnMeta):
         "column_theme_form_radio_widget_class"
     )
     theme_button_class = ThemeAttribute("column_theme_button_class")
+    theme_cell_with_filter_icon = ThemeAttribute("column_theme_cell_with_filter_icon")
 
     def __init__(self, *args, **kwargs):
         self.init_args = args
@@ -635,6 +645,20 @@ class Column(metaclass=ColumnMeta):
         )
         return attrs
 
+    def get_cell_filter_link(self, rec, ctx, value):
+        if callable(self.cell_with_filter_link):
+            return self.cell_with_filter_link(self, rec, ctx, value)
+        listing = self.listing
+        filters = listing.filters
+        if filters:
+            filter_name = self.cell_with_filter_name or self.name
+            filter = filters.get(filter_name)
+            if filter:
+                rec_val = rec.get(filter_name)
+                rec_val = getattr(rec_val, "pk", rec_val)  # case it is a model object
+                return listing.get_url(**{filter.input_name: rec_val})
+        return ""
+
     def get_default_value(self, rec):
         return self.default_value
 
@@ -716,7 +740,16 @@ class Column(metaclass=ColumnMeta):
             value_tpl = self.get_edit_value_tpl(rec, ctx, value)
             cell_tpl = self.cell_edit_tpl or self.cell_tpl
         else:
-            cell_tpl = self.cell_tpl
+            if self.has_cell_filter:
+                cell_tpl = self.cell_with_filter_tpl or (
+                    '<td{attrs}><span class="cell-with-filter">'
+                    '<span class="cell-value">%s</span>'
+                    '<a href="{filter_link}" '
+                    'class="cell-filter {col.theme_cell_with_filter_icon}">'
+                    "</a></span></td>"
+                )
+            else:
+                cell_tpl = self.cell_tpl
             value_tpl = self.get_value_tpl(rec, ctx, value)
         tpl = cell_tpl or "<td{attrs}>%s</td>"
         return tpl % value_tpl
@@ -725,6 +758,8 @@ class Column(metaclass=ColumnMeta):
         value = self.get_cell_value(rec)
         ctx = self.get_cell_context(rec, value)
         ctx.attrs = self.get_cell_attrs(rec, ctx, value)
+        if self.has_cell_filter:
+            ctx.filter_link = self.get_cell_filter_link(rec, ctx, value)
         tpl = self.get_cell_template(rec, ctx, value)
         try:
             return tpl.format(**ctx)

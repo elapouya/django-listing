@@ -575,3 +575,12 @@ div.form-check-input {
     border: none;
     margin: 0;
 }
+
+span.cell-with-filter {
+    display: flex;
+    justify-content: space-between;
+
+    a.cell-filter {
+        text-decoration: none;
+    }
+}

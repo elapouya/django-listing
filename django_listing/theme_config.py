@@ -60,6 +60,7 @@ class ThemeConfigBase(metaclass=ThemeConfigMeta):
 
     column_theme_button_class = "btn btn-primary btn-sm"
     column_theme_cell_class = ""
+    column_theme_cell_with_filter_icon = "listing-icon-filter"
     column_theme_footer_class = ""
     column_theme_form_checkbox_widget_class = "form-control form-control-sm"
     column_theme_form_radio_widget_class = "form-control form-control-sm"

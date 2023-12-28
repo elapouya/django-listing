@@ -486,6 +486,11 @@ class NoToolbarListing(ListingVariations):
 
 
 class FilterListing(Listing):
+    first_name__has_cell_filter = True
+    last_name__has_cell_filter = True
+    gender__has_cell_filter = True
+    marital_status__has_cell_filter = True
+    company__has_cell_filter = True
     filters = Filters(
         IntegerFilter("age1", filter_key="age__gte", label="Age from"),
         IntegerFilter("age2", filter_key="age__lte", label="to"),

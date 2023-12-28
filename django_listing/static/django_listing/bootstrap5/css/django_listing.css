@@ -92,7 +92,7 @@
 .listing-icon-lock-filled:before {
   content: "\e80f";
 } /* '' */
-.listing-icon-lock-1:before {
+.listing-icon-lock-2:before {
   content: "\e810";
 } /* '' */
 .listing-icon-cancel-1:before {
@@ -509,7 +509,7 @@
 .listing-icon-pencil:before {
   content: "\e89b";
 } /* '' */
-.listing-icon-lock-2:before {
+.listing-icon-lock-3:before {
   content: "\e89c";
 } /* '' */
 .listing-icon-lock-open:before {
@@ -560,6 +560,9 @@
 .listing-icon-down-circled:before {
   content: "\f0ab";
 } /* '' */
+.listing-icon-filter:before {
+  content: "\f0b0";
+} /* '' */
 .listing-icon-menu:before {
   content: "\f0c9";
 } /* '' */
@@ -1399,6 +1402,14 @@ div.form-check-input {
   background: none;
   border: none;
   margin: 0;
+}
+
+span.cell-with-filter {
+  display: flex;
+  justify-content: space-between;
+}
+span.cell-with-filter a.cell-filter {
+  text-decoration: none;
 }
 
 /*# sourceMappingURL=django_listing.css.map */
