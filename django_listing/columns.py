@@ -652,12 +652,12 @@ class Column(metaclass=ColumnMeta):
         filters = listing.filters
         if filters:
             filter_name = self.cell_with_filter_name or self.name
-            filter = filters.get(filter_name)
-            if filter:
+            filter_obj = filters.get(filter_name)
+            if filter_obj:
                 rec_val = rec.get(filter_name)
                 rec_val = getattr(rec_val, "pk", rec_val)  # case it is a model object
-                return listing.get_url(**{filter.input_name: rec_val})
-        return ""
+                return listing.get_url(**{filter_obj.input_name: rec_val})
+        return None
 
     def get_default_value(self, rec):
         return self.default_value
@@ -740,7 +740,7 @@ class Column(metaclass=ColumnMeta):
             value_tpl = self.get_edit_value_tpl(rec, ctx, value)
             cell_tpl = self.cell_edit_tpl or self.cell_tpl
         else:
-            if self.has_cell_filter:
+            if self.has_cell_filter and ctx.get("filter_link"):
                 cell_tpl = self.cell_with_filter_tpl or (
                     '<td{attrs}><span class="cell-with-filter">'
                     '<span class="cell-value">%s</span>'
@@ -1125,18 +1125,37 @@ class ManyColumn(Column):
         value = self.cell_reduce(value)
         return mark_safe(value)
 
+    def get_cell_filter_link(self, rec, ctx, value):
+        return None
+
     def cell_filter(self, value):
         if isinstance(value, models.Manager):
             value = value.all()
         return value
 
+    def cell_map_add_filter(self, out, value):
+        listing = self.listing
+        filters = listing.filters
+        if filters:
+            filter_name = self.cell_with_filter_name or self.name
+            filter_obj = filters.get(filter_name)
+            if filter_obj:
+                filter_link = listing.get_url(**{filter_obj.input_name: value.pk})
+                out += (
+                    f'<a href="{filter_link}" '
+                    f'class="cell-filter {self.theme_cell_with_filter_icon}"></a>'
+                )
+        return out
+
     def cell_map(self, value):
-        label = force_str(value)
+        out = force_str(value)
         if hasattr(value, "get_absolute_url"):
             url = value.get_absolute_url()
             if url is not None:
-                return f'<a href="{url}">{label}</a>'
-        return label
+                out = f'<a href="{url}">{out}</a>'
+        if self.has_cell_filter:
+            out = self.cell_map_add_filter(out, value)
+        return out
 
     def cell_reduce(self, value):
         return self.many_separator.join(value)

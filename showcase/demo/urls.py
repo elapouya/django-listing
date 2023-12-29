@@ -41,6 +41,7 @@ urlpatterns = i18n_patterns(
     path("filters/", FiltersListingIndexView.as_view(), name="filters"),
     path("filters/1/", FiltersListing1View.as_view(), name="filters_1"),
     path("filters/2/", FiltersListing2View.as_view(), name="filters_2"),
+    path("filters/3/", FiltersListing3View.as_view(), name="filters_3"),
     path("editable/", EditableListingIndexView.as_view(), name="editable"),
     path("editable/1/", EditableListing1View.as_view(), name="editable1"),
     path("editable/2/", EditableListing2View.as_view(), name="editable2"),
@@ -61,8 +62,8 @@ urlpatterns = i18n_patterns(
     path("show_company/<int:pk>/", CompanyDetailView.as_view(), name="company_detail"),
     # from django-robohash-svg django app
     path("robohash/<string>/", robohash, name="robohash"),
-    path("company-autocomplete/", CompanyAutocomplete.as_view(), name="company-autocomplete",
-    ),
+    path("company-autocomplete/", CompanyAutocomplete.as_view(), name="company-autocomplete"),
+    path("interest-autocomplete/", InterestAutocomplete.as_view(), name="interest-autocomplete"),
 )
 # fmt: on
 

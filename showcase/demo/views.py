@@ -308,6 +308,13 @@ class FiltersListing2View(ListingView):
     context_classes = (Employee,)
 
 
+class FiltersListing3View(ListingView):
+    template_name = "demo/filters3.html"
+
+    def get_listing_instance(self):
+        return CellFilterListing(Employee)
+
+
 class EditableListingIndexView(TemplateView):
     template_name = "demo/editable.html"
 
@@ -652,9 +659,26 @@ class CompanyAutocomplete(autocomplete.Select2QuerySetView):
         qs = Company.objects.all()
 
         if self.q:
-            qs = qs.filter(name__istartswith=self.q)
+            qs = qs.filter(name__icontains=self.q)
 
         return qs
 
     def get_result_label(self, result):
         return format_html("<b>{}</b><i>({})</i>", result.name, result.city)
+
+
+class InterestAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # # Don't forget to filter out results depending on the visitor !
+        # if not self.request.user.is_authenticated:
+        #     return Company.objects.none()
+
+        qs = Interest.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+
+        return qs
+
+    def get_result_label(self, result):
+        return result.name

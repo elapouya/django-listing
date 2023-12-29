@@ -541,8 +541,7 @@ form.dropzone {
     }
 }
 
-
-#filters-form .label_input > .multiple-radios {
+#filters-form .label_input > .multiple-radios, #filters-form .label_input > .multiple-checkboxes {
     border: 1px solid lightgrey;
     padding: 2px 5px;
     border-radius: 4px;
@@ -580,7 +579,8 @@ span.cell-with-filter {
     display: flex;
     justify-content: space-between;
 
-    a.cell-filter {
-        text-decoration: none;
-    }
+}
+
+a.cell-filter {
+    text-decoration: none;
 }

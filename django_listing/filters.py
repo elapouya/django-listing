@@ -250,6 +250,7 @@ class Filters(list):
 
     def get_hiddens_html(self):
         query_fields = [(FILTER_QUERYSTRING_PREFIX + f.name) for f in self]
+        query_fields.append("f_do_filter")
         return self.listing.get_hiddens_html(without=query_fields)
 
     def render_init(self, context):

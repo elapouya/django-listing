@@ -35,6 +35,24 @@ class HTMLAttributes(dict):
             else:
                 self[attr] = (" ".join(s)).strip()
 
+    def remove(self, attr, value):
+        if value is not None:
+            if attr not in self:
+                s = set()
+            else:
+                if attr == "style":
+                    s = set(self[attr].split(";"))
+                else:
+                    s = set(self[attr].split())
+            if isinstance(value, set):
+                s -= value
+            else:
+                s -= set([value])  # do not use remove() to avoid KeyError
+            if attr == "style":
+                self[attr] = (";".join(s)).strip()
+            else:
+                self[attr] = (" ".join(s)).strip()
+
     def set(self, attr, value=None):
         self[attr] = value
 

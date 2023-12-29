@@ -486,11 +486,6 @@ class NoToolbarListing(ListingVariations):
 
 
 class FilterListing(Listing):
-    first_name__has_cell_filter = True
-    last_name__has_cell_filter = True
-    gender__has_cell_filter = True
-    marital_status__has_cell_filter = True
-    company__has_cell_filter = True
     filters = Filters(
         IntegerFilter("age1", filter_key="age__gte", label="Age from"),
         IntegerFilter("age2", filter_key="age__lte", label="to"),
@@ -504,23 +499,33 @@ class FilterListing(Listing):
             help_text="Case insensitive",
         ),
         Filter("last_name", filter_key="last_name__icontains"),
+        # If you want a simple select box use this :
         # ForeignKeyFilter(
         #     "company", order_by="name", format_label=lambda c: f"{c.name} ({c.city})"
         # ),
+        # But if you have a lot of items, you should prefer autocomplete widget :
         AutocompleteForeignKeyFilter(
             "company",
             label="Company",
             url="company-autocomplete",
         ),
+        AutocompleteMultipleForeignKeyFilter(
+            "interests",
+            filter_key="interests__in",
+            help_text="You may specify many interests",
+            label="Interests",
+            url="interest-autocomplete",
+        ),
         ChoiceFilter("marital_status", input_type="radio", no_choice_msg="Indifferent"),
+        BooleanFilter("have_car", input_type="radio", no_choice_msg="Indifferent"),
         # Note : By default filter_key = filter name if not specified
         MultipleChoiceFilter("gender", input_type="checkbox", label="Gender")
         # For MultipleChoiceFilter '__in' will be added to filter_key if missing
     )
     filters.form_layout = (
         "age1,age2,salary1,salary2,joined1,joined2;"
-        "first_name,last_name,company;"
-        "marital_status,gender"
+        "first_name,last_name,company,marital_status,have_car,gender;"
+        "interests"
     )
     filters.form_buttons = "submit,reset"
     # remove default behaviour when there no row to display (remove the listing
@@ -530,6 +535,17 @@ class FilterListing(Listing):
     empty_table_msg = "There is no employee corresponding to your criteria"
     per_page = 5
     exclude_columns = "interests"
+
+
+class CellFilterListing(FilterListing):
+    first_name__has_cell_filter = True
+    last_name__has_cell_filter = True
+    gender__has_cell_filter = True
+    marital_status__has_cell_filter = True
+    have_car__has_cell_filter = True
+    company__has_cell_filter = True
+    interests__has_cell_filter = True
+    exclude_columns = "address,designation"
 
 
 class InsertableListing(Listing):
