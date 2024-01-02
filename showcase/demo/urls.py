@@ -53,6 +53,7 @@ urlpatterns = i18n_patterns(
     path("selectable/3/", SelectableListing3View.as_view(), name="selectable3"),
     path("selectable/4/", SelectableListing4View.as_view(), name="selectable4"),
     path("selectable/5/", SelectableListing5View.as_view(), name="selectable5"),
+    path("group_by/", GroupByListingView.as_view(), name="group_by"),
     path("insertable/", InsertableListingView.as_view(), name="insertable"),
     path("upload/", UploadListingView.as_view(), name="upload"),
     path("fonticons/", FonticonsView.as_view(), name="fonticons"),

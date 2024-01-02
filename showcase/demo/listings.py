@@ -548,6 +548,104 @@ class CellFilterListing(FilterListing):
     exclude_columns = "address,designation"
 
 
+class GroupByBaseListing:
+    toolbar = Toolbar(
+        ExportSelectToolbarItem(),
+        SortSelectToolbarItem(),
+        VariationsToolbarItem(
+            # labels=("Listing", "Detailed", "Thumbnails", "Big thumbnails"),
+            icons=(
+                "listing-icon-menu-2",
+                "listing-icon-th-list-4",
+                "listing-icon-th-3",
+                "listing-icon-th-large-2",
+            ),
+        ),
+        GroupByToolbarItem(),
+        PerPageSelectToolbarItem(choices="8,16,32,64,-1:All"),
+    )
+    toolbar_placement = "both"
+    per_page = 15
+    paginator_has_first_last = True
+    exclude_columns = "interests"
+    filters = Filters(
+        IntegerFilter("age1", filter_key="age__gte", label="Age from"),
+        IntegerFilter("age2", filter_key="age__lte", label="to"),
+        IntegerFilter("salary1", filter_key="salary__gte", label="Salary between"),
+        IntegerFilter("salary2", filter_key="salary__lte", label="and"),
+        DateFilter("joined1", filter_key="joined__gte", label="Joined between"),
+        DateFilter("joined2", filter_key="joined__lte", label="and"),
+        Filter(
+            "first_name",
+            filter_key="first_name__icontains",
+            help_text="Case insensitive",
+        ),
+        Filter("last_name", filter_key="last_name__icontains"),
+        # If you want a simple select box use this :
+        # ForeignKeyFilter(
+        #     "company", order_by="name", format_label=lambda c: f"{c.name} ({c.city})"
+        # ),
+        # But if you have a lot of items, you should prefer autocomplete widget :
+        AutocompleteForeignKeyFilter(
+            "company",
+            label="Company",
+            url="company-autocomplete",
+        ),
+        AutocompleteMultipleForeignKeyFilter(
+            "interests",
+            filter_key="interests__in",
+            help_text="You may specify many interests",
+            label="Interests",
+            url="interest-autocomplete",
+        ),
+        ChoiceFilter("marital_status", input_type="radio", no_choice_msg="Indifferent"),
+        BooleanFilter("have_car", input_type="radio", no_choice_msg="Indifferent"),
+        # Note : By default filter_key = filter name if not specified
+        MultipleChoiceFilter("gender", input_type="checkbox", label="Gender")
+        # For MultipleChoiceFilter '__in' will be added to filter_key if missing
+    )
+    filters.form_layout = (
+        "age1,age2,salary1,salary2,joined1,joined2;"
+        "first_name,last_name,company,marital_status,have_car,gender;"
+        "interests"
+    )
+    filters.form_buttons = "submit,reset"
+    # remove default behaviour when there no row to display (remove the listing
+    # and display the template 'empty_listing_template_name' )
+    empty_listing_template_name = None
+    # instead, display a string into the empty table itself.
+    empty_table_msg = "There is no employee corresponding to your criteria"
+
+
+class GroupByVariationListing(GroupByBaseListing, Listing):
+    per_page = 10
+
+
+class GroupByVariationEmployeeDivListing(GroupByBaseListing, ToolbarEmployeeDivListing):
+    pass
+
+
+class GroupByVariationEmployeeThumbnailsListing(
+    GroupByBaseListing, ToolbarEmployeeThumbnailsListing
+):
+    pass
+
+
+class GroupByVariationEmployeeBigThumbnailsListing(
+    GroupByBaseListing, ToolbarEmployeeBigThumbnailsListing
+):
+    pass
+
+
+class GroupByListing(ListingVariations):
+    variations_classes = (
+        GroupByVariationListing,
+        GroupByVariationEmployeeDivListing,
+        GroupByVariationEmployeeThumbnailsListing,
+        GroupByVariationEmployeeBigThumbnailsListing,
+    )
+
+
 class InsertableListing(Listing):
     per_page = 5
     sort = "-id"

@@ -640,6 +640,13 @@ class InsertableListingView(ListingView):
         return age
 
 
+class GroupByListingView(ListingView):
+    template_name = "demo/group_by.html"
+
+    def get_listing_instance(self):
+        return GroupByListing(Employee)
+
+
 class EmployeeDetailView(DetailView):
     model = Employee
     template_name = "demo/employee_detail.html"

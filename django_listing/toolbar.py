@@ -30,6 +30,7 @@ __all__ = [
     "ToolbarItem",
     "UpdateToolbarItem",
     "VariationsToolbarItem",
+    "GroupByToolbarItem",
 ]
 
 TOOLBAR_PARAMS_KEYS = {
@@ -314,3 +315,8 @@ class ExportDropdownToolbarItem(ExportSelectToolbarItem):
 class UpdateToolbarItem(ToolbarItem):
     template_name = ThemeTemplate("tbi_update.html")
     label = _("Update")
+
+
+class GroupByToolbarItem(ToolbarItem):
+    template_name = ThemeTemplate("tbi_group_by.html")
+    label = _("Group by...")

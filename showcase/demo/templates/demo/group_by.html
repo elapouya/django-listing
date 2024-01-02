@@ -1,0 +1,25 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block body %}
+    <h2>GROUP BY feature</h2>
+    <p>Have a look at <code>demo/templates/demo/group_by.html</code> and
+        <code>GroupByListingView</code> in <code>demo/views.py</code> to see how examples are coded</p>
+
+    <h3>Click on <span class="btn btn-outline-primary">Group By...</span> button in toolbar</h3>
+
+    {% render_listing listing as listing_frame %}
+    {% render_filters_form listing as filter_frame %}
+
+    <div class="row justify-content-center">
+        <div class="col col-lg-auto">
+            {{ filter_frame }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ listing_frame }}
+        </div>
+    </div>
+{% endblock %}
