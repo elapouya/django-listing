@@ -320,3 +320,7 @@ class UpdateToolbarItem(ToolbarItem):
 class GroupByToolbarItem(ToolbarItem):
     template_name = ThemeTemplate("tbi_group_by.html")
     label = _("Group by...")
+
+    def init(self, listing, name=None, **kwargs):
+        super().init(listing, name, **kwargs)
+        listing.has_group_by = True

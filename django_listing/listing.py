@@ -413,6 +413,7 @@ class Listing(ListingBase):
     has_footer = False
     has_footer_action_buttons = True
     has_form = False
+    has_group_by = False
     has_header = True
     has_hidden_selection = False
     has_paginator = True
