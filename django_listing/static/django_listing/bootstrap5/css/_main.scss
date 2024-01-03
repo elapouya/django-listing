@@ -541,7 +541,7 @@ form.dropzone {
     }
 }
 
-#filters-form .label_input > .multiple-radios, #filters-form .label_input > .multiple-checkboxes {
+.filters-form .label_input > .multiple-radios, .filters-form .label_input > .multiple-checkboxes {
     border: 1px solid lightgrey;
     padding: 2px 5px;
     border-radius: 4px;
@@ -553,6 +553,10 @@ form.dropzone {
             margin-left: 10px;
         }
     }
+}
+
+.group-by-form.listing-form {
+    background-color: #d4ecd4;
 }
 
 @include media-breakpoint-down(lg)  {

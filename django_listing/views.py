@@ -232,11 +232,11 @@ class ListingViewMixin:
     def manage_listing_post(self, request, *args, **kwargs):
         if "action" in request.POST:
             listing = self.get_listing_from_post(request)
-            listing.set_view(self)
             self.listing = listing
             response = None
             if listing:
                 listing.render_init(RequestContext(request))
+                listing.set_view(self)
                 if isinstance(listing.action, str) and listing.action:
                     method = getattr(self, "manage_listing_%s" % listing.action, None)
                     if callable(method):

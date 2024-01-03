@@ -257,11 +257,11 @@ class Filters(list):
         self.listing.manage_page_context(context)
         if not isinstance(self.form_attrs, HTMLAttributes):
             self.form_attrs = HTMLAttributes(self.form_attrs)
-        self.form_attrs.add("class", "listing-form")
+        self.form_attrs.add("class", {"listing-form", "filters-form"})
         if self.listing.accept_ajax:
             self.form_attrs.add("class", "django-filters-ajax")
         if "id" not in self.form_attrs:
-            self.form_attrs.add("id", "filters-form{}".format(self.listing.suffix))
+            self.form_attrs.add("id", "filters-form-id{}".format(self.listing.suffix))
         self.id = self.form_attrs["id"]
         self.datetimepicker_init()
 

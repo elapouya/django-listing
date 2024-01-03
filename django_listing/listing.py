@@ -109,6 +109,7 @@ LISTING_PARAMS_KEYS = {
     "footer_template_name",
     "form",
     "global_context",
+    "group_by_template_name",
     "has_footer",
     "has_footer_action_buttons",
     "has_header",
@@ -173,7 +174,6 @@ LISTING_PARAMS_KEYS = {
     "variations",
 }
 
-LISTING_VARIATIONS_KEYS = LISTING_PARAMS_KEYS | {"get_url"}
 LISTING_FORMSET_PREFIX = "listing"
 
 
@@ -360,13 +360,8 @@ class ListingVariations(ListingBase):
         self.create_listing(context)
         return self.listing.get_url(context, **kwargs)
 
-    def have_to_refresh(self):
-        if self.listing:
-            return self.listing.have_to_refresh()
-        return False
-
     def __getattr__(self, item):
-        if item in LISTING_VARIATIONS_KEYS and self.listing:
+        if self.listing and hasattr(self.listing, item):
             return getattr(self.listing, item)
         return super().__getattribute__(item)
 
@@ -410,6 +405,7 @@ class Listing(ListingBase):
     footer_snippet = None
     footer_template_name = None
     form = None
+    group_by_template_name = ThemeTemplate("group_by.html")
     has_footer = False
     has_footer_action_buttons = True
     has_form = False
@@ -820,7 +816,13 @@ class Listing(ListingBase):
                 self.datetimepicker_init()
             if self.has_upload:
                 self.dropzone_init()
-            if self.can_edit or self.can_select or self.form or self.has_upload:
+            if (
+                self.can_edit
+                or self.can_select
+                or self.form
+                or self.has_upload
+                or self.has_group_by
+            ):
                 self.add_form_input_hiddens(
                     listing_id=self.id, listing_suffix=self.suffix
                 )
@@ -929,6 +931,8 @@ class Listing(ListingBase):
             get=self.request.GET,
             overlay_selector_css_class=sel_css_class,
             hover_selection_css_class=hover_css_class,
+            # Needed for action framework with javascript compatibility :
+            csrf_token=get_csrf_token(self.request),
         )
         if self.paginator:
             ctx.update(self.paginator.get_context())

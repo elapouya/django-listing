@@ -1371,18 +1371,22 @@ form.dropzone .dz-error-mark svg g g {
   stroke-opacity: 1;
 }
 
-#filters-form .label_input > .multiple-radios, #filters-form .label_input > .multiple-checkboxes {
+.filters-form .label_input > .multiple-radios, .filters-form .label_input > .multiple-checkboxes {
   border: 1px solid lightgrey;
   padding: 2px 5px;
   border-radius: 4px;
 }
-#filters-form .label_input > .multiple-radios.inline, #filters-form .label_input > .multiple-checkboxes.inline {
+.filters-form .label_input > .multiple-radios.inline, .filters-form .label_input > .multiple-checkboxes.inline {
   padding: 2px 5px 2px 0px;
   display: flex;
 }
-#filters-form .label_input > .multiple-radios.inline input, #filters-form .label_input > .multiple-checkboxes.inline input {
+.filters-form .label_input > .multiple-radios.inline input, .filters-form .label_input > .multiple-checkboxes.inline input {
   display: inline-block;
   margin-left: 10px;
+}
+
+.group-by-form.listing-form {
+  background-color: #d4ecd4;
 }
 
 @media (max-width: 991.98px) {

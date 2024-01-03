@@ -27,11 +27,15 @@
                     {% include listing.toolbar.template_name %}
                 </div>
             {% endif %}
-
-            {% if listing.can_edit or listing.has_upload or listing.edit_on_demand %}
+            {% if listing.can_edit or listing.has_upload or listing.edit_on_demand or listing.has_group_by %}
                 {% if listing.action_header_template_name %}
                     {% include listing.action_header_template_name %}
                 {% endif %}
+            {% endif %}
+            {% if listing.has_group_by %}
+                <div class="group-by-container">
+                    {% include listing.group_by_template_name %}
+                </div>
             {% endif %}
             {% block listing %}
                 <table{{ listing.attrs }}>
@@ -99,7 +103,7 @@
                 {% endif %}
             {% endblock %}
 
-            {% if listing.can_edit or listing.has_upload or listing.edit_on_demand %}
+            {% if listing.can_edit or listing.has_upload or listing.edit_on_demand or listing.has_group_by %}
                 </form>
             {% endif %}
 
