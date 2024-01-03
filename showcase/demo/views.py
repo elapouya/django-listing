@@ -11,6 +11,7 @@ import re
 from dal import autocomplete
 from django.conf import settings
 from django.contrib import messages
+from django.db.models import Count
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext
@@ -644,7 +645,10 @@ class GroupByListingView(ListingView):
     template_name = "demo/group_by.html"
 
     def get_listing_instance(self):
-        return GroupByListing(Employee)
+        return GroupByListing(
+            Employee.objects.values("have_car").annotate(count=Count("have_car")),
+            sort="have_car",
+        )
 
 
 class EmployeeDetailView(DetailView):

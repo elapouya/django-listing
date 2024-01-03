@@ -156,12 +156,12 @@ class Columns(list):
         if params is None:
             params = {}
         self._params = params
-        self.name2col = {}
         if cols:
             if isinstance(cols[0], (list, tuple)):
                 cols = cols[0]
             elif isinstance(cols[0], GeneratorType):
                 cols = list(cols[0])
+        self.name2col = {c.init_args[0]: c for c in cols if c.init_args}
         super().__init__(cols)
 
     def get(self, name, default=None):

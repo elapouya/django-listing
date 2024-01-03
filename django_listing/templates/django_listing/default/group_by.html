@@ -1,3 +1,4 @@
+{% load django_listing %}
 {% block group_by %}
-    <input type="submit" name="do_group_by" value="Do group by">
+    <a href="{% geturl_listing listing gb_cols="first_name" %}" class="btn btn-primary">Group By first name</a>
 {% endblock group_by %}

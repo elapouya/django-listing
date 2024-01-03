@@ -26,7 +26,14 @@ from django_listing import (
     EXPORT_FORMATS_USE_COL_NAME,
 )
 
-from .columns import COLUMNS_PARAMS_KEYS, ModelColumns, SelectionColumn, SequenceColumns
+from .columns import (
+    COLUMNS_PARAMS_KEYS,
+    ModelColumns,
+    SelectionColumn,
+    SequenceColumns,
+    Columns,
+    IntegerColumn,
+)
 from .context import RenderContext
 from .exceptions import *
 from .filters import FILTERS_PARAMS_KEYS, Filters
@@ -66,6 +73,7 @@ LISTING_QUERY_STRING_KEYS = {
     "sort",
     "theme",
     "variation",
+    "gb_cols",
 }
 LISTING_QUERY_STRING_INT_KEYS = {"page", "per_page", "variation", "editing_row_pk"}
 LISTING_NOT_PERSISTENT_QUERY_STRING_KEYS = set()
@@ -108,6 +116,7 @@ LISTING_PARAMS_KEYS = {
     "footer_snippet",
     "footer_template_name",
     "form",
+    "gb_cols",  # group_by columns
     "global_context",
     "group_by_template_name",
     "has_footer",
@@ -591,6 +600,10 @@ class Listing(ListingBase):
         if isinstance(self.columns, (ModelColumns, SequenceColumns)):
             self.columns.set_listing(self)
             self.columns.init()
+        self.columns = Columns(
+            self.columns.get("have_car"),
+            IntegerColumn("count"),
+        )
         if not self.columns:
             raise InvalidListing(
                 _("Please configure at least one column " "in your listing")
@@ -816,13 +829,7 @@ class Listing(ListingBase):
                 self.datetimepicker_init()
             if self.has_upload:
                 self.dropzone_init()
-            if (
-                self.can_edit
-                or self.can_select
-                or self.form
-                or self.has_upload
-                or self.has_group_by
-            ):
+            if self.can_edit or self.can_select or self.form or self.has_upload:
                 self.add_form_input_hiddens(
                     listing_id=self.id, listing_suffix=self.suffix
                 )
