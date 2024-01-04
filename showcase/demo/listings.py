@@ -549,6 +549,7 @@ class CellFilterListing(FilterListing):
 
 
 class GroupByBaseListing:
+    accept_ajax = True
     toolbar = Toolbar(
         ExportSelectToolbarItem(),
         SortSelectToolbarItem(),

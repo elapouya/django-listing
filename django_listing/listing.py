@@ -12,11 +12,12 @@ from urllib.parse import urlsplit, urlunsplit
 import tablib
 from django import forms
 from django.conf import settings
-from django.db.models import Model
+from django.db.models import Model, Count
 from django.db.models.query import QuerySet
 from django.http import QueryDict
 from django.middleware.csrf import get_token as get_csrf_token
 from django.template import loader
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy, pgettext_lazy
 
@@ -33,6 +34,7 @@ from .columns import (
     SequenceColumns,
     Columns,
     IntegerColumn,
+    Column,
 )
 from .context import RenderContext
 from .exceptions import *
@@ -118,7 +120,7 @@ LISTING_PARAMS_KEYS = {
     "form",
     "gb_cols",  # group_by columns
     "global_context",
-    "group_by_template_name",
+    "gb_template_name",
     "has_footer",
     "has_footer_action_buttons",
     "has_header",
@@ -352,7 +354,7 @@ class ListingVariations(ListingBase):
                     setattr(listing, k, v)
             listing.transfert_params_from(self)
             listing.set_kwargs()
-            listing.init(self.data)
+            listing.init(self.data, context)
             self.listing = listing
 
     def render_init(self, context):
@@ -368,6 +370,11 @@ class ListingVariations(ListingBase):
     def get_url(self, context, **kwargs):
         self.create_listing(context)
         return self.listing.get_url(context, **kwargs)
+
+    def have_to_refresh(self):
+        if self.listing:
+            return self.listing.have_to_refresh()
+        return False
 
     def __getattr__(self, item):
         if self.listing and hasattr(self.listing, item):
@@ -414,7 +421,8 @@ class Listing(ListingBase):
     footer_snippet = None
     footer_template_name = None
     form = None
-    group_by_template_name = ThemeTemplate("group_by.html")
+    gb_cols = None
+    gb_template_name = ThemeTemplate("group_by.html")
     has_footer = False
     has_footer_action_buttons = True
     has_form = False
@@ -600,10 +608,31 @@ class Listing(ListingBase):
         if isinstance(self.columns, (ModelColumns, SequenceColumns)):
             self.columns.set_listing(self)
             self.columns.init()
-        self.columns = Columns(
-            self.columns.get("have_car"),
-            IntegerColumn("count"),
-        )
+
+        def gb_filter(col, rec):
+            url = rec.get_url(
+                filters=dict(
+                    have_car="have_car",
+                    marital_status="marital_status",
+                ),
+                without="gb_cols",
+            )
+            return mark_safe(
+                f'<a class="btn btn-sm btn-primary" href="{url}">Filter</a>'
+            )
+
+        if self.gb_cols:
+            self.columns = Columns(
+                self.columns.get("have_car"),
+                self.columns.get("marital_status"),
+                IntegerColumn("count"),
+                Column(
+                    "filter_button",
+                    sortable=False,
+                    header="Action",
+                    cell_value=gb_filter,
+                ),
+            )
         if not self.columns:
             raise InvalidListing(
                 _("Please configure at least one column " "in your listing")
@@ -696,7 +725,7 @@ class Listing(ListingBase):
                     self.record_label_plural = self.model._meta.verbose_name_plural
                 else:
                     self.record_label_plural = _("records")
-            self.data = data
+
             self.create_missing_filters()
             if self.filters:
                 self.filters = self.filters.bind_to_listing(self)
@@ -713,6 +742,13 @@ class Listing(ListingBase):
                 col: getattr(self, "render_{}".format(col.name), col.render_cell)
                 for col in self.columns
             }
+            if self.gb_cols:
+                data = data.values("have_car", "marital_status").annotate(
+                    count=Count("have_car")
+                )
+                if not self.sort:
+                    self.sort = ["have_car"]
+            self.data = data
             self._initialized = True
 
     def datetimepicker_init(self):

@@ -645,10 +645,13 @@ class GroupByListingView(ListingView):
     template_name = "demo/group_by.html"
 
     def get_listing_instance(self):
-        return GroupByListing(
-            Employee.objects.values("have_car").annotate(count=Count("have_car")),
-            sort="have_car",
-        )
+        return GroupByListing(Employee)
+        # return GroupByListing(
+        #     Employee.objects.values("have_car", "marital_status").annotate(
+        #         count=Count("have_car")
+        #     ),
+        #     sort="have_car",
+        # )
 
 
 class EmployeeDetailView(DetailView):

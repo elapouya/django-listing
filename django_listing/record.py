@@ -11,11 +11,12 @@ import types
 from urllib.parse import quote_plus
 
 from django.db import models
-from django.db.models import F, Model
+from django.db.models import F, Model, Count
 from django.db.models.query import QuerySet
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
+from .filters import FILTER_QUERYSTRING_PREFIX
 from .exceptions import *
 
 __all__ = ["RecordManager", "Record", "cache_in_record"]
@@ -146,7 +147,9 @@ class RecordManager:
         if not self._records:
             lsg = self.listing
             self._records = [
-                Record(lsg, obj, i) for i, obj in enumerate(lsg.current_page)
+                # lsg.current_page is set in RecordManager.compute_current_page_records()
+                Record(lsg, obj, i)
+                for i, obj in enumerate(lsg.current_page)
             ]
         return self._records
 
@@ -305,6 +308,13 @@ class Record:
     def get_href(self):
         if hasattr(self._obj, "get_absolute_url"):
             return self._obj.get_absolute_url()
+
+    def get_url(self, filters=None, **kwargs):
+        if isinstance(filters, dict):
+            for filter_name, rec_key in filters.items():
+                fname = FILTER_QUERYSTRING_PREFIX + filter_name + self._listing.suffix
+                kwargs[fname] = self.get(rec_key)
+        return self._listing.get_url(**kwargs)
 
     def get(self, key, default=None):
         obj = self._obj
