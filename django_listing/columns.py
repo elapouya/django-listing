@@ -96,6 +96,7 @@ COLUMNS_PARAMS_KEYS = {
     "input_type",
     "is_safe_value",
     "label",
+    "link_target",
     "model_field",
     "name",
     "no_choice_msg",
@@ -103,6 +104,8 @@ COLUMNS_PARAMS_KEYS = {
     "sortable",
     "start",
     "theme_button_class",
+    "theme_button_link_class",
+    "theme_link_class",
     "theme_cell_class",
     "theme_cell_with_filter_icon",
     "theme_footer_class",
@@ -484,6 +487,7 @@ class Column(metaclass=ColumnMeta):
     help_text = None
     input_type = None
     listing = None
+    link_target = None
     model_field = None
     name = None
     no_choice_msg = _("Please choose...")
@@ -507,6 +511,8 @@ class Column(metaclass=ColumnMeta):
         "column_theme_form_radio_widget_class"
     )
     theme_button_class = ThemeAttribute("column_theme_button_class")
+    theme_button_link_class = ThemeAttribute("column_theme_button_link_class")
+    theme_link_class = ThemeAttribute("column_theme_link_class")
     theme_cell_with_filter_icon = ThemeAttribute("column_theme_cell_with_filter_icon")
 
     def __init__(self, *args, **kwargs):
@@ -1179,7 +1185,7 @@ class CheckboxColumn(Column):
 
 
 class ButtonColumn(Column):
-    label = "Button"
+    label = _("Button")
     sortable = False
 
     def get_value_tpl(self, rec, ctx, value):
@@ -1576,3 +1582,36 @@ class SelectionColumn(Column):
                 'value="{selection_value}"{checked}>'
             )
         return tpl
+
+
+class GroupByFilterColumn(Column):
+    sortable = False
+    label = _("Filter")
+    name = "group_by_filter"
+    header = _("Filter")
+    link_target = "_blank"
+    theme_cell_with_filter_icon = "listing-icon-link-ext"
+
+    def action_filter(self, rec):
+        url = rec.get_url(
+            filters=self.listing.gb_model_filters_mapping,
+            without="gb_cols",
+        )
+        out = f'<a class="{self.theme_button_link_class}" href="{url}"'
+        if self.link_target:
+            out += f' target="{self.link_target}"'
+        out += f">{self.label}"
+        if self.theme_cell_with_filter_icon:
+            out += f' <span class="{self.theme_cell_with_filter_icon}"></span>'
+        out += "</a>"
+        return mark_safe(out)
+
+    @cache_in_record
+    def get_cell_value(self, rec):
+        if isinstance(self.cell_value, ListingMethodRef):
+            value = self.cell_value(self.listing, self, rec)
+        elif callable(self.cell_value):
+            value = self.cell_value(self, rec)
+        else:
+            value = self.action_filter(rec)
+        return value

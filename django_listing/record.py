@@ -312,7 +312,7 @@ class Record:
     def get_url(self, filters=None, **kwargs):
         if isinstance(filters, dict):
             for filter_name, rec_key in filters.items():
-                fname = FILTER_QUERYSTRING_PREFIX + filter_name + self._listing.suffix
+                fname = filter_name + self._listing.suffix
                 kwargs[fname] = self.get(rec_key)
         return self._listing.get_url(**kwargs)
 

@@ -455,6 +455,9 @@
 .listing-icon-star-empty:before {
   content: "\e888";
 } /* '' */
+.listing-icon-thumbs-up:before {
+  content: "\e889";
+} /* '' */
 .listing-icon-block:before {
   content: "\e88a";
 } /* '' */
@@ -515,6 +518,9 @@
 .listing-icon-lock-open:before {
   content: "\e89d";
 } /* '' */
+.listing-icon-thumbs-down:before {
+  content: "\e89e";
+} /* '' */
 .listing-icon-magnifier:before {
   content: "\e89f";
 } /* '' */
@@ -533,6 +539,12 @@
 .listing-icon-sliders-1:before {
   content: "\e8a4";
 } /* '' */
+.listing-icon-login:before {
+  content: "\e8a5";
+} /* '' */
+.listing-icon-logout:before {
+  content: "\e8a6";
+} /* '' */
 .listing-icon-menu-1:before {
   content: "\f008";
 } /* '' */
@@ -542,6 +554,9 @@
 .listing-icon-th-thumb:before {
   content: "\f00a";
 } /* '' */
+.listing-icon-link-ext:before {
+  content: "\f08e";
+} /* '' */
 .listing-icon-check-empty:before {
   content: "\f096";
 } /* '' */
@@ -680,6 +695,9 @@
 .listing-icon-ok-squared:before {
   content: "\f14a";
 } /* '' */
+.listing-icon-link-ext-alt:before {
+  content: "\f14c";
+} /* '' */
 .listing-icon-sort-name-up:before {
   content: "\f15d";
 } /* '' */
@@ -698,6 +716,12 @@
 .listing-icon-sort-number-down:before {
   content: "\f163";
 } /* '' */
+.listing-icon-thumbs-up-alt:before {
+  content: "\f164";
+} /* '' */
+.listing-icon-thumbs-down-alt:before {
+  content: "\f165";
+} /* '' */
 .listing-icon-down:before {
   content: "\f175";
 } /* '' */

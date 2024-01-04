@@ -35,6 +35,7 @@ from .columns import (
     Columns,
     IntegerColumn,
     Column,
+    GroupByFilterColumn,
 )
 from .context import RenderContext
 from .exceptions import *
@@ -609,30 +610,6 @@ class Listing(ListingBase):
             self.columns.set_listing(self)
             self.columns.init()
 
-        def gb_filter(col, rec):
-            url = rec.get_url(
-                filters=dict(
-                    have_car="have_car",
-                    marital_status="marital_status",
-                ),
-                without="gb_cols",
-            )
-            return mark_safe(
-                f'<a class="btn btn-sm btn-primary" href="{url}">Filter</a>'
-            )
-
-        if self.gb_cols:
-            self.columns = Columns(
-                self.columns.get("have_car"),
-                self.columns.get("marital_status"),
-                IntegerColumn("count"),
-                Column(
-                    "filter_button",
-                    sortable=False,
-                    header="Action",
-                    cell_value=gb_filter,
-                ),
-            )
         if not self.columns:
             raise InvalidListing(
                 _("Please configure at least one column " "in your listing")
@@ -642,6 +619,27 @@ class Listing(ListingBase):
                 self.columns.insert(0, SelectionColumn(LISTING_SELECTION_CHECKBOX_NAME))
             elif self.selection_position == "right":
                 self.columns.append(SelectionColumn(LISTING_SELECTION_CHECKBOX_NAME))
+
+    def manage_group_by(self):
+        if self.gb_cols:
+            gb_cols_names = self.gb_cols
+            if isinstance(gb_cols_names, str):
+                gb_cols_names = map(str.strip, gb_cols_names.split(","))
+            gb_cols_names = list(
+                filter(lambda cname: cname in self.columns.name2col, gb_cols_names)
+            )
+            gb_cols = [self.columns.get(cname) for cname in gb_cols_names]
+            gb_cols += [IntegerColumn("count"), GroupByFilterColumn()]
+            self.columns = Columns(*gb_cols)
+            mfn2f = self.filters.modelfieldname2filter
+            self.gb_model_filters_mapping = {
+                mfn2f[c].input_name: c for c in gb_cols_names if c in mfn2f
+            }
+            self.data = self.data.values(*gb_cols_names).annotate(
+                count=Count(gb_cols_names[0])
+            )
+            if not self.sort:
+                self.sort = [gb_cols_names[0]]
 
     def create_missing_toolbar_items(self):
         if self.toolbar is None:
@@ -726,6 +724,7 @@ class Listing(ListingBase):
                 else:
                     self.record_label_plural = _("records")
 
+            self.data = data
             self.create_missing_filters()
             if self.filters:
                 self.filters = self.filters.bind_to_listing(self)
@@ -733,6 +732,7 @@ class Listing(ListingBase):
                 self.form = self.form.bind_to_listing(self)
             self.manage_page_context(context)
             self.create_missing_columns()
+            self.manage_group_by()
             self.create_missing_toolbar_items()
             self.has_toolbar = bool(self.toolbar)
             self.columns = self.columns.bind_to_listing(self)
@@ -742,13 +742,6 @@ class Listing(ListingBase):
                 col: getattr(self, "render_{}".format(col.name), col.render_cell)
                 for col in self.columns
             }
-            if self.gb_cols:
-                data = data.values("have_car", "marital_status").annotate(
-                    count=Count("have_car")
-                )
-                if not self.sort:
-                    self.sort = ["have_car"]
-            self.data = data
             self._initialized = True
 
     def datetimepicker_init(self):

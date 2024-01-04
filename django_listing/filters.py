@@ -173,6 +173,9 @@ class Filters(list):
                 filtr.bind_to_listing(listing)
                 filters.append(filtr)
         filters.name2filter = {f.name: f for f in filters if isinstance(f, Filter)}
+        filters.modelfieldname2filter = {
+            f.from_model_field_name: f for f in filters if isinstance(f, Filter)
+        }
         filters.listing = listing
         # extract labels and endings from given layout
         if filters.form_layout:
@@ -333,6 +336,7 @@ class FilterMeta(type):
 class Filter(metaclass=FilterMeta):
     from_model_field_order = 100
     from_model_field_classes = ()
+    from_model_field_name = None  # used by GroupByFilterColumn indirectly
     form_field_class = forms.CharField
     container_attrs = {"class": "form-field"}
     shrink_width = None
@@ -416,6 +420,8 @@ class Filter(metaclass=FilterMeta):
         self.label = self.get_label()
         if self.help_text is None:
             self.help_text = "&nbsp;"  # otherwise formfields may me not aligned vertically. keep align-items: flex-end; on row
+        if self.from_model_field_name is None:
+            self.from_model_field_name, *dummy = self.filter_key.split("__")
 
     def get_label(self):
         label = self.label
