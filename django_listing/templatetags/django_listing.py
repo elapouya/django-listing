@@ -365,3 +365,8 @@ def listing_responsive_columns_css(listing, format_str=None):
             f"table.{css_class} td:nth-of-type({i}):before {{content: '{content}';}}"
         )
     return mark_safe("\n".join(css))
+
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)

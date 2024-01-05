@@ -325,4 +325,13 @@ $(document).ready(function () {
         }
     });
 
+    $("select.group-by-dual-listbox").each(function() {
+        let dlb_select = this
+        new DualListbox(this);
+        $(this).parent().find(".apply-group-by").on("click", function () {
+            let gb_cols = $(dlb_select).val().join(",");
+            let url = djlst_replaceUrlParam(window.location.href, "gb_cols", gb_cols);
+            window.location.href = url;
+        });
+    });
 });

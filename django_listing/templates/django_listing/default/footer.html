@@ -60,6 +60,14 @@
     {% endblock %}
 {% endif %}
 
+{% if need_media_for.dual_listbox and DUAL_LISTBOX_JS_URL %}
+    {% block django_listing_dual_listbox %}
+        {% if AUTO_DECLARE_JS %}
+            <script src="{{ DUAL_LISTBOX_JS_URL }}?{{ STATIC_FILES_VERSION }}"></script>
+        {% endif %}
+    {% endblock %}
+{% endif %}
+
 {% footer_snippets %}
 
 {% if request.django_listing_onready_snippets %}

@@ -1,4 +1,15 @@
 {% load django_listing %}
 {% block group_by %}
-    <a href="{% geturl_listing listing gb_cols="first_name" %}" class="btn btn-primary listing-nav">Group By first name</a>
+    <select class="group-by-dual-listbox" multiple>
+        {% for name in listing.gb_cols_names %}
+            <option value="{{ name }}" selected>{{ listing.original_columns_headers|get_item:name }}</option>
+        {% endfor %}
+        {% for name, header in listing.original_columns_headers.items %}
+            {% if name not in listing.gb_cols_names %}
+                <option value="{{ name }}">{{ header }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+
+    <a class="btn btn-primary listing-nav apply-group-by">Apply Grouping</a>
 {% endblock group_by %}

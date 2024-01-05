@@ -621,6 +621,15 @@ class Listing(ListingBase):
                 self.columns.append(SelectionColumn(LISTING_SELECTION_CHECKBOX_NAME))
 
     def manage_group_by(self):
+        self.gb_cols_names = []
+        self.original_columns_headers = {}
+        for c in self.columns:
+            name = c.init_args[0]
+            header = c.init_kwargs.get("header")
+            if not header:
+                header = name.replace("_", " ").captalize()
+            if name and header:
+                self.original_columns_headers[name] = header
         if self.gb_cols:
             gb_cols_names = self.gb_cols
             if isinstance(gb_cols_names, str):
@@ -628,6 +637,7 @@ class Listing(ListingBase):
             gb_cols_names = list(
                 filter(lambda cname: cname in self.columns.name2col, gb_cols_names)
             )
+            self.gb_cols_names = gb_cols_names
             gb_cols = [self.columns.get(cname) for cname in gb_cols_names]
             gb_cols += [IntegerColumn("count"), GroupByFilterColumn()]
             self.columns = Columns(*gb_cols)

@@ -324,3 +324,4 @@ class GroupByToolbarItem(ToolbarItem):
     def init(self, listing, name=None, **kwargs):
         super().init(listing, name, **kwargs)
         listing.has_group_by = True
+        self.listing.need_media_for("dual_listbox")

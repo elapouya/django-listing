@@ -1,6 +1,16 @@
 {% load django_listing %}
 {% get_uniq_id as uniq_id %}
 <div class="btn-group-sm me-2 toolbar_item {{ item.css_class }}" role="group">
+    <select class="select1" multiple>
+    <option value="1">One</option>
+    <option value="2">Two</option>
+    <option value="3">Three</option>
+    </select>
+
+<script>
+    let dlb1 = new DualListbox('.select1');
+</script>
+
     <a id="toolbar-item-{{ uniq_id }}-update-id"
         class="button-action-group-by {{ item.theme_button_class }}">
         {{ item.label }}

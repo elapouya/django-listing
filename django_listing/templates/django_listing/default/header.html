@@ -10,8 +10,12 @@
             <link rel="stylesheet"
                   href="{{ DROPZONE_CSS_URL }}?{{ STATIC_FILES_VERSION }}"/>
         {% endif %}
+        {% if need_media_for.dual_listbox and DUAL_LISTBOX_CSS_URL %}
+            <link rel="stylesheet"
+                  href="{{ DUAL_LISTBOX_CSS_URL }}?{{ STATIC_FILES_VERSION }}"/>
+        {% endif %}
         <link rel="stylesheet"
-              href="{% static "django_listing" %}/{{ THEME }}/css/django_listing.min.css?{{ STATIC_FILES_VERSION }}">
+              href="{% static "django_listing" %}/{{ THEME }}/css/django_listing.min.css?{{ STATIC_FILES_VERSION }}"/>
     {% endif %}
 
     {% if need_media_for.autocomplete and AUTOCOMPLETE_CSS_URLS %}

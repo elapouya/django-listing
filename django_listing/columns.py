@@ -21,7 +21,7 @@ from django.utils.dateparse import parse_datetime
 from django.utils.encoding import force_str
 from django.utils.html import conditional_escape, strip_tags, escape
 from django.utils.safestring import mark_safe, SafeData
-from django.utils.translation import gettext
+from django.utils.translation import gettext, pgettext_lazy
 from django.utils.translation import gettext_lazy as _
 
 from .aggregations import Aggregation, AggregationMeta
@@ -1586,9 +1586,9 @@ class SelectionColumn(Column):
 
 class GroupByFilterColumn(Column):
     sortable = False
-    label = _("Filter")
+    label = pgettext_lazy("verb", "Filter")
     name = "group_by_filter"
-    header = _("Filter")
+    header = pgettext_lazy("verb", "Filter")
     link_target = "_blank"
     theme_cell_with_filter_icon = "listing-icon-link-ext"
 
@@ -1597,7 +1597,7 @@ class GroupByFilterColumn(Column):
             filters=self.listing.gb_model_filters_mapping,
             without="gb_cols",
         )
-        out = f'<a class="{self.theme_button_link_class}" href="{url}"'
+        out = f'<a class="{self.theme_button_link_class} gb-filter" href="{url}"'
         if self.link_target:
             out += f' target="{self.link_target}"'
         out += f">{self.label}"
