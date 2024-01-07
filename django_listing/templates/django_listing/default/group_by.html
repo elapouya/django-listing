@@ -1,6 +1,10 @@
 {% load django_listing %}
+{% load i18n %}
 {% block group_by %}
-    <select class="group-by-dual-listbox" multiple>
+    <select class="group-by-dual-listbox" multiple
+            available-title="{% trans "[Available columns]" %}"
+            selected-title="{% trans "[Selected columns]" %}"
+    >
         {% for name in listing.gb_cols_names %}
             <option value="{{ name }}" selected>{{ listing.original_columns_headers|get_item:name }}</option>
         {% endfor %}
@@ -11,5 +15,10 @@
         {% endfor %}
     </select>
 
-    <a class="btn btn-primary listing-nav apply-group-by">Apply Grouping</a>
+    <div class="row">
+        <div class="col text-center">
+            <a class="btn btn-primary listing-nav apply-group-by">Apply Grouping</a>
+            <a class="btn btn-primary listing-nav remove-group-by">Remove Grouping</a>
+        </div>
+    </div>
 {% endblock group_by %}

@@ -16,7 +16,6 @@ from django.db.models.query import QuerySet
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
-from .filters import FILTER_QUERYSTRING_PREFIX
 from .exceptions import *
 
 __all__ = ["RecordManager", "Record", "cache_in_record"]
@@ -144,6 +143,8 @@ class RecordManager:
             self.bind_formset()
 
     def current_page(self):
+        from . import ForeignKeyColumn  # local import to avoid circular import
+
         if not self._records:
             lsg = self.listing
             self._records = [
@@ -151,6 +152,17 @@ class RecordManager:
                 Record(lsg, obj, i)
                 for i, obj in enumerate(lsg.current_page)
             ]
+            if lsg.gb_cols:
+                # Remap model instances if any:
+                fk_cols = [c for c in lsg.columns if isinstance(c, ForeignKeyColumn)]
+                for col in fk_cols:
+                    col_name = col.name
+                    model = col.model_field.related_model
+                    pks = [rec.get(col_name) for rec in self._records]
+                    objs = model.objects.filter(pk__in=pks)
+                    pk2obj = {obj.pk: obj for obj in objs}
+                    for rec in self._records:
+                        rec.set(col_name, pk2obj[rec[col_name]])
         return self._records
 
     def bind_formset(self):
@@ -313,7 +325,10 @@ class Record:
         if isinstance(filters, dict):
             for filter_name, rec_key in filters.items():
                 fname = filter_name + self._listing.suffix
-                kwargs[fname] = self.get(rec_key)
+                val = self.get(rec_key)
+                if isinstance(val, Model):
+                    val = val.pk
+                kwargs[fname] = val
         return self._listing.get_url(**kwargs)
 
     def get(self, key, default=None):
@@ -365,3 +380,9 @@ class Record:
 
     def __getitem__(self, item):
         return self.get(item)
+
+    def set(self, item, value):
+        if isinstance(self._obj, dict):
+            self._obj[item] = value
+        else:
+            setattr(self._obj, item, value)

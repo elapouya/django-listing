@@ -616,6 +616,7 @@ class GroupByBaseListing:
     empty_listing_template_name = None
     # instead, display a string into the empty table itself.
     empty_table_msg = "There is no employee corresponding to your criteria"
+    company__sort_key = "company__name"
 
 
 class GroupByVariationListing(GroupByBaseListing, Listing):

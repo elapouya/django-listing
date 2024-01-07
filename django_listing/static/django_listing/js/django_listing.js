@@ -327,10 +327,21 @@ $(document).ready(function () {
 
     $("select.group-by-dual-listbox").each(function() {
         let dlb_select = this
-        new DualListbox(this);
+        new DualListbox(this, {
+            addButtonText: '>',
+            removeButtonText: '<',
+            addAllButtonText: '>>',
+            removeAllButtonText: '<<',
+            availableTitle: $(this).attr("available-title") || 'Available columns',
+            selectedTitle: $(this).attr("selected-title") || 'Selected columns'
+        });
         $(this).parent().find(".apply-group-by").on("click", function () {
             let gb_cols = $(dlb_select).val().join(",");
             let url = djlst_replaceUrlParam(window.location.href, "gb_cols", gb_cols);
+            window.location.href = url;
+        });
+        $(this).parent().find(".remove-group-by").on("click", function () {
+            let url = djlst_replaceUrlParam(window.location.href, "gb_cols", "");
             window.location.href = url;
         });
     });
