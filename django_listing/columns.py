@@ -82,6 +82,8 @@ COLUMNS_PARAMS_KEYS = {
     "default_footer_value",
     "default_value",
     "editable",
+    "exportable",
+    "float_format",
     "footer",
     "footer_attrs",
     "footer_tpl",
@@ -472,6 +474,7 @@ class Column(metaclass=ColumnMeta):
     default_value = "-"
     editable = None
     editing = False
+    exportable = True
     footer = None
     footer_tpl = None
     footer_value_tpl = None
@@ -722,7 +725,7 @@ class Column(metaclass=ColumnMeta):
     def get_cell_context(self, rec, value):
         if isinstance(value, str):
             value = conditional_escape(value)
-        return RenderContext(
+        ctx = RenderContext(
             self.listing.global_context,
             rec.get_format_ctx(),
             value,  # if value is a dict it will be merged (see RenderContext)
@@ -731,6 +734,9 @@ class Column(metaclass=ColumnMeta):
             listing=self.listing,
             col=self,
         )
+        # if self.has_cell_filter:
+        #     ctx["filter_link"] = self.get_cell_filter_link(rec, ctx, value)
+        return ctx
 
     def get_edit_value_tpl(self, rec, ctx, value):
         return self.render_form_field(rec)
@@ -746,16 +752,7 @@ class Column(metaclass=ColumnMeta):
             value_tpl = self.get_edit_value_tpl(rec, ctx, value)
             cell_tpl = self.cell_edit_tpl or self.cell_tpl
         else:
-            if self.has_cell_filter and ctx.get("filter_link"):
-                cell_tpl = self.cell_with_filter_tpl or (
-                    '<td{attrs}><span class="cell-with-filter">'
-                    '<span class="cell-value">%s</span>'
-                    '<a href="{filter_link}" '
-                    'class="cell-filter {col.theme_cell_with_filter_icon}">'
-                    "</a></span></td>"
-                )
-            else:
-                cell_tpl = self.cell_tpl
+            cell_tpl = self.cell_tpl
             value_tpl = self.get_value_tpl(rec, ctx, value)
         tpl = cell_tpl or "<td{attrs}>%s</td>"
         return tpl % value_tpl
@@ -764,8 +761,6 @@ class Column(metaclass=ColumnMeta):
         value = self.get_cell_value(rec)
         ctx = self.get_cell_context(rec, value)
         ctx.attrs = self.get_cell_attrs(rec, ctx, value)
-        if self.has_cell_filter:
-            ctx.filter_link = self.get_cell_filter_link(rec, ctx, value)
         tpl = self.get_cell_template(rec, ctx, value)
         try:
             return tpl.format(**ctx)
@@ -1021,6 +1016,18 @@ class BooleanColumn(Column):
 class IntegerColumn(Column):
     from_model_field_classes = (models.IntegerField,)
     form_field_class = forms.IntegerField
+
+
+class FloatColumn(Column):
+    from_model_field_classes = (models.FloatField,)
+    form_field_class = forms.FloatField
+    float_format = ".2f"
+    params_keys = "float_format"
+
+    # /!\ do not redefine get_cell_value otherwise the value will be modified on export
+    def get_cell_context(self, rec, value):
+        value = f"{value:{self.float_format}}"
+        return super().get_cell_context(rec, value)
 
 
 class ChoiceColumn(Column):
@@ -1591,11 +1598,12 @@ class GroupByFilterColumn(Column):
     header = pgettext_lazy("verb", "Filter")
     link_target = "_blank"
     theme_cell_with_filter_icon = "listing-icon-link-ext"
+    exportable = False
 
     def action_filter(self, rec):
         url = rec.get_url(
             filters=self.listing.gb_model_filters_mapping,
-            without="gb_cols",
+            without="gb_cols,gb_annotate_cols",
         )
         out = f'<a class="{self.theme_button_link_class} gb-filter" href="{url}"'
         if self.link_target:

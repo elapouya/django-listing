@@ -12,7 +12,7 @@ from urllib.parse import urlsplit, urlunsplit
 import tablib
 from django import forms
 from django.conf import settings
-from django.db.models import Model, Count
+from django.db.models import Model, Count, Min, Max, Sum, Avg
 from django.db.models.query import QuerySet
 from django.http import QueryDict
 from django.middleware.csrf import get_token as get_csrf_token
@@ -36,6 +36,7 @@ from .columns import (
     IntegerColumn,
     Column,
     GroupByFilterColumn,
+    FloatColumn,
 )
 from .context import RenderContext
 from .exceptions import *
@@ -77,6 +78,7 @@ LISTING_QUERY_STRING_KEYS = {
     "theme",
     "variation",
     "gb_cols",
+    "gb_annotate_cols",
 }
 LISTING_QUERY_STRING_INT_KEYS = {"page", "per_page", "variation", "editing_row_pk"}
 LISTING_NOT_PERSISTENT_QUERY_STRING_KEYS = set()
@@ -119,6 +121,7 @@ LISTING_PARAMS_KEYS = {
     "footer_snippet",
     "footer_template_name",
     "form",
+    "gb_annotate_cols",  # group_by annotation columns
     "gb_cols",  # group_by columns
     "global_context",
     "gb_template_name",
@@ -187,6 +190,13 @@ LISTING_PARAMS_KEYS = {
 }
 
 LISTING_FORMSET_PREFIX = "listing"
+
+LISTING_ANNOTATIONS = {
+    "min": (pgettext_lazy("abbreviation", "Min"), Min),
+    "max": (pgettext_lazy("abbreviation", "Max"), Max),
+    "sum": (pgettext_lazy("abbreviation", "Sum"), Sum),
+    "avg": (pgettext_lazy("abbreviation", "Avg"), Avg),
+}
 
 
 class ListingBase:
@@ -422,6 +432,7 @@ class Listing(ListingBase):
     footer_snippet = None
     footer_template_name = None
     form = None
+    gb_annotate_cols = None
     gb_cols = None
     gb_template_name = ThemeTemplate("group_by.html")
     has_footer = False
@@ -623,6 +634,7 @@ class Listing(ListingBase):
     def manage_group_by(self):
         self.gb_cols_names = []
         self.original_columns_headers = {}
+        ach = self.annotation_columns_headers = {}
         for c in self.columns:
             name = c.init_args[0]
             header = c.init_kwargs.get("header")
@@ -630,6 +642,9 @@ class Listing(ListingBase):
                 header = name.replace("_", " ").captalize()
             if name and header:
                 self.original_columns_headers[name] = header
+            if isinstance(c, (IntegerColumn, FloatColumn)):
+                for a, (alabel, afunc) in LISTING_ANNOTATIONS.items():
+                    ach[f"{name}_annotate_{a}"] = f"{header} ({alabel})"
         if self.gb_cols:
             gb_cols_names = self.gb_cols
             if isinstance(gb_cols_names, str):
@@ -639,15 +654,28 @@ class Listing(ListingBase):
             )
             self.gb_cols_names = gb_cols_names
             gb_cols = [self.columns.get(cname) for cname in gb_cols_names]
-            gb_cols += [IntegerColumn("count"), GroupByFilterColumn()]
-            self.columns = Columns(*gb_cols)
+            gb_cols.append(IntegerColumn("count"))
             mfn2f = self.filters.modelfieldname2filter
             self.gb_model_filters_mapping = {
                 mfn2f[c].input_name: c for c in gb_cols_names if c in mfn2f
             }
-            self.data = self.data.values(*gb_cols_names).annotate(
-                count=Count(gb_cols_names[0])
-            )
+            gb_annotate_cols = {"count": Count(gb_cols_names[0])}
+            self.gb_annotate_cols_names = self.gb_annotate_cols
+            if isinstance(self.gb_annotate_cols_names, str):
+                self.gb_annotate_cols_names = list(
+                    map(str.strip, self.gb_annotate_cols_names.split(","))
+                )
+            for aname in self.gb_annotate_cols_names:
+                label = self.annotation_columns_headers.get(aname)
+                if label:
+                    col_name, annotation = aname.split("_annotate_")
+                    gb_cols.append(FloatColumn(aname, header=label))
+                    gb_annotate_cols[aname] = LISTING_ANNOTATIONS[annotation][1](
+                        col_name
+                    )
+            gb_cols.append(GroupByFilterColumn())
+            self.columns = Columns(*gb_cols)
+            self.data = self.data.values(*gb_cols_names).annotate(**gb_annotate_cols)
             if not self.sort:
                 self.sort = [gb_cols_names[0]]
 
@@ -1041,15 +1069,18 @@ class Listing(ListingBase):
 
     def exported_headers(self, use_col_name=True):
         if use_col_name:
-            return [c.name for c in self.selected_columns]
+            return [c.name for c in self.selected_columns if c.exportable]
         else:
-            return [str(c.get_header_value()) for c in self.selected_columns]
+            return [
+                str(c.get_header_value()) for c in self.selected_columns if c.exportable
+            ]
 
     def exported_rows(self, keep_original_type=True):
         for rec in self.records.export():
             yield [
                 c.get_cell_exported_value(rec, keep_original_type)
                 for c in self.selected_columns
+                if c.exportable
             ]
 
     def get_rendered_cells(self, rec):

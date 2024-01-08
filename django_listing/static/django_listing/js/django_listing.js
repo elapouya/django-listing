@@ -325,22 +325,33 @@ $(document).ready(function () {
         }
     });
 
-    $("select.group-by-dual-listbox").each(function() {
-        let dlb_select = this
-        new DualListbox(this, {
+    $(".group-by-container").each(function() {
+        let group_by_select = $(this).find(".group-by-select")
+        new DualListbox(group_by_select[0], {
             addButtonText: '>',
             removeButtonText: '<',
             addAllButtonText: '>>',
             removeAllButtonText: '<<',
-            availableTitle: $(this).attr("available-title") || 'Available columns',
-            selectedTitle: $(this).attr("selected-title") || 'Selected columns'
+            availableTitle: group_by_select.attr("available-title") || 'Available columns',
+            selectedTitle: group_by_select.attr("selected-title") || 'Selected columns'
         });
-        $(this).parent().find(".apply-group-by").on("click", function () {
-            let gb_cols = $(dlb_select).val().join(",");
+        let annotation_select = $(this).find(".annotation-select")
+        new DualListbox(annotation_select[0], {
+            addButtonText: '>',
+            removeButtonText: '<',
+            addAllButtonText: '>>',
+            removeAllButtonText: '<<',
+            availableTitle: annotation_select.attr("available-title") || 'Available columns',
+            selectedTitle: annotation_select.attr("selected-title") || 'Selected columns'
+        });
+        $(this).find(".apply-group-by").on("click", function () {
+            let gb_cols = group_by_select.val().join(",");
             let url = djlst_replaceUrlParam(window.location.href, "gb_cols", gb_cols);
+            let gb_annotate_cols = annotation_select.val().join(",");
+            url = djlst_replaceUrlParam(url, "gb_annotate_cols", gb_annotate_cols);
             window.location.href = url;
         });
-        $(this).parent().find(".remove-group-by").on("click", function () {
+        $(this).find(".remove-group-by").on("click", function () {
             let url = djlst_replaceUrlParam(window.location.href, "gb_cols", "");
             window.location.href = url;
         });

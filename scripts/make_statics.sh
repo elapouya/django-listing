@@ -22,6 +22,8 @@ STATIC_DIR=$PROJECT_DIR/django_listing/static/django_listing
 JS_DIR=$STATIC_DIR/js
 DJL_JS=$JS_DIR/django_listing.js
 DJL_MIN_JS=$JS_DIR/django_listing.min.js
+DUAL_LISTBOX_JS=$JS_DIR/dual-listbox.js
+DUAL_LISTBOX_MIN_JS=$JS_DIR/dual-listbox.min.js
 
 JS_COMPRESS="google-closure-compiler --language_out=ECMASCRIPT_2015"
 CSS_COMPRESS=csso
@@ -62,6 +64,18 @@ then
       $JS_COMPRESS $DJL_JS > $DJL_MIN_JS
     else
       cp $DJL_JS $DJL_MIN_JS
+    fi
+    set +x
+fi
+
+if [[ -f $DUAL_LISTBOX_JS ]]
+then
+    set -x
+    if [[ $MINIFY == "true" ]]
+    then
+      $JS_COMPRESS $DUAL_LISTBOX_JS > $DUAL_LISTBOX_MIN_JS
+    else
+      cp $DUAL_LISTBOX_JS $DUAL_LISTBOX_MIN_JS
     fi
     set +x
 fi
