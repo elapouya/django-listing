@@ -244,7 +244,10 @@ class VariationsToolbarItem(ToolbarItem):
         nb_variations = len(self.listing.variations_classes)
         labels = normalize_list(self.labels, force_length=nb_variations)
         icons = normalize_list(self.icons, force_length=nb_variations)
-        urls = [self.listing.get_url(variation=i) for i in range(nb_variations)]
+        urls = [
+            self.listing.get_url(variation=i, without="gb_cols,gb_annotate_cols")
+            for i in range(nb_variations)
+        ]
         self.buttons = list(
             zip(
                 urls,
@@ -323,5 +326,4 @@ class GroupByToolbarItem(ToolbarItem):
 
     def init(self, listing, name=None, **kwargs):
         super().init(listing, name, **kwargs)
-        listing.has_group_by = True
         self.listing.need_media_for("dual_listbox")

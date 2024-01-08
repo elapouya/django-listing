@@ -621,6 +621,7 @@ class GroupByBaseListing:
 
 class GroupByVariationListing(GroupByBaseListing, Listing):
     per_page = 10
+    has_group_by = True
 
 
 class GroupByVariationEmployeeDivListing(GroupByBaseListing, ToolbarEmployeeDivListing):
