@@ -2,7 +2,7 @@
 {% load i18n %}
 {% block group_by %}
     <div class="row">
-        <div class="col">
+        <div class="col-12 col-lg-6">
             <h3>Group By</h3>
             <select class="group-by-select" multiple
                     available-title="{% trans "[Available columns]" %}"
@@ -19,7 +19,7 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="col">
+        <div class="col-12 col-lg-6">
             <h3>Annotations</h3>
             <select class="annotation-select" multiple
                     available-title="{% trans "[Available columns]" %}"

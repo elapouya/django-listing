@@ -11624,10 +11624,7 @@ td.col-gender > div.form-field {
 
 .group-by-container {
   border: 2px solid #5fa35f;
-  border-radius: 6px;
-  padding: 20px;
   background-color: #d0e4d0;
-  margin-bottom: 10px;
 }
 .group-by-container .dual-listbox .dual-listbox__search {
   border-color: #5fa35f;

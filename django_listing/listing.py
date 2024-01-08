@@ -640,7 +640,7 @@ class Listing(ListingBase):
             name = c.init_args[0]
             header = c.init_kwargs.get("header")
             if not header:
-                header = name.replace("_", " ").captalize()
+                header = name.replace("_", " ").capitalize()
             if name and header:
                 self.original_columns_headers[name] = header
             if isinstance(c, (IntegerColumn, FloatColumn)):
