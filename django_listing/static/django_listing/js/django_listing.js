@@ -3,12 +3,16 @@ function djlst_replaceUrlParam(url, param_name, param_value)
     if (param_value == null) {
         param_value = '';
     }
-    var pattern = new RegExp('\\b('+param_name+'=).*?(&|$)');
-    if (url.search(pattern)>=0) {
-        return url.replace(pattern,'$1' + param_value + '$2');
-    }
-    url = url.replace(/\?$/,'');
-    return url + (url.indexOf('?')>0 ? '&' : '?') + param_name + '=' + param_value;
+    let url_obj = new URL(url);
+    url_obj.searchParams.set(param_name, param_value);
+    return url_obj.toString();
+}
+
+function djlst_removeUrlParam(url, param_name)
+{
+    let url_obj = new URL(url);
+    url_obj.searchParams.delete(param_name);
+    return url_obj.toString();
 }
 
 function get_csrf_token() {
@@ -325,6 +329,10 @@ $(document).ready(function () {
         }
     });
 
+    $(".button-action-group-by").on("click", function () {
+        $(this).closest(".django-listing-container").find(".group-by-container").slideToggle(200);
+    });
+
     $(".group-by-container").each(function() {
         let group_by_select = $(this).find(".group-by-select")
         new DualListbox(group_by_select[0], {
@@ -352,7 +360,8 @@ $(document).ready(function () {
             window.location.href = url;
         });
         $(this).find(".remove-group-by").on("click", function () {
-            let url = djlst_replaceUrlParam(window.location.href, "gb_cols", "");
+            let url = djlst_removeUrlParam(window.location.href, "gb_cols");
+            url = djlst_removeUrlParam(url, "gb_annotate_cols");
             window.location.href = url;
         });
     });

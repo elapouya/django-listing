@@ -633,6 +633,7 @@ class Listing(ListingBase):
 
     def manage_group_by(self):
         self.gb_cols_names = []
+        self.gb_annotate_cols_names = []
         self.original_columns_headers = {}
         ach = self.annotation_columns_headers = {}
         for c in self.columns:
@@ -660,11 +661,15 @@ class Listing(ListingBase):
                 mfn2f[c].input_name: c for c in gb_cols_names if c in mfn2f
             }
             gb_annotate_cols = {"count": Count(gb_cols_names[0])}
-            self.gb_annotate_cols_names = self.gb_annotate_cols
-            if isinstance(self.gb_annotate_cols_names, str):
-                self.gb_annotate_cols_names = list(
-                    map(str.strip, self.gb_annotate_cols_names.split(","))
+            gb_annotate_cols_names = self.gb_annotate_cols
+            if isinstance(gb_annotate_cols_names, str):
+                gb_annotate_cols_names = map(
+                    str.strip, gb_annotate_cols_names.split(",")
                 )
+            gb_annotate_cols_names = list(
+                filter(lambda cname: cname in ach, gb_annotate_cols_names)
+            )
+            self.gb_annotate_cols_names = gb_annotate_cols_names
             for aname in self.gb_annotate_cols_names:
                 label = self.annotation_columns_headers.get(aname)
                 if label:

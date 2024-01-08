@@ -261,3 +261,29 @@ table.object-popup {
 td.col-gender > div.form-field {
     width: 90px;
 }
+
+.group-by-container {
+    border: 2px solid $primary;
+    border-radius: 6px;
+    padding: 20px;
+    background-color: lighten($primary, 35);
+    margin-bottom: 10px;
+
+    .dual-listbox {
+        .dual-listbox__search {
+            border-color: $primary;
+        }
+
+        .dual-listbox__button {
+            background-color: $primary;
+        }
+
+        .dual-listbox__title {
+            border: none;
+        }
+
+        .dual-listbox__available, .dual-listbox__selected {
+            border-color: $primary;
+        }
+    }
+}

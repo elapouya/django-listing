@@ -11622,4 +11622,24 @@ td.col-gender > div.form-field {
   width: 90px;
 }
 
+.group-by-container {
+  border: 2px solid #5fa35f;
+  border-radius: 6px;
+  padding: 20px;
+  background-color: #d0e4d0;
+  margin-bottom: 10px;
+}
+.group-by-container .dual-listbox .dual-listbox__search {
+  border-color: #5fa35f;
+}
+.group-by-container .dual-listbox .dual-listbox__button {
+  background-color: #5fa35f;
+}
+.group-by-container .dual-listbox .dual-listbox__title {
+  border: none;
+}
+.group-by-container .dual-listbox .dual-listbox__available, .group-by-container .dual-listbox .dual-listbox__selected {
+  border-color: #5fa35f;
+}
+
 /*# sourceMappingURL=demo.css.map */
