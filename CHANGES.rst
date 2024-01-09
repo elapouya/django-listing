@@ -1,3 +1,7 @@
+0.6.1 (2024-01-09)
+-------------------
+- Many fixes when accept_ajax = True
+
 0.6.0 (2024-01-08)
 -------------------
 - Add "Group By" and annotations feature

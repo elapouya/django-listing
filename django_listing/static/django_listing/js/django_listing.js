@@ -3,7 +3,12 @@ function djlst_replaceUrlParam(url, param_name, param_value)
     if (param_value == null) {
         param_value = '';
     }
-    let url_obj = new URL(url);
+    let url_obj;
+    if (url.startsWith("/")) {
+        url_obj = new URL(url, window.location.origin);
+    } else {
+        url_obj = new URL(url);
+    }
     url_obj.searchParams.set(param_name, param_value);
     return url_obj.toString();
 }
@@ -39,6 +44,9 @@ function update_csrf_token() {
 }
 
 function djlst_load_listing_url(nav_obj, url) {
+    if (! $("div.django-listing-ajax").length) {
+        window.location.href = url;
+    }
     var listing_div = nav_obj.closest("div.django-listing-ajax");
     listing_div.addClass("spinning");
     var listing_id = $(listing_div).attr("id");
@@ -62,6 +70,7 @@ function djlst_load_listing_url(nav_obj, url) {
             } else {
                 $(this).children(":first").unwrap();
             }
+            djlst_listing_on_load();
             $(document).trigger( "djlst_ajax_loaded", [ listing_target ] );
         } // to avoid cascade of listing container divs
     );
@@ -108,6 +117,8 @@ function djlst_post_button_action(event) {
        {
            $(listing_target).html(response);
            $(listing_target).children(":first").unwrap();
+           djlst_listing_on_load();
+           $(document).trigger( "djlst_ajax_loaded", [ listing_target ] );
        }
     });
 }
@@ -259,6 +270,41 @@ function djlst_view_object_popup(event) {
     });
 }
 
+function djlst_listing_on_load() {
+    $(".group-by-container").each(function() {
+        let group_by_select = $(this).find(".group-by-select")
+        new DualListbox(group_by_select[0], {
+            addButtonText: '>',
+            removeButtonText: '<',
+            addAllButtonText: '>>',
+            removeAllButtonText: '<<',
+            availableTitle: group_by_select.attr("available-title") || 'Available columns',
+            selectedTitle: group_by_select.attr("selected-title") || 'Selected columns'
+        });
+        let annotation_select = $(this).find(".annotation-select")
+        new DualListbox(annotation_select[0], {
+            addButtonText: '>',
+            removeButtonText: '<',
+            addAllButtonText: '>>',
+            removeAllButtonText: '<<',
+            availableTitle: annotation_select.attr("available-title") || 'Available columns',
+            selectedTitle: annotation_select.attr("selected-title") || 'Selected columns'
+        });
+        $(this).find(".apply-group-by").on("click", function () {
+            let gb_cols = group_by_select.val().join(",");
+            let url = djlst_replaceUrlParam(window.location.href, "gb_cols", gb_cols);
+            let gb_annotate_cols = annotation_select.val().join(",");
+            url = djlst_replaceUrlParam(url, "gb_annotate_cols", gb_annotate_cols);
+            djlst_load_listing_url($(this), url);
+        });
+        $(this).find(".remove-group-by").on("click", function () {
+            let url = djlst_removeUrlParam(window.location.href, "gb_cols");
+            url = djlst_removeUrlParam(url, "gb_annotate_cols");
+            djlst_load_listing_url($(this), url);
+        });
+    });
+}
+
 $(document).ready(function () {
 
     var select2_opened = false;
@@ -279,6 +325,9 @@ $(document).ready(function () {
     $(document.body).on("click","[listing-action='unselect-all']", djlst_unselect_all);
     $(document.body).on("click",".listing-selection-menu .listing-menu-close", djlst_deactivate_selection);
     $(document.body).on("click","li.action-item.view-object-popup a", djlst_view_object_popup);
+    $(document.body).on("click", ".button-action-group-by", function () {
+        $(this).closest(".django-listing-container").find(".group-by-container").slideToggle(200);
+    });
 
     $('[data-toggle="popover"]').popover();
 
@@ -329,40 +378,5 @@ $(document).ready(function () {
         }
     });
 
-    $(".button-action-group-by").on("click", function () {
-        $(this).closest(".django-listing-container").find(".group-by-container").slideToggle(200);
-    });
-
-    $(".group-by-container").each(function() {
-        let group_by_select = $(this).find(".group-by-select")
-        new DualListbox(group_by_select[0], {
-            addButtonText: '>',
-            removeButtonText: '<',
-            addAllButtonText: '>>',
-            removeAllButtonText: '<<',
-            availableTitle: group_by_select.attr("available-title") || 'Available columns',
-            selectedTitle: group_by_select.attr("selected-title") || 'Selected columns'
-        });
-        let annotation_select = $(this).find(".annotation-select")
-        new DualListbox(annotation_select[0], {
-            addButtonText: '>',
-            removeButtonText: '<',
-            addAllButtonText: '>>',
-            removeAllButtonText: '<<',
-            availableTitle: annotation_select.attr("available-title") || 'Available columns',
-            selectedTitle: annotation_select.attr("selected-title") || 'Selected columns'
-        });
-        $(this).find(".apply-group-by").on("click", function () {
-            let gb_cols = group_by_select.val().join(",");
-            let url = djlst_replaceUrlParam(window.location.href, "gb_cols", gb_cols);
-            let gb_annotate_cols = annotation_select.val().join(",");
-            url = djlst_replaceUrlParam(url, "gb_annotate_cols", gb_annotate_cols);
-            window.location.href = url;
-        });
-        $(this).find(".remove-group-by").on("click", function () {
-            let url = djlst_removeUrlParam(window.location.href, "gb_cols");
-            url = djlst_removeUrlParam(url, "gb_annotate_cols");
-            window.location.href = url;
-        });
-    });
+    djlst_listing_on_load();
 });

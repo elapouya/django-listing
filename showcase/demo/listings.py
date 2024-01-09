@@ -328,6 +328,7 @@ class WidgetsColumnsListing(Listing):
 class ActionsColumnListing(Listing):
     id = "employee-rank"
     sort = "rank"
+    accept_ajax = True
     paginator_has_first_last = True
     paginator_page_scale_size = 9
     paginator_has_page_info = False
@@ -549,7 +550,7 @@ class CellFilterListing(FilterListing):
 
 
 class GroupByBaseListing:
-    # accept_ajax = True
+    accept_ajax = True
     toolbar = Toolbar(
         ExportSelectToolbarItem(),
         SortSelectToolbarItem(),
