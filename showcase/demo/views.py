@@ -637,7 +637,7 @@ class InsertableListingView(ListingView):
     def manage_listing_insert_form_clean_age(self, form):
         age = form.cleaned_data.get("age")
         if age is None or age < 0 or age > 130:
-            raise ValidationError(_("Age must be between 0 and 130."))
+            raise ValidationError(gettext("Age must be between 0 and 130."))
         return age
 
 
