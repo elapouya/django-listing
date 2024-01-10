@@ -1026,7 +1026,13 @@ class FloatColumn(Column):
 
     # /!\ do not redefine get_cell_value otherwise the value will be modified on export
     def get_cell_context(self, rec, value):
-        value = f"{value:{self.float_format}}"
+        if not isinstance(value, float):
+            try:
+                value = float(value)
+            except ValueError:
+                pass
+        if isinstance(value, float):
+            value = f"{value:{self.float_format}}"
         return super().get_cell_context(rec, value)
 
 

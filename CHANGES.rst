@@ -1,3 +1,9 @@
+0.6.2 (2024-01-10)
+-------------------
+- fix FloatColumn
+- fix gettext
+- fix group-by buttons
+
 0.6.1 (2024-01-09)
 -------------------
 - Many fixes when accept_ajax = True
