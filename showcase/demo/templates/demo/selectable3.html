@@ -21,8 +21,8 @@
     <br><br>
     <h3>Multiple selection and checkbox at right :</h3>
     <form method="post">{% csrf_token %}
-        <button type="button" class="btn btn-primary btn-sm mb-1" listing-action="select-all" listing-target="{{ companies_listing.id }}">Select All</button>
-        <button type="button" class="btn btn-primary btn-sm mb-1" listing-action="unselect-all" listing-target="{{ companies_listing.id }}">Unselect All</button>
+        <button type="button" class="btn btn-primary btn-sm mb-1" listing-action="select-all" listing-target="{{ companies_listing.css_id }}">Select All</button>
+        <button type="button" class="btn btn-primary btn-sm mb-1" listing-action="unselect-all" listing-target="{{ companies_listing.css_id }}">Unselect All</button>
         {% render_listing companies_listing %}
         <div class="text-center">
             <button type="submit" name="action" value="action1" class="btn btn-primary">Action 1</button>

@@ -1,3 +1,7 @@
+0.6.3 (2024-01-14)
+------------------
+- add range selection (press shift on second selection)
+
 0.6.2 (2024-01-10)
 -------------------
 - fix FloatColumn

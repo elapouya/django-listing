@@ -123,37 +123,66 @@ function djlst_post_button_action(event) {
     });
 }
 
+var djlst_last_selected_rows_container = null;
+var djlst_last_selected_index = null;
+
 function djlst_multiple_row_select(e) {
-    var row=$(this).closest('.row-container');
-    var hidden=row.find('input.row-select').first();
+    let row=$(this).closest('.row-container');
+    let rows_container = row.parent();
+    let index = row.index();
+    let last_rows_container = djlst_last_selected_rows_container;
+    let last_index = djlst_last_selected_index;
+    let action;
     if (row.hasClass('selected')) {
-        row.removeClass('selected');
-        hidden.removeAttr('name');
-        row.find('input.selection-box').first().prop('checked',false);
+        action = djlst_multiple_row_do_unselect;
     } else {
-        row.addClass('selected');
-        hidden.attr('name',hidden.attr('select-name'));
-        row.find('input.selection-box').first().prop('checked',true);
+        action = djlst_multiple_row_do_select;
+    }
+    if (e.shiftKey && last_rows_container[0] === rows_container[0] && last_index != null) {
+        djlst_map_children_range(rows_container, last_index, index, action);
+    } else {
+        action(row);
     }
     djlst_selection_menu_update($(this));
+    djlst_last_selected_rows_container = rows_container;
+    djlst_last_selected_index = index;
+}
+
+function djlst_map_children_range(container, index1, index2, func) {
+    if (index2 >= index1) {
+        rows = container.children().slice(index1, index2 + 1);
+    } else {
+        rows = container.children().slice(index2, index1 + 1);
+    }
+    rows.each(function () {
+        func($(this));
+    });
+}
+
+function djlst_multiple_row_do_unselect(row) {
+    let hidden=row.find('input.row-select').first();
+    row.removeClass('selected');
+    hidden.removeAttr('name');
+    row.find('input.selection-box').first().prop('checked',false);
+}
+
+function djlst_multiple_row_do_select(row) {
+    let hidden=row.find('input.row-select').first();
+    row.addClass('selected');
+    hidden.attr('name',hidden.attr('select-name'));
+    row.find('input.selection-box').first().prop('checked',true);
 }
 
 function djlst_unique_row_select(e) {
-    var row=$(this).closest('.row-container');
-    var hidden=row.find('input.row-select').first();
+    let row=$(this).closest('.row-container');
     if (row.hasClass('selected')) {
-        row.removeClass('selected');
-        hidden.removeAttr('name');
-        row.find('input.selection-box').first().prop('checked',false);
+        djlst_multiple_row_do_unselect(row);
     } else {
         row.siblings().removeClass('selected').find('input.row-select').removeAttr('name');
-        row.addClass('selected');
-        hidden.attr('name', hidden.attr('select-name'));
-        row.find('input.selection-box').first().prop('checked', true);
+        djlst_multiple_row_do_select(row);
     }
     djlst_selection_menu_update($(this));
 }
-
 
 function djlst_select_all(e) {
     var listing_id = $(this).attr('listing-target');
