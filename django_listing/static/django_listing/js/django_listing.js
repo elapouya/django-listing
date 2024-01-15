@@ -140,6 +140,7 @@ function djlst_multiple_row_select(e) {
     }
     if (e.shiftKey && last_rows_container[0] === rows_container[0] && last_index != null) {
         djlst_map_children_range(rows_container, last_index, index, action);
+        djlst_unselectText();
     } else {
         action(row);
     }
@@ -209,6 +210,16 @@ function djlst_listing_unselect_all(listing) {
         $(this).removeAttr('name');
     });
     djlst_selection_menu_update(listing);
+}
+
+function djlst_unselectText() {
+    if (window.getSelection) {
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+    } else if (document.selection) {
+        // For older IE browsers
+        document.selection.empty();
+    }
 }
 
 function djlst_activate_selection(e) {

@@ -1253,7 +1253,7 @@ class DateColumn(Column):
     params_keys = "date_format"
     from_model_field_classes = (models.DateField,)
     form_field_class = forms.DateField
-    widget_attrs = {"class": "edit-datecolumn", "autocomplete": "off"}
+    widget_attrs = {"class": "edit-datecolumn", "autocomplete": "off", "type": "date"}
 
     def get_cell_value(self, rec):
         value = super().get_cell_value(rec)
@@ -1270,7 +1270,11 @@ class DateTimeColumn(Column):
     datetime_format = settings.DATETIME_FORMAT
     params_keys = "datetime_format"
     from_model_field_classes = (models.DateTimeField,)
-    widget_attrs = {"class": "edit-datetimecolumn", "autocomplete": "off"}
+    widget_attrs = {
+        "class": "edit-datetimecolumn",
+        "autocomplete": "off",
+        "type": "datetime-local",
+    }
 
     def get_cell_value(self, rec):
         value = super().get_cell_value(rec)
