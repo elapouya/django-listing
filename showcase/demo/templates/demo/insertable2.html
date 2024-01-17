@@ -1,0 +1,32 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'insertable' %}">Insertable listing</a> : Filter, insert, select and edit</h2>
+    <p>Have a look at <code>demo/templates/demo/insertable2.html</code> and
+        <code>Insertable2View</code> in <code>demo/views.py</code> to see how examples are coded</p>
+
+    {% render_listing listing as listing_frame %}
+    {% render_filters_form listing as filter_frame %}
+
+    <div class="row justify-content-center">
+        <div class="col col-lg-auto">
+            {{ filter_frame }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ listing_frame }}
+        </div>
+    </div>
+
+    {% render_listing_form listing action='insert' layout='first_name,last_name,age,gender,marital_status;address;designation,salary,joined,company,have_car' submit_label='Insert' %}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#id_marital_status").val("Married");
+    });
+</script>
+
+{% endblock %}

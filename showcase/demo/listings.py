@@ -486,7 +486,52 @@ class NoToolbarListing(ListingVariations):
     )
 
 
-class FilterListing(Listing):
+class FilterListingMixin:
+    filters = Filters(
+        IntegerFilter("age1", filter_key="age__gte", label="Age from"),
+        IntegerFilter("age2", filter_key="age__lte", label="to"),
+        IntegerFilter("salary1", filter_key="salary__gte", label="Salary between"),
+        IntegerFilter("salary2", filter_key="salary__lte", label="and"),
+        DateFilter("joined1", filter_key="joined__gte", label="Joined between"),
+        DateFilter("joined2", filter_key="joined__lte", label="and"),
+        Filter(
+            "first_name",
+            filter_key="first_name__icontains",
+            help_text="Case insensitive",
+        ),
+        Filter("last_name", filter_key="last_name__icontains"),
+        # If you want a simple select box use this :
+        # ForeignKeyFilter(
+        #     "company", order_by="name", format_label=lambda c: f"{c.name} ({c.city})"
+        # ),
+        # But if you have a lot of items, you should prefer autocomplete widget :
+        AutocompleteForeignKeyFilter(
+            "company",
+            label="Company",
+            url="company-autocomplete",
+        ),
+        AutocompleteMultipleForeignKeyFilter(
+            "interests",
+            filter_key="interests__in",
+            help_text="You may specify many interests",
+            label="Interests",
+            url="interest-autocomplete",
+        ),
+        ChoiceFilter("marital_status", input_type="radio", no_choice_msg="Indifferent"),
+        BooleanFilter("have_car", input_type="radio", no_choice_msg="Indifferent"),
+        # Note : By default filter_key = filter name if not specified
+        MultipleChoiceFilter("gender", input_type="checkbox", label="Gender")
+        # For MultipleChoiceFilter '__in' will be added to filter_key if missing
+    )
+    filters.form_layout = (
+        "age1,age2,salary1,salary2,joined1,joined2;"
+        "first_name,last_name,company,marital_status,have_car,gender;"
+        "interests"
+    )
+    filters.form_buttons = "submit,reset"
+
+
+class FilterListing(FilterListingMixin, Listing):
     filters = Filters(
         IntegerFilter("age1", filter_key="age__gte", label="Age from"),
         IntegerFilter("age2", filter_key="age__lte", label="to"),
@@ -650,9 +695,21 @@ class GroupByListing(ListingVariations):
     )
 
 
-class InsertableListing(Listing):
+class InsertableListing1(Listing):
     per_page = 5
     sort = "-id"
+    gender__input_type = "radio"
+    salary__min_value = 0
+    columns_no_choice_msg = "Please choose..."
+    columns_label_suffix = ""
+    save_to_database = True
+    exclude_columns = "interests"
+
+
+class InsertableListing2(FilterListingMixin, Listing):
+    per_page = 5
+    sort = "-id"
+    accept_ajax = True
     gender__input_type = "radio"
     salary__min_value = 0
     columns_no_choice_msg = "Please choose..."

@@ -637,6 +637,8 @@ class Listing(ListingBase):
         self.original_columns_headers = {}
         ach = self.annotation_columns_headers = {}
         for c in self.columns:
+            if not c.init_args:
+                continue
             name = c.init_args[0]
             header = c.init_kwargs.get("header")
             if not header:

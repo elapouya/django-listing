@@ -280,6 +280,9 @@ form.listing-form {
         flex-shrink: 10;
         margin: 5px;
         width: 100%;
+        > .label_input > .select2 {
+            display: block;
+        }
         label {
             margin-bottom: .1em;
         }

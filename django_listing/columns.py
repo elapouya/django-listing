@@ -102,6 +102,7 @@ COLUMNS_PARAMS_KEYS = {
     "model_field",
     "name",
     "no_choice_msg",
+    "no_foreignkey_link",
     "sort_key",
     "sortable",
     "start",
@@ -947,6 +948,8 @@ class Column(metaclass=ColumnMeta):
                 )
         widget_attrs = HTMLAttributes(self.widget_attrs)
         widget_attrs.add("class", self.theme_form_widget_class)
+        widget_id = f"id-listingform-{self.name}{self.listing.suffix}".replace("_", "-")
+        widget_attrs.add("id", widget_id)
         return cls(attrs=widget_attrs)
 
     def create_form_field(self, have_empty_choice=False):
@@ -1135,6 +1138,8 @@ class ManyColumn(Column):
     many_separator = ", "
     params_keys = "many_separator,cell_map,cell_filter,cell_reduce"
     from_model_field_classes = (models.ManyToManyField, models.ManyToManyRel)
+    params_keys = "no_foreignkey_link"
+    no_foreignkey_link = False
     editable = False
 
     def get_cell_value(self, rec):
@@ -1168,7 +1173,7 @@ class ManyColumn(Column):
 
     def cell_map(self, value):
         out = force_str(value)
-        if hasattr(value, "get_absolute_url"):
+        if not self.no_foreignkey_link and hasattr(value, "get_absolute_url"):
             url = value.get_absolute_url()
             if url is not None:
                 out = f'<a href="{url}">{out}</a>'

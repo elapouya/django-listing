@@ -502,6 +502,8 @@ class Filter(metaclass=FilterMeta):
     def get_form_field_widget(self, field_class):
         widget_attrs = HTMLAttributes(self.widget_attrs)
         widget_attrs.add("class", self.theme_form_widget_class)
+        widget_id = f"id-filter-{self.name}{self.listing.suffix}".replace("_", "-")
+        widget_attrs.add("id", widget_id)
         return field_class.widget(attrs=widget_attrs)
 
     def create_form_field(self):

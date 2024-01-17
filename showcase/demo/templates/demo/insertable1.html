@@ -1,0 +1,14 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'insertable' %}">Insertable listing</a> : Simple form</h2>
+    <p>Have a look at <code>demo/templates/demo/insertable1.html</code> and
+        <code>Insertable1View</code> in <code>demo/views.py</code> to see how examples are coded</p>
+
+    {% render_listing listing %}
+
+    {% render_listing_form listing action='insert' layout='first_name,last_name,age,gender,marital_status;address;designation,salary,joined,have_car' submit_label='Insert' %}
+
+{% endblock %}

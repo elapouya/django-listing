@@ -1,14 +1,12 @@
 {% extends "demo/base.html" %}
-{% load django_listing %}
 {% load i18n %}
 
 {% block body %}
     <h2>Insertable listing</h2>
-    <p>Have a look at <code>demo/templates/demo/insertable.html</code> and
-        <code>InsertableView</code> in <code>demo/views.py</code> to see how examples are coded</p>
-
-    {% render_listing listing %}
-
-    {% render_listing_form listing action='insert' layout='first_name,last_name,age,gender,marital_status;address;designation,salary,joined,have_car' submit_label='Insert' %}
-
+    <div class="list-group col-md-6 offset-md-3 django-listing-menu">
+        <a class="list-group-item list-group-item-action" href="{% url "insertable1" %}">
+            <b>Simple insert form</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "insertable2" %}">
+            <b>Filter, insert, select and edit</b></a>
+    </div>
 {% endblock %}

@@ -54,7 +54,9 @@ urlpatterns = i18n_patterns(
     path("selectable/4/", SelectableListing4View.as_view(), name="selectable4"),
     path("selectable/5/", SelectableListing5View.as_view(), name="selectable5"),
     path("group_by/", GroupByListingView.as_view(), name="group_by"),
-    path("insertable/", InsertableListingView.as_view(), name="insertable"),
+    path("insertable/", InsertableListingIndexView.as_view(), name="insertable"),
+    path("insertable1/", InsertableListing1View.as_view(), name="insertable1"),
+    path("insertable2/", InsertableListing2View.as_view(), name="insertable2"),
     path("upload/", UploadListingView.as_view(), name="upload"),
     path("fonticons/", FonticonsView.as_view(), name="fonticons"),
     path(

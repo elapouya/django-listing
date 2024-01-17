@@ -613,9 +613,41 @@ class SelectableListing5View(ListingView):
         return context
 
 
-class InsertableListingView(ListingView):
+class InsertableListingIndexView(TemplateView):
     template_name = "demo/insertable.html"
-    listing_class = InsertableListing
+
+
+class InsertableListing1View(ListingView):
+    template_name = "demo/insertable1.html"
+    listing_class = InsertableListing1
+    listing_data = Employee
+
+    def manage_listing_insert_form_clean(self, form):
+        cd = form.cleaned_data
+        first_name = cd.get("first_name")
+        last_name = cd.get("last_name")
+        if first_name and last_name:
+            if Employee.objects.filter(
+                first_name=first_name, last_name=last_name
+            ).exists():
+                raise ValidationError(
+                    mark_safe(
+                        _("<b>{first_name} {last_name}</b> already exists").format(
+                            first_name=first_name, last_name=last_name
+                        )
+                    )
+                )
+
+    def manage_listing_insert_form_clean_age(self, form):
+        age = form.cleaned_data.get("age")
+        if age is None or age < 0 or age > 130:
+            raise ValidationError(gettext("Age must be between 0 and 130."))
+        return age
+
+
+class InsertableListing2View(ListingView):
+    template_name = "demo/insertable2.html"
+    listing_class = InsertableListing2
     listing_data = Employee
 
     def manage_listing_insert_form_clean(self, form):

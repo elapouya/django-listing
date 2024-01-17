@@ -1130,6 +1130,9 @@ form.listing-form div.form-field {
   margin: 5px;
   width: 100%;
 }
+form.listing-form div.form-field > .label_input > .select2 {
+  display: block;
+}
 form.listing-form div.form-field label {
   margin-bottom: 0.1em;
 }
