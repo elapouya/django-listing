@@ -721,8 +721,6 @@ class InsertableListing2(FilterListingMixin, Listing):
     company__form_field_widget_class = ModelSelect2
     company__form_field_widget_params = {"url": "company-autocomplete"}
     company__widget_attrs = {"data-result-html": True}
-    salary__required = False
-    age__required = False
 
     # for Select2 widget :
 

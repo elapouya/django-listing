@@ -1,3 +1,8 @@
+0.6.4 (2024-01-18)
+------------------
+- Improve listing insert form
+- add no_foreignkey_link to ManyColumn class
+
 0.6.3 (2024-01-14)
 ------------------
 - add range selection (press shift on second selection)

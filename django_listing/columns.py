@@ -574,7 +574,8 @@ class Column(metaclass=ColumnMeta):
         if listing.model:
             try:
                 f = listing.model._meta.get_field(name)
-                self.model_form_field = f.formfield(validators=f.validators)
+                if hasattr(f, "formfield"):
+                    self.model_form_field = f.formfield(validators=f.validators)
             except FieldDoesNotExist:
                 pass
         self.set_kwargs(**kwargs)
@@ -1183,8 +1184,8 @@ class ManyColumn(Column):
     def init(self, *args, **kwargs):
         super().init(*args, **kwargs)
         qs = getattr(self, "queryset", None)
-        if not qs and self.listing.model:
-            self.queryset = self.listing.model.objects.all()
+        if not qs and self.model_field:
+            self.queryset = self.model_field.related_model.objects.all()
 
     def get_cell_value(self, rec):
         value = super().get_cell_value(rec)
@@ -1498,8 +1499,8 @@ class ForeignKeyColumn(LinkColumn):
     def init(self, *args, **kwargs):
         super().init(*args, **kwargs)
         qs = getattr(self, "queryset", None)
-        if not qs and self.listing.model:
-            self.queryset = self.listing.model.objects.all()
+        if not qs and self.model_field:
+            self.queryset = self.model_field.related_model.objects.all()
 
     def get_cell_value(self, rec):
         value = super().get_cell_value(rec)
