@@ -13,6 +13,7 @@ from types import GeneratorType
 
 from django import forms
 from django.conf import settings
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.forms import widgets
 from django.template.defaultfilters import filesizeformat
@@ -88,8 +89,10 @@ COLUMNS_PARAMS_KEYS = {
     "footer_attrs",
     "footer_tpl",
     "footer_value_tpl",
+    "form_field",
     "form_field_class",
     "form_field_widget_class",
+    "form_field_widget_params",
     "has_cell_filter",
     "header",
     "header_attrs",
@@ -137,10 +140,26 @@ COLUMNS_FORM_FIELD_KEYS = {
     "max_value",
     "min_length",
     "min_value",
+    "queryset",
     "required",
     "strip",
     "validators",
     "widget",
+}
+
+
+FORM_FIELD_BASE_KEYS = {
+    "required",
+    "widget",
+    "label",
+    "initial",
+    "help_text",
+    "error_messages",
+    "show_hidden_initial",
+    "validators",
+    "localize",
+    "disabled",
+    "label_suffix",
 }
 
 EXPORT_XLSX_ILLEGAL_CHARACTERS_RE = re.compile(r"[\000-\010]|[\013-\014]|[\016-\037]")
@@ -479,6 +498,7 @@ class Column(metaclass=ColumnMeta):
     footer = None
     footer_tpl = None
     footer_value_tpl = None
+    form_field = None
     form_field_class = forms.CharField
     form_field_widget_class = None
     form_field_keys = None
@@ -493,6 +513,7 @@ class Column(metaclass=ColumnMeta):
     listing = None
     link_target = None
     model_field = None
+    model_form_field = None
     name = None
     no_choice_msg = _("Please choose...")
     params_keys = ""
@@ -530,6 +551,7 @@ class Column(metaclass=ColumnMeta):
                 "cell_attrs",
                 "footer_attrs",
                 "widget_attrs",
+                "form_field_widget_params",
             ],
         )
 
@@ -549,6 +571,12 @@ class Column(metaclass=ColumnMeta):
                 self.name = re.sub(r"\W", "", header.strip().replace(" ", "_").lower())
             else:
                 self.name = "noname"
+        if listing.model:
+            try:
+                f = listing.model._meta.get_field(name)
+                self.model_form_field = f.formfield(validators=f.validators)
+            except FieldDoesNotExist:
+                pass
         self.set_kwargs(**kwargs)
         self.apply_template_kwargs()
         if self.data_key is None:
@@ -917,11 +945,18 @@ class Column(metaclass=ColumnMeta):
             return '<td class="render-error">{}</td>'.format(e)
 
     def get_form_field_params(self, have_empty_choice=False):
-        params = {
-            p: getattr(self, p)
-            for p in COLUMNS_FORM_FIELD_KEYS
-            if getattr(self, p, None) is not None
-        }
+        # Get form field params from the listing first,
+        # if not available use model informations
+        params = {}
+        for p in COLUMNS_FORM_FIELD_KEYS:
+            if p != "widget":
+                if getattr(self, p, None) is not None:
+                    params[p] = getattr(self, p)
+                elif (
+                    p in FORM_FIELD_BASE_KEYS
+                    and getattr(self.model_form_field, p, None) is not None
+                ):
+                    params[p] = getattr(self.model_form_field, p)
         return params
 
     def get_form_field_class(self):
@@ -950,9 +985,11 @@ class Column(metaclass=ColumnMeta):
         widget_attrs.add("class", self.theme_form_widget_class)
         widget_id = f"id-listingform-{self.name}{self.listing.suffix}".replace("_", "-")
         widget_attrs.add("id", widget_id)
-        return cls(attrs=widget_attrs)
+        return cls(attrs=widget_attrs, **self.form_field_widget_params)
 
     def create_form_field(self, have_empty_choice=False):
+        if self.form_field:
+            return self.form_field
         cls = self.get_form_field_class()
         params = self.get_form_field_params(have_empty_choice)
         widget = self.get_form_field_widget(cls)
@@ -1138,9 +1175,16 @@ class ManyColumn(Column):
     many_separator = ", "
     params_keys = "many_separator,cell_map,cell_filter,cell_reduce"
     from_model_field_classes = (models.ManyToManyField, models.ManyToManyRel)
+    form_field_class = forms.ModelMultipleChoiceField
     params_keys = "no_foreignkey_link"
     no_foreignkey_link = False
     editable = False
+
+    def init(self, *args, **kwargs):
+        super().init(*args, **kwargs)
+        qs = getattr(self, "queryset", None)
+        if not qs and self.listing.model:
+            self.queryset = self.listing.model.objects.all()
 
     def get_cell_value(self, rec):
         value = super().get_cell_value(rec)
@@ -1446,9 +1490,16 @@ class LinkObjectColumn(LinkColumn):
 
 class ForeignKeyColumn(LinkColumn):
     from_model_field_classes = (models.ForeignKey,)
+    form_field_class = forms.ModelChoiceField
     params_keys = "no_foreignkey_link"
     no_foreignkey_link = False
     editable = False
+
+    def init(self, *args, **kwargs):
+        super().init(*args, **kwargs)
+        qs = getattr(self, "queryset", None)
+        if not qs and self.listing.model:
+            self.queryset = self.listing.model.objects.all()
 
     def get_cell_value(self, rec):
         value = super().get_cell_value(rec)

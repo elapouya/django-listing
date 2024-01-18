@@ -12,7 +12,7 @@ from dal import autocomplete
 from django.conf import settings
 from django.contrib import messages
 from django.db.models import Count
-from django.utils.html import format_html
+from django.utils.html import format_html, escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -709,8 +709,15 @@ class CompanyAutocomplete(autocomplete.Select2QuerySetView):
 
         return qs
 
+    def get_selected_result_label(self, item):
+        comp_name = escape(item.name)
+        comp_city = escape(item.city)
+        return f"{comp_name} ({comp_city})"
+
     def get_result_label(self, result):
-        return format_html("<b>{}</b><i>({})</i>", result.name, result.city)
+        comp_name = escape(result.name)
+        comp_city = escape(result.city)
+        return format_html("<b>{}</b><i>({})</i>", comp_name, comp_city)
 
 
 class InterestAutocomplete(autocomplete.Select2QuerySetView):

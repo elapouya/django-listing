@@ -6,7 +6,9 @@
 
 from datetime import datetime
 
+from dal_select2.widgets import ModelSelect2
 from django.core.exceptions import ValidationError
+from django.forms import ModelChoiceField
 from django.utils.encoding import force_str
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -716,6 +718,26 @@ class InsertableListing2(FilterListingMixin, Listing):
     columns_label_suffix = ""
     save_to_database = True
     exclude_columns = "interests"
+    company__form_field_widget_class = ModelSelect2
+    company__form_field_widget_params = {"url": "company-autocomplete"}
+    company__widget_attrs = {"data-result-html": True}
+    salary__required = False
+    age__required = False
+
+    # for Select2 widget :
+
+    # company__form_field_widget_class = ModelSelect2
+    # company__form_field_widget_params = dict(url="company-autocomplete")
+    # company__widget_attrs = {"data-result-html": True}
+    # company__queryset = Company.objects.filter(...)  # all() by default
+    # or
+
+    # company__form_field = ModelChoiceField(
+    #     queryset=Company.objects.all(),
+    #     widget=ModelSelect2(
+    #         url="company-autocomplete", attrs={"data-result-html": True}
+    #     ),
+    # )
 
 
 class UploadListing(DivListing):
