@@ -21,11 +21,23 @@
         </div>
     </div>
 
-    {% render_listing_form listing action='insert' layout='first_name,last_name,age,gender,marital_status;address;designation,salary,joined,company,have_car' submit_label='Insert' %}
+    {% render_listing_form listing %}
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#id_marital_status").val("Married");
+        var newOption = $('<option>', {
+            value: '5',
+            text: 'Option 5'
+        });
+
+  // Append the new option to the select element
+        $('#id-listingform-company').append(newOption);
+        $("#id-listingform-company").val("5").trigger("change");
+    });
+
+    $("form.listing-form").on("submit", function(e) {
+        console.log("form.listing-form submitted...");
+        e.preventDefault();
     });
 </script>
 

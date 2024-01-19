@@ -3,6 +3,7 @@
 #
 # @author: Eric Lapouyade
 #
+import copy
 
 from django import forms
 from django.core.exceptions import ValidationError
@@ -102,6 +103,7 @@ class ListingForm:
     submit_label = pgettext_lazy("Listing form", "Add")
     template_name = ThemeTemplate("listing_form.html")
     layout = None
+    listing = None
     buttons = "reset,submit"
     name = "listing_form"
     attrs = {"class": "listing-form"}
@@ -120,7 +122,11 @@ class ListingForm:
         )
 
     def bind_to_listing(self, listing):
-        self.init(listing, *self.init_args, **self.init_kwargs)
+        form = self
+        if form.listing != listing:
+            form = copy.deepcopy(self)
+        form.init(listing, *self.init_args, **self.init_kwargs)
+        return form
 
     def set_listing(self, listing):
         self.listing = listing
@@ -169,10 +175,11 @@ class ListingForm:
         fields = {}
         if not self.layout:
             raise InvalidListingForm(
-                _("You must specify a list of columns " "names in the form layout")
+                _("You must specify a list of columns names in the form layout")
             )
         for row in self.layout:
             for field_name in row:
+                field_name = field_name.strip()
                 col = self.listing.columns.get(field_name)
                 if not col:
                     raise InvalidListingForm(
@@ -193,7 +200,10 @@ class ListingForm:
     def get_form(self):
         if not self._form:
             form_class = self.create_form_from_layout()
-            self._form = form_class(self.listing.request.POST or None)
+            data = None
+            if self.listing.request.POST.get("action") == self.action:
+                data = self.listing.request.POST
+            self._form = form_class(data)
             self._form.listing = self.listing
             self._form.form_name = self.name
         return self._form
