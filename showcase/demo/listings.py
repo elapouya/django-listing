@@ -731,6 +731,7 @@ class InsertableListing2(FilterListingMixin, Listing):
         ),
         submit_label="Insert",
     )
+    selectable = True
 
     # for Select2 widget :
 

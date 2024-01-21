@@ -5,6 +5,7 @@
          class="{{ listing_container_class }}"
          ajax_url="{{ listing.get_url }}"
          {% if listing.selection_menu_id %}selection-menu-id="{{ listing.selection_menu_id }}"{% endif %}
+         related-form="{{ listing.related_form }}"
     >
     <style>
         @media (max-width: {{ listing.theme_localized_small_device_styles_width }}) {

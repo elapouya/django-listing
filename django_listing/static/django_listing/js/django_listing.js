@@ -172,6 +172,12 @@ function djlst_multiple_row_do_select(row) {
     row.addClass('selected');
     hidden.attr('name',hidden.attr('select-name'));
     row.find('input.selection-box').first().prop('checked',true);
+    let form = $("#" + row.closest('.django-listing-container').attr('related-form'));
+    if (form.length) {
+        let obj = JSON.parse(decodeURIComponent(row.attr('data-serialized-object')));
+        djlst_fill_form(form, obj.fields);
+        console.log(obj);
+    }
 }
 
 function djlst_unique_row_select(e) {
@@ -280,6 +286,32 @@ function djlst_selection_menu_update(e) {
             selected_items.text(selected_items.attr('many').replace('{nb}', count));
         }
     }
+}
+
+function djlst_fill_form(form, obj) {
+    $.each(obj, function(key, value) {
+        console.log(key,value);
+        var element = form.find("[name='" + key + "']");
+        if (element.is(":input")) {
+             if (element.is("input[type='radio']")) {
+                 element.filter("[value='" + value + "']").prop("checked", true);
+             } else if (element.is("input[type='checkbox']")) {
+                 element.prop("checked", value);
+             } else if (element.is("select")) {
+                 var option = element.find("option[value='" + value + "']");
+                 if (option.length === 0) {
+                     // If option doesn't exist, create it
+                     element.append($("<option>", {
+                         value: value,
+                         text: value
+                     }));
+                 }
+                 element.val(value);
+            } else {
+                element.val(value);
+            }
+        }
+    });
 }
 
 function djlst_view_object_popup(event) {

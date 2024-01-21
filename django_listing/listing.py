@@ -469,6 +469,7 @@ class Listing(ListingBase):
     records_class = RecordManager
     record_label = None
     record_label_plural = None
+    related_form = None
     row_form_errors = None
     row_inner_div_tpl = None
     save_to_database = False
@@ -918,6 +919,8 @@ class Listing(ListingBase):
             if not isinstance(self.selection_initial, list):
                 self.selection_initial = [self.selection_initial]
             self.selection_has_overlay = self.selection_mode in ["overlay", "hover"]
+            if self.form:
+                self.form.render_init(context)
             self.global_context_init()
             self.records.compute_current_page_records()
             self._render_initialized = True

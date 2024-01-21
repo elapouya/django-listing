@@ -114,12 +114,16 @@ class ListingForm:
         self.name = name or f"{action}_form"
         self.action = action
         self._form = None
+        self._render_initialized = False
         init_dicts_from_class(
             self,
             [
                 "attrs",
             ],
         )
+
+    def is_render_initialized(self):
+        return self._render_initialized
 
     def bind_to_listing(self, listing):
         form = self
@@ -165,15 +169,6 @@ class ListingForm:
                 listing_form_layout=layout_str, listing_form_name=self.name
             )
         self.listing.add_form_input_hiddens(listing_id=self.listing.id)
-        if not isinstance(self.attrs, HTMLAttributes):
-            self.attrs = HTMLAttributes(self.attrs)
-        form_css_class = "listing-" + self.name.replace("_", "-")
-        self.attrs.add("class", form_css_class)
-        if self.listing.accept_ajax:
-            self.attrs.add("class", f"django-{self.name}-ajax")
-        if "id" not in self.attrs:
-            self.attrs.add("id", f"{form_css_class}{self.listing.suffix}")
-        self.id = self.attrs["id"]
         buttons = self.buttons
         if isinstance(buttons, str):
             self.buttons = list(map(str.strip, buttons.split(",")))
@@ -215,8 +210,20 @@ class ListingForm:
         return self._form
 
     def render_init(self, context):
-        self.listing.manage_page_context(context)
-        self.datetimepicker_init()
+        if not self._render_initialized:
+            self.listing.manage_page_context(context)
+            self.datetimepicker_init()
+            if not isinstance(self.attrs, HTMLAttributes):
+                self.attrs = HTMLAttributes(self.attrs)
+            form_css_class = "listing-" + self.name.replace("_", "-")
+            self.attrs.add("class", form_css_class)
+            if self.listing.accept_ajax:
+                self.attrs.add("class", f"django-{self.name}-ajax")
+            if "id" not in self.attrs:
+                self.attrs.add("id", f"{form_css_class}{self.listing.suffix}")
+            self.listing.related_form = self.id = self.attrs["id"]
+            self.attrs.add("related-listing", self.listing.css_id)
+            self._render_initialized = True
 
     def render(self, context):
         self.render_init(context)
