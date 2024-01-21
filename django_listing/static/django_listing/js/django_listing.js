@@ -291,7 +291,7 @@ function djlst_selection_menu_update(e) {
 function djlst_fill_form(form, obj) {
     $.each(obj, function(key, value) {
         console.log(key,value);
-        var element = form.find("[name='" + key + "']");
+        var element = form.find("[data-model-field='" + key + "']");
         if (element.is(":input")) {
              if (element.is("input[type='radio']")) {
                  element.filter("[value='" + value + "']").prop("checked", true);
