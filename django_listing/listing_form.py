@@ -124,7 +124,7 @@ class ListingForm:
     def bind_to_listing(self, listing):
         form = self
         if form.listing != listing:
-            form = copy.deepcopy(self)
+            form = copy.deepcopy(self)  # important
         form.init(listing, *self.init_args, **self.init_kwargs)
         return form
 
@@ -146,6 +146,20 @@ class ListingForm:
             # transform layout string into list of lists
             self.layout = list(map(lambda s: s.split(","), self.layout.split(";")))
         if self.layout:
+            self.listing.form_model_fields = []
+            for row in self.layout:
+                for field_name in row:
+                    field_name = field_name.strip()
+                    col = self.listing.columns.get(field_name)
+                    if not col:
+                        raise InvalidListingForm(
+                            _(
+                                "In the {form_name} layout you specified the field "
+                                '"{field_name}" but there is no existing listing '
+                                "column with that name"
+                            ).format(form_name=self.name, field_name=field_name)
+                        )
+                    self.listing.form_model_fields.append(col.model_field.name)
             layout_str = ";".join(map(lambda l: ",".join(l), self.layout))
             self.listing.add_form_input_hiddens(
                 listing_form_layout=layout_str, listing_form_name=self.name
@@ -181,14 +195,6 @@ class ListingForm:
             for field_name in row:
                 field_name = field_name.strip()
                 col = self.listing.columns.get(field_name)
-                if not col:
-                    raise InvalidListingForm(
-                        _(
-                            "In the {form_name} layout you specified the field "
-                            '"{field_name}" but there is no existing listing '
-                            "column with that name"
-                        ).format(form_name=self.name, field_name=field_name)
-                    )
                 fields[field_name] = col.create_form_field(have_empty_choice=True)
         form_class = type(
             "{}{}".format(self.name, self.listing.suffix),

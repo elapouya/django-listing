@@ -7,7 +7,7 @@
 import collections
 import logging
 import pprint
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import urlsplit, urlunsplit, quote
 
 import tablib
 from django import forms
@@ -120,7 +120,9 @@ LISTING_PARAMS_KEYS = {
     "filters",
     "footer_snippet",
     "footer_template_name",
-    "form",
+    "form",  # usually insert/edit form (NOT filter form)
+    "form_autofill",  # insert/edit form is automatically filled when a listing row is selected
+    "form_model_fields",  # corresponding model fields in insert/edit form
     "gb_annotate_cols",  # group_by annotation columns
     "gb_cols",  # group_by columns
     "global_context",
@@ -432,6 +434,8 @@ class Listing(ListingBase):
     footer_snippet = None
     footer_template_name = None
     form = None
+    form_autofill = False
+    form_model_fields = None
     gb_annotate_cols = None
     gb_cols = None
     gb_template_name = ThemeTemplate("group_by.html")
@@ -773,14 +777,14 @@ class Listing(ListingBase):
             self.create_missing_filters()
             if self.filters:
                 self.filters = self.filters.bind_to_listing(self)
-            if self.form:
-                self.form = self.form.bind_to_listing(self)
             self.manage_page_context(context)
             self.create_missing_columns()
             self.manage_group_by()
             self.create_missing_toolbar_items()
             self.has_toolbar = bool(self.toolbar)
             self.columns = self.columns.bind_to_listing(self)
+            if self.form:
+                self.form = self.form.bind_to_listing(self)
             if self.toolbar:
                 self.toolbar = self.toolbar.bind_to_listing(self)
             self.col_cell_renderers = {
@@ -1267,6 +1271,11 @@ class Listing(ListingBase):
         attrs = HTMLAttributes(self.row_attrs)  # create a copy
         if rec.pk:
             attrs.add("data-pk", str(rec.pk))
+        if self.form_model_fields:
+            attrs.add(
+                "data-serialized-object",
+                rec.get_serialized_object(fields=self.form_model_fields),
+            )
         attrs.add("class", "odd" if rec.get_index() % 2 else "even")
         if self.can_select:
             if not self.selection_has_overlay:

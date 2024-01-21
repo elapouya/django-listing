@@ -994,6 +994,8 @@ class Column(metaclass=ColumnMeta):
         cls = self.get_form_field_class()
         params = self.get_form_field_params(have_empty_choice)
         widget = self.get_form_field_widget(cls)
+        if self.listing.model:
+            widget.attrs["data-model-field"] = self.model_field.name
         field = cls(widget=widget, **params)
         return field
 
@@ -1049,9 +1051,9 @@ class BooleanColumn(Column):
         return self.true_tpl if value else self.false_tpl
 
     def get_form_field_widget(self, field_class):
-        wiget_attrs = HTMLAttributes(self.widget_attrs)
-        wiget_attrs.add("class", "form-check-input")
-        return forms.CheckboxInput(attrs=wiget_attrs)
+        widget_attrs = HTMLAttributes(self.widget_attrs)
+        widget_attrs.add("class", "form-check-input")
+        return forms.CheckboxInput(attrs=widget_attrs)
 
 
 class IntegerColumn(Column):

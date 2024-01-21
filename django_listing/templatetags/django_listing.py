@@ -308,8 +308,8 @@ def render_listing_form(
             else:
                 listing.form.action = action
     if not listing.form:
-        listing.form = ListingForm(action, name=name, layout=layout, *args, **kwargs)
-    listing.form.bind_to_listing(listing)
+        form = ListingForm(action, name=name, layout=layout, *args, **kwargs)
+        listing.form = form.bind_to_listing(listing)
     return mark_safe(listing.form.render(context))
 
 

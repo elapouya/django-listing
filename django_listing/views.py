@@ -293,7 +293,7 @@ class ListingViewMixin:
                     )
                 )
             listing_form = ListingForm(listing.action, name=name, layout=layout)
-            listing_form.bind_to_listing(listing)
+            listing_form = listing_form.bind_to_listing(listing)
             django_form = listing_form.get_form()
         return django_form
 

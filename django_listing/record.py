@@ -8,13 +8,14 @@ import collections
 import os
 import re
 import types
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus, quote
 
 from django.db import models
 from django.db.models import F, Model, Count
 from django.db.models.query import QuerySet
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
+from django.core.serializers import serialize
 
 from .exceptions import *
 
@@ -264,6 +265,9 @@ class Record:
 
     def get_object(self):
         return self._obj
+
+    def get_serialized_object(self, **kwargs):
+        return quote(serialize("json", [self._obj], **kwargs)[1:-1])
 
     def is_selected(self):
         return self._selected
