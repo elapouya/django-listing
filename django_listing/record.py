@@ -10,6 +10,7 @@ import re
 import types
 from urllib.parse import quote_plus, quote
 
+from django.core.serializers.json import Serializer
 from django.db import models
 from django.db.models import F, Model, Count
 from django.db.models.query import QuerySet
@@ -19,7 +20,16 @@ from django.core.serializers import serialize
 
 from .exceptions import *
 
-__all__ = ["RecordManager", "Record", "cache_in_record"]
+__all__ = [
+    "RecordManager",
+    "Record",
+    "cache_in_record",
+    "object_serializer",
+    "FORM_LABEL_METHOD_NAME",
+]
+
+
+FORM_LABEL_METHOD_NAME = "get_form_label"
 
 
 def cache_in_record(value_func):
@@ -37,6 +47,27 @@ class SequenceItem:
     def __init__(self, pk, obj):
         self.pk = pk
         self.obj = obj
+
+
+class ObjectSerializer(Serializer):
+    def serialize(self, *args, **kwargs):
+        self.include_data = kwargs.pop("include_data", None)
+        return super().serialize(*args, **kwargs)
+
+    def start_serialization(self):
+        self._init_options()
+
+    def end_serialization(self):
+        pass
+
+    def get_dump_object(self, obj):
+        data = {"fields": self._current}
+        if self.include_data:
+            data["data"] = self.include_data
+        return data
+
+
+object_serializer = ObjectSerializer()
 
 
 # Records are always bound to a listing instance
@@ -266,8 +297,41 @@ class Record:
     def get_object(self):
         return self._obj
 
+    def get_form_serialized_labels(self, obj, labels_fields):
+        data = {}
+        for f in labels_fields:
+            foreign_object = getattr(obj, f)
+            if foreign_object:
+                form_label_func = getattr(foreign_object, FORM_LABEL_METHOD_NAME, None)
+                if form_label_func is None or not callable(form_label_func):
+                    raise InvalidListing(
+                        _(
+                            "You must define the method {FORM_LABEL_METHOD_NAME}() "
+                            "in your model {class_name}"
+                        ).format(
+                            FORM_LABEL_METHOD_NAME=FORM_LABEL_METHOD_NAME,
+                            class_name=foreign_object.__class__.__name__,
+                        )
+                    )
+                data[f] = form_label_func()
+        return data
+
     def get_serialized_object(self, **kwargs):
-        return quote(serialize("json", [self._obj], **kwargs)[1:-1])
+        include_data = None
+        labels_fields = self._listing.form_serialize_labels
+        if labels_fields:
+            func = self._listing.form_serialize_labels_func
+            if func is None:
+                func = self.get_form_serialized_labels
+            elif isinstance(func, str):
+                func = getattr(self._obj.__class__, func)
+            include_data = func(self._obj, labels_fields)
+        serialized_obj = object_serializer.serialize(
+            [self._obj],
+            include_data=include_data,
+            **kwargs,
+        )
+        return quote(serialized_obj)
 
     def is_selected(self):
         return self._selected

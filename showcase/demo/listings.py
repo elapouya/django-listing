@@ -721,6 +721,7 @@ class InsertableListing2(FilterListingMixin, Listing):
     company__form_field_widget_class = ModelSelect2
     company__form_field_widget_params = {"url": "company-autocomplete"}
     company__widget_attrs = {"data-result-html": True}
+    company__form_field_serialize_label = True
     form_autofill = True
     form = ListingForm(
         "insert",

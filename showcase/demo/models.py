@@ -3,6 +3,7 @@
 #
 # @author: Eric Lapouyade
 #
+from html import escape
 
 from django.conf import settings
 from django.db import models
@@ -29,6 +30,11 @@ class Company(models.Model):
 
     def get_absolute_url(self):
         return reverse("company_detail", args=[self.pk])
+
+    def get_form_label(self):
+        comp_name = escape(self.name)
+        comp_city = escape(self.city)
+        return f"{comp_name} ({comp_city})"
 
 
 class Interest(models.Model):

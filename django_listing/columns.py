@@ -93,6 +93,7 @@ COLUMNS_PARAMS_KEYS = {
     "form_field_class",
     "form_field_widget_class",
     "form_field_widget_params",
+    "form_field_serialize_label",
     "has_cell_filter",
     "header",
     "header_attrs",
@@ -502,6 +503,7 @@ class Column(metaclass=ColumnMeta):
     form_field_class = forms.CharField
     form_field_widget_class = None
     form_field_keys = None
+    form_field_serialize_label = False
     from_model_field_classes = []
     from_model_field_order = 100
     has_cell_filter = False

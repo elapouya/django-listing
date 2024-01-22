@@ -174,8 +174,10 @@ function djlst_multiple_row_do_select(row) {
     row.find('input.selection-box').first().prop('checked',true);
     let form = $("#" + row.closest('.django-listing-container').attr('related-form'));
     if (form.length) {
-        let obj = JSON.parse(decodeURIComponent(row.attr('data-serialized-object')));
-        djlst_fill_form(form, obj.fields);
+        let serialized_obj = decodeURIComponent(row.attr('data-serialized-object'));
+        console.log("serialized_obj", serialized_obj);
+        let obj = JSON.parse(serialized_obj);
+        djlst_fill_form(form, obj);
         console.log(obj);
     }
 }
@@ -289,7 +291,7 @@ function djlst_selection_menu_update(e) {
 }
 
 function djlst_fill_form(form, obj) {
-    $.each(obj, function(key, value) {
+    $.each(obj.fields, function(key, value) {
         console.log(key,value);
         var element = form.find("[data-model-field='" + key + "']");
         if (element.is(":input")) {
@@ -300,11 +302,19 @@ function djlst_fill_form(form, obj) {
              } else if (element.is("select")) {
                  var option = element.find("option[value='" + value + "']");
                  if (option.length === 0) {
-                     // If option doesn't exist, create it
-                     element.append($("<option>", {
-                         value: value,
-                         text: value
-                     }));
+                     // If option doesn't exist, create it and remove others
+                     element.empty();
+                     if (obj.data) {
+                         element.append($("<option>", {
+                             value: value,
+                             text: obj.data[key] || value
+                         }));
+                     } else {
+                         element.append($("<option>", {
+                             value: value,
+                             text: value
+                         }));
+                     }
                  }
                  element.val(value);
             } else {

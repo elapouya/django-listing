@@ -122,7 +122,6 @@ LISTING_PARAMS_KEYS = {
     "footer_template_name",
     "form",  # usually insert/edit form (NOT filter form)
     "form_autofill",  # insert/edit form is automatically filled when a listing row is selected
-    "form_model_fields",  # corresponding model fields in insert/edit form
     "gb_annotate_cols",  # group_by annotation columns
     "gb_cols",  # group_by columns
     "global_context",
@@ -436,6 +435,8 @@ class Listing(ListingBase):
     form = None
     form_autofill = False
     form_model_fields = None
+    form_serialize_labels = None
+    form_serialize_labels_func = None
     gb_annotate_cols = None
     gb_cols = None
     gb_template_name = ThemeTemplate("group_by.html")

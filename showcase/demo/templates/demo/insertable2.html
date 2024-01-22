@@ -24,20 +24,9 @@
     {% render_listing_form listing %}
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        var newOption = $('<option>', {
-            value: '5',
-            text: 'Option 5'
-        });
-
-  // Append the new option to the select element
-        $('#id-listingform-company').append(newOption);
-        $("#id-listingform-company").val("5").trigger("change");
-    });
-
     $("form.listing-form").on("submit", function(e) {
         console.log("form.listing-form submitted...");
-        e.preventDefault();
+        {#e.preventDefault();#}
     });
 </script>
 

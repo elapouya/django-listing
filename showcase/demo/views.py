@@ -710,9 +710,7 @@ class CompanyAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
     def get_selected_result_label(self, item):
-        comp_name = escape(item.name)
-        comp_city = escape(item.city)
-        return f"{comp_name} ({comp_city})"
+        return item.get_form_label()
 
     def get_result_label(self, result):
         comp_name = escape(result.name)
