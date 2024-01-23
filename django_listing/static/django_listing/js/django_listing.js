@@ -101,13 +101,51 @@ function djlst_post_button_action(event) {
     if (! listing_target) listing_target = "#"+listing_id;
     var listing_part = nav_obj.attr("listing-part");
     if (! listing_part) listing_part = "all";
-    request_data = {
+    let request_data = {
         listing_id : listing_id,
         listing_suffix : listing_suffix,
         listing_part : listing_part,
         serialized_data : nav_obj.closest('form').serialize()
     };
     request_data[$(this).attr('name')]=$(this).val();
+    update_csrf_token();
+    $.ajax({
+       type: "POST",
+       url: ajax_url,
+       data: request_data,
+       success: function(response)
+       {
+           $(listing_target).html(response);
+           $(listing_target).children(":first").unwrap();
+           djlst_listing_on_load();
+           $(document).trigger( "djlst_ajax_loaded", [ listing_target ] );
+       }
+    });
+}
+
+function djlst_post_listing_form(event) {
+    console.log("djlst_post_listing_form");
+    event.preventDefault();
+    let nav_obj = $(event.originalEvent.submitter);
+    let action = nav_obj.val();
+    let listing_form = nav_obj.closest("form.listing-form");
+    let listing_div = $("#" + listing_form.attr("related-listing"));
+    let ajax_url = listing_div.attr("ajax_url");
+    listing_div.addClass("spinning");
+    let listing_id = listing_div.attr("id");
+    let listing_suffix = listing_div.attr("listing-suffix");
+    let listing_target = nav_obj.attr("listing-target");
+    if (! listing_target) listing_target = "#"+listing_id;
+    let listing_part = nav_obj.attr("listing-part");
+    if (! listing_part) listing_part = "all";
+
+    let request_data = {
+        listing_id : listing_id,
+        listing_suffix : listing_suffix,
+        listing_part : listing_part,
+        action : action,
+        serialized_data : nav_obj.closest('form').serialize()
+    };
     update_csrf_token();
     $.ajax({
        type: "POST",
@@ -175,10 +213,8 @@ function djlst_multiple_row_do_select(row) {
     let form = $("#" + row.closest('.django-listing-container').attr('related-form'));
     if (form.length) {
         let serialized_obj = decodeURIComponent(row.attr('data-serialized-object'));
-        console.log("serialized_obj", serialized_obj);
         let obj = JSON.parse(serialized_obj);
         djlst_fill_form(form, obj);
-        console.log(obj);
     }
 }
 
@@ -292,7 +328,6 @@ function djlst_selection_menu_update(e) {
 
 function djlst_fill_form(form, obj) {
     $.each(obj.fields, function(key, value) {
-        console.log(key,value);
         var element = form.find("[data-model-field='" + key + "']");
         if (element.is(":input")) {
              if (element.is("input[type='radio']")) {
@@ -410,6 +445,19 @@ $(document).ready(function () {
     $(document.body).on("click", ".button-action-group-by", function () {
         $(this).closest(".django-listing-container").find(".group-by-container").slideToggle(200);
     });
+
+
+    $("form.listing-form").on("submit", function(event) {
+        console.log("form.listing-form submitted...");
+        console.log(event);
+        var pressedButton = $(":submit", event.target);
+        console.log("Pressed Button Value: " + pressedButton.val());
+        console.log("Pressed Button name: " + pressedButton.attr("name"));
+        djlst_post_listing_form(event);
+        console.log(event.originalEvent.submitter);
+        event.preventDefault();
+    });
+
 
     $('[data-toggle="popover"]').popover();
 

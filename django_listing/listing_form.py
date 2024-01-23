@@ -171,7 +171,7 @@ class ListingForm:
             self.listing.add_form_input_hiddens(
                 listing_form_layout=layout_str, listing_form_name=self.name
             )
-        self.listing.add_form_input_hiddens(listing_id=self.listing.id)
+        # self.listing.add_form_input_hiddens(listing_id=self.listing.id)
         buttons = self.buttons
         if isinstance(buttons, str):
             self.buttons = list(map(str.strip, buttons.split(",")))

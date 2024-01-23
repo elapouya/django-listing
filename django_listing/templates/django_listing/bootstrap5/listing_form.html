@@ -53,6 +53,10 @@
                                 name="action" value="{{ listing_form.action }}">
                             {{ listing_form.submit_label|safe }}
                         </button>
+                        <button type="submit" class="listing-form-nav btn btn-primary submit-button"
+                                name="action" value="update">
+                            Update
+                        </button>
                     {% endif %}
                 {% endif %}
             {% endfor %}

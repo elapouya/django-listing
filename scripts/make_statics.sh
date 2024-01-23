@@ -28,7 +28,7 @@ DUAL_LISTBOX_MIN_JS=$JS_DIR/dual-listbox.min.js
 JS_COMPRESS="google-closure-compiler --language_out=ECMASCRIPT_2015"
 CSS_COMPRESS=csso
 SAAS=/usr/local/bin/sass
-MINIFY=true
+MINIFY=false
 
 for THEME in bootstrap4 bootstrap5
 do
