@@ -257,21 +257,21 @@ msgstr "Sort by:"
 msgid ":"
 msgstr ""
 
-#: listing_form.py:101
+#: attached_form.py:101
 msgctxt "Listing form"
 msgid "Reset"
 msgstr ""
 
-#: listing_form.py:102
+#: attached_form.py:102
 msgctxt "Listing form"
 msgid "Add"
 msgstr ""
 
-#: listing_form.py:172
+#: attached_form.py:172
 msgid "You must specify a list of columns names in the form layout"
 msgstr ""
 
-#: listing_form.py:180
+#: attached_form.py:180
 #, python-brace-format
 msgid ""
 "In the {form_name} layout you specified the field \"{field_name}\" but there "

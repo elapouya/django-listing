@@ -11,7 +11,7 @@ from django.conf import settings
 from django.utils.safestring import SafeString, mark_safe
 
 from ..listing import Listing, ListingVariations
-from ..listing_form import ListingForm
+from ..attached_form import AttachedForm
 from ..theme_config import ThemeTemplate
 
 register = template.Library()
@@ -273,7 +273,7 @@ def get_form_field(form, name):
 
 
 @register.simple_tag(takes_context=True)
-def render_listing_form(
+def render_attached_form(
     context, listing, *args, action=None, layout=None, name=None, **kwargs
 ):
     if not listing:
@@ -283,34 +283,34 @@ def render_listing_form(
             "<b>ERROR :</b> You specified an invalid listing instance. "
             "Do you have set the corresponding variable in view context ?"
         )
-    if listing.form:
-        if not isinstance(listing.form, ListingForm):
+    if listing.attached_form:
+        if not isinstance(listing.attached_form, AttachedForm):
             return mark_safe(
-                "<b>ERROR :</b> when using {% render_listing_form listing %}"
-                "listing.form must be an instance of ListingForm"
+                "<b>ERROR :</b> when using {% render_attached_form listing %}"
+                "listing.attached_form must be an instance of AttachedForm"
             )
         if layout:
-            if listing.form.layout:
+            if listing.attached_form.layout:
                 return mark_safe(
                     "<b>ERROR :</b> Do not specify a layout in "
-                    "{% render_listing_form %} when a layout has already been  "
+                    "{% render_attached_form %} when a layout has already been  "
                     "defined at python side.<br><br>"
                 )
             else:
-                listing.form.layout = layout
+                listing.attached_form.layout = layout
         if action:
-            if listing.form.action:
+            if listing.attached_form.action:
                 return mark_safe(
                     "<b>ERROR :</b> Do not specify an action in "
-                    "{% render_listing_form %} when an action has already been  "
+                    "{% render_attached_form %} when an action has already been  "
                     "defined at python side.<br><br>"
                 )
             else:
-                listing.form.action = action
-    if not listing.form:
-        form = ListingForm(action, name=name, layout=layout, *args, **kwargs)
-        listing.form = form.bind_to_listing(listing)
-    return mark_safe(listing.form.render(context))
+                listing.attached_form.action = action
+    if not listing.attached_form:
+        form = AttachedForm(action, name=name, layout=layout, *args, **kwargs)
+        listing.attached_form = form.bind_to_listing(listing)
+    return mark_safe(listing.attached_form.render(context))
 
 
 @register.simple_tag(takes_context=True)

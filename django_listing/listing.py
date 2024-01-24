@@ -42,7 +42,7 @@ from .context import RenderContext
 from .exceptions import *
 from .filters import FILTERS_PARAMS_KEYS, Filters
 from .html_attributes import HTMLAttributes
-from .listing_form import LISTING_FORM_PARAMS_KEYS, ListingBaseForm
+from .attached_form import ATTACHED_FORM_PARAMS_KEYS, ListingBaseForm
 from .paginators import PAGINATOR_PARAMS_KEYS, Paginator
 from .record import RecordManager
 from .theme_config import ThemeAttribute, ThemeTemplate
@@ -121,7 +121,7 @@ LISTING_PARAMS_KEYS = {
     "footer_snippet",
     "footer_template_name",
     "form",  # usually insert/edit form (NOT filter form)
-    "form_autofill",  # insert/edit form is automatically filled when a listing row is selected
+    "attached_form_autofill",  # insert/edit form is automatically filled when a listing row is selected
     "gb_annotate_cols",  # group_by annotation columns
     "gb_cols",  # group_by columns
     "global_context",
@@ -190,7 +190,7 @@ LISTING_PARAMS_KEYS = {
     "variations",
 }
 
-LISTING_FORMSET_PREFIX = "listing"
+attached_formSET_PREFIX = "listing"
 
 LISTING_ANNOTATIONS = {
     "min": (pgettext_lazy("abbreviation", "Min"), Min),
@@ -432,8 +432,8 @@ class Listing(ListingBase):
     filters = None
     footer_snippet = None
     footer_template_name = None
-    form = None
-    form_autofill = False
+    attached_form = None
+    attached_form_autofill = False
     form_model_fields = None
     form_serialize_labels = None
     form_serialize_labels_func = None
@@ -453,7 +453,7 @@ class Listing(ListingBase):
     is_small_device_localized = False
     link_object_columns = None
     row_form_base_class = ListingBaseForm
-    listing_form_base_class = ListingBaseForm
+    attached_form_base_class = ListingBaseForm
     listing_template_name = ThemeTemplate("listing.html")
     model = None
     name = "listing"
@@ -562,7 +562,7 @@ class Listing(ListingBase):
             Listing.params_keys.update({"toolbar_%s" % k for k in TOOLBAR_PARAMS_KEYS})
             Listing.params_keys.update({"filters_%s" % k for k in FILTERS_PARAMS_KEYS})
             Listing.params_keys.update(
-                {"form_%s" % k for k in LISTING_FORM_PARAMS_KEYS}
+                {"form_%s" % k for k in ATTACHED_FORM_PARAMS_KEYS}
             )
         return Listing.params_keys
 
@@ -785,8 +785,8 @@ class Listing(ListingBase):
             self.create_missing_toolbar_items()
             self.has_toolbar = bool(self.toolbar)
             self.columns = self.columns.bind_to_listing(self)
-            if self.form:
-                self.form = self.form.bind_to_listing(self)
+            if self.attached_form:
+                self.attached_form = self.attached_form.bind_to_listing(self)
             if self.toolbar:
                 self.toolbar = self.toolbar.bind_to_listing(self)
             self.col_cell_renderers = {
@@ -909,7 +909,12 @@ class Listing(ListingBase):
                 self.datetimepicker_init()
             if self.has_upload:
                 self.dropzone_init()
-            if self.can_edit or self.can_select or self.form or self.has_upload:
+            if (
+                self.can_edit
+                or self.can_select
+                or self.attached_form
+                or self.has_upload
+            ):
                 self.add_form_input_hiddens(
                     listing_id=self.id, listing_suffix=self.suffix
                 )
@@ -920,8 +925,8 @@ class Listing(ListingBase):
             if not isinstance(self.selection_initial, list):
                 self.selection_initial = [self.selection_initial]
             self.selection_has_overlay = self.selection_mode in ["overlay", "hover"]
-            if self.form:
-                self.form.render_init(context)
+            if self.attached_form:
+                self.attached_form.render_init(context)
             self.global_context_init()
             self.records.compute_current_page_records()
             self._render_initialized = True
@@ -1330,7 +1335,7 @@ class Listing(ListingBase):
                 post_data,
                 post_files,
                 initial=self.get_formset_initial_values(),
-                prefix="{}{}".format(LISTING_FORMSET_PREFIX, self.suffix),
+                prefix="{}{}".format(attached_formSET_PREFIX, self.suffix),
             )
             for form in self._formset:
                 form.listing = self

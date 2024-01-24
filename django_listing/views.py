@@ -25,7 +25,7 @@ from django.views.generic import TemplateView
 
 from .exceptions import *
 from .listing import Listing, logger
-from .listing_form import ListingForm
+from .attached_form import AttachedForm
 
 __all__ = [
     "INSTANCE_METHOD_PREFIX",
@@ -271,30 +271,30 @@ class ListingViewMixin:
                 ]
 
     def get_form_instance(self, listing):
-        if listing.form:
-            if isinstance(listing.form, ListingForm):
-                django_form = listing.form.get_form()
-            elif isinstance(listing.form, forms.Form):
-                django_form = listing.form
+        if listing.attached_form:
+            if isinstance(listing.attached_form, AttachedForm):
+                django_form = listing.attached_form.get_form()
+            elif isinstance(listing.attached_form, forms.Form):
+                django_form = listing.attached_form
             else:
-                if isinstance(listing.form, str):
-                    form_class = import_string(listing.form)
+                if isinstance(listing.attached_form, str):
+                    form_class = import_string(listing.attached_form)
                 else:
-                    form_class = listing.form
+                    form_class = listing.attached_form
                 django_form = form_class(listing.request.POST, listing.request.FILES)
         else:
-            layout = listing.request.POST.get("listing_form_layout")
-            name = listing.request.POST.get("listing_form_name")
+            layout = listing.request.POST.get("attached_form_layout")
+            name = listing.request.POST.get("attached_form_name")
             if not layout or not name:
-                raise InvalidListingForm(
+                raise InvalidAttachedForm(
                     gettext(
                         "At least a form layout and name are mandatory in POST data "
                         "to build a relevant form instance"
                     )
                 )
-            listing_form = ListingForm(listing.action, name=name, layout=layout)
-            listing_form = listing_form.bind_to_listing(listing)
-            django_form = listing_form.get_form()
+            attached_form = AttachedForm(listing.action, name=name, layout=layout)
+            attached_form = attached_form.bind_to_listing(listing)
+            django_form = attached_form.get_form()
         return django_form
 
     def manage_listing_insert(self, listing, *args, **kwargs):

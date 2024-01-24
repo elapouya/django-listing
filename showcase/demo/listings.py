@@ -711,7 +711,7 @@ class InsertableListing1(Listing):
 class InsertableListing2(FilterListingMixin, Listing):
     per_page = 5
     sort = "-id"
-    accept_ajax = True
+    # accept_ajax = True
     gender__input_type = "radio"
     salary__min_value = 0
     columns_no_choice_msg = "Please choose..."
@@ -722,8 +722,8 @@ class InsertableListing2(FilterListingMixin, Listing):
     company__form_field_widget_params = {"url": "company-autocomplete"}
     company__widget_attrs = {"data-result-html": True}
     company__form_field_serialize_label = True
-    form_autofill = True
-    form = ListingForm(
+    attached_form_autofill = True
+    attached_form = AttachedForm(
         "insert",
         layout=(
             "first_name,last_name,age,gender,marital_status;"

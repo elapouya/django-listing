@@ -13,15 +13,15 @@ from django.utils.translation import gettext as _
 from django.utils.translation import pgettext_lazy
 
 from .context import RenderContext
-from .exceptions import InvalidListingForm
+from .exceptions import InvalidAttachedForm
 from .html_attributes import HTMLAttributes
 from .theme_config import ThemeTemplate
 from .utils import init_dicts_from_class
 
-__all__ = ["LISTING_FORM_PARAMS_KEYS", "ListingForm"]
+__all__ = ["ATTACHED_FORM_PARAMS_KEYS", "AttachedForm"]
 
 # Declare keys only for "Filters" object
-LISTING_FORM_PARAMS_KEYS = {
+ATTACHED_FORM_PARAMS_KEYS = {
     "action",
     "reset_label",
     "submit_label",
@@ -94,18 +94,18 @@ class ListingBaseForm(forms.BaseForm):
                 self.cleaned_data = cleaned_data
 
 
-class ListingForm:
+class AttachedForm:
     id = None
     action = None
     form_base_class = ListingBaseForm
     django_form_class = None
     reset_label = pgettext_lazy("Listing form", "Reset")
     submit_label = pgettext_lazy("Listing form", "Add")
-    template_name = ThemeTemplate("listing_form.html")
+    template_name = ThemeTemplate("attached_form.html")
     layout = None
     listing = None
     buttons = "reset,submit"
-    name = "listing_form"
+    name = "attached_form"
     attrs = {"class": "listing-form"}
 
     def __init__(self, action, name=None, *args, **kwargs):
@@ -136,7 +136,7 @@ class ListingForm:
         self.listing = listing
 
     def set_kwargs(self, **kwargs):
-        for k in LISTING_FORM_PARAMS_KEYS:
+        for k in ATTACHED_FORM_PARAMS_KEYS:
             listing_key = "{}_{}".format(self.name, k)
             if k in kwargs:
                 setattr(self, k, kwargs[k])
@@ -157,7 +157,7 @@ class ListingForm:
                     field_name = field_name.strip()
                     col = self.listing.columns.get(field_name)
                     if not col:
-                        raise InvalidListingForm(
+                        raise InvalidAttachedForm(
                             _(
                                 "In the {form_name} layout you specified the field "
                                 '"{field_name}" but there is no existing listing '
@@ -169,7 +169,7 @@ class ListingForm:
                         self.listing.form_serialize_labels.append(col.model_field.name)
             layout_str = ";".join(map(lambda l: ",".join(l), self.layout))
             self.listing.add_form_input_hiddens(
-                listing_form_layout=layout_str, listing_form_name=self.name
+                attached_form_layout=layout_str, attached_form_name=self.name
             )
         # self.listing.add_form_input_hiddens(listing_id=self.listing.id)
         buttons = self.buttons
@@ -186,7 +186,7 @@ class ListingForm:
     def create_form_from_layout(self):
         fields = {}
         if not self.layout:
-            raise InvalidListingForm(
+            raise InvalidAttachedForm(
                 _("You must specify a list of columns names in the form layout")
             )
         for row in self.layout:
@@ -240,7 +240,7 @@ class ListingForm:
             self.listing.global_context,
             self.listing.page_context.flatten(),
             listing=self.listing,
-            listing_form=self,
+            attached_form=self,
             get=self.listing.request.GET,
         )
         return ctx

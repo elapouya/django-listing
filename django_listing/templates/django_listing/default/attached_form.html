@@ -1,6 +1,6 @@
 {% load django_listing %}
 
-<form{{ listing_form.attrs }} method="post" enctype="multipart/form-data">
+<form{{ attached_form.attrs }} method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% gethiddens_listing listing %}
     {% block hiddens %}
@@ -8,7 +8,7 @@
             <input type="hidden" name="{{ hidden.0 }}" value="{{ hidden.1 }}">{% endfor %}
     {% endblock %}
 
-    {% with listing_form.get_form as form %}
+    {% with attached_form.get_form as form %}
 
         {% if form.non_field_errors %}
             <ul class="errorlist nonfield">
@@ -18,12 +18,12 @@
             </ul>
         {% endif %}
 
-        {% for row in listing_form.layout %}
-            <div class="form-row d-lg-flex">
+        {% for row in attached_form.layout %}
+            <div class="form-row">
                 {% for field_name in row %}
                     {% get_form_field form field_name as field %}
                     {% if field %}
-                        <div class="form-field {{ field_name }}{{ listing_form.theme_field_class }}{% if field.errors %} errors{% endif %}">
+                        <div class="form-field {{ field_name }}{{ attached_form.theme_field_class }}{% if field.errors %} errors{% endif %}">
                             {% if field.errors %}<span class="listing-icon-attention"></span> {{ field.errors }}{% endif %}
                             <div class="label_input">
                                 {{ field.label_tag }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
@@ -40,22 +40,18 @@
         {% endfor %}
 
         <div class="form-buttons">
-            {% for button in listing_form.buttons %}
+            {% for button in attached_form.buttons %}
                 {% if button == 'reset' %}
-                    {% if listing_form.reset_label %}
+                    {% if attached_form.reset_label %}
                         <input type="reset"
                                class="listing-form-nav btn btn-primary reset-button"
-                               value="{{ listing_form.reset_label|safe }}"/>
+                               value="{{ attached_form.reset_label|safe }}"/>
                     {% endif %}
                 {% elif button == 'submit' %}
-                    {% if listing_form.submit_label %}
+                    {% if attached_form.submit_label %}
                         <button type="submit" class="listing-form-nav btn btn-primary submit-button"
-                                name="action" value="{{ listing_form.action }}">
-                            {{ listing_form.submit_label|safe }}
-                        </button>
-                        <button type="submit" class="listing-form-nav btn btn-primary submit-button"
-                                name="action" value="update">
-                            Update
+                                name="action" value="{{ attached_form.action }}">
+                            {{ attached_form.submit_label|safe }}
                         </button>
                     {% endif %}
                 {% endif %}

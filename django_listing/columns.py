@@ -986,7 +986,9 @@ class Column(metaclass=ColumnMeta):
                 )
         widget_attrs = HTMLAttributes(self.widget_attrs)
         widget_attrs.add("class", self.theme_form_widget_class)
-        widget_id = f"id-listingform-{self.name}{self.listing.suffix}".replace("_", "-")
+        widget_id = f"id-attachedForm-{self.name}{self.listing.suffix}".replace(
+            "_", "-"
+        )
         widget_attrs.add("id", widget_id)
         return cls(attrs=widget_attrs, **self.form_field_widget_params)
 

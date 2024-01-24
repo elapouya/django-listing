@@ -51,3 +51,7 @@ class InvalidAggregation(ListingException):
 
 class InvalidListingForm(ListingException):
     pass
+
+
+class InvalidAttachedForm(ListingException):
+    pass

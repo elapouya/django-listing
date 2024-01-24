@@ -25,5 +25,5 @@ from .paginators import *
 from .toolbar import *
 from .filters import *
 from .aggregations import *
-from .listing_form import *
+from .attached_form import *
 from .actions_buttons_column import *

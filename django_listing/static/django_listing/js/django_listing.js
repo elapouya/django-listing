@@ -123,13 +123,13 @@ function djlst_post_button_action(event) {
     });
 }
 
-function djlst_post_listing_form(event) {
-    console.log("djlst_post_listing_form");
+function djlst_post_attached_form(event) {
+    console.log("djlst_post_attached_form");
     event.preventDefault();
     let nav_obj = $(event.originalEvent.submitter);
     let action = nav_obj.val();
-    let listing_form = nav_obj.closest("form.listing-form");
-    let listing_div = $("#" + listing_form.attr("related-listing"));
+    let attached_form = nav_obj.closest("form.listing-form");
+    let listing_div = $("#" + attached_form.attr("related-listing"));
     let ajax_url = listing_div.attr("ajax_url");
     listing_div.addClass("spinning");
     let listing_id = listing_div.attr("id");
@@ -447,13 +447,13 @@ $(document).ready(function () {
     });
 
 
-    $("form.listing-form").on("submit", function(event) {
+    $("form.attached-form").on("submit", function(event) {
         console.log("form.listing-form submitted...");
         console.log(event);
         var pressedButton = $(":submit", event.target);
         console.log("Pressed Button Value: " + pressedButton.val());
         console.log("Pressed Button name: " + pressedButton.attr("name"));
-        djlst_post_listing_form(event);
+        djlst_post_attached_form(event);
         console.log(event.originalEvent.submitter);
         event.preventDefault();
     });
