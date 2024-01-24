@@ -161,6 +161,7 @@ FORM_FIELD_BASE_KEYS = {
     "localize",
     "disabled",
     "label_suffix",
+    "format",
 }
 
 EXPORT_XLSX_ILLEGAL_CHARACTERS_RE = re.compile(r"[\000-\010]|[\013-\014]|[\016-\037]")
@@ -1309,6 +1310,7 @@ class DateColumn(Column):
     params_keys = "date_format"
     from_model_field_classes = (models.DateField,)
     form_field_class = forms.DateField
+    form_field_widget_params = {"format": "%Y-%m-%d"}
     widget_attrs = {"class": "edit-datecolumn", "autocomplete": "off", "type": "date"}
 
     def get_cell_value(self, rec):
@@ -1326,6 +1328,7 @@ class DateTimeColumn(Column):
     datetime_format = settings.DATETIME_FORMAT
     params_keys = "datetime_format"
     from_model_field_classes = (models.DateTimeField,)
+    form_field_widget_params = {"format": "%Y-%m-%d %H:%M"}
     widget_attrs = {
         "class": "edit-datetimecolumn",
         "autocomplete": "off",

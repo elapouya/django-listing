@@ -40,25 +40,16 @@
         {% endfor %}
 
         <div class="form-buttons">
-            {% for button in attached_form.buttons %}
-                {% if button == 'reset' %}
-                    {% if attached_form.reset_label %}
-                        <input type="reset"
-                               class="listing-form-nav btn btn-primary reset-button"
-                               value="{{ attached_form.reset_label|safe }}"/>
+            {% for action,label,icon in attached_form.buttons %}
+                <button type="{% if action == 'reset' %}reset{% else %}submit{% endif %}" class="attached-form-nav btn btn-primary submit-button {{ action }}"
+                        name="button_action" value="{{ action }}">
+                    {% if label %}
+                        <span class="label">{{ label|safe }}</span>
                     {% endif %}
-                {% elif button == 'submit' %}
-                    {% if attached_form.submit_label %}
-                        <button type="submit" class="listing-form-nav btn btn-primary submit-button"
-                                name="action" value="{{ attached_form.action }}">
-                            {{ attached_form.submit_label|safe }}
-                        </button>
-                        <button type="submit" class="listing-form-nav btn btn-primary submit-button"
-                                name="action" value="update">
-                            Update
-                        </button>
+                    {% if icon %}
+                        <span class="icon"><span class="{{ icon }}"></span></span>
                     {% endif %}
-                {% endif %}
+                </button>
             {% endfor %}
         </div>
     {% endwith %}

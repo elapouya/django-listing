@@ -273,9 +273,7 @@ def get_form_field(form, name):
 
 
 @register.simple_tag(takes_context=True)
-def render_attached_form(
-    context, listing, *args, action=None, layout=None, name=None, **kwargs
-):
+def render_attached_form(context, listing, *args, name=None, layout=None, **kwargs):
     if not listing:
         listing = context.get("listing")
     if not isinstance(listing, (Listing, ListingVariations)):
@@ -298,17 +296,8 @@ def render_attached_form(
                 )
             else:
                 listing.attached_form.layout = layout
-        if action:
-            if listing.attached_form.action:
-                return mark_safe(
-                    "<b>ERROR :</b> Do not specify an action in "
-                    "{% render_attached_form %} when an action has already been  "
-                    "defined at python side.<br><br>"
-                )
-            else:
-                listing.attached_form.action = action
     if not listing.attached_form:
-        form = AttachedForm(action, name=name, layout=layout, *args, **kwargs)
+        form = AttachedForm(name=name, layout=layout, *args, **kwargs)
         listing.attached_form = form.bind_to_listing(listing)
     return mark_safe(listing.attached_form.render(context))
 

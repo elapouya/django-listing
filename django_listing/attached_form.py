@@ -23,8 +23,12 @@ __all__ = ["ATTACHED_FORM_PARAMS_KEYS", "AttachedForm"]
 # Declare keys only for "Filters" object
 ATTACHED_FORM_PARAMS_KEYS = {
     "action",
+    "attached_form_name",
     "reset_label",
+    "reset_icon",
     "submit_label",
+    "submit_icon",
+    "submit_action",
     "template_name",
     "django_form_class",
     "layout",
@@ -96,11 +100,14 @@ class ListingBaseForm(forms.BaseForm):
 
 class AttachedForm:
     id = None
-    action = None
+    action = "attached_form"
     form_base_class = ListingBaseForm
     django_form_class = None
-    reset_label = pgettext_lazy("Listing form", "Reset")
-    submit_label = pgettext_lazy("Listing form", "Add")
+    reset_label = pgettext_lazy("Attached form", "Reset")
+    reset_icon = None
+    submit_label = pgettext_lazy("Attached form", "Add")
+    submit_icon = None
+    submit_action = "insert"
     template_name = ThemeTemplate("attached_form.html")
     layout = None
     listing = None
@@ -108,11 +115,10 @@ class AttachedForm:
     name = "attached_form"
     attrs = {"class": "listing-form"}
 
-    def __init__(self, action, name=None, *args, **kwargs):
+    def __init__(self, name=None, *args, **kwargs):
         self.init_args = args
         self.init_kwargs = kwargs
-        self.name = name or f"{action}_form"
-        self.action = action
+        self.name = name or "attached_form"
         self._form = None
         self._render_initialized = False
         init_dicts_from_class(
@@ -171,10 +177,20 @@ class AttachedForm:
             self.listing.add_form_input_hiddens(
                 attached_form_layout=layout_str, attached_form_name=self.name
             )
-        # self.listing.add_form_input_hiddens(listing_id=self.listing.id)
         buttons = self.buttons
         if isinstance(buttons, str):
-            self.buttons = list(map(str.strip, buttons.split(",")))
+            buttons = list(map(str.strip, buttons.split(",")))
+        self.buttons = []
+        for button in buttons:
+            if isinstance(button, str):
+                # must be defined has (action, label, icon css class)
+                if button == "reset":
+                    button = ("reset", self.reset_label, self.reset_icon)
+                elif button == "submit":
+                    button = (self.submit_action, self.submit_label, self.submit_icon)
+                else:
+                    button = (button, button.capitalize(), None)
+            self.buttons.append(button)
 
     def datetimepicker_init(self):
         if self.listing.use_datetimepicker:
@@ -205,7 +221,7 @@ class AttachedForm:
         if not self._form:
             form_class = self.create_form_from_layout()
             data = None
-            if self.listing.request.POST.get("action") == self.action:
+            if self.listing.request.POST.get("attached_form_name") == self.name:
                 data = self.listing.request.POST
             self._form = form_class(data)
             self._form.listing = self.listing
@@ -220,11 +236,13 @@ class AttachedForm:
                 self.attrs = HTMLAttributes(self.attrs)
             form_css_class = "listing-" + self.name.replace("_", "-")
             self.attrs.add("class", form_css_class)
+            self.attrs.add("class", f"attached-form")
             if self.listing.accept_ajax:
-                self.attrs.add("class", f"django-{self.name}-ajax")
+                self.attrs.add("class", f"django-listing-ajax")
             if "id" not in self.attrs:
-                self.attrs.add("id", f"{form_css_class}{self.listing.suffix}")
-            self.listing.related_form = self.id = self.attrs["id"]
+                css_id = f"{form_css_class}{self.listing.suffix}".replace("_", "-")
+                self.attrs.add("id", css_id)
+            self.listing.attached_form_css_id = self.id = css_id
             self.attrs.add("related-listing", self.listing.css_id)
             self._render_initialized = True
 

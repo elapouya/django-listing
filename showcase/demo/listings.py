@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelChoiceField
 from django.utils.encoding import force_str
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 from django_listing import *
 from django_listing.columns import LineNumberColumn
@@ -711,7 +711,7 @@ class InsertableListing1(Listing):
 class InsertableListing2(FilterListingMixin, Listing):
     per_page = 5
     sort = "-id"
-    # accept_ajax = True
+    accept_ajax = True
     gender__input_type = "radio"
     salary__min_value = 0
     columns_no_choice_msg = "Please choose..."
@@ -724,13 +724,19 @@ class InsertableListing2(FilterListingMixin, Listing):
     company__form_field_serialize_label = True
     attached_form_autofill = True
     attached_form = AttachedForm(
-        "insert",
+        "attached_edit_form",
         layout=(
             "first_name,last_name,age,gender,marital_status;"
             "address;"
             "designation,salary,joined,company,have_car"
         ),
-        submit_label="Insert",
+        buttons=(
+            ("delete", pgettext_lazy("Attached form", "Delete"), None),
+            "reset",
+            ("insert", pgettext_lazy("Attached form", "Insert"), None),
+            ("update", pgettext_lazy("Attached form", "Update"), None),
+            ("duplicate", pgettext_lazy("Attached form", "Duplicate"), None),
+        ),
     )
     selectable = True
 

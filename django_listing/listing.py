@@ -470,7 +470,7 @@ class Listing(ListingBase):
     records_class = RecordManager
     record_label = None
     record_label_plural = None
-    related_form = None
+    attached_form_css_id = None
     row_form_errors = None
     row_inner_div_tpl = None
     save_to_database = False
@@ -1010,6 +1010,8 @@ class Listing(ListingBase):
             )
         if self.has_upload:
             listing_container_class += " has_upload"
+        if self.attached_form_autofill:
+            listing_container_class += " attached_form_autofill"
         sel_css_class = LISTING_SELECTOR_CSS_CLASS if self.selection_has_overlay else ""
         hover_css_class = (
             LISTING_SELECTION_HOVER_CSS_CLASS if self.selection_mode == "hover" else ""

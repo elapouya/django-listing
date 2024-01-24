@@ -127,7 +127,7 @@ function djlst_post_attached_form(event) {
     console.log("djlst_post_attached_form");
     event.preventDefault();
     let nav_obj = $(event.originalEvent.submitter);
-    let action = nav_obj.val();
+    let button_action = nav_obj.val();
     let attached_form = nav_obj.closest("form.listing-form");
     let listing_div = $("#" + attached_form.attr("related-listing"));
     let ajax_url = listing_div.attr("ajax_url");
@@ -143,7 +143,8 @@ function djlst_post_attached_form(event) {
         listing_id : listing_id,
         listing_suffix : listing_suffix,
         listing_part : listing_part,
-        action : action,
+        action : "attached_form",
+        button_action : button_action,
         serialized_data : nav_obj.closest('form').serialize()
     };
     update_csrf_token();
@@ -210,7 +211,7 @@ function djlst_multiple_row_do_select(row) {
     row.addClass('selected');
     hidden.attr('name',hidden.attr('select-name'));
     row.find('input.selection-box').first().prop('checked',true);
-    let form = $("#" + row.closest('.django-listing-container').attr('related-form'));
+    let form = $("#" + row.closest('.django-listing-container').attr('attached-form-id'));
     if (form.length) {
         let serialized_obj = decodeURIComponent(row.attr('data-serialized-object'));
         let obj = JSON.parse(serialized_obj);
@@ -447,7 +448,7 @@ $(document).ready(function () {
     });
 
 
-    $("form.attached-form").on("submit", function(event) {
+    $("form.django-listing-ajax.attached-form").on("submit", function(event) {
         console.log("form.listing-form submitted...");
         console.log(event);
         var pressedButton = $(":submit", event.target);
