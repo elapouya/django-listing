@@ -175,7 +175,9 @@ class AttachedForm:
                         self.listing.form_serialize_labels.append(col.model_field.name)
             layout_str = ";".join(map(lambda l: ",".join(l), self.layout))
             self.listing.add_form_input_hiddens(
-                attached_form_layout=layout_str, attached_form_name=self.name
+                attached_form_layout=layout_str,
+                attached_form_name=self.name,
+                action=self.action,
             )
         buttons = self.buttons
         if isinstance(buttons, str):
@@ -246,14 +248,14 @@ class AttachedForm:
             self.attrs.add("related-listing", self.listing.css_id)
             self._render_initialized = True
 
-    def render(self, context):
-        self.render_init(context)
-        ctx = self.get_context()
+    def render(self, request_context):
+        self.render_init(request_context)
+        ctx = self.get_context(request_context)
         template = loader.get_template(self.template_name)
         out = template.render(ctx)
         return out
 
-    def get_context(self):
+    def get_context(self, request_context):
         ctx = RenderContext(
             self.listing.global_context,
             self.listing.page_context.flatten(),
@@ -261,4 +263,8 @@ class AttachedForm:
             attached_form=self,
             get=self.listing.request.GET,
         )
+        # needed when using ajax :
+        csrf_token = request_context.request.POST.get("csrfmiddlewaretoken")
+        if csrf_token:
+            ctx["csrf_token"] = csrf_token
         return ctx

@@ -458,7 +458,7 @@ $(document).ready(function () {
     });
 
 
-    $("form.django-listing-ajax.attached-form").on("submit", function(event) {
+    $(document.body).on("submit", "form.django-listing-ajax.attached-form", function(event) {
         console.log("form.listing-form submitted...");
         console.log(event);
         var pressedButton = $(":submit", event.target);
