@@ -650,7 +650,7 @@ class InsertableListing2View(ListingView):
     listing_class = InsertableListing2
     listing_data = Employee
 
-    def manage_listing_insert_form_clean(self, form):
+    def manage_listing_attached_edit_form_clean(self, form):
         cd = form.cleaned_data
         first_name = cd.get("first_name")
         last_name = cd.get("last_name")
@@ -666,7 +666,7 @@ class InsertableListing2View(ListingView):
                     )
                 )
 
-    def manage_listing_insert_form_clean_age(self, form):
+    def manage_listing_attached_edit_form_clean_age(self, form):
         age = form.cleaned_data.get("age")
         if age is None or age < 0 or age > 130:
             raise ValidationError(gettext("Age must be between 0 and 130."))

@@ -4,17 +4,20 @@
 # @author: Eric Lapouyade
 #
 import json
+import traceback
 from urllib.parse import parse_qs
 
 from django import forms
 from django.contrib import messages
 from django.db import models
 from django.db.models import QuerySet
+from django.forms.models import construct_instance
 from django.http import (
     HttpResponse,
     HttpResponseRedirect,
     HttpResponseServerError,
     QueryDict,
+    JsonResponse,
 )
 from django.template import RequestContext, loader
 from django.utils.module_loading import import_string
@@ -77,26 +80,33 @@ class ListingViewMixin:
             self.object = self.get_object()
         try:
             if is_ajax(request):
-                if "serialized_data" in request.POST:
-                    post = request.POST.copy()
-                    serialized_data = post.pop("serialized_data")
-                    if isinstance(serialized_data, list):
-                        serialized_data = serialized_data[0]
-                    data = parse_qs(serialized_data)
-                    for k, v in data.items():
-                        if k != "csrfmiddlewaretoken":
-                            if len(v) == 1:
-                                post[k] = v[0]
-                            else:
-                                post[k] = v
-                    request.POST = post
-                return self.manage_listing_ajax_request(request, *args, **kwargs)
+                try:
+                    if "serialized_data" in request.POST:
+                        post = request.POST.copy()
+                        serialized_data = post.pop("serialized_data")
+                        if isinstance(serialized_data, list):
+                            serialized_data = serialized_data[0]
+                        data = parse_qs(serialized_data)
+                        for k, v in data.items():
+                            if k != "csrfmiddlewaretoken":
+                                if len(v) == 1:
+                                    post[k] = v[0]
+                                else:
+                                    post[k] = v
+                        request.POST = post
+                    return self.manage_listing_ajax_request(request, *args, **kwargs)
+                except KeyboardInterrupt:
+                    raise
+                except Exception as e:
+                    stack = traceback.format_exc()
+                    logger.error(stack)
+                    return HttpResponseServerError(e)
             response = self.manage_listing_post(request, *args, **kwargs)
             if response:
                 return response
             return self.get(self, request, *args, **kwargs)
         except ListingException as e:
-            return HttpResponseServerError(e)
+            return HttpResponseServerError(str(e))
 
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
@@ -137,6 +147,7 @@ class ListingViewMixin:
         self.listing = listing
         response = None
         if listing:
+            listing.set_view(self)
             listing_part = request.POST.get("listing_part", "all")
             listing.ajax_request = True
             listing.ajax_part = listing_part
@@ -287,10 +298,8 @@ class ListingViewMixin:
             name = listing.request.POST.get("attached_form_name")
             if not layout or not name:
                 raise InvalidAttachedForm(
-                    gettext(
-                        "At least a form layout and name are mandatory in POST data "
-                        "to build a relevant form instance"
-                    )
+                    "At least a form layout and name are mandatory in POST data "
+                    "to build a relevant form instance"
                 )
             attached_form = AttachedForm(listing.action, name=name, layout=layout)
             attached_form = attached_form.bind_to_listing(listing)
@@ -309,6 +318,48 @@ class ListingViewMixin:
             if col:
                 return col.manage_button_action(*args, **kwargs)
         raise ListingException(f'Unknown action column "{col_name}"')
+
+    def manage_listing_attached_form(self, listing, *args, **kwargs):
+        meth_name = f"manage_attached_form_{listing.action_button}_action"
+        # Search method in view object first
+        action_method = getattr(self, meth_name, None)
+        if action_method:
+            return action_method(listing, *args, **kwargs)
+        action_method = getattr(listing, meth_name, None)
+        if action_method is None:
+            raise ListingException(
+                f'Unknown "{listing.action_button}" action.'
+                f"Please define {meth_name}(self, listing, *args, *kwarg) "
+                f"in your view or your {meth_name}(self, *args, *kwarg) "
+                f"in your listing."
+            )
+        return action_method(*args, **kwargs)
+
+    def manage_attached_form_insert_action_process(
+        self, listing, form, instance, *args, **kwargs
+    ):
+        instance.save()
+
+    def manage_attached_form_insert_action(self, listing, *args, **kwargs):
+        attached_form = listing.attached_form
+        form = attached_form.get_form()
+        if form.is_valid():
+            instance = listing.model()
+            form.instance = construct_instance(form, instance)
+            mixed_response = self.manage_attached_form_insert_action_process(
+                listing, form, instance, *args, **kwargs
+            )
+            if mixed_response is None:
+                out = listing.render(RequestContext(self.request))
+                return JsonResponse({"listing": out})
+            else:
+                if "listing" in mixed_response and mixed_response["listing"] is None:
+                    out = listing.render(RequestContext(self.request))
+                    mixed_response["listing"] = out
+                return JsonResponse({"listing": out})
+        else:
+            out = listing.attached_form.render(RequestContext(self.request))
+            return JsonResponse({"attached_form": out})
 
     # def manage_listing_select(self, listing, *args, **kwargs):
     #     if listing.selectable and listing.selecting:

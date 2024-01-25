@@ -299,7 +299,7 @@ class ExportSelectToolbarItem(ToolbarItem):
     template_name = ThemeTemplate("tbi_export.html")
     choices = [("", _("Choose..."))] + EXPORT_FORMATS
     has_submit_button = True
-    label = "Export to "
+    label = _("Export to...")
     button_label = _("OK")
     select_name = "export"
 

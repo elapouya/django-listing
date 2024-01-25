@@ -56,24 +56,24 @@ function djlst_load_listing_url(nav_obj, url) {
     var listing_part = nav_obj.attr("listing-part");
     if (! listing_part) listing_part = "all";
     update_csrf_token();
-    $(listing_target).load(
-        url,
-        {
-            "listing_id": listing_id,
-            "listing_suffix": listing_suffix,
-            "listing_part": listing_part
+    $.ajax({
+       type: "POST",
+       url: url,
+       data: {
+           "listing_id": listing_id,
+           "listing_suffix": listing_suffix,
+           "listing_part": listing_part
         },
-        function (responseText, textStatus, req) {
-            if (textStatus == "error") {
-                listing_div.removeClass("spinning");
-                alert(responseText);
-            } else {
-                $(this).children(":first").unwrap();
-            }
-            djlst_listing_on_load();
-            $(document).trigger( "djlst_ajax_loaded", [ listing_target ] );
-        } // to avoid cascade of listing container divs
-    );
+       success: function(response) {
+           $(listing_target).replaceWith(response);
+           djlst_listing_on_load();
+           $(document).trigger( "djlst_ajax_loaded", [ listing_target ] );
+       },
+       error: function(response) {
+           text = "An error occured.\n\nIndications :\n\n" + response.responseText;
+           alert(text);
+       },
+    });
     return false;
 }
 
@@ -89,7 +89,7 @@ function djlst_load_listing_val() {
     return djlst_load_listing_url($(this),url);
 }
 
-function djlst_post_button_action(event) {
+function djlst_post_action_button(event) {
     event.preventDefault();
     var nav_obj = $(this);
     var listing_div = nav_obj.closest("div.django-listing-ajax");
@@ -115,10 +115,13 @@ function djlst_post_button_action(event) {
        data: request_data,
        success: function(response)
        {
-           $(listing_target).html(response);
-           $(listing_target).children(":first").unwrap();
+           $(listing_target).replaceWith(response);
            djlst_listing_on_load();
            $(document).trigger( "djlst_ajax_loaded", [ listing_target ] );
+       },
+       error: function(response) {
+            text = "An error occured.\n\nIndications :\n\n" + response.responseText;
+            alert(text);
        }
     });
 }
@@ -127,11 +130,11 @@ function djlst_post_attached_form(event) {
     console.log("djlst_post_attached_form");
     event.preventDefault();
     let nav_obj = $(event.originalEvent.submitter);
-    let button_action = nav_obj.val();
+    let action_button = nav_obj.val();
     let attached_form = nav_obj.closest("form.listing-form");
     let listing_div = $("#" + attached_form.attr("related-listing"));
     let ajax_url = listing_div.attr("ajax_url");
-    listing_div.addClass("spinning");
+    // listing_div.addClass("spinning");
     let listing_id = listing_div.attr("id");
     let listing_suffix = listing_div.attr("listing-suffix");
     let listing_target = nav_obj.attr("listing-target");
@@ -144,20 +147,27 @@ function djlst_post_attached_form(event) {
         listing_suffix : listing_suffix,
         listing_part : listing_part,
         action : "attached_form",
-        button_action : button_action,
+        action_button : action_button,
         serialized_data : nav_obj.closest('form').serialize()
     };
     update_csrf_token();
     $.ajax({
-       type: "POST",
-       url: ajax_url,
-       data: request_data,
-       success: function(response)
-       {
-           $(listing_target).html(response);
-           $(listing_target).children(":first").unwrap();
-           djlst_listing_on_load();
-           $(document).trigger( "djlst_ajax_loaded", [ listing_target ] );
+        type: "POST",
+        url: ajax_url,
+        data: request_data,
+        success: function(mixed_response) {
+            if (mixed_response.listing) {
+                listing_div.replaceWith(mixed_response.listing);
+            }
+            if (mixed_response.attached_form) {
+                attached_form.replaceWith(mixed_response.attached_form);
+            }
+            djlst_listing_on_load();
+            $(document).trigger( "djlst_ajax_loaded", [ listing_target ] );
+       },
+       error: function(response) {
+            text = "An error occured.\n\nIndications :\n\n" + response.responseText;
+            alert(text);
        }
     });
 }
@@ -433,7 +443,7 @@ $(document).ready(function () {
         }).prop('name', '');
     });
 
-    $(document.body).on("click","div.django-listing-ajax button.listing-nav",djlst_post_button_action);
+    $(document.body).on("click","div.django-listing-ajax button.listing-nav",djlst_post_action_button);
     $(document.body).on("click","div.django-listing-ajax a.listing-nav",djlst_load_listing_href);
     $(document.body).on("change","div.django-listing-ajax select.listing-nav",djlst_load_listing_val);
     $(document.body).on("click","div.django-listing-selecting.selection_multiple .row-selector",djlst_multiple_row_select);

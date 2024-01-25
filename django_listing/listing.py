@@ -66,6 +66,7 @@ LISTING_SELECTOR_CSS_CLASS = "row-selector"
 
 # only these parameters are allowed in the query string.
 LISTING_QUERY_STRING_KEYS = {
+    "action_button",
     "editing",
     "editing_columns",
     "editing_row_pk",
@@ -324,6 +325,10 @@ class ListingVariations(ListingBase):
         else:
             # postpone to when listing will be created
             self.store_kwargs(**{attr: value})
+
+    def set_view(self, view):
+        if self.listing:
+            self.listing.set_view(view)
 
     def is_initialized(self):
         if self.listing:
