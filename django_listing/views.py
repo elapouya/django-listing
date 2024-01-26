@@ -384,6 +384,7 @@ class ListingViewMixin:
                         f"in your view or your in your listing."
                     )
                 mixed_response = process_method(form, instance, *args, **kwargs)
+            self.listing.request.POST[instance._meta.pk.attname] = instance.pk
             if listing.processed_flash:
                 listing.processed_pk = instance.pk
             if not self.is_ajax:
@@ -391,12 +392,11 @@ class ListingViewMixin:
             form_html = listing.attached_form.render(RequestContext(self.request))
             if mixed_response is None:
                 listing_html = listing.render(RequestContext(self.request))
-                return JsonResponse(
-                    {
-                        "listing": listing_html,
-                        "attached_form": form_html,
-                    }
-                )
+                mixed_response = {
+                    "listing": listing_html,
+                    "attached_form": form_html,
+                    "object_pk": instance.pk,
+                }
             else:
                 if "listing" in mixed_response and mixed_response["listing"] is None:
                     listing_html = listing.render(RequestContext(self.request))
@@ -405,9 +405,10 @@ class ListingViewMixin:
                     "attached_form" in mixed_response
                     and mixed_response["attached_form"] is None
                 ):
-                    listing_html = listing.render(RequestContext(self.request))
                     mixed_response["attached_form"] = form_html
-                return JsonResponse(mixed_response)
+            if instance.pk:
+                mixed_response["object_pk"] = instance.pk
+            return JsonResponse(mixed_response)
         else:
             if not self.is_ajax:
                 return None

@@ -131,6 +131,7 @@ function djlst_post_attached_form(event) {
     let nav_obj = $(this);
     let action_button = nav_obj.val();
     let attached_form = nav_obj.closest("form.listing-form");
+    let attached_form_id = attached_form.attr("id");
     let listing_div = $("#" + attached_form.attr("related-listing"));
     let ajax_url = listing_div.attr("ajax_url");
     // listing_div.addClass("spinning");
@@ -161,8 +162,12 @@ function djlst_post_attached_form(event) {
             if (mixed_response.attached_form) {
                 attached_form.replaceWith(mixed_response.attached_form);
             }
-            djlst_listing_on_load();
-            $(document).trigger( "djlst_ajax_loaded", [ listing_target ] );
+            if (mixed_response.object_pk) {
+                let new_attached_form = $("#" + attached_form_id);
+                let object_pk_input = new_attached_form.find('input[name="object_pk"]');
+                object_pk_input.val(mixed_response.object_pk);
+            }
+            $(document).trigger( "djlst_ajax_attached_form_loaded", [ listing_target ] );
        },
        error: function(response) {
             text = "An error occured.\n\nIndications :\n\n" + response.responseText;
