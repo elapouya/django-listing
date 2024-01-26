@@ -144,6 +144,8 @@ LISTING_PARAMS_KEYS = {
     "per_page",
     "per_page_max",
     "primary_key",
+    "processed_flash",
+    "processed_pk",
     "record_label",
     "record_label_plural",
     "row_attrs",
@@ -472,6 +474,8 @@ class Listing(ListingBase):
     per_page_max = LISTING_ROWS_PER_PAGE_MAX
     posted_columns = None
     primary_key = "id"
+    processed_flash = True
+    processed_pk = None
     records_class = RecordManager
     record_label = None
     record_label_plural = None
@@ -1287,11 +1291,14 @@ class Listing(ListingBase):
         attrs = HTMLAttributes(self.row_attrs)  # create a copy
         if rec.pk:
             attrs.add("data-pk", str(rec.pk))
-        if self.form_model_fields:
+        if self.form_model_fields and self.attached_form_autofill:
             attrs.add(
                 "data-serialized-object",
                 rec.get_serialized_object(fields=self.form_model_fields),
             )
+        if self.processed_flash:
+            if rec.pk == self.processed_pk:
+                attrs.add("class", {"flash-once", "selected"})
         attrs.add("class", "odd" if rec.get_index() % 2 else "even")
         if self.can_select:
             if not self.selection_has_overlay:

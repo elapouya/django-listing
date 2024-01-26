@@ -69,6 +69,7 @@ class ListingViewMixin:
         "The form is valid but nothing has been updated to database "
         "as <tt>save_to_database=False</tt>."
     )
+    is_ajax = False
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -79,7 +80,8 @@ class ListingViewMixin:
         if hasattr(self, "get_object"):  # for DetailView that works only on GET
             self.object = self.get_object()
         try:
-            if is_ajax(request):
+            self.is_ajax = is_ajax(request)
+            if self.is_ajax:
                 try:
                     if "serialized_data" in request.POST:
                         post = request.POST.copy()
@@ -104,7 +106,7 @@ class ListingViewMixin:
             response = self.manage_listing_post(request, *args, **kwargs)
             if response:
                 return response
-            return self.get(self, request, *args, **kwargs)
+            return self.get(request, *args, **kwargs)
         except ListingException as e:
             return HttpResponseServerError(str(e))
 
@@ -320,46 +322,123 @@ class ListingViewMixin:
         raise ListingException(f'Unknown action column "{col_name}"')
 
     def manage_listing_attached_form(self, listing, *args, **kwargs):
-        meth_name = f"manage_attached_form_{listing.action_button}_action"
+        """
+        To manage a simple action that does not required the form to be instanciated,
+        one can define such method:
+
+        in view :
+            manage_attached_form_<action>_action(self, listing, *args, **kwargs)
+        in listing :
+            manage_attached_form_<action>_action(self, *args, **kwargs)
+
+        But for form processing, one can define such method:
+
+        in view :
+            manage_attached_form_<action>_process(self, listing, form, instance, *args, **kwargs)
+        in listing :
+            manage_attached_form_<action>_process(self, form, instance, *args, **kwargs)
+
+        For ajax requests methods must return None or a dict like this :
+
+            {
+                "listing": <html code to replace actual listing>,
+                "attached_form": <html code to replace actual form>,
+            }
+
+            If givent listing or attached_form html code is None, it will be
+            automatically calculated.
+            If methods returns None instead of a the dict. The dict will be
+            automatically calculated.
+        """
+        action_meth_name = f"manage_attached_form_{listing.action_button}_action"
         # Search method in view object first
-        action_method = getattr(self, meth_name, None)
+        action_method = getattr(self, action_meth_name, None)
         if action_method:
             return action_method(listing, *args, **kwargs)
-        action_method = getattr(listing, meth_name, None)
-        if action_method is None:
-            raise ListingException(
-                f'Unknown "{listing.action_button}" action.'
-                f"Please define {meth_name}(self, listing, *args, *kwarg) "
-                f"in your view or your {meth_name}(self, *args, *kwarg) "
-                f"in your listing."
-            )
-        return action_method(*args, **kwargs)
+        action_method = getattr(listing, action_meth_name, None)
+        if action_method:
+            return action_method(*args, **kwargs)
+        attached_form = listing.attached_form
+        form = attached_form.get_form()
+        if form.is_valid():
+            object_pk = listing.request.POST.get("object_pk")
+            instance = None
+            if object_pk:
+                instance = listing.model.objects.filter(pk=object_pk).first()
+            if not instance:
+                instance = listing.model()
+            form.instance = construct_instance(form, instance)
+            process_meth_name = f"manage_attached_form_{listing.action_button}_process"
+            # Search method in view object first
+            process_method = getattr(self, process_meth_name, None)
+            if process_method:
+                mixed_response = process_method(
+                    listing, form, instance, *args, **kwargs
+                )
+            else:
+                process_method = getattr(listing, process_meth_name, None)
+                if not process_method:
+                    raise ListingException(
+                        f'Do not know how to manage "{listing.action_button}" action. '
+                        f"Please define {action_meth_name}() or {process_meth_name}() "
+                        f"in your view or your in your listing."
+                    )
+                mixed_response = process_method(form, instance, *args, **kwargs)
+            if listing.processed_flash:
+                listing.processed_pk = instance.pk
+            if not self.is_ajax:
+                return None
+            form_html = listing.attached_form.render(RequestContext(self.request))
+            if mixed_response is None:
+                listing_html = listing.render(RequestContext(self.request))
+                return JsonResponse(
+                    {
+                        "listing": listing_html,
+                        "attached_form": form_html,
+                    }
+                )
+            else:
+                if "listing" in mixed_response and mixed_response["listing"] is None:
+                    listing_html = listing.render(RequestContext(self.request))
+                    mixed_response["listing"] = listing_html
+                if (
+                    "attached_form" in mixed_response
+                    and mixed_response["attached_form"] is None
+                ):
+                    listing_html = listing.render(RequestContext(self.request))
+                    mixed_response["attached_form"] = form_html
+                return JsonResponse(mixed_response)
+        else:
+            if not self.is_ajax:
+                return None
+            form_html = listing.attached_form.render(RequestContext(self.request))
+            return JsonResponse({"attached_form": form_html})
 
-    def manage_attached_form_insert_action_process(
+    def manage_attached_form_insert_process(
+        self, listing, form, instance, *args, **kwargs
+    ):
+        instance.pk = None
+        instance.save()
+
+    def manage_attached_form_update_process(
         self, listing, form, instance, *args, **kwargs
     ):
         instance.save()
 
-    def manage_attached_form_insert_action(self, listing, *args, **kwargs):
+    def manage_attached_form_delete_process(
+        self, listing, form, instance, *args, **kwargs
+    ):
+        if instance.pk:
+            instance.delete()
+
+    def manage_attached_form_clear_action(self, listing, *args, **kwargs):
         attached_form = listing.attached_form
-        form = attached_form.get_form()
-        if form.is_valid():
-            instance = listing.model()
-            form.instance = construct_instance(form, instance)
-            mixed_response = self.manage_attached_form_insert_action_process(
-                listing, form, instance, *args, **kwargs
-            )
-            if mixed_response is None:
-                out = listing.render(RequestContext(self.request))
-                return JsonResponse({"listing": out})
-            else:
-                if "listing" in mixed_response and mixed_response["listing"] is None:
-                    out = listing.render(RequestContext(self.request))
-                    mixed_response["listing"] = out
-                return JsonResponse({"listing": out})
-        else:
-            out = listing.attached_form.render(RequestContext(self.request))
-            return JsonResponse({"attached_form": out})
+        # Purge all post data except csrf token
+        self.request.POST = dict(
+            csrfmiddlewaretoken=self.request.POST.get("csrfmiddlewaretoken")
+        )
+        form_html = attached_form.render(RequestContext(self.request))
+        return JsonResponse({"attached_form": form_html})
 
     # def manage_listing_select(self, listing, *args, **kwargs):
     #     if listing.selectable and listing.selecting:

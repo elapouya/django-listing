@@ -10,7 +10,7 @@
 
     {% with attached_form.get_form as form %}
 
-        {% if form.non_field_errors %}
+        {% if attached_form.display_errors and form.non_field_errors %}
             <ul class="errorlist nonfield">
             {% for error in form.non_field_errors %}
                 <li><span class="listing-icon-attention"></span> {{error}}</li>
@@ -23,8 +23,8 @@
                 {% for field_name in row %}
                     {% get_form_field form field_name as field %}
                     {% if field %}
-                        <div class="form-field {{ field_name }}{{ attached_form.theme_field_class }}{% if field.errors %} errors{% endif %}">
-                            {% if field.errors %}<span class="listing-icon-attention"></span> {{ field.errors }}{% endif %}
+                        <div class="form-field {{ field_name }}{{ attached_form.theme_field_class }}{% if attached_form.display_errors and field.errors %} errors{% endif %}">
+                            {% if attached_form.display_errors and field.errors %}<span class="listing-icon-attention"></span> {{ field.errors }}{% endif %}
                             <div class="label_input">
                                 {{ field.label_tag }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
                                 {{ field }}
@@ -41,7 +41,7 @@
 
         <div class="form-buttons">
             {% for action,label,icon in attached_form.buttons %}
-                <button type="{% if action == 'reset' %}reset{% else %}submit{% endif %}" class="attached-form-nav btn btn-primary submit-button {{ action }}"
+                <button type="{% if action == 'reset' %}reset{% else %}button{% endif %}" class="attached-form-nav btn btn-primary submit-button {{ action }}"
                         name="action_button" value="{{ action }}">
                     {% if label %}
                         <span class="label">{{ label|safe }}</span>

@@ -1105,6 +1105,18 @@ div.django-listing-container .table-striped > tbody > tr.selected > * {
   }
 }
 
+@keyframes row-flash-once {
+  0% {
+    background-color: #0033ff;
+  }
+  50% {
+    background-color: #58ae39;
+  }
+}
+.django-listing-container .row-container.flash-once {
+  animation: row-flash-once 0.5s; /* Removed "infinite" */
+}
+
 @media (min-width: 992px) {
   div.django-listing-container td.type-str.cls-filesizecolumn,
   div.django-listing-container td.type-int,

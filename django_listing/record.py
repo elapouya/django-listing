@@ -62,6 +62,7 @@ class ObjectSerializer(Serializer):
 
     def get_dump_object(self, obj):
         data = {"fields": self._current}
+        data["fields"][obj._meta.pk.attname] = obj.pk
         if self.include_data:
             data["data"] = self.include_data
         return data

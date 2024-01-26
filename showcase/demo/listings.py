@@ -726,13 +726,14 @@ class InsertableListing2(FilterListingMixin, Listing):
     attached_form = AttachedForm(
         "attached_edit_form",
         layout=(
-            "first_name,last_name,age,gender,marital_status;"
-            "address;"
+            "id,first_name,last_name,age;"
+            "address,gender,marital_status;"
             "designation,salary,joined,company,have_car"
         ),
         buttons=(
             ("delete", pgettext_lazy("Attached form", "Delete"), None),
             "reset",
+            ("clear", pgettext_lazy("Attached form", "Clear"), None),
             ("insert", pgettext_lazy("Attached form", "Insert"), None),
             ("update", pgettext_lazy("Attached form", "Update"), None),
             ("duplicate", pgettext_lazy("Attached form", "Duplicate"), None),

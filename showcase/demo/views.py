@@ -651,6 +651,8 @@ class InsertableListing2View(ListingView):
     listing_data = Employee
 
     def manage_listing_attached_edit_form_clean(self, form):
+        if form.listing.action_button != "insert":
+            return
         cd = form.cleaned_data
         first_name = cd.get("first_name")
         last_name = cd.get("last_name")
@@ -660,7 +662,7 @@ class InsertableListing2View(ListingView):
             ).exists():
                 raise ValidationError(
                     mark_safe(
-                        _("<b>{first_name} {last_name}</b> already exists").format(
+                        _("<b>{first_name} {last_name}</b> already exists !").format(
                             first_name=first_name, last_name=last_name
                         )
                     )

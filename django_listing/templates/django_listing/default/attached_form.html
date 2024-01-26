@@ -41,7 +41,7 @@
 
         <div class="form-buttons">
             {% for action,label,icon in attached_form.buttons %}
-                <button type="{% if action == 'reset' %}reset{% else %}submit{% endif %}" class="attached-form-nav btn btn-primary submit-button {{ action }}"
+                <button type="{% if action == 'reset' %}reset{% else %}button{% endif %}" class="attached-form-nav btn btn-primary submit-button {{ action }}"
                         name="action_button" value="{{ action }}">
                     {% if label %}
                         <span class="label">{{ label|safe }}</span>

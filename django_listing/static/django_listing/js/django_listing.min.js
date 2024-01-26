@@ -127,9 +127,8 @@ function djlst_post_action_button(event) {
 }
 
 function djlst_post_attached_form(event) {
-    console.log("djlst_post_attached_form");
     event.preventDefault();
-    let nav_obj = $(event.originalEvent.submitter);
+    let nav_obj = $(this);
     let action_button = nav_obj.val();
     let attached_form = nav_obj.closest("form.listing-form");
     let listing_div = $("#" + attached_form.attr("related-listing"));
@@ -221,11 +220,18 @@ function djlst_multiple_row_do_select(row) {
     row.addClass('selected');
     hidden.attr('name',hidden.attr('select-name'));
     row.find('input.selection-box').first().prop('checked',true);
-    let form = $("#" + row.closest('.django-listing-container').attr('attached-form-id'));
+    let listing_dev = row.closest('.django-listing-container');
+    let form = $("#" + listing_dev.attr('attached-form-id'));
     if (form.length) {
-        let serialized_obj = decodeURIComponent(row.attr('data-serialized-object'));
-        let obj = JSON.parse(serialized_obj);
-        djlst_fill_form(form, obj);
+        if (listing_dev.hasClass("attached_form_autofill")) {
+            let serialized_data = row.attr('data-serialized-object');
+            if (serialized_data) {
+                let serialized_obj = decodeURIComponent(serialized_data);
+                let obj = JSON.parse(serialized_obj);
+                let pk = row.attr("data-pk");
+                djlst_fill_form(form, obj, pk);
+            }
+        }
     }
 }
 
@@ -337,16 +343,18 @@ function djlst_selection_menu_update(e) {
     }
 }
 
-function djlst_fill_form(form, obj) {
+function djlst_fill_form(form, obj, pk) {
+    let element = form.find('input[name="object_pk"]');
+    element.val(pk);
     $.each(obj.fields, function(key, value) {
-        var element = form.find("[data-model-field='" + key + "']");
+        let element = form.find("[data-model-field='" + key + "']");
         if (element.is(":input")) {
              if (element.is("input[type='radio']")) {
                  element.filter("[value='" + value + "']").prop("checked", true);
              } else if (element.is("input[type='checkbox']")) {
                  element.prop("checked", value);
              } else if (element.is("select")) {
-                 var option = element.find("option[value='" + value + "']");
+                 let option = element.find("option[value='" + value + "']");
                  if (option.length === 0) {
                      // If option doesn't exist, create it and remove others
                      element.empty();
@@ -456,18 +464,7 @@ $(document).ready(function () {
     $(document.body).on("click", ".button-action-group-by", function () {
         $(this).closest(".django-listing-container").find(".group-by-container").slideToggle(200);
     });
-
-
-    $(document.body).on("submit", "form.django-listing-ajax.attached-form", function(event) {
-        console.log("form.listing-form submitted...");
-        console.log(event);
-        var pressedButton = $(":submit", event.target);
-        console.log("Pressed Button Value: " + pressedButton.val());
-        console.log("Pressed Button name: " + pressedButton.attr("name"));
-        djlst_post_attached_form(event);
-        console.log(event.originalEvent.submitter);
-        event.preventDefault();
-    });
+    $(document.body).on("click", "form.django-listing-ajax.attached-form button[type='button']", djlst_post_attached_form);
 
 
     $('[data-toggle="popover"]').popover();

@@ -24,6 +24,7 @@ __all__ = ["ATTACHED_FORM_PARAMS_KEYS", "AttachedForm"]
 ATTACHED_FORM_PARAMS_KEYS = {
     "action",
     "attached_form_name",
+    "display_errors",
     "reset_label",
     "reset_icon",
     "submit_label",
@@ -101,6 +102,7 @@ class ListingBaseForm(forms.BaseForm):
 class AttachedForm:
     id = None
     action = "attached_form"
+    display_errors = True
     form_base_class = ListingBaseForm
     django_form_class = None
     reset_label = pgettext_lazy("Attached form", "Reset")
@@ -267,4 +269,6 @@ class AttachedForm:
         csrf_token = request_context.request.POST.get("csrfmiddlewaretoken")
         if csrf_token:
             ctx["csrf_token"] = csrf_token
+        object_pk = request_context.request.POST.get("object_pk", "")
+        self.listing.add_form_input_hiddens(object_pk=object_pk)
         return ctx
