@@ -1,8 +1,9 @@
-{% load static %}
+{% load static i18n %}
 {% load django_listing %}
 <div id="listing-popup-container"></div>
 <script type="text/javascript">
-    var csrf_token = '{{ csrf_token }}';
+    var csrf_token = "{{ csrf_token }}";
+    var no_choice_msg = "{% trans "Please choose..." %}";
     $(document).ready(function () {
         $.ajaxSetup({
             data: {'csrfmiddlewaretoken': csrf_token}

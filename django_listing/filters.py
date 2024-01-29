@@ -488,7 +488,7 @@ class Filter(metaclass=FilterMeta):
         if field.__class__ in cls.from_model_field_classes:
             return cls(name, model_field=field, label=field.verbose_name)
 
-    def get_form_field_params(self):
+    def get_form_field_params(self, **kwargs):
         params = {
             p: getattr(self, p)
             for p in FILTERS_FORM_FIELD_KEYS
@@ -496,10 +496,10 @@ class Filter(metaclass=FilterMeta):
         }
         return params
 
-    def get_form_field_class(self):
+    def get_form_field_class(self, **kwargs):
         return self.form_field_class
 
-    def get_form_field_widget(self, field_class):
+    def get_form_field_widget(self, field_class, **kwargs):
         widget_attrs = HTMLAttributes(self.widget_attrs)
         widget_attrs.add("class", self.theme_form_widget_class)
         widget_id = f"id-filter-{self.name}{self.listing.suffix}".replace("_", "-")
@@ -658,13 +658,13 @@ class BooleanFilter(Filter):
     false_msg = gettext_lazy("No")
     indifferent_msg = gettext_lazy("Indiff.")
 
-    def get_form_field_widget(self, field_class):
+    def get_form_field_widget(self, field_class, force_select=False, **kwargs):
         widget_attrs = HTMLAttributes(self.widget_attrs)
-        if self.input_type == "radio":
+        if self.input_type == "radio" and not force_select:
             widget = forms.RadioSelect
             widget_attrs.add("class", self.theme_form_radio_widget_class)
             widget_attrs.add("class", "multiple-radios")
-        elif self.input_type == "radioinline":
+        elif self.input_type == "radioinline" and not force_select:
             widget = forms.RadioSelect
             widget_attrs.add("class", self.theme_form_radio_widget_class)
             widget_attrs.add("class", "multiple-radios inline")
@@ -673,7 +673,7 @@ class BooleanFilter(Filter):
             widget_attrs.add("class", self.theme_form_select_widget_class)
         return widget(attrs=widget_attrs)
 
-    def get_form_field_params(self):
+    def get_form_field_params(self, **kwargs):
         params = super().get_form_field_params()
         params["choices"] = [
             ("", self.indifferent_msg),
@@ -695,13 +695,13 @@ class ChoiceFilter(Filter):
                 name, model_field=field, label=field.verbose_name, choices=choices
             )
 
-    def get_form_field_widget(self, field_class):
+    def get_form_field_widget(self, field_class, force_select=False, **kwargs):
         widget_attrs = HTMLAttributes(self.widget_attrs)
-        if self.input_type == "radio":
+        if self.input_type == "radio" and not force_select:
             widget = forms.RadioSelect
             widget_attrs.add("class", self.theme_form_radio_widget_class)
             widget_attrs.add("class", "multiple-radios")
-        elif self.input_type == "radioinline":
+        elif self.input_type == "radioinline" and not force_select:
             widget = forms.RadioSelect
             widget_attrs.add("class", self.theme_form_radio_widget_class)
             widget_attrs.add("class", "multiple-radios inline")
@@ -710,7 +710,7 @@ class ChoiceFilter(Filter):
             widget_attrs.add("class", self.theme_form_select_widget_class)
         return widget(attrs=widget_attrs)
 
-    def get_form_field_params(self):
+    def get_form_field_params(self, **kwargs):
         params = super().get_form_field_params()
         self.set_params_choices(params)
         params["choices"] = [("", self.no_choice_msg)] + list(params["choices"])
@@ -735,7 +735,7 @@ class MultipleChoiceFilter(Filter):
         if choices and name.endswith("__in"):
             return cls(name, model_field=field, label=field.verbose_name)
 
-    def get_form_field_widget(self, field_class):
+    def get_form_field_widget(self, field_class, **kwargs):
         widget_attrs = HTMLAttributes(self.widget_attrs)
         if self.input_type == "checkbox":
             widget = forms.CheckboxSelectMultiple
@@ -750,7 +750,7 @@ class MultipleChoiceFilter(Filter):
             widget_attrs.add("class", self.theme_form_select_widget_class)
         return widget(attrs=widget_attrs)
 
-    def get_form_field_params(self):
+    def get_form_field_params(self, **kwargs):
         params = super().get_form_field_params()
         self.set_params_choices(params)
         if params.get("help_text") is None and self.input_type not in [
@@ -769,7 +769,7 @@ class MultipleChoiceFilter(Filter):
 class ForeignKeyFilter(Filter):
     form_field_class = forms.ChoiceField
 
-    def get_form_field_widget(self, field_class):
+    def get_form_field_widget(self, field_class, **kwargs):
         widget_attrs = HTMLAttributes(self.widget_attrs)
         widget = forms.Select
         widget_attrs.add("class", self.theme_form_select_widget_class)
@@ -788,7 +788,7 @@ class ForeignKeyFilter(Filter):
             qs = qs.order_by(order_by)
         return qs
 
-    def get_form_field_params(self):
+    def get_form_field_params(self, **kwargs):
         params = super().get_form_field_params()
         self.set_params_choices(params)
         choices = [("", self.no_choice_msg)]
@@ -801,7 +801,7 @@ class AutocompleteForeignKeyFilter(Filter):
     form_field_class = forms.ModelChoiceField
     widget_class = autocomplete.ModelSelect2
 
-    def get_form_field_params(self):
+    def get_form_field_params(self, **kwargs):
         related_model = self.listing.model._meta.get_field(
             self.field_name
         ).related_model
@@ -810,7 +810,7 @@ class AutocompleteForeignKeyFilter(Filter):
         params["queryset"] = related_model.objects.all()
         return params
 
-    def get_form_field_widget(self, field_class):
+    def get_form_field_widget(self, field_class, **kwargs):
         self.listing.need_media_for("autocomplete")
         widget_attrs = HTMLAttributes(self.widget_attrs)
         widget_attrs.add("class", self.theme_form_select_widget_class)

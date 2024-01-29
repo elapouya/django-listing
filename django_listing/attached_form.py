@@ -213,7 +213,9 @@ class AttachedForm:
             for field_name in row:
                 field_name = field_name.strip()
                 col = self.listing.columns.get(field_name)
-                fields[field_name] = col.create_form_field(have_empty_choice=True)
+                fields[field_name] = col.create_form_field(
+                    have_empty_choice=True, force_select=True
+                )
         form_class = type(
             "{}{}".format(self.name, self.listing.suffix),
             (self.form_base_class,),

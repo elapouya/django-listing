@@ -106,6 +106,8 @@ COLUMNS_PARAMS_KEYS = {
     "model_field",
     "name",
     "no_choice_msg",
+    "true_msg",
+    "false_msg",
     "no_foreignkey_link",
     "sort_key",
     "sortable",
@@ -519,6 +521,8 @@ class Column(metaclass=ColumnMeta):
     model_form_field = None
     name = None
     no_choice_msg = _("Please choose...")
+    true_msg = _("Yes")
+    false_msg = _("No")
     params_keys = ""
     sort_key = None
     sortable = True
@@ -948,7 +952,7 @@ class Column(metaclass=ColumnMeta):
         except (ValueError, AttributeError, IndexError) as e:
             return '<td class="render-error">{}</td>'.format(e)
 
-    def get_form_field_params(self, have_empty_choice=False):
+    def get_form_field_params(self, **kwargs):
         # Get form field params from the listing first,
         # if not available use model informations
         params = {}
@@ -963,7 +967,7 @@ class Column(metaclass=ColumnMeta):
                     params[p] = getattr(self.model_form_field, p)
         return params
 
-    def get_form_field_class(self):
+    def get_form_field_class(self, force_select=False, **kwargs):
         cls = self.form_field_class
         if isinstance(cls, str):
             cls = getattr(forms, cls, None)
@@ -973,9 +977,11 @@ class Column(metaclass=ColumnMeta):
                         self.form_field_class
                     )
                 )
+        if force_select and issubclass(cls, forms.BooleanField):
+            cls = forms.ChoiceField
         return cls
 
-    def get_form_field_widget(self, field_class):
+    def get_form_field_widget(self, field_class, **kwargs):
         cls = self.form_field_widget_class or field_class.widget
         if isinstance(cls, str):
             cls = getattr(widgets, cls, None)
@@ -993,12 +999,12 @@ class Column(metaclass=ColumnMeta):
         widget_attrs.add("id", widget_id)
         return cls(attrs=widget_attrs, **self.form_field_widget_params)
 
-    def create_form_field(self, have_empty_choice=False):
+    def create_form_field(self, **kwargs):
         if self.form_field:
             return self.form_field
-        cls = self.get_form_field_class()
-        params = self.get_form_field_params(have_empty_choice)
-        widget = self.get_form_field_widget(cls)
+        cls = self.get_form_field_class(**kwargs)
+        params = self.get_form_field_params(**kwargs)
+        widget = self.get_form_field_widget(cls, **kwargs)
         if self.listing.model:
             widget.attrs["data-model-field"] = self.model_field.name
         field = cls(widget=widget, **params)
@@ -1055,10 +1061,24 @@ class BooleanColumn(Column):
     def get_value_tpl(self, rec, ctx, value):
         return self.true_tpl if value else self.false_tpl
 
-    def get_form_field_widget(self, field_class):
+    def get_form_field_widget(self, field_class, force_select=False, **kwargs):
         widget_attrs = HTMLAttributes(self.widget_attrs)
-        widget_attrs.add("class", "form-check-input")
-        return forms.CheckboxInput(attrs=widget_attrs)
+        if force_select:
+            widget_attrs.add("class", self.theme_form_select_widget_class)
+            return forms.Select(attrs=widget_attrs)
+        else:
+            widget_attrs.add("class", self.theme_form_checkbox_widget_class)
+            return forms.CheckboxInput(attrs=widget_attrs)
+
+    def get_form_field_params(self, force_select=False, **kwargs):
+        params = super().get_form_field_params()
+        if force_select:
+            params["choices"] = [
+                ("", self.no_choice_msg),
+                ("True", self.true_msg),
+                ("False", self.false_msg),
+            ]
+        return params
 
 
 class IntegerColumn(Column):
@@ -1108,20 +1128,24 @@ class ChoiceColumn(Column):
     def get_value_tpl(self, rec, ctx, value):
         return self.choices.get(value, value)
 
-    def get_form_field_params(self, have_empty_choice=False):
+    def get_form_field_params(
+        self, have_empty_choice=False, force_select=False, **kwargs
+    ):
         params = super().get_form_field_params()
         self.set_params_choices(params)
-        if have_empty_choice and self.input_type not in ("radio", "radioinline"):
+        if have_empty_choice and (
+            self.input_type not in ("radio", "radioinline") or force_select
+        ):
             params["choices"] = [("", self.no_choice_msg)] + list(params["choices"])
         return params
 
-    def get_form_field_widget(self, field_class):
+    def get_form_field_widget(self, field_class, force_select=False, **kwargs):
         widget_attrs = HTMLAttributes(self.widget_attrs)
-        if self.input_type == "radio":
+        if self.input_type == "radio" and not force_select:
             widget = forms.RadioSelect
             widget_attrs.add("class", self.theme_form_radio_widget_class)
             widget_attrs.add("class", "multiple-radios")
-        elif self.input_type == "radioinline":
+        elif self.input_type == "radioinline" and not force_select:
             widget = forms.RadioSelect
             widget_attrs.add("class", self.theme_form_radio_widget_class)
             widget_attrs.add("class", "multiple-radios inline")
@@ -1156,14 +1180,14 @@ class MultipleChoiceColumn(Column):
         value = super().get_cell_value(rec)
         return self.choices.get(value, value)
 
-    def get_form_field_params(self, have_empty_choice=False):
+    def get_form_field_params(self, have_empty_choice=False, **kwargs):
         params = super().get_form_field_params()
         self.set_params_choices(params)
         if have_empty_choice and self.input_type not in ("checkbox", "checkboxinline"):
             params["choices"] = [("", self.no_choice_msg)] + list(params["choices"])
         return params
 
-    def get_form_field_widget(self, field_class):
+    def get_form_field_widget(self, field_class, **kwargs):
         widget_attrs = HTMLAttributes(self.widget_attrs)
         if self.input_type == "checkbox":
             widget = forms.CheckboxSelectMultiple

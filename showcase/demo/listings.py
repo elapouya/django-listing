@@ -284,7 +284,7 @@ class WidgetsColumnsListing(Listing):
         SelectColumn(
             "SelectBox",
             choices=(
-                ("", "Please choose..."),
+                ("", _("Please choose...")),
                 ("good", "The good"),
                 ("bad", "The bad"),
                 ("ugly", "The ugly"),
@@ -702,7 +702,7 @@ class InsertableListing1(Listing):
     sort = "-id"
     gender__input_type = "radio"
     salary__min_value = 0
-    columns_no_choice_msg = "Please choose..."
+    columns_no_choice_msg = _("Please choose...")
     columns_label_suffix = ""
     save_to_database = True
     exclude_columns = "interests"
@@ -714,10 +714,12 @@ class InsertableListing2(FilterListingMixin, Listing):
     accept_ajax = True
     gender__input_type = "radio"
     salary__min_value = 0
-    columns_no_choice_msg = "Please choose..."
+    columns_no_choice_msg = _("Please choose...")
     columns_label_suffix = ""
     save_to_database = True
     exclude_columns = "interests"
+    selection_multiple = True
+    selection_multiple_ctrl = True
     company__form_field_widget_class = ModelSelect2
     company__form_field_widget_params = {"url": "company-autocomplete"}
     company__widget_attrs = {"data-result-html": True}

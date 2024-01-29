@@ -160,6 +160,7 @@ LISTING_PARAMS_KEYS = {
     "selection_menu_id",
     "selection_mode",
     "selection_multiple",
+    "selection_multiple_ctrl",
     "selection_overlay_template_name",
     "selection_position",
     "small_device_header_style",
@@ -493,6 +494,7 @@ class Listing(ListingBase):
     selection_menu_id = None
     selection_mode = "default"  # default, overlay, hover
     selection_multiple = False
+    selection_multiple_ctrl = False
     selection_overlay_template_name = ThemeTemplate("selection_overlay.html")
     selection_position = "hidden"  # left, right or hidden
     small_device_max_width = "767.98px"
@@ -1012,6 +1014,8 @@ class Listing(ListingBase):
             listing_container_class += " django-listing-selecting"
             if self.selection_multiple:
                 listing_container_class += " selection_multiple"
+                if self.selection_multiple_ctrl:
+                    listing_container_class += " selection-multiple-ctrl"
             else:
                 listing_container_class += " selection_unique"
             listing_container_class += " selection_position_{}".format(
@@ -1297,7 +1301,7 @@ class Listing(ListingBase):
                 rec.get_serialized_object(fields=self.form_model_fields),
             )
         if self.processed_flash:
-            if rec.pk == self.processed_pk:
+            if self.processed_pk and rec.pk == self.processed_pk:
                 attrs.add("class", {"flash-once", "selected"})
         attrs.add("class", "odd" if rec.get_index() % 2 else "even")
         if self.can_select:
