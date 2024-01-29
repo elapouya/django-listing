@@ -145,7 +145,7 @@ LISTING_PARAMS_KEYS = {
     "per_page_max",
     "primary_key",
     "processed_flash",
-    "processed_pk",
+    "processed_pks",
     "record_label",
     "record_label_plural",
     "row_attrs",
@@ -476,7 +476,7 @@ class Listing(ListingBase):
     posted_columns = None
     primary_key = "id"
     processed_flash = True
-    processed_pk = None
+    processed_pks = None
     records_class = RecordManager
     record_label = None
     record_label_plural = None
@@ -1301,7 +1301,7 @@ class Listing(ListingBase):
                 rec.get_serialized_object(fields=self.form_model_fields),
             )
         if self.processed_flash:
-            if self.processed_pk and rec.pk == self.processed_pk:
+            if self.processed_pks and rec.pk in self.processed_pks:
                 attrs.add("class", {"flash-once", "selected"})
         attrs.add("class", "odd" if rec.get_index() % 2 else "even")
         if self.can_select:

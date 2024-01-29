@@ -350,6 +350,19 @@ class ListingViewMixin:
             If methods returns None instead of a the dict. The dict will be
             automatically calculated.
         """
+
+        # Read selected listing rows
+        listing.selected_pks = self.request.POST.get("selected_pks", [])
+        if isinstance(listing.selected_pks, str):
+            listing.selected_pks = list(
+                map(
+                    lambda x: int(x),
+                    filter(
+                        str.isdigit, map(str.strip, listing.selected_pks.split(","))
+                    ),
+                )
+            )
+
         # if a specific action method is available in view or listing : use it
         action_meth_name = f"manage_attached_form_{listing.action_button}_action"
         # Search method in view object first
@@ -400,7 +413,7 @@ class ListingViewMixin:
                 mixed_response = process_method(form, instance, *args, **kwargs)
             self.listing.request.POST[instance._meta.pk.attname] = instance.pk
             if listing.processed_flash:
-                listing.processed_pk = instance.pk
+                listing.processed_pks = set(listing.selected_pks)
             if not self.is_ajax:
                 return None
             form_html = listing.attached_form.render(RequestContext(self.request))
@@ -436,16 +449,8 @@ class ListingViewMixin:
         instance.save()
 
     def manage_attached_form_update_get_form(self, listing, *args, **kwargs):
-        self.selected_pks = self.request.POST.get("selected_pks", [])
-        if isinstance(self.selected_pks, str):
-            self.selected_pks = list(
-                map(
-                    lambda x: int(x),
-                    filter(str.isdigit, map(str.strip, self.selected_pks.split(","))),
-                )
-            )
         form = listing.attached_form.get_form(
-            force_not_required=len(self.selected_pks) > 1
+            force_not_required=len(listing.selected_pks) > 1
         )
         form.full_clean()
         if not any(form.cleaned_data.values()):
@@ -455,11 +460,13 @@ class ListingViewMixin:
     def manage_attached_form_update_process(
         self, listing, form, instance, *args, **kwargs
     ):
-        if len(self.selected_pks) == 1:
+        if len(listing.selected_pks) == 1:
             instance.save()
         else:
-            update_fields = {k: v for k, v in form.cleaned_data.items() if v}
-            listing.model.objects.filter(pk__in=self.selected_pks).update(
+            update_fields = {
+                k: v for k, v in form.cleaned_data.items() if v and k != "id"
+            }
+            listing.model.objects.filter(pk__in=listing.selected_pks).update(
                 **update_fields
             )
 
