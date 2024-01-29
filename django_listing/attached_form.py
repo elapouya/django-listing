@@ -56,6 +56,8 @@ class ListingBaseForm(forms.BaseForm):
                     value = field.clean(value)
                 self.cleaned_data[name] = value
 
+                if value is None and not field.required:
+                    continue
                 method = None
                 view = self.listing.get_view()
                 if view:
@@ -203,7 +205,7 @@ class AttachedForm:
                 "datetimepickers", dict(listing=self.listing, div_id=self.id)
             )
 
-    def create_form_from_layout(self):
+    def create_form_from_layout(self, **kwargs):
         fields = {}
         if not self.layout:
             raise InvalidAttachedForm(
@@ -213,9 +215,7 @@ class AttachedForm:
             for field_name in row:
                 field_name = field_name.strip()
                 col = self.listing.columns.get(field_name)
-                fields[field_name] = col.create_form_field(
-                    have_empty_choice=True, force_select=True
-                )
+                fields[field_name] = col.create_form_field(**kwargs)
         form_class = type(
             "{}{}".format(self.name, self.listing.suffix),
             (self.form_base_class,),
@@ -223,9 +223,11 @@ class AttachedForm:
         )
         return form_class
 
-    def get_form(self):
+    def get_form(self, **kwargs):
         if not self._form:
-            form_class = self.create_form_from_layout()
+            kwargs.setdefault("have_empty_choice", True)
+            kwargs.setdefault("force_select", True)
+            form_class = self.create_form_from_layout(**kwargs)
             data = None
             if self.listing.request.POST.get("attached_form_name") == self.name:
                 data = self.listing.request.POST

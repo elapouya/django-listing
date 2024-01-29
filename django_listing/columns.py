@@ -952,7 +952,9 @@ class Column(metaclass=ColumnMeta):
         except (ValueError, AttributeError, IndexError) as e:
             return '<td class="render-error">{}</td>'.format(e)
 
-    def get_form_field_params(self, **kwargs):
+    def get_form_field_params(
+        self, force_select=False, force_not_required=False, **kwargs
+    ):
         # Get form field params from the listing first,
         # if not available use model informations
         params = {}
@@ -965,6 +967,10 @@ class Column(metaclass=ColumnMeta):
                     and getattr(self.model_form_field, p, None) is not None
                 ):
                     params[p] = getattr(self.model_form_field, p)
+        if force_not_required:
+            params["required"] = False
+        elif force_select and not self.model_field.blank:
+            params["required"] = True
         return params
 
     def get_form_field_class(self, force_select=False, **kwargs):
@@ -1071,7 +1077,7 @@ class BooleanColumn(Column):
             return forms.CheckboxInput(attrs=widget_attrs)
 
     def get_form_field_params(self, force_select=False, **kwargs):
-        params = super().get_form_field_params()
+        params = super().get_form_field_params(force_select=force_select, **kwargs)
         if force_select:
             params["choices"] = [
                 ("", self.no_choice_msg),
@@ -1131,7 +1137,9 @@ class ChoiceColumn(Column):
     def get_form_field_params(
         self, have_empty_choice=False, force_select=False, **kwargs
     ):
-        params = super().get_form_field_params()
+        params = super().get_form_field_params(
+            have_empty_choice=have_empty_choice, force_select=force_select, **kwargs
+        )
         self.set_params_choices(params)
         if have_empty_choice and (
             self.input_type not in ("radio", "radioinline") or force_select
@@ -1181,7 +1189,9 @@ class MultipleChoiceColumn(Column):
         return self.choices.get(value, value)
 
     def get_form_field_params(self, have_empty_choice=False, **kwargs):
-        params = super().get_form_field_params()
+        params = super().get_form_field_params(
+            have_empty_choice=have_empty_choice, **kwargs
+        )
         self.set_params_choices(params)
         if have_empty_choice and self.input_type not in ("checkbox", "checkboxinline"):
             params["choices"] = [("", self.no_choice_msg)] + list(params["choices"])

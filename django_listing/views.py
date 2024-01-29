@@ -350,6 +350,7 @@ class ListingViewMixin:
             If methods returns None instead of a the dict. The dict will be
             automatically calculated.
         """
+        # if a specific action method is available in view or listing : use it
         action_meth_name = f"manage_attached_form_{listing.action_button}_action"
         # Search method in view object first
         action_method = getattr(self, action_meth_name, None)
@@ -358,8 +359,21 @@ class ListingViewMixin:
         action_method = getattr(listing, action_meth_name, None)
         if action_method:
             return action_method(*args, **kwargs)
-        attached_form = listing.attached_form
-        form = attached_form.get_form()
+
+        # if a specific get_form() method is available in view or listing : use it
+        action_meth_name = f"manage_attached_form_{listing.action_button}_get_form"
+        # Search method in view object first
+        get_form_method = getattr(self, action_meth_name, None)
+        if get_form_method:
+            form = get_form_method(listing, *args, **kwargs)
+        else:
+            get_form_method = getattr(listing, action_meth_name, None)
+            if get_form_method:
+                form = get_form_method(*args, **kwargs)
+            else:
+                attached_form = listing.attached_form
+                form = attached_form.get_form()
+
         if form.is_valid():
             object_pk = listing.request.POST.get("object_pk")
             instance = None
@@ -421,10 +435,33 @@ class ListingViewMixin:
         instance.pk = None
         instance.save()
 
+    def manage_attached_form_update_get_form(self, listing, *args, **kwargs):
+        self.selected_pks = self.request.POST.get("selected_pks", [])
+        if isinstance(self.selected_pks, str):
+            self.selected_pks = list(
+                map(
+                    lambda x: int(x),
+                    filter(str.isdigit, map(str.strip, self.selected_pks.split(","))),
+                )
+            )
+        form = listing.attached_form.get_form(
+            force_not_required=len(self.selected_pks) > 1
+        )
+        form.full_clean()
+        if not any(form.cleaned_data.values()):
+            form.add_error(None, gettext("Please fill at least one field to update"))
+        return form
+
     def manage_attached_form_update_process(
         self, listing, form, instance, *args, **kwargs
     ):
-        instance.save()
+        if len(self.selected_pks) == 1:
+            instance.save()
+        else:
+            update_fields = {k: v for k, v in form.cleaned_data.items() if v}
+            listing.model.objects.filter(pk__in=self.selected_pks).update(
+                **update_fields
+            )
 
     def manage_attached_form_delete_process(
         self, listing, form, instance, *args, **kwargs
