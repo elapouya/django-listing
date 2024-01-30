@@ -651,8 +651,6 @@ class InsertableListing2View(ListingView):
     listing_data = Employee
 
     def manage_listing_attached_edit_form_clean(self, form):
-        if form.listing.action_button != "insert":
-            return
         cd = form.cleaned_data
         first_name = cd.get("first_name")
         last_name = cd.get("last_name")

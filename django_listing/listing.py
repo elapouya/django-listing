@@ -205,6 +205,13 @@ LISTING_ANNOTATIONS = {
 
 
 class ListingBase:
+    PERMISSION_ACTIONS = dict(
+        insert="add",
+        update="change",
+        update_all="change",
+        delete_all="delete",
+    )
+
     def __init__(self, *args, **kwargs):
         self.stored_params = {}
         self.stored_columns_params = {}
@@ -535,6 +542,9 @@ class Listing(ListingBase):
     theme_localized_small_device_styles_width = ThemeAttribute(
         "theme_localized_small_device_styles_width"
     )
+
+    permission_required_for_reset = False
+    permission_required_for_clear = False
 
     def __init__(self, data=None, **kwargs):
         super().__init__(data, **kwargs)
@@ -1371,6 +1381,25 @@ class Listing(ListingBase):
 
     def get_view(self):
         return self._view
+
+    def has_permission_for_action(self, action):
+        if not action:
+            raise ListingException("self.action_button value is empty")
+        perm_attr_name = f"permission_required_for_{action}"
+        perms = getattr(self._view, perm_attr_name, None)
+        if perms is None:
+            perms = getattr(self, perm_attr_name, None)
+        if perms is None:
+            app_label = self.model._meta.app_label
+            model_name = self.model._meta.model_name
+            permission_action = self.PERMISSION_ACTIONS.get(action, action)
+            if permission_action:
+                perms = (f"{app_label}.{permission_action}_{model_name}",)
+        if perms == False:
+            return True
+        if perms is not None:
+            return self.request.user.has_perms(perms)
+        return True
 
 
 class DivListing(Listing):

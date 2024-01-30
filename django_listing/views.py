@@ -9,6 +9,8 @@ from urllib.parse import parse_qs
 
 from django import forms
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
+
 from django.db import models
 from django.db.models import QuerySet
 from django.forms.models import construct_instance
@@ -350,6 +352,11 @@ class ListingViewMixin:
             If methods returns None instead of a the dict. The dict will be
             automatically calculated.
         """
+        # Test permissions
+        # Note : action_button is automatically set from POST during listing init
+        action = listing.action_button
+        if not listing.has_permission_for_action(action):
+            raise PermissionDenied(gettext("You do not have the required permission"))
 
         # Read selected listing rows
         listing.selected_pks = self.request.POST.get("selected_pks", [])
@@ -364,7 +371,7 @@ class ListingViewMixin:
             )
 
         # if a specific action method is available in view or listing : use it
-        action_meth_name = f"manage_attached_form_{listing.action_button}_action"
+        action_meth_name = f"manage_attached_form_{action}_action"
         # Search method in view object first
         action_method = getattr(self, action_meth_name, None)
         if action_method:
@@ -374,7 +381,7 @@ class ListingViewMixin:
             return action_method(*args, **kwargs)
 
         # if a specific get_form() method is available in view or listing : use it
-        action_meth_name = f"manage_attached_form_{listing.action_button}_get_form"
+        action_meth_name = f"manage_attached_form_{action}_get_form"
         # Search method in view object first
         get_form_method = getattr(self, action_meth_name, None)
         if get_form_method:
@@ -395,7 +402,7 @@ class ListingViewMixin:
             if not instance:
                 instance = listing.model()
             form.instance = construct_instance(form, instance)
-            process_meth_name = f"manage_attached_form_{listing.action_button}_process"
+            process_meth_name = f"manage_attached_form_{action}_process"
             # Search method in view object first
             process_method = getattr(self, process_meth_name, None)
             if process_method:
@@ -406,7 +413,7 @@ class ListingViewMixin:
                 process_method = getattr(listing, process_meth_name, None)
                 if not process_method:
                     raise ListingException(
-                        f'Do not know how to manage "{listing.action_button}" action. '
+                        f'Do not know how to manage "{action}" action. '
                         f"Please define {action_meth_name}() or {process_meth_name}() "
                         f"in your view or your in your listing."
                     )
@@ -457,10 +464,16 @@ class ListingViewMixin:
             form.add_error(None, gettext("Please fill at least one field to update"))
         return form
 
+    def manage_attached_form_update_get_form(self, listing, *args, **kwargs):
+        form = listing.attached_form.get_form(force_not_required=True)
+        if len(listing.selected_pks) == 0:
+            form.add_error(None, gettext("Please select at least one item"))
+        return form
+
     def manage_attached_form_update_process(
         self, listing, form, instance, *args, **kwargs
     ):
-        if len(listing.selected_pks) == 1:
+        if len(listing.selected_pks) == 1 and instance.pk:
             instance.save()
         else:
             update_fields = {
@@ -470,11 +483,36 @@ class ListingViewMixin:
                 **update_fields
             )
 
+    def manage_attached_form_duplicate_get_form(self, listing, *args, **kwargs):
+        form = listing.attached_form.get_form(force_not_required=True)
+        if len(listing.selected_pks) == 0:
+            form.add_error(None, gettext("Please select one item"))
+        elif len(listing.selected_pks) > 1:
+            form.add_error(
+                None, gettext("You can duplicate only one item at the same time")
+            )
+        return form
+
+    def manage_attached_form_duplicate_process(
+        self, listing, form, instance, *args, **kwargs
+    ):
+        if len(listing.selected_pks) == 1 and instance.pk:
+            instance.pk = None
+            instance.save()
+
+    def manage_attached_form_delete_get_form(self, listing, *args, **kwargs):
+        form = listing.attached_form.get_form(force_not_required=True)
+        if len(listing.selected_pks) == 0:
+            form.add_error(None, gettext("Please select at least one item"))
+        return form
+
     def manage_attached_form_delete_process(
         self, listing, form, instance, *args, **kwargs
     ):
-        if instance.pk:
+        if len(listing.selected_pks) == 1 and instance.pk:
             instance.delete()
+        else:
+            listing.model.objects.filter(pk__in=listing.selected_pks).delete()
 
     def manage_attached_form_clear_action(self, listing, *args, **kwargs):
         attached_form = listing.attached_form

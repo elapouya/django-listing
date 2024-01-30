@@ -511,6 +511,7 @@ $(document).ready(function () {
         $(this).closest(".django-listing-container").find(".group-by-container").slideToggle(200);
     });
     $(document.body).on("click", "form.django-listing-ajax.attached-form button[type='button']", djlst_post_attached_form);
+    $(document.body).on("click", ".btn.gb-filter", function() {$(this).addClass("visited")});
 
 
     $('[data-toggle="popover"]').popover();
