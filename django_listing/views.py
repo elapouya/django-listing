@@ -394,14 +394,20 @@ class ListingViewMixin:
                 attached_form = listing.attached_form
                 form = attached_form.get_form()
 
+        form.selected_pks = listing.selected_pks
+
+        # create instance from database if possible
+        instance = None
+        object_pk = listing.request.POST.get("object_pk")
+        if object_pk:
+            instance = listing.model.objects.filter(pk=object_pk).first()
+        form.instance = instance
         if form.is_valid():
-            object_pk = listing.request.POST.get("object_pk")
-            instance = None
-            if object_pk:
-                instance = listing.model.objects.filter(pk=object_pk).first()
+            # if no instance, build it from form cleaned_data:
             if not instance:
                 instance = listing.model()
             form.instance = construct_instance(form, instance)
+
             process_meth_name = f"manage_attached_form_{action}_process"
             # Search method in view object first
             process_method = getattr(self, process_meth_name, None)
@@ -420,7 +426,10 @@ class ListingViewMixin:
                 mixed_response = process_method(form, instance, *args, **kwargs)
             self.listing.request.POST[instance._meta.pk.attname] = instance.pk
             if listing.processed_flash:
-                listing.processed_pks = set(listing.selected_pks)
+                if len(listing.selected_pks) == 1 and instance.pk:
+                    listing.processed_pks = {instance.pk}
+                else:
+                    listing.processed_pks = set(listing.selected_pks)
             if not self.is_ajax:
                 return None
             form_html = listing.attached_form.render(RequestContext(self.request))

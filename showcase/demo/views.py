@@ -654,6 +654,11 @@ class InsertableListing2View(ListingView):
         cd = form.cleaned_data
         first_name = cd.get("first_name")
         last_name = cd.get("last_name")
+        instance = form.instance
+        # test if unchanged :
+        if instance and form.listing.action_button != "insert":
+            if instance.first_name == first_name and instance.last_name == last_name:
+                return
         if first_name and last_name:
             if Employee.objects.filter(
                 first_name=first_name, last_name=last_name

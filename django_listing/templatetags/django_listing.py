@@ -343,6 +343,16 @@ def listing_has_permission_for_action(listing, action):
 
 
 @register.simple_tag()
+def listing_confirm_msg_for_action(listing, action):
+    return listing.get_confirm_msg_for_action(action)
+
+
+@register.simple_tag()
+def listing_confirm_msg_nb_items_for_action(listing, action):
+    return listing.get_confirm_msg_nb_items_for_action(action)
+
+
+@register.simple_tag()
 def listing_responsive_columns_css(listing, format_str=None):
     if not isinstance(listing, (Listing, ListingVariations)):
         return mark_safe(

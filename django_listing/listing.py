@@ -100,6 +100,10 @@ LISTING_PARAMS_KEYS = {
     "anchor_hash",
     "attrs",
     "columns_headers",
+    "confirm_msg_for_delete",
+    "confirm_msg_nb_items_for_delete",
+    "confirm_msg_for_update",
+    "confirm_msg_nb_items_for_update",
     "data",
     "datetimepicker_date_format",
     "datetimepicker_datetime_format",
@@ -427,6 +431,15 @@ class Listing(ListingBase):
     can_select = False
     columns = None
     columns_headers = None
+    confirm_msg_for_delete = gettext_lazy(
+        "Do you really want delete {nb_items} item(s)"
+    )
+    confirm_msg_nb_items_for_delete = 1
+    confirm_msg_for_update = gettext_lazy("Do you really want update {nb_items} items")
+    confirm_msg_nb_items_for_update = 2
+    confirm_msg_for_update_all = gettext_lazy(
+        "Do you really want update absolutely all {nb_all_items} items"
+    )
     data = None
     datetimepicker_date_format = "Y-m-d"
     datetimepicker_datetime_format = "Y-m-d H:i"
@@ -1381,6 +1394,16 @@ class Listing(ListingBase):
 
     def get_view(self):
         return self._view
+
+    def get_confirm_msg_for_action(self, action):
+        attr_name = f"confirm_msg_for_{action}"
+        msg = getattr(self, attr_name, "")
+        return msg
+
+    def get_confirm_msg_nb_items_for_action(self, action):
+        attr_name = f"confirm_msg_nb_items_for_{action}"
+        nb = getattr(self, attr_name, "")
+        return nb
 
     def has_permission_for_action(self, action):
         if not action:
