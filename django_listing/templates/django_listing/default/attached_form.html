@@ -2,7 +2,7 @@
 
 <form{{ attached_form.attrs }} method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {% gethiddens_listing listing %}
+    {% gethiddens_listing listing without="page,sort" %}
     {% block hiddens %}
         {% for hidden in listing.form_input_hiddens %}
             <input type="hidden" name="{{ hidden.0 }}" value="{{ hidden.1 }}">{% endfor %}
@@ -40,9 +40,14 @@
         {% endfor %}
 
         <div class="form-buttons">
-            {% for action,label,icon in attached_form.buttons %}
+            {% for action,label,icon,css_class in attached_form.buttons %}
                 {% listing_has_permission_for_action listing action as has_button_perm %}
-                <button type="{% if action == 'reset' %}reset{% else %}button{% endif %}" class="attached-form-nav btn btn-primary submit-button {{ action }}{% if not has_button_perm %} disabled{% endif %}"
+                {% listing_confirm_msg_for_action listing action as confirm_msg %}
+                {% listing_confirm_msg_nb_items_for_action listing action as confirm_msg_nb_items %}
+                <button type="{% if action == 'reset' %}reset{% else %}button{% endif %}"
+                        class="attached-form-nav btn btn-primary submit-button {{ action }}{% if not has_button_perm %} no-perm disabled{% endif %}{% if css_class %} {{ css_class }}{% endif %}"
+                        {% if confirm_msg %}confirm-msg="{{ confirm_msg }}"{% endif %}
+                        {% if confirm_msg_nb_items %}confirm-msg-nb-items="{{ confirm_msg_nb_items }}"{% endif %}
                         name="action_button" value="{{ action }}">
                     {% if label %}
                         <span class="label">{{ label|safe }}</span>

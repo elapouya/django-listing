@@ -2,7 +2,7 @@
 
 <form{{ attached_form.attrs }} method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {% gethiddens_listing listing %}
+    {% gethiddens_listing listing without="page,sort" %}
     {% block hiddens %}
         {% for hidden in listing.form_input_hiddens %}
             <input type="hidden" name="{{ hidden.0 }}" value="{{ hidden.1 }}">{% endfor %}

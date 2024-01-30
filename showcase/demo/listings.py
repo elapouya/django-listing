@@ -699,7 +699,11 @@ class GroupByListing(ListingVariations):
 
 class InsertableListing1(Listing):
     per_page = 5
+
+    # important : always use ascending_by_default = False when default sort is negative
     sort = "-id"
+    id__ascending_by_default = False
+
     gender__input_type = "radio"
     salary__min_value = 0
     columns_no_choice_msg = _("Please choose...")
@@ -710,7 +714,11 @@ class InsertableListing1(Listing):
 
 class InsertableListing2(FilterListingMixin, Listing):
     per_page = 5
+
+    # important : always use ascending_by_default = False when default sort is negative
     sort = "-id"
+    id__ascending_by_default = False
+
     accept_ajax = True
     gender__input_type = "radio"
     salary__min_value = 0
