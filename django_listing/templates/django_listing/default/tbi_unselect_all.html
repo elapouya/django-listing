@@ -1,0 +1,13 @@
+{% load django_listing %}
+{% get_uniq_id as uniq_id %}
+<div class="btn-group-sm mr-2 toolbar_item {{ item.css_class }}" role="group">
+    <button id="toolbar-item-{{ uniq_id }}-select-all-id"
+            type="button"
+            title="{{ item.label }}"
+            listing-action="unselect-all"
+            listing-target="{{ listing.css_id }}"
+            class="button-action-unselect-all {{ item.theme_button_class }}">
+        {% if item.icon %}<span class="{{ item.icon }}"></span>{% endif %}
+        {% if item.label %}{{ item.label }}{% endif %}
+    </button>
+</div>

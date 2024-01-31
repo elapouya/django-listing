@@ -37,6 +37,7 @@ TOOLBAR_PARAMS_KEYS = {
     "attrs",
     "button_label",
     "choices",
+    "icon",
     "label",
     "name",
     "template_name",
@@ -121,6 +122,8 @@ class ToolbarItem(metaclass=ToolbarItemMeta):
     params_keys = ""
     attrs = {}
     listing = None
+    label = None
+    icon = None
     theme_button_class = ThemeAttribute("toolbar_theme_button_class")
 
     _ids = count(0)
@@ -318,6 +321,21 @@ class ExportDropdownToolbarItem(ExportSelectToolbarItem):
 class UpdateToolbarItem(ToolbarItem):
     template_name = ThemeTemplate("tbi_update.html")
     label = _("Update")
+
+
+class SelectAllToolbarItem(ToolbarItem):
+    template_name = ThemeTemplate("tbi_select_all.html")
+    label = _("Select all")
+
+
+class UnselectAllToolbarItem(ToolbarItem):
+    template_name = ThemeTemplate("tbi_unselect_all.html")
+    label = _("Unselect all")
+
+
+class InvertSelectionToolbarItem(ToolbarItem):
+    template_name = ThemeTemplate("tbi_invert_selection.html")
+    label = _("Invert selection")
 
 
 class GroupByToolbarItem(ToolbarItem):

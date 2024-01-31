@@ -296,25 +296,25 @@ function djlst_unique_row_select(e) {
 }
 
 function djlst_select_all(e) {
-    var listing_id = $(this).attr('listing-target');
-    var listing = $('#'+listing_id);
-    listing.find('.row-container').addClass('selected');
+    let listing_id = $(this).attr('listing-target');
+    let listing = $('#'+listing_id);
+    listing.find('.row-container.row-selector').addClass('selected');
     listing.find('input.selection-box').prop('checked',true);
     listing.find('input.row-select').each(function () {
-        var hidden=$(this);
+        let hidden=$(this);
         hidden.attr('name',hidden.attr('select-name'));
     });
     djlst_selection_changed_hook(listing);
 }
 
 function djlst_unselect_all(e) {
-    var listing_id = $(this).attr('listing-target');
-    var listing = $('#'+listing_id);
+    let listing_id = $(this).attr('listing-target');
+    let listing = $('#'+listing_id);
     djlst_listing_unselect_all(listing);
 }
 
 function djlst_listing_unselect_all(listing) {
-    listing.find('.row-container').removeClass('selected');
+    listing.find('.row-container.row-selector').removeClass('selected');
     listing.find('input.selection-box').prop('checked',false);
     listing.find('input.row-select').each(function () {
         $(this).removeAttr('name');
@@ -322,9 +322,25 @@ function djlst_listing_unselect_all(listing) {
     djlst_selection_changed_hook(listing);
 }
 
+function djlst_invert_selection(e) {
+    let listing_id = $(this).attr('listing-target');
+    let listing = $('#'+listing_id);
+    listing.find('.row-container.row-selector').toggleClass('selected');
+    listing.find('input.selection-box').prop('checked',true);
+    listing.find('input.row-select').each(function () {
+        let hidden=$(this);
+        if (hidden.hasAttribute("name")) {
+            hidden.removeAttr('name');
+        } else {
+            hidden.attr('name',hidden.attr('select-name'));
+        }
+    });
+    djlst_selection_changed_hook(listing);
+}
+
 function djlst_unselectText() {
     if (window.getSelection) {
-        var selection = window.getSelection();
+        let selection = window.getSelection();
         selection.removeAllRanges();
     } else if (document.selection) {
         // For older IE browsers
@@ -527,6 +543,7 @@ $(document).ready(function () {
     $(document.body).on("click","div.django-listing-selecting .selection-overlay.hover",djlst_activate_selection);
     $(document.body).on("click","[listing-action='select-all']", djlst_select_all);
     $(document.body).on("click","[listing-action='unselect-all']", djlst_unselect_all);
+    $(document.body).on("click","[listing-action='invert-selection']", djlst_invert_selection);
     $(document.body).on("click",".listing-selection-menu .listing-menu-close", djlst_deactivate_selection);
     $(document.body).on("click","li.action-item.view-object-popup a", djlst_view_object_popup);
     $(document.body).on("click", ".button-action-group-by", function () {

@@ -16,6 +16,11 @@ from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from django_listing import *
 from django_listing.columns import LineNumberColumn
 from django_listing.filters import ForeignKeyFilter, AutocompleteForeignKeyFilter
+from django_listing.toolbar import (
+    SelectAllToolbarItem,
+    UnselectAllToolbarItem,
+    InvertSelectionToolbarItem,
+)
 
 from .data import *
 from .models import *
@@ -774,6 +779,16 @@ class InsertableListing2(FilterListingMixin, Listing):
     permission_required_for_update_all = False
     permission_required_for_delete = False
     permission_required_for_delete_all = False
+
+    toolbar = Toolbar(
+        ExportSelectToolbarItem(),
+        SortSelectToolbarItem(),
+        PerPageSelectToolbarItem(choices="8,16,32,64,-1:All"),
+        SelectAllToolbarItem(icon="listing-icon-check-2"),
+        UnselectAllToolbarItem(icon="listing-icon-check-empty"),
+        InvertSelectionToolbarItem(icon="listing-icon-minus-squared-alt"),
+    )
+    toolbar_placement = "both"
 
     # for Select2 widget :
 
