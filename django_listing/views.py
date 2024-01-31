@@ -79,6 +79,8 @@ class ListingViewMixin:
         self._formset_errors = {}
 
     def post(self, request, *args, **kwargs):
+        # make POST data mutable
+        request.POST = request.POST.copy()
         if hasattr(self, "get_object"):  # for DetailView that works only on GET
             self.object = self.get_object()
         try:
@@ -86,18 +88,16 @@ class ListingViewMixin:
             if self.is_ajax:
                 try:
                     if "serialized_data" in request.POST:
-                        post = request.POST.copy()
-                        serialized_data = post.pop("serialized_data")
+                        serialized_data = request.POST.pop("serialized_data")
                         if isinstance(serialized_data, list):
                             serialized_data = serialized_data[0]
                         data = parse_qs(serialized_data)
                         for k, v in data.items():
                             if k != "csrfmiddlewaretoken":
                                 if len(v) == 1:
-                                    post[k] = v[0]
+                                    request.POST[k] = v[0]
                                 else:
-                                    post[k] = v
-                        request.POST = post
+                                    request.POST[k] = v
                     return self.manage_listing_ajax_request(request, *args, **kwargs)
                 except KeyboardInterrupt:
                     raise
@@ -305,7 +305,7 @@ class ListingViewMixin:
                     "At least a form layout and name are mandatory in POST data "
                     "to build a relevant form instance"
                 )
-            attached_form = AttachedForm(listing.action, name=name, layout=layout)
+            attached_form = AttachedForm(name=name, layout=layout)
             attached_form = attached_form.bind_to_listing(listing)
             django_form = attached_form.get_form()
         return django_form

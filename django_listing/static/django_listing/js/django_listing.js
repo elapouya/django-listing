@@ -329,7 +329,7 @@ function djlst_invert_selection(e) {
     listing.find('input.selection-box').prop('checked',true);
     listing.find('input.row-select').each(function () {
         let hidden=$(this);
-        if (hidden.hasAttribute("name")) {
+        if (hidden.attr("name") !== undefined) {
             hidden.removeAttr('name');
         } else {
             hidden.attr('name',hidden.attr('select-name'));

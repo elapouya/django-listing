@@ -715,6 +715,7 @@ class InsertableListing1(Listing):
     columns_label_suffix = ""
     save_to_database = True
     exclude_columns = "interests"
+    permission_required_for_insert = False
 
 
 class InsertableListing2(FilterListingMixin, Listing):
