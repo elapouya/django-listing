@@ -741,6 +741,7 @@ class InsertableListing2(FilterListingMixin, Listing):
             "designation,salary,joined,company,have_car"
         ),
         buttons=(
+            ("delete_all", pgettext_lazy("Attached form", "Delete ALL"), None, None),
             (
                 "delete",
                 pgettext_lazy("Attached form", "Delete selected"),
@@ -751,17 +752,18 @@ class InsertableListing2(FilterListingMixin, Listing):
             ("clear", pgettext_lazy("Attached form", "Clear"), None, None),
             ("insert", pgettext_lazy("Attached form", "Insert"), None, None),
             (
-                "update",
-                pgettext_lazy("Attached form", "Update selected"),
-                None,
-                "disabled-if-no-selection",
-            ),
-            (
                 "duplicate",
                 pgettext_lazy("Attached form", "Duplicate"),
                 None,
                 "disabled-if-no-selection",
             ),
+            (
+                "update",
+                pgettext_lazy("Attached form", "Update selected"),
+                None,
+                "disabled-if-no-selection",
+            ),
+            ("update_all", pgettext_lazy("Attached form", "Update ALL"), None, None),
         ),
     )
     selectable = True
@@ -769,7 +771,9 @@ class InsertableListing2(FilterListingMixin, Listing):
     permission_required_for_duplicate = False
     permission_required_for_insert = False
     permission_required_for_update = False
+    permission_required_for_update_all = False
     permission_required_for_delete = False
+    permission_required_for_delete_all = False
 
     # for Select2 widget :
 

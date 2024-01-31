@@ -140,6 +140,9 @@ function djlst_post_attached_form(event) {
         confirm_msg_nb_items = parseInt(confirm_msg_nb_items);
         if (isNaN(confirm_msg_nb_items)) confirm_msg_nb_items = 0;
         confirm_msg = confirm_msg.replace("{nb_items}", selected_rows.length);
+        nb_all_items = listing_div.attr("nb-rows");
+        if (!nb_all_items) nb_all_items="";
+        confirm_msg = confirm_msg.replace("{nb_all_items}", nb_all_items);
         if (selected_rows.length >= confirm_msg_nb_items) {
             if (!confirm(confirm_msg)) return;
         }
@@ -174,6 +177,7 @@ function djlst_post_attached_form(event) {
             }
             if (mixed_response.attached_form) {
                 attached_form.replaceWith(mixed_response.attached_form);
+                djlst_selection_changed_hook(listing_div);
             }
             if (mixed_response.object_pk) {
                 let new_attached_form = $("#" + attached_form_id);

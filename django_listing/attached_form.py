@@ -13,7 +13,11 @@ from django.utils.translation import gettext as _
 from django.utils.translation import pgettext_lazy
 
 from .context import RenderContext
-from .exceptions import InvalidAttachedForm
+from .exceptions import (
+    InvalidAttachedForm,
+    ListingException,
+    InvalidListingConfiguration,
+)
 from .html_attributes import HTMLAttributes
 from .theme_config import ThemeTemplate
 from .utils import init_dicts_from_class
@@ -205,6 +209,13 @@ class AttachedForm:
                     )
                 else:
                     button = (button, button.capitalize(), None, None)
+            if len(button) != 4:
+                raise InvalidListingConfiguration(
+                    _(
+                        "In attached form, button tuple description must have 4 items : "
+                        "(action, label, icon css class, button css class)."
+                    )
+                )
             self.buttons.append(button)
 
     def datetimepicker_init(self):

@@ -432,13 +432,24 @@ class Listing(ListingBase):
     columns = None
     columns_headers = None
     confirm_msg_for_delete = gettext_lazy(
-        "Do you really want delete {nb_items} item(s)"
+        "Do you really want to DELETE {nb_items} item(s) ?"
     )
     confirm_msg_nb_items_for_delete = 1
-    confirm_msg_for_update = gettext_lazy("Do you really want update {nb_items} items")
+    confirm_msg_for_update = gettext_lazy(
+        "Do you really want to UPDATE {nb_items} items ?"
+    )
     confirm_msg_nb_items_for_update = 2
     confirm_msg_for_update_all = gettext_lazy(
-        "Do you really want update absolutely all {nb_all_items} items"
+        "WARNING : Do you really want to UPDATE absolutely all {nb_all_items} items ?"
+        "\n\n"
+        "This will process ALL items in ALL pages in the actual listing. Note that "
+        "it will take in account the filter : only filtered items will be processed."
+    )
+    confirm_msg_for_delete_all = gettext_lazy(
+        "WARNING : Do you really want to DELETE absolutely all {nb_all_items} items ?"
+        "\n\n"
+        "This will process ALL items in ALL pages in the actual listing. Note that "
+        "it will take in account the filter : only filtered items will be processed."
     )
     data = None
     datetimepicker_date_format = "Y-m-d"
@@ -1384,10 +1395,30 @@ class Listing(ListingBase):
         return self._formset
 
     def get_selected_rows(self):
-        if self.request and self.request.POST:
-            return self.request.POST.getlist(
-                LISTING_SELECTION_INPUT_NAME_KEY + self.suffix
-            )
+        if not hasattr(self, "_selected_rows"):
+            self._selected_rows = []
+            if self.request and self.request.POST:
+                # Read selected listing rows
+                if "selected_pks" in self.request.POST:
+                    self._selected_rows = self.request.POST.get("selected_pks", [])
+                    if isinstance(self._selected_rows, str):
+                        self._selected_rows = list(
+                            map(
+                                lambda x: int(x),
+                                filter(
+                                    str.isdigit,
+                                    map(str.strip, self._selected_rows.split(",")),
+                                ),
+                            )
+                        )
+                else:
+                    self._selected_rows = (
+                        self.request.POST.getlist(
+                            LISTING_SELECTION_INPUT_NAME_KEY + self.suffix
+                        )
+                        or []
+                    )
+        return self._selected_rows
 
     def set_view(self, view):
         self._view = view

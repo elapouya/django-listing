@@ -222,11 +222,15 @@ class RecordManager:
                 qs = filtr.filter_queryset(qs, cleaned_data)
         return qs
 
+    def get_filtered_queryset(self):
+        qs = self.listing.data
+        qs = self.filter_queryset(qs)
+        return qs
+
     def get_objs_from_queryset(self):
         if not hasattr(self, "_queryset_objs"):
+            qs = self.get_filtered_queryset()
             lsg = self.listing
-            qs = self.listing.data
-            qs = self.filter_queryset(qs)
             order_by = []
             if lsg.sort:
                 for col_name in lsg.columns_sort_list:

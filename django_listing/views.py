@@ -359,16 +359,7 @@ class ListingViewMixin:
             raise PermissionDenied(gettext("You do not have the required permission"))
 
         # Read selected listing rows
-        listing.selected_pks = self.request.POST.get("selected_pks", [])
-        if isinstance(listing.selected_pks, str):
-            listing.selected_pks = list(
-                map(
-                    lambda x: int(x),
-                    filter(
-                        str.isdigit, map(str.strip, listing.selected_pks.split(","))
-                    ),
-                )
-            )
+        selected_rows = listing.get_selected_rows()
 
         # if a specific action method is available in view or listing : use it
         action_meth_name = f"manage_attached_form_{action}_action"
@@ -393,8 +384,6 @@ class ListingViewMixin:
             else:
                 attached_form = listing.attached_form
                 form = attached_form.get_form()
-
-        form.selected_pks = listing.selected_pks
 
         # create instance from database if possible
         instance = None
@@ -426,10 +415,10 @@ class ListingViewMixin:
                 mixed_response = process_method(form, instance, *args, **kwargs)
             self.listing.request.POST[instance._meta.pk.attname] = instance.pk
             if listing.processed_flash:
-                if len(listing.selected_pks) == 1 and instance.pk:
+                if len(selected_rows) == 1 and instance.pk:
                     listing.processed_pks = {instance.pk}
                 else:
-                    listing.processed_pks = set(listing.selected_pks)
+                    listing.processed_pks = set(selected_rows)
             if not self.is_ajax:
                 return None
             form_html = listing.attached_form.render(RequestContext(self.request))
@@ -466,7 +455,7 @@ class ListingViewMixin:
 
     def manage_attached_form_update_get_form(self, listing, *args, **kwargs):
         form = listing.attached_form.get_form(
-            force_not_required=len(listing.selected_pks) > 1
+            force_not_required=len(listing.get_selected_rows()) > 1
         )
         form.full_clean()
         if not any(form.cleaned_data.values()):
@@ -475,28 +464,37 @@ class ListingViewMixin:
 
     def manage_attached_form_update_get_form(self, listing, *args, **kwargs):
         form = listing.attached_form.get_form(force_not_required=True)
-        if len(listing.selected_pks) == 0:
+        if len(listing.get_selected_rows()) == 0:
             form.add_error(None, gettext("Please select at least one item"))
         return form
 
     def manage_attached_form_update_process(
         self, listing, form, instance, *args, **kwargs
     ):
-        if len(listing.selected_pks) == 1 and instance.pk:
+        selected_rows = listing.get_selected_rows()
+        if len(selected_rows) == 1 and instance.pk:
             instance.save()
         else:
             update_fields = {
                 k: v for k, v in form.cleaned_data.items() if v and k != "id"
             }
-            listing.model.objects.filter(pk__in=listing.selected_pks).update(
-                **update_fields
-            )
+            listing.model.objects.filter(pk__in=selected_rows).update(**update_fields)
+
+    def manage_attached_form_update_all_get_form(self, listing, *args, **kwargs):
+        return listing.attached_form.get_form(force_not_required=True)
+
+    def manage_attached_form_update_all_process(
+        self, listing, form, instance, *args, **kwargs
+    ):
+        update_fields = {k: v for k, v in form.cleaned_data.items() if v and k != "id"}
+        listing.records.get_filtered_queryset().update(**update_fields)
 
     def manage_attached_form_duplicate_get_form(self, listing, *args, **kwargs):
         form = listing.attached_form.get_form(force_not_required=True)
-        if len(listing.selected_pks) == 0:
+        selected_rows = listing.get_selected_rows()
+        if len(selected_rows) == 0:
             form.add_error(None, gettext("Please select one item"))
-        elif len(listing.selected_pks) > 1:
+        elif len(selected_rows) > 1:
             form.add_error(
                 None, gettext("You can duplicate only one item at the same time")
             )
@@ -505,23 +503,32 @@ class ListingViewMixin:
     def manage_attached_form_duplicate_process(
         self, listing, form, instance, *args, **kwargs
     ):
-        if len(listing.selected_pks) == 1 and instance.pk:
+        if len(listing.get_selected_rows()) == 1 and instance.pk:
             instance.pk = None
             instance.save()
 
     def manage_attached_form_delete_get_form(self, listing, *args, **kwargs):
         form = listing.attached_form.get_form(force_not_required=True)
-        if len(listing.selected_pks) == 0:
+        if len(listing.get_selected_rows()) == 0:
             form.add_error(None, gettext("Please select at least one item"))
         return form
 
     def manage_attached_form_delete_process(
         self, listing, form, instance, *args, **kwargs
     ):
-        if len(listing.selected_pks) == 1 and instance.pk:
+        selected_rows = listing.get_selected_rows()
+        if len(selected_rows) == 1 and instance.pk:
             instance.delete()
         else:
-            listing.model.objects.filter(pk__in=listing.selected_pks).delete()
+            listing.model.objects.filter(pk__in=selected_rows).delete()
+
+    def manage_attached_form_delete_all_get_form(self, listing, *args, **kwargs):
+        return listing.attached_form.get_form(force_not_required=True)
+
+    def manage_attached_form_delete_all_process(
+        self, listing, form, instance, *args, **kwargs
+    ):
+        listing.records.get_filtered_queryset().delete()
 
     def manage_attached_form_clear_action(self, listing, *args, **kwargs):
         attached_form = listing.attached_form
