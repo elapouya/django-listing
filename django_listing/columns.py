@@ -789,7 +789,16 @@ class Column(metaclass=ColumnMeta):
             value_tpl = self.get_edit_value_tpl(rec, ctx, value)
             cell_tpl = self.cell_edit_tpl or self.cell_tpl
         else:
-            cell_tpl = self.cell_tpl
+            if self.has_cell_filter and ctx.get("filter_link"):
+                cell_tpl = self.cell_with_filter_tpl or (
+                    '<td{attrs}><span class="cell-with-filter">'
+                    '<span class="cell-value">%s</span>'
+                    '<a href="{filter_link}" '
+                    'class="cell-filter {col.theme_cell_with_filter_icon}">'
+                    "</a></span></td>"
+                )
+            else:
+                cell_tpl = self.cell_tpl
             value_tpl = self.get_value_tpl(rec, ctx, value)
         tpl = cell_tpl or "<td{attrs}>%s</td>"
         return tpl % value_tpl
@@ -798,6 +807,8 @@ class Column(metaclass=ColumnMeta):
         value = self.get_cell_value(rec)
         ctx = self.get_cell_context(rec, value)
         ctx.attrs = self.get_cell_attrs(rec, ctx, value)
+        if self.has_cell_filter:
+            ctx.filter_link = self.get_cell_filter_link(rec, ctx, value)
         tpl = self.get_cell_template(rec, ctx, value)
         try:
             return tpl.format(**ctx)

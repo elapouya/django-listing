@@ -596,7 +596,7 @@ class CellFilterListing(FilterListing):
     gender__has_cell_filter = True
     marital_status__has_cell_filter = True
     have_car__has_cell_filter = True
-    company__has_cell_filter = True
+    company__has_cell_filter = False
     interests__has_cell_filter = True
     exclude_columns = "address,designation"
 
