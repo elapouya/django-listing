@@ -444,6 +444,10 @@ class Listing(ListingBase):
         "\n\n"
         "This will process ALL items in ALL pages in the actual listing. Note that "
         "it will take in account the filter : only filtered items will be processed."
+        "\n\n"
+        "IMPORTANT : Check that all form's fields are empty except those you want to "
+        "update. You can use the CLEAR button to make all fields empty, then fill "
+        "only one or more fields with value(s) you want to apply on all items."
     )
     confirm_msg_for_delete_all = gettext_lazy(
         "WARNING : Do you really want to DELETE absolutely all {nb_all_items} items ?"
