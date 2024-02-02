@@ -492,7 +492,13 @@ class Column(metaclass=ColumnMeta):
     cell_value = None
     cell_with_filter_link = None
     cell_with_filter_name = None
-    cell_with_filter_tpl = None
+    cell_with_filter_tpl = (
+        '<td{attrs}><span class="cell-with-filter">'
+        '<span class="cell-value">%s</span>'
+        '<a href="{filter_link}" '
+        'class="cell-filter {col.theme_cell_with_filter_icon}">'
+        "</a></span></td>"
+    )
     data_key = None
     default_footer_value = ""
     default_value = "-"
@@ -790,13 +796,7 @@ class Column(metaclass=ColumnMeta):
             cell_tpl = self.cell_edit_tpl or self.cell_tpl
         else:
             if self.has_cell_filter and ctx.get("filter_link"):
-                cell_tpl = self.cell_with_filter_tpl or (
-                    '<td{attrs}><span class="cell-with-filter">'
-                    '<span class="cell-value">%s</span>'
-                    '<a href="{filter_link}" '
-                    'class="cell-filter {col.theme_cell_with_filter_icon}">'
-                    "</a></span></td>"
-                )
+                cell_tpl = self.cell_with_filter_tpl
             else:
                 cell_tpl = self.cell_tpl
             value_tpl = self.get_value_tpl(rec, ctx, value)
@@ -1460,6 +1460,13 @@ class LinkColumn(Column):
     link_attrs = None
     cell_tpl = "<td{attrs}><a{link_attrs}>%s</a></td>"
     cell_edit_tpl = "<td{attrs}>%s</td>"
+    cell_with_filter_tpl = (
+        '<td{attrs}><span class="cell-with-filter">'
+        '<span class="cell-value"><a{link_attrs}>%s</a></span>'
+        '<a href="{filter_link}" '
+        'class="cell-filter {col.theme_cell_with_filter_icon}">'
+        "</a></span></td>"
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

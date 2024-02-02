@@ -175,9 +175,23 @@ class RecordManager:
         if lsg.editable and lsg.editing:
             self.bind_formset()
 
-    def current_page(self):
-        from . import ForeignKeyColumn  # local import to avoid circular import
+    def group_by_foreignkey_object_map(self, records):
+        lsg = self.listing
+        if lsg.gb_cols:
+            from . import ForeignKeyColumn  # local import to avoid circular import
 
+            # Remap model instances if any:
+            fk_cols = [c for c in lsg.columns if isinstance(c, ForeignKeyColumn)]
+            for col in fk_cols:
+                col_name = col.name
+                model = col.model_field.related_model
+                pks = [rec.get(col_name) for rec in records]
+                objs = model.objects.filter(pk__in=pks)
+                pk2obj = {obj.pk: obj for obj in objs}
+                for rec in records:
+                    rec.set(col_name, pk2obj[rec[col_name]])
+
+    def current_page(self):
         if not self._records:
             lsg = self.listing
             self._records = [
@@ -185,17 +199,7 @@ class RecordManager:
                 Record(lsg, obj, i)
                 for i, obj in enumerate(lsg.current_page)
             ]
-            if lsg.gb_cols:
-                # Remap model instances if any:
-                fk_cols = [c for c in lsg.columns if isinstance(c, ForeignKeyColumn)]
-                for col in fk_cols:
-                    col_name = col.name
-                    model = col.model_field.related_model
-                    pks = [rec.get(col_name) for rec in self._records]
-                    objs = model.objects.filter(pk__in=pks)
-                    pk2obj = {obj.pk: obj for obj in objs}
-                    for rec in self._records:
-                        rec.set(col_name, pk2obj[rec[col_name]])
+            self.group_by_foreignkey_object_map(self._records)
         return self._records
 
     def bind_formset(self):
@@ -209,10 +213,17 @@ class RecordManager:
                 rec.set_form(form)
 
     def export(self):
-        qs = self.listing.data
-        qs = self.filter_queryset(qs)
-        for i, obj in enumerate(qs):
-            yield Record(self.listing, obj, i)
+        lsg = self.listing
+        qs = lsg.data
+        if lsg.gb_cols:
+            records = [Record(lsg, obj, i) for i, obj in enumerate(qs)]
+            self.group_by_foreignkey_object_map(records)
+            for rec in records:
+                yield rec
+        else:
+            qs = self.filter_queryset(qs)
+            for i, obj in enumerate(qs):
+                yield Record(lsg, obj, i)
 
     def filter_queryset(self, qs):
         if self.listing.filters:

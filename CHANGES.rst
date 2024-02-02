@@ -1,24 +1,16 @@
+0.7.0 (2024-02-02)
+------------------
+- Add AttachedForm feature with ajax autofill and actions processing
+
 0.6.4 (2024-01-18)
 ------------------
 - Improve listing insert form
 - add no_foreignkey_link to ManyColumn class
-
-0.6.3 (2024-01-14)
-------------------
 - add range selection (press shift on second selection)
-
-0.6.2 (2024-01-10)
--------------------
 - fix FloatColumn
 - fix gettext
 - fix group-by buttons
-
-0.6.1 (2024-01-09)
--------------------
 - Many fixes when accept_ajax = True
-
-0.6.0 (2024-01-08)
--------------------
 - Add "Group By" and annotations feature
 
 0.5.17 (2023-11-28)
