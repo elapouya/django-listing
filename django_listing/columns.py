@@ -303,7 +303,7 @@ class ModelColumns(Columns):
         if self.params is None:
             self.params = {}
         if not self.link_object_columns:
-            self.link_object_columns = ""
+            self.link_object_columns = self.listing.link_object_columns or ""
         if isinstance(self.link_object_columns, str):
             self.link_object_columns = set(
                 map(str.strip, self.link_object_columns.split(","))
