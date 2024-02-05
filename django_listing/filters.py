@@ -9,9 +9,10 @@ from datetime import timedelta
 
 from dal import autocomplete
 from django import forms
-from django.core.exceptions import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db import models
 from django.db.models import DateTimeField
+from django.forms import FileField
 from django.template import loader
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy, pgettext_lazy
@@ -97,7 +98,46 @@ FILTER_QUERYSTRING_PREFIX = "f_"
 
 
 class FiltersBaseForm(forms.BaseForm):
-    pass
+    def _clean_fields(self):
+        for name, field in self.fields.items():
+            if field.disabled:
+                value = self.get_initial_for_field(field, name)
+            else:
+                value = field.widget.value_from_datadict(
+                    self.data, self.files, self.add_prefix(name)
+                )
+            try:
+                if isinstance(field, FileField):
+                    initial = self.get_initial_for_field(field, name)
+                    value = field.clean(value, initial)
+                else:
+                    value = field.clean(value)
+                self.cleaned_data[name] = value
+
+                if value is None and not field.required:
+                    continue
+                filter_name = name[len(FILTER_QUERYSTRING_PREFIX) :]
+                method_name = f"filter_form_clean_{filter_name}"
+                method = getattr(self.listing, method_name, None)
+                if method:
+                    value = method(self)
+                    self.cleaned_data[name] = value
+            except ValidationError as e:
+                self.add_error(name, e)
+
+    def _clean_form(self):
+        try:
+            method_name = f"filter_form_clean"
+            method = getattr(self.listing, method_name, None)
+            if method:
+                cleaned_data = method(self)
+            else:
+                cleaned_data = self.cleaned_data
+        except ValidationError as e:
+            self.add_error(None, e)
+        else:
+            if cleaned_data is not None:
+                self.cleaned_data = cleaned_data
 
 
 class Filters(list):
@@ -168,7 +208,7 @@ class Filters(list):
                 filtr = self.create_filter(filtr, listing)
             # ensure there is one filter instance per listing
             elif not filtr.listing:
-                filtr = copy.deepcopy(filtr)
+                filtr = copy.copy(filtr)  # do not use deepcopy here
             if isinstance(filtr, Filter):
                 filtr.bind_to_listing(listing)
                 filters.append(filtr)
@@ -249,6 +289,7 @@ class Filters(list):
                 {"base_fields": fields},
             )
             self._form = form_class(self.listing.request.GET or None, initial=initial)
+            self._form.listing = self.listing
         return self._form
 
     def get_hiddens_html(self):
@@ -522,18 +563,20 @@ class Filter(metaclass=FilterMeta):
             if self.default_value is None:
                 return qs
             cleaned_value = self.default_value
-        if self.filter_queryset_method:
+        method_name = f"filter_queryset_{self.filter_key}"
+        method = getattr(self.listing, method_name, None)
+        if not method and self.filter_queryset_method:
             if isinstance(self.filter_queryset_method, str):
                 method = getattr(self.listing, self.filter_queryset_method, None)
             else:
                 method = self.filter_queryset_method
-            if method:
-                if self.word_search and isinstance(cleaned_value, str):
-                    words = filter(None, cleaned_value.split())
-                    for word in words:
-                        qs = method(qs, word)
-                    return qs
-                return method(qs, cleaned_value)
+        if method:
+            if self.word_search and isinstance(cleaned_value, str):
+                words = filter(None, cleaned_value.split())
+                for word in words:
+                    qs = method(qs, word)
+                return qs
+            return method(qs, cleaned_value)
         if self.word_search and isinstance(cleaned_value, str):
             words = filter(None, cleaned_value.split())
             for word in words:
