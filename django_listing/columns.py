@@ -54,6 +54,8 @@ __all__ = [
     "LinkColumn",
     "LinkObjectColumn",
     "ListingMethodRef",
+    "ModelMethodRef",
+    "RelatedModelMethodRef",
     "ManyColumn",
     "MaxColumn",
     "MinColumn",
@@ -125,6 +127,7 @@ COLUMNS_PARAMS_KEYS = {
     "theme_header_class",
     "theme_header_icon",
     "time_format",
+    "use_raw_value",
     "value_tpl",
     "widget_attrs",
 }
@@ -178,6 +181,38 @@ class ListingMethodRef:
     def __call__(self, listing, *args, **kwargs):
         method = getattr(listing, self.method_name)
         return method(*args, **kwargs)
+
+
+class ModelMethodRef:
+    """Helper to reference a Model method in column.cell_value instead of a lambda"""
+
+    def __init__(self, method_name, *args, **kwargs):
+        self.method_name = method_name
+        self.args = args
+        self.kwargs = kwargs
+
+    def __call__(self, rec):
+        obj = rec.get_object()
+        method = getattr(obj, self.method_name)
+        return method(*self.args, **self.kwargs)
+
+
+class RelatedModelMethodRef:
+    """Helper to reference a Model method in column.cell_value instead of a lambda"""
+
+    def __init__(self, method_name, default=None, *args, **kwargs):
+        self.method_name = method_name
+        self.default = default
+        self.args = args
+        self.kwargs = kwargs
+
+    def __call__(self, col, rec):
+        obj = rec.get_object()
+        related_obj = getattr(obj, col.model_field.name, None)
+        if related_obj is None:
+            return self.default
+        method = getattr(related_obj, self.method_name)
+        return method(*self.args, **self.kwargs)
 
 
 class Columns(list):
@@ -327,7 +362,9 @@ class ModelColumns(Columns):
             ):
                 if not hasattr(self.listing, f"{f.name}__header"):
                     if getattr(f, "related_model", None):
-                        header = f.related_model._meta.verbose_name
+                        header = getattr(f, "verbose_name", None)
+                        if not header:
+                            header = f.related_model._meta.verbose_name
                     else:
                         header = getattr(f, "verbose_name", f.name.capitalize())
                 else:
@@ -521,6 +558,7 @@ class Column(metaclass=ColumnMeta):
     header_tpl = None
     help_text = None
     input_type = None
+    is_safe_value = False  # to avoid XSS attack
     listing = None
     link_target = None
     model_field = None
@@ -532,8 +570,8 @@ class Column(metaclass=ColumnMeta):
     params_keys = ""
     sort_key = None
     sortable = True
+    use_raw_value = False
     value_tpl = "{value}"
-    is_safe_value = False  # to avoid XSS attack
 
     theme_header_class = ThemeAttribute("column_theme_header_class")
     theme_cell_class = ThemeAttribute("column_theme_cell_class")
@@ -561,7 +599,6 @@ class Column(metaclass=ColumnMeta):
             [
                 "cell_attrs",
                 "header_attrs",
-                "cell_attrs",
                 "footer_attrs",
                 "widget_attrs",
                 "form_field_widget_params",
@@ -714,12 +751,13 @@ class Column(metaclass=ColumnMeta):
     def get_default_value(self, rec):
         return self.default_value
 
-    # def get_raw_value(self, rec):
-    #     return rec.get(self.data_key)
-
     @cache_in_record
     def get_cell_value(self, rec):
-        if isinstance(self.cell_value, ListingMethodRef):
+        if isinstance(self.cell_value, RelatedModelMethodRef):
+            value = self.cell_value(self, rec)
+        elif isinstance(self.cell_value, ModelMethodRef):
+            value = self.cell_value(rec)
+        elif isinstance(self.cell_value, ListingMethodRef):
             value = self.cell_value(self.listing, self, rec)
         elif callable(self.cell_value):
             value = self.cell_value(self, rec)
@@ -727,7 +765,7 @@ class Column(metaclass=ColumnMeta):
             value = rec.get(self.data_key)
             if value is None:
                 value = self.get_default_value(rec)
-        if hasattr(self, "choices"):
+        if hasattr(self, "choices") and not self.use_raw_value:
             value = self.choices.get(value, value)
         return value
 
@@ -1104,7 +1142,7 @@ class IntegerColumn(Column):
 
 
 class FloatColumn(Column):
-    from_model_field_classes = (models.FloatField,)
+    from_model_field_classes = (models.FloatField, models.DecimalField)
     form_field_class = forms.FloatField
     float_format = ".2f"
     params_keys = "float_format"
@@ -1143,6 +1181,8 @@ class ChoiceColumn(Column):
             )
 
     def get_value_tpl(self, rec, ctx, value):
+        if self.use_raw_value:
+            return value
         return self.choices.get(value, value)
 
     def get_form_field_params(
@@ -1226,7 +1266,7 @@ class MultipleChoiceColumn(Column):
 
 class ManyColumn(Column):
     many_separator = ", "
-    params_keys = "many_separator,cell_map,cell_filter,cell_reduce"
+    params_keys = "many_separator,cell_map,cell_map_value,cell_filter,cell_reduce"
     from_model_field_classes = (models.ManyToManyField, models.ManyToManyRel)
     form_field_class = forms.ModelMultipleChoiceField
     params_keys = "no_foreignkey_link"
@@ -1268,14 +1308,17 @@ class ManyColumn(Column):
                 )
         return out
 
-    def cell_map(self, value):
-        out = force_str(value)
-        if not self.no_foreignkey_link and hasattr(value, "get_absolute_url"):
-            url = value.get_absolute_url()
+    def cell_map_value(self, obj):
+        return force_str(obj)
+
+    def cell_map(self, obj):
+        out = self.cell_map_value(obj)
+        if not self.no_foreignkey_link and hasattr(obj, "get_absolute_url"):
+            url = obj.get_absolute_url()
             if url is not None:
                 out = f'<a href="{url}">{out}</a>'
         if self.has_cell_filter:
-            out = self.cell_map_add_filter(out, value)
+            out = self.cell_map_add_filter(out, obj)
         return out
 
     def cell_reduce(self, value):
@@ -1567,7 +1610,7 @@ class ForeignKeyColumn(LinkColumn):
         value = super().get_cell_value(rec)
         if self.is_safe_value:
             return value
-        value = escape(str(value))
+        value = str(value)  # already escaped
         return value
 
     def get_href(self, rec, ctx, value):
