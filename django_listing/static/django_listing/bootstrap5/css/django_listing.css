@@ -1236,6 +1236,16 @@ div.django-listing-container div.form-field ul.multiple-checkboxes.inline li,
 form.listing-form div.form-field ul.multiple-checkboxes.inline li {
   margin-right: 10px;
 }
+@media (max-width: 991.98px) {
+  div.django-listing-container div.form-field ul.multiple-checkboxes,
+  form.listing-form div.form-field ul.multiple-checkboxes {
+    display: flex;
+  }
+  div.django-listing-container div.form-field ul.multiple-checkboxes li,
+  form.listing-form div.form-field ul.multiple-checkboxes li {
+    margin-right: 10px;
+  }
+}
 
 div.django-listing-container div.form-field ul.multiple-radios,
 form.listing-form div.form-field ul.multiple-radios {
@@ -1257,6 +1267,16 @@ form.listing-form div.form-field ul.multiple-radios.inline {
 div.django-listing-container div.form-field ul.multiple-radios.inline li,
 form.listing-form div.form-field ul.multiple-radios.inline li {
   margin-right: 10px;
+}
+@media (max-width: 991.98px) {
+  div.django-listing-container div.form-field ul.multiple-radios,
+  form.listing-form div.form-field ul.multiple-radios {
+    display: flex;
+  }
+  div.django-listing-container div.form-field ul.multiple-radios li,
+  form.listing-form div.form-field ul.multiple-radios li {
+    margin-right: 10px;
+  }
 }
 
 div.django-listing-selecting.selection_position_hidden tr {
@@ -1436,6 +1456,18 @@ form.dropzone .dz-error-mark svg g g {
 .listing-form .label_input > .multiple-radios.inline input, .listing-form .label_input > .multiple-checkboxes.inline input {
   display: inline-block;
   margin-left: 10px;
+}
+@media (max-width: 991.98px) {
+  .filters-form .label_input > .multiple-radios, .filters-form .label_input > .multiple-checkboxes,
+  .listing-form .label_input > .multiple-radios, .listing-form .label_input > .multiple-checkboxes {
+    padding: 2px 5px 2px 0px;
+    display: flex;
+  }
+  .filters-form .label_input > .multiple-radios input, .filters-form .label_input > .multiple-checkboxes input,
+  .listing-form .label_input > .multiple-radios input, .listing-form .label_input > .multiple-checkboxes input {
+    display: inline-block;
+    margin-left: 10px;
+  }
 }
 
 .group-by-form.listing-form {

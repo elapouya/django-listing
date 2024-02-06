@@ -379,6 +379,12 @@ form.listing-form div.form-field ul.multiple-checkboxes {
             margin-right: 10px;
         }
     }
+    @include media-breakpoint-down(lg) {
+        display: flex;
+        li {
+            margin-right: 10px;
+        }
+    }
 }
 
 div.django-listing-container div.form-field ul.multiple-radios,
@@ -392,6 +398,12 @@ form.listing-form div.form-field ul.multiple-radios {
         vertical-align: middle;
     }
     &.inline {
+        display: flex;
+        li {
+            margin-right: 10px;
+        }
+    }
+    @include media-breakpoint-down(lg) {
         display: flex;
         li {
             margin-right: 10px;
@@ -571,6 +583,14 @@ form.dropzone {
     padding: 2px 5px;
     border-radius: 4px;
     &.inline {
+        padding: 2px 5px 2px 0px;
+        display: flex;
+        input {
+            display: inline-block;
+            margin-left: 10px;
+        }
+    }
+    @include media-breakpoint-down(lg) {
         padding: 2px 5px 2px 0px;
         display: flex;
         input {
