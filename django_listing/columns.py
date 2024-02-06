@@ -198,7 +198,7 @@ class ModelMethodRef:
 
 
 class RelatedModelMethodRef:
-    """Helper to reference a Model method in column.cell_value instead of a lambda"""
+    """Helper to reference a Model method of a foreign object"""
 
     def __init__(self, method_name, default=None, *args, **kwargs):
         self.method_name = method_name
@@ -208,7 +208,10 @@ class RelatedModelMethodRef:
 
     def __call__(self, col, rec):
         obj = rec.get_object()
-        related_obj = getattr(obj, col.model_field.name, None)
+        if isinstance(obj, dict):
+            related_obj = obj.get(col.model_field.name)
+        else:
+            related_obj = getattr(obj, col.model_field.name, None)
         if related_obj is None:
             return self.default
         method = getattr(related_obj, self.method_name)
