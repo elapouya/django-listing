@@ -1564,5 +1564,10 @@ a.cell-filter {
     width: 24px;
   }
 }
+@media (min-width: 1200px) {
+  .group-by-container {
+    min-width: 1100px;
+  }
+}
 
 /*# sourceMappingURL=django_listing.css.map */

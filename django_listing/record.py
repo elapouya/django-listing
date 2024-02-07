@@ -319,16 +319,8 @@ class Record:
             foreign_object = getattr(obj, f)
             if foreign_object:
                 form_label_func = getattr(foreign_object, FORM_LABEL_METHOD_NAME, None)
-                if form_label_func is None or not callable(form_label_func):
-                    raise InvalidListing(
-                        _(
-                            "You must define the method {FORM_LABEL_METHOD_NAME}() "
-                            "in your model {class_name}"
-                        ).format(
-                            FORM_LABEL_METHOD_NAME=FORM_LABEL_METHOD_NAME,
-                            class_name=foreign_object.__class__.__name__,
-                        )
-                    )
+                if form_label_func is None:
+                    form_label_func = lambda: str(foreign_object)
                 data[f] = form_label_func()
         return data
 

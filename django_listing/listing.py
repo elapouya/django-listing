@@ -654,6 +654,8 @@ class Listing(ListingBase):
             self.request.django_listing_footer_snippets.append(snippet)
 
     def need_media_for(self, feature_name):
+        if not self.request:
+            return
         if not hasattr(self.request, "need_media_for"):
             self.request.need_media_for = {}
         self.request.need_media_for[feature_name] = True
