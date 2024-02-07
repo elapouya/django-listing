@@ -1,3 +1,8 @@
+0.7.1 (2024-02-07)
+------------------
+- Fix group by
+- Add ModelMethodRef and RelatedModelMethodRef
+
 0.7.0 (2024-02-02)
 ------------------
 - Add AttachedForm feature with ajax autofill and actions processing
