@@ -738,6 +738,7 @@ class Listing(ListingBase):
             gb_cols.append(GroupByFilterColumn())
             self.columns = Columns(*gb_cols)
             self.select_columns = None
+            self.exclude_columns = None
             self.data = self.data.values(*gb_cols_names).annotate(**gb_annotate_cols)
             if not self.sort:
                 self.sort = [gb_cols_names[0]]
