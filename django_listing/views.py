@@ -452,6 +452,10 @@ class ListingViewMixin:
     ):
         instance.pk = None
         instance.save()
+        listing.page = "last"
+        listing.sort = "id"
+        listing.sort_key = "id"
+        listing.processed_pks = {instance.pk}
 
     def manage_attached_form_update_get_form(self, listing, *args, **kwargs):
         form = listing.attached_form.get_form(

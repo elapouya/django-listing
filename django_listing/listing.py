@@ -981,11 +981,11 @@ class Listing(ListingBase):
             if self.attached_form:
                 self.attached_form.render_init(context)
             self.global_context_init()
-            self.records.compute_current_page_records()
             self._render_initialized = True
 
     def render(self, context):
         response = self.render_init(context)
+        self.records.compute_current_page_records()
         if response is not None:
             return response
         return self.render_template()

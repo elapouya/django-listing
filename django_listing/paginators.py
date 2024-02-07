@@ -112,6 +112,21 @@ class Paginator(DjangoPaginator):
                 map(lambda s: s.split(","), self.parts_order.split(";"))
             )
 
+    def validate_number(self, number):
+        if number == "last":
+            number = self.num_pages
+        return super().validate_number(number)
+
+    def page(self, number):
+        """Return a Page object for the given 1-based page number."""
+        number = self.validate_number(number)
+        bottom = (number - 1) * self.per_page
+        top = bottom + self.per_page
+        if bottom > self.count - self.per_page:
+            bottom = self.count - self.per_page
+            top = self.count
+        return self._get_page(self.object_list[bottom:top], number, self)
+
     def get_context(self):
         get_url = self.listing.get_url
         page = self.listing.current_page

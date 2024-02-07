@@ -726,6 +726,9 @@ class InsertableListing2(FilterListingMixin, Listing):
     id__ascending_by_default = False
 
     accept_ajax = True
+    paginator_has_first_last = True
+    paginator_has_row_info = True
+    paginator_has_page_info = False
     gender__input_type = "radio"
     salary__min_value = 0
     columns_no_choice_msg = _("Please choose...")
