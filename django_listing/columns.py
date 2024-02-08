@@ -1021,7 +1021,7 @@ class Column(metaclass=ColumnMeta):
                     params[p] = getattr(self.model_form_field, p)
         if force_not_required:
             params["required"] = False
-        elif force_select and not self.model_field.blank:
+        elif force_select and self.model_field and not self.model_field.blank:
             params["required"] = True
         return params
 
@@ -1050,7 +1050,10 @@ class Column(metaclass=ColumnMeta):
                     )
                 )
         widget_attrs = HTMLAttributes(self.widget_attrs)
-        widget_attrs.add("class", self.theme_form_widget_class)
+        if issubclass(cls, forms.Select):
+            widget_attrs.add("class", self.theme_form_select_widget_class)
+        else:
+            widget_attrs.add("class", self.theme_form_widget_class)
         widget_id = f"id-attachedForm-{self.name}{self.listing.suffix}".replace(
             "_", "-"
         )
@@ -1063,7 +1066,7 @@ class Column(metaclass=ColumnMeta):
         cls = self.get_form_field_class(**kwargs)
         params = self.get_form_field_params(**kwargs)
         widget = self.get_form_field_widget(cls, **kwargs)
-        if self.listing.model:
+        if self.listing.model and self.model_field:
             widget.attrs["data-model-field"] = self.model_field.name
         field = cls(widget=widget, **params)
         return field
@@ -1605,6 +1608,8 @@ class ForeignKeyColumn(LinkColumn):
 
     def init(self, *args, **kwargs):
         super().init(*args, **kwargs)
+        if "queryset" in kwargs:
+            self.queryset = kwargs["queryset"]
         qs = getattr(self, "queryset", None)
         if not qs and self.model_field:
             self.queryset = self.model_field.related_model.objects.all()

@@ -449,6 +449,13 @@ class ListingViewMixin:
             form_html = listing.attached_form.render(RequestContext(self.request))
             return JsonResponse({"attached_form": form_html})
 
+    def manage_attached_form_insert_get_form(self, listing, *args, **kwargs):
+        form = listing.attached_form.get_form()
+        id_field = form.fields.get("id")
+        if id_field:
+            id_field.required = False
+        return form
+
     def manage_attached_form_insert_process(
         self, listing, form, instance, *args, **kwargs
     ):

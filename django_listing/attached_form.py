@@ -174,17 +174,13 @@ class AttachedForm:
                 for field_name in row:
                     field_name = field_name.strip()
                     col = self.listing.columns.get(field_name)
-                    if not col:
-                        raise InvalidAttachedForm(
-                            _(
-                                "In the {form_name} layout you specified the field "
-                                '"{field_name}" but there is no existing listing '
-                                "column with that name"
-                            ).format(form_name=self.name, field_name=field_name)
-                        )
-                    self.listing.form_model_fields.append(col.model_field.name)
-                    if col.form_field_serialize_label:
-                        self.listing.form_serialize_labels.append(col.model_field.name)
+                    if col:
+                        if col.model_field:
+                            self.listing.form_model_fields.append(col.model_field.name)
+                        if col.form_field_serialize_label:
+                            self.listing.form_serialize_labels.append(
+                                col.model_field.name
+                            )
             layout_str = ";".join(map(lambda l: ",".join(l), self.layout))
             self.listing.add_form_input_hiddens(
                 attached_form_layout=layout_str,
@@ -225,6 +221,32 @@ class AttachedForm:
                 "datetimepickers", dict(listing=self.listing, div_id=self.id)
             )
 
+    def get_form_field_from_layout_field(self, field_name, **kwargs):
+        field_name = field_name.strip()
+        key = f"form_field_{field_name}"
+        form_field = self.init_kwargs.get(key)
+        if not form_field:
+            attrname = f"attached_form_field_{field_name}"
+            form_field = getattr(self.listing, attrname, None)
+        if not form_field:
+            col = self.listing.columns.get(field_name)
+            form_field = col.create_form_field(**kwargs)
+        if not form_field:
+            raise InvalidAttachedForm(
+                _(
+                    "In the {form_name} layout you specified the field "
+                    '"{field_name}" but there is no existing listing '
+                    'column with that name nor listing method "{attrname}"'
+                    'nor attached_form param "{key}"'
+                ).format(
+                    form_name=self.name,
+                    field_name=field_name,
+                    attrname=attrname,
+                    key=key,
+                )
+            )
+        return form_field
+
     def create_form_from_layout(self, **kwargs):
         fields = {}
         if not self.layout:
@@ -233,9 +255,8 @@ class AttachedForm:
             )
         for row in self.layout:
             for field_name in row:
-                field_name = field_name.strip()
-                col = self.listing.columns.get(field_name)
-                fields[field_name] = col.create_form_field(**kwargs)
+                field = self.get_form_field_from_layout_field(field_name, **kwargs)
+                fields[field_name] = field
         form_class = type(
             "{}{}".format(self.name, self.listing.suffix),
             (self.form_base_class,),
