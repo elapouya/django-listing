@@ -123,7 +123,7 @@ class Paginator(DjangoPaginator):
         bottom = (number - 1) * self.per_page
         top = bottom + self.per_page
         if bottom > self.count - self.per_page:
-            bottom = self.count - self.per_page
+            bottom = max(0, self.count - self.per_page)
             top = self.count
         return self._get_page(self.object_list[bottom:top], number, self)
 

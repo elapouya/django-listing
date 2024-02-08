@@ -1,3 +1,8 @@
+0.7.3 (2024-02-08)
+------------------
+- Add animation on attached_form insert
+- Fix pagination
+
 0.7.2 (2024-02-08)
 ------------------
 - Improve insert button management in attached_form

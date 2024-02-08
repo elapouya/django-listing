@@ -1122,6 +1122,20 @@ div.django-listing-container .table-striped > tbody > tr.selected > * {
   animation: row-flash-once 0.5s; /* Removed "infinite" */
 }
 
+@keyframes row-insert-animation {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+.django-listing-container .row-container.flash-once.insert {
+  animation: row-insert-animation 0.5s; /* Removed "infinite" */
+}
+
 @media (min-width: 992px) {
   div.django-listing-container td.type-str.cls-filesizecolumn,
   div.django-listing-container td.type-int,
