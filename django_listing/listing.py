@@ -477,6 +477,7 @@ class Listing(ListingBase):
     footer_template_name = None
     attached_form = None
     attached_form_autofill = False
+    force_order_by = None
     form_model_fields = None
     form_serialize_labels = None
     form_serialize_labels_func = None
@@ -873,10 +874,24 @@ class Listing(ListingBase):
         if self.request and (self.can_edit or self.has_upload):
             self.global_context["csrf_token"] = get_csrf_token(self.request)
 
+    def render_init_context(self, context):
+        self.manage_page_context(context)
+        self.normalize_params()
+        if not isinstance(self.attrs, HTMLAttributes):
+            self.attrs = HTMLAttributes(self.attrs)
+        html_class = "listing-" + self.__class__.__name__.lower()
+        self.attrs.add("class", {html_class, self.theme_listing_class})
+        if self.variation is not None:
+            self.attrs.add("class", "variation-{}".format(self.variation))
+        if not self.id:
+            self.id = "{}{}-id".format(html_class, self.suffix)
+        self.css_id = self.id.replace("_", "-")
+        if isinstance(self.suffix, str):
+            self.css_suffix = self.suffix.replace("_", "-")
+
     def render_init(self, context):
         if not self._render_initialized:
-            self.manage_page_context(context)
-            self.normalize_params()
+            self.render_init_context(context)
             for col in self.columns:
                 col.render_init()
             if isinstance(self.editable_columns, str):
@@ -928,17 +943,6 @@ class Listing(ListingBase):
                         ascending = False
                     self.columns_sort_list.append(col_name)
                     self.columns_sort_ascending[col_name] = ascending
-            if not isinstance(self.attrs, HTMLAttributes):
-                self.attrs = HTMLAttributes(self.attrs)
-            html_class = "listing-" + self.__class__.__name__.lower()
-            self.attrs.add("class", {html_class, self.theme_listing_class})
-            if self.variation is not None:
-                self.attrs.add("class", "variation-{}".format(self.variation))
-            if not self.id:
-                self.id = "{}{}-id".format(html_class, self.suffix)
-            self.css_id = self.id.replace("_", "-")
-            if isinstance(self.suffix, str):
-                self.css_suffix = self.suffix.replace("_", "-")
             if not isinstance(self.row_attrs, HTMLAttributes):
                 self.row_attrs = HTMLAttributes(self.row_attrs)
             self.row_attrs.add(
@@ -981,11 +985,11 @@ class Listing(ListingBase):
             if self.attached_form:
                 self.attached_form.render_init(context)
             self.global_context_init()
+            self.records.compute_current_page_records()
             self._render_initialized = True
 
     def render(self, context):
         response = self.render_init(context)
-        self.records.compute_current_page_records()
         if response is not None:
             return response
         return self.render_template()
@@ -1345,6 +1349,8 @@ class Listing(ListingBase):
         if self.processed_flash:
             if self.processed_pks and rec.pk in self.processed_pks:
                 attrs.add("class", {"flash-once", "selected"})
+                attrs.add("class", {self.action.replace("_", "-")})
+                attrs.add("class", {self.action_button.replace("_", "-")})
         attrs.add("class", "odd" if rec.get_index() % 2 else "even")
         if self.can_select:
             if not self.selection_has_overlay:

@@ -242,20 +242,25 @@ class RecordManager:
         if not hasattr(self, "_queryset_objs"):
             qs = self.get_filtered_queryset()
             lsg = self.listing
-            order_by = []
-            if lsg.sort:
-                for col_name in lsg.columns_sort_list:
-                    order_prefix = "" if lsg.columns_sort_ascending[col_name] else "-"
-                    col = lsg.columns.get(col_name)
-                    if col:
-                        if isinstance(col.sort_key, (tuple, list)):
-                            for sort_key in col.sort_key:
-                                order_by.append(order_prefix + sort_key)
-                        else:
-                            order_by.append(order_prefix + col.sort_key)
-            # add a default sorting to avoid a Django 'UnorderedObjectListWarning'
-            if not order_by:
-                order_by = ["pk"]
+            if lsg.force_order_by:
+                order_by = lsg.force_order_by
+            else:
+                order_by = []
+                if lsg.sort:
+                    for col_name in lsg.columns_sort_list:
+                        order_prefix = (
+                            "" if lsg.columns_sort_ascending[col_name] else "-"
+                        )
+                        col = lsg.columns.get(col_name)
+                        if col:
+                            if isinstance(col.sort_key, (tuple, list)):
+                                for sort_key in col.sort_key:
+                                    order_by.append(order_prefix + sort_key)
+                            else:
+                                order_by.append(order_prefix + col.sort_key)
+                # add a default sorting to avoid a Django 'UnorderedObjectListWarning'
+                if not order_by:
+                    order_by = ["pk"]
             self._queryset_objs = qs.order_by(*order_by)
         return self._queryset_objs
 

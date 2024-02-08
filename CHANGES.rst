@@ -1,3 +1,7 @@
+0.7.2 (2024-02-08)
+------------------
+- Improve insert button management in attached_form
+
 0.7.1 (2024-02-07)
 ------------------
 - Fix group by

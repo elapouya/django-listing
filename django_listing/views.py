@@ -156,7 +156,8 @@ class ListingViewMixin:
             listing.ajax_request = True
             listing.ajax_part = listing_part
             if isinstance(listing.action, str) and listing.action:
-                listing.render_init(RequestContext(request))
+                # listing.render_init(RequestContext(request))
+                listing.render_init_context(RequestContext(request))
                 method = getattr(self, "manage_listing_%s" % listing.action, None)
                 if callable(method):
                     response = method(listing, *args, **kwargs)
@@ -415,8 +416,9 @@ class ListingViewMixin:
                 mixed_response = process_method(form, instance, *args, **kwargs)
             self.listing.request.POST[instance._meta.pk.attname] = instance.pk
             if listing.processed_flash:
-                if len(selected_rows) == 1 and instance.pk:
-                    listing.processed_pks = {instance.pk}
+                if len(selected_rows) < 2:
+                    if instance.pk:
+                        listing.processed_pks = {instance.pk}
                 else:
                     listing.processed_pks = set(selected_rows)
             if not self.is_ajax:
@@ -450,12 +452,10 @@ class ListingViewMixin:
     def manage_attached_form_insert_process(
         self, listing, form, instance, *args, **kwargs
     ):
-        instance.pk = None
+        instance.pk = None  # needed to force insert vs update
         instance.save()
         listing.page = "last"
         listing.sort = "id"
-        listing.sort_key = "id"
-        listing.processed_pks = {instance.pk}
 
     def manage_attached_form_update_get_form(self, listing, *args, **kwargs):
         form = listing.attached_form.get_form(
