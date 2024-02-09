@@ -48,6 +48,8 @@ __all__ = [
     "DateColumn",
     "DateTimeColumn",
     "FileSizeColumn",
+    "FloatColumn",
+    "DecimalColumn",
     "ForeignKeyColumn",
     "InputColumn",
     "JsonDateTimeColumn",
@@ -1148,7 +1150,7 @@ class IntegerColumn(Column):
 
 
 class FloatColumn(Column):
-    from_model_field_classes = (models.FloatField, models.DecimalField)
+    from_model_field_classes = (models.FloatField,)
     form_field_class = forms.FloatField
     float_format = ".2f"
     params_keys = "float_format"
@@ -1163,6 +1165,11 @@ class FloatColumn(Column):
         if isinstance(value, float):
             value = f"{value:{self.float_format}}"
         return super().get_cell_context(rec, value)
+
+
+class DecimalColumn(FloatColumn):
+    from_model_field_classes = (models.DecimalField,)
+    form_field_class = forms.DecimalField
 
 
 class ChoiceColumn(Column):
