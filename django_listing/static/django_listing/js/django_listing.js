@@ -425,10 +425,13 @@ function djlst_fill_form(form, obj, pk) {
                  element.prop("checked", value);
              } else if (element.is("select")) {
                  if (typeof value === 'boolean') value = (value)?"True":"False";
+                 if (!value) value = "";
                  let option = element.find("option[value='" + value + "']");
                  if (option.length === 0) {
                      // If option doesn't exist, create it and remove others
-                     element.empty();
+                     if (element.hasClass("select2-hidden-accessible")) {
+                         element.empty();
+                     }
                      if (obj.data) {
                          element.append($("<option>", {
                              value: value,
