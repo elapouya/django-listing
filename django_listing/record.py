@@ -51,7 +51,8 @@ class SequenceItem:
 
 class ObjectSerializer(Serializer):
     def serialize(self, *args, **kwargs):
-        self.include_data = kwargs.pop("include_data", None)
+        self.additional_data = kwargs.pop("additional_data", None)
+        self.form_data = kwargs.pop("form_data", None)
         return super().serialize(*args, **kwargs)
 
     def start_serialization(self):
@@ -63,8 +64,10 @@ class ObjectSerializer(Serializer):
     def get_dump_object(self, obj):
         data = {"fields": self._current}
         data["fields"][obj._meta.pk.attname] = obj.pk
-        if self.include_data:
-            data["data"] = self.include_data
+        if self.additional_data:
+            data["data"] = self.additional_data
+        if self.form_data:
+            data["formfields"] = self.form_data
         return data
 
 
@@ -330,7 +333,10 @@ class Record:
         return data
 
     def get_serialized_object(self, **kwargs):
-        include_data = None
+        method = getattr(self._obj, "get_serialized_additional_data", None)
+        additional_data = method() if method else {}
+        method = getattr(self._obj, "get_serialized_form_data", None)
+        form_data = method() if method else {}
         labels_fields = self._listing.form_serialize_labels
         if labels_fields:
             func = self._listing.form_serialize_labels_func
@@ -338,10 +344,11 @@ class Record:
                 func = self.get_form_serialized_labels
             elif isinstance(func, str):
                 func = getattr(self._obj.__class__, func)
-            include_data = func(self._obj, labels_fields)
+            additional_data.update(func(self._obj, labels_fields))
         serialized_obj = object_serializer.serialize(
             [self._obj],
-            include_data=include_data,
+            form_data=form_data,
+            additional_data=additional_data,
             **kwargs,
         )
         return quote(serialized_obj)

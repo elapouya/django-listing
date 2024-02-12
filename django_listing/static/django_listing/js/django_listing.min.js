@@ -416,8 +416,18 @@ function djlst_selection_changed_hook(e) {
 function djlst_fill_form(form, obj, pk) {
     let element = form.find('input[name="object_pk"]');
     element.val(pk);
-    $.each(obj.fields, function(key, value) {
-        let element = form.find("[data-model-field='" + key + "']");
+    form.find("input, select").each(function() {
+        let element = $(this);
+        let name = element.attr("name");
+        let value;
+        if (obj.formfields !== undefined && name in obj.formfields) {
+            value = obj.formfields[name];
+        } else if (obj.fields !== undefined && name in obj.fields) {
+            value = obj.fields[name];
+        } else {
+            return true;
+        }
+        console.log(name,"=>",value);
         if (element.is(":input")) {
              if (element.is("input[type='radio']")) {
                  element.filter("[value='" + value + "']").prop("checked", true);
@@ -435,7 +445,7 @@ function djlst_fill_form(form, obj, pk) {
                      if (obj.data) {
                          element.append($("<option>", {
                              value: value,
-                             text: obj.data[key] || value
+                             text: obj.data[name] || value
                          }));
                      } else {
                          element.append($("<option>", {
@@ -449,9 +459,49 @@ function djlst_fill_form(form, obj, pk) {
                 element.val(value);
             }
         }
+
     });
 }
 
+// function djlst_fill_form(form, obj, pk) {
+//     let element = form.find('input[name="object_pk"]');
+//     element.val(pk);
+//     $.each(obj.fields, function(key, value) {
+//         let element = form.find("[data-model-field='" + key + "']");
+//         if (element.is(":input")) {
+//              if (element.is("input[type='radio']")) {
+//                  element.filter("[value='" + value + "']").prop("checked", true);
+//              } else if (element.is("input[type='checkbox']")) {
+//                  element.prop("checked", value);
+//              } else if (element.is("select")) {
+//                  if (typeof value === 'boolean') value = (value)?"True":"False";
+//                  if (!value) value = "";
+//                  let option = element.find("option[value='" + value + "']");
+//                  if (option.length === 0) {
+//                      // If option doesn't exist, create it and remove others
+//                      if (element.hasClass("select2-hidden-accessible")) {
+//                          element.empty();
+//                      }
+//                      if (obj.data) {
+//                          element.append($("<option>", {
+//                              value: value,
+//                              text: obj.data[key] || value
+//                          }));
+//                      } else {
+//                          element.append($("<option>", {
+//                              value: value,
+//                              text: value
+//                          }));
+//                      }
+//                  }
+//                  element.val(value);
+//             } else {
+//                 element.val(value);
+//             }
+//         }
+//     });
+// }
+//
 function djlst_clean_form(form) {
     form.find("input[type='text'],input[type='number'],textarea").val("");
     form.find("input[type='date'],input[type='time']").val("");
