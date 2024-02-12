@@ -91,6 +91,9 @@ def initialize_listing(context, listing, data=None, *args, **kwargs):
         listing.init(data, context=context, **kwargs)
     else:
         listing.set_kwargs(**kwargs)
+    view = context.get("view")
+    if view:
+        listing.set_view(view)
     return listing
 
 

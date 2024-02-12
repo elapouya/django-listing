@@ -264,6 +264,20 @@ class AttachedForm:
         )
         return form_class
 
+    def get_form_initial(self):
+        # Look in listing then in view whether a specific method exists
+        meth_name = f"manage_attached_form_get_initial"
+        # Search method in view object first
+        get_initial_method = getattr(self.listing, meth_name, None)
+        if get_initial_method:
+            return get_initial_method()
+        else:
+            view = self.listing.get_view()
+            get_initial_method = getattr(view, meth_name, None)
+            if get_initial_method:
+                return get_initial_method(self.listing)
+        return None
+
     def get_form(self, do_not_clean=False, **kwargs):
         if not self._form:
             kwargs.setdefault("have_empty_choice", True)
@@ -272,7 +286,8 @@ class AttachedForm:
             data = None
             if self.listing.request.POST.get("attached_form_name") == self.name:
                 data = self.listing.request.POST
-            self._form = form_class(data)
+            initial = self.get_form_initial()
+            self._form = form_class(data, initial=initial)
             self._form.instance = None
             self._form.do_not_clean = do_not_clean
             self._form.listing = self.listing

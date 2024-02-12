@@ -374,14 +374,14 @@ class ListingViewMixin:
 
         # if a specific get_form() method is available in view or listing : use it
         action_meth_name = f"manage_attached_form_{action}_get_form"
-        # Search method in view object first
-        get_form_method = getattr(self, action_meth_name, None)
+        # Search method in listing object first
+        get_form_method = getattr(listing, action_meth_name, None)
         if get_form_method:
-            form = get_form_method(listing, *args, **kwargs)
+            form = get_form_method(*args, **kwargs)
         else:
-            get_form_method = getattr(listing, action_meth_name, None)
+            get_form_method = getattr(self, action_meth_name, None)
             if get_form_method:
-                form = get_form_method(*args, **kwargs)
+                form = get_form_method(listing, *args, **kwargs)
             else:
                 attached_form = listing.attached_form
                 form = attached_form.get_form()
@@ -399,21 +399,21 @@ class ListingViewMixin:
             form.instance = construct_instance(form, instance)
 
             process_meth_name = f"manage_attached_form_{action}_process"
-            # Search method in view object first
-            process_method = getattr(self, process_meth_name, None)
+            # Search method in listing object first
+            process_method = getattr(listing, process_meth_name, None)
             if process_method:
-                mixed_response = process_method(
-                    listing, form, instance, *args, **kwargs
-                )
+                mixed_response = process_method(form, instance, *args, **kwargs)
             else:
-                process_method = getattr(listing, process_meth_name, None)
+                process_method = getattr(self, process_meth_name, None)
                 if not process_method:
                     raise ListingException(
                         f'Do not know how to manage "{action}" action. '
                         f"Please define {action_meth_name}() or {process_meth_name}() "
                         f"in your view or your in your listing."
                     )
-                mixed_response = process_method(form, instance, *args, **kwargs)
+                mixed_response = process_method(
+                    listing, form, instance, *args, **kwargs
+                )
             self.listing.request.POST[instance._meta.pk.attname] = instance.pk
             if listing.processed_flash:
                 if len(selected_rows) < 2:
@@ -671,6 +671,7 @@ class ListingViewMixin:
         context = super().get_context_data(**kwargs)
         context["request"] = self.request  # no need to add request context processor
         context["posted_listing"] = self.listing
+        context["view"] = self
         for cls in self.context_classes:
             context[cls.__name__] = cls
         if self.listing_class:
