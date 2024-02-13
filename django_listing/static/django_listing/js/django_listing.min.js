@@ -427,7 +427,6 @@ function djlst_fill_form(form, obj, pk) {
         } else {
             return true;
         }
-        console.log(name,"=>",value);
         if (element.is(":input")) {
              if (element.is("input[type='radio']")) {
                  element.filter("[value='" + value + "']").prop("checked", true);
@@ -461,6 +460,7 @@ function djlst_fill_form(form, obj, pk) {
         }
 
     });
+    $(document).trigger( "djlst_form_filled", {form: form});
 }
 
 // function djlst_fill_form(form, obj, pk) {
@@ -602,7 +602,7 @@ $(document).ready(function () {
     $(document.body).on("click", ".button-action-group-by", function () {
         $(this).closest(".django-listing-container").find(".group-by-container").slideToggle(200);
     });
-    $(document.body).on("click", "form.django-listing-ajax.attached-form button[type='button']", djlst_post_attached_form);
+    $(document.body).on("click", "form.django-listing-ajax.attached-form button[name='action_button']", djlst_post_attached_form);
     $(document.body).on("click", ".btn.gb-filter", function() {$(this).addClass("visited")});
 
     $(".django-listing-container").each(function() {
