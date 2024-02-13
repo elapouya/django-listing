@@ -67,7 +67,7 @@ function djlst_load_listing_url(nav_obj, url) {
        success: function(response) {
            $(listing_target).replaceWith(response);
            djlst_listing_on_load();
-           $(document).trigger( "djlst_ajax_loaded", [ listing_target ] );
+           $(document).trigger( "djlst_ajax_loaded", {listing: listing_target} );
        },
        error: function(response) {
            text = "An error occured.\n\nIndications :\n\n" + response.responseText;
@@ -117,7 +117,7 @@ function djlst_post_action_button(event) {
        {
            $(listing_target).replaceWith(response);
            djlst_listing_on_load();
-           $(document).trigger( "djlst_ajax_loaded", [ listing_target ] );
+           $(document).trigger( "djlst_ajax_loaded", {listing: listing_target} );
        },
        error: function(response) {
             text = "An error occured.\n\nIndications :\n\n" + response.responseText;
@@ -172,6 +172,7 @@ function djlst_post_attached_form(event) {
         url: ajax_url,
         data: request_data,
         success: function(mixed_response) {
+            let new_attached_form;
             if (mixed_response.listing) {
                 listing_div.replaceWith(mixed_response.listing);
             }
@@ -180,11 +181,14 @@ function djlst_post_attached_form(event) {
                 djlst_selection_changed_hook(listing_div);
             }
             if (mixed_response.object_pk) {
-                let new_attached_form = $("#" + attached_form_id);
+                new_attached_form = $("#" + attached_form_id);
                 let object_pk_input = new_attached_form.find('input[name="object_pk"]');
                 object_pk_input.val(mixed_response.object_pk);
             }
-            $(document).trigger( "djlst_ajax_attached_form_loaded", [ listing_target ] );
+            $(document).trigger(
+                "djlst_ajax_attached_form_loaded",
+                {listing: listing_target, form: new_attached_form}
+            );
        },
        error: function(response) {
             text = "An error occured.\n\nIndications :\n\n" + response.responseText;
