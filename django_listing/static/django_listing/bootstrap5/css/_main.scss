@@ -66,6 +66,20 @@ div.django-listing-container {
                 background: #ccc;
             }
         }
+        &.div-separated div.row-container {
+            background: white;
+            margin-top: 8px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border: 2px solid rgba(0,0,0,0.2);
+            padding: 8px;
+
+            &.selected {
+                background: #EEEEEE;
+                box-shadow: 0 0 0 0.25rem rgba(0,0,0, 0.4);
+                border-color: transparent;
+            }
+        }
         &.div-bordered {
             border: 1px solid #cccccc;
         }

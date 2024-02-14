@@ -749,31 +749,7 @@ class InsertableListing2(FilterListingMixin, Listing):
             "address,gender,marital_status;"
             "designation,salary,joined,company,have_car"
         ),
-        buttons=(
-            ("delete_all", pgettext_lazy("Attached form", "Delete ALL"), None, None),
-            (
-                "delete",
-                pgettext_lazy("Attached form", "Delete selected"),
-                None,
-                "disabled-if-no-selection",
-            ),
-            "reset",
-            ("clear", pgettext_lazy("Attached form", "Clear"), None, None),
-            ("insert", pgettext_lazy("Attached form", "Insert"), None, None),
-            (
-                "duplicate",
-                pgettext_lazy("Attached form", "Duplicate"),
-                None,
-                "disabled-if-no-selection",
-            ),
-            (
-                "update",
-                pgettext_lazy("Attached form", "Update selected"),
-                None,
-                "disabled-if-no-selection",
-            ),
-            ("update_all", pgettext_lazy("Attached form", "Update ALL"), None, None),
-        ),
+        buttons="delete_all,delete,reset,clear,insert,duplicate,update,update_all",
     )
     selectable = True
 

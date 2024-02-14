@@ -187,6 +187,9 @@ class AttachedForm:
                 attached_form_name=self.name,
                 action=self.action,
             )
+        self.init_buttons()
+
+    def init_buttons(self):
         buttons = self.buttons
         if isinstance(buttons, str):
             buttons = list(map(str.strip, buttons.split(",")))
@@ -201,6 +204,55 @@ class AttachedForm:
                         self.submit_action,
                         self.submit_label,
                         self.submit_icon,
+                        None,
+                    )
+                elif button == "delete_all":
+                    button = (
+                        "delete_all",
+                        pgettext_lazy("Attached form", "Delete ALL"),
+                        None,
+                        None,
+                    )
+                elif button == "delete":
+                    button = (
+                        "delete",
+                        pgettext_lazy("Attached form", "Delete selected"),
+                        None,
+                        "disabled-if-no-selection",
+                    )
+                elif button == "clear":
+                    button = (
+                        "clear",
+                        pgettext_lazy("Attached form", "Clear"),
+                        None,
+                        None,
+                    )
+                elif button == "insert":
+                    button = (
+                        "insert",
+                        pgettext_lazy("Attached form", "Insert"),
+                        None,
+                        None,
+                    )
+                elif button == "duplicate":
+                    button = (
+                        "duplicate",
+                        pgettext_lazy("Attached form", "Duplicate"),
+                        None,
+                        "disabled-if-no-selection",
+                    )
+                elif button == "update":
+                    button = (
+                        "update",
+                        pgettext_lazy("Attached form", "Update selected"),
+                        None,
+                        "disabled-if-no-selection",
+                    )
+                elif button == "update_all":
+                    button = (
+                        "update_all",
+                        pgettext_lazy("Attached form", "Update ALL"),
+                        None,
                         None,
                     )
                 else:

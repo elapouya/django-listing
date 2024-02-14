@@ -310,7 +310,6 @@ class ListingVariations(ListingBase):
     data = None
     listing = None
     id = None
-    model = None
     suffix = None
 
     def __init__(self, data=None, **kwargs):
@@ -319,12 +318,14 @@ class ListingVariations(ListingBase):
             self.init(data, **kwargs)
         self.init_kwargs = kwargs
 
-    def get_model(self):
-        if self.model:
-            return self.model
-        if self.listing and self.listing.columns:
-            return self.listing.columns.get_model()
+    @property
+    def model(self):
+        if self.listing:
+            return self.listing.get_model()
         return None
+
+    def get_model(self):
+        return self.model
 
     def set_kwargs(self, **kwargs):
         if self.listing:
@@ -375,6 +376,10 @@ class ListingVariations(ListingBase):
             listing = cls(**self.init_kwargs)
             listing.variation = variation
             listing.variations = self
+            if hasattr(self, "action"):
+                listing.action = self.action
+            if hasattr(self, "action_col"):
+                listing.action_col = self.action_col
             listing.suffix = self.suffix
             listing.parsed_url = urlsplit(request.get_full_path())
             if self.id:
@@ -393,6 +398,11 @@ class ListingVariations(ListingBase):
         self.listing.set_kwargs()
         self.listing.render_init(context)
 
+    def render_init_context(self, context):
+        self.create_listing(context)
+        self.listing.set_kwargs()
+        self.listing.render_init_context(context)
+
     def render(self, context):
         self.create_listing(context)
         self.listing.set_kwargs()
@@ -406,6 +416,13 @@ class ListingVariations(ListingBase):
         if self.listing:
             return self.listing.have_to_refresh()
         return False
+
+    def __setattr__(self, item, value):
+        if item in LISTING_PARAMS_KEYS:
+            if self.listing:
+                setattr(self.listing, item, value)
+                return
+        super().__setattr__(item, value)
 
     def __getattr__(self, item):
         if self.listing and hasattr(self.listing, item):

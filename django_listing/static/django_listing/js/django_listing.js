@@ -67,7 +67,7 @@ function djlst_load_listing_url(nav_obj, url) {
        success: function(response) {
            $(listing_target).replaceWith(response);
            djlst_listing_on_load();
-           $(document).trigger( "djlst_ajax_loaded", {listing: listing_target} );
+           $(document).trigger( "djlst_ajax_loaded", {listing_target: listing_target} );
        },
        error: function(response) {
            text = "An error occured.\n\nIndications :\n\n" + response.responseText;
@@ -117,7 +117,7 @@ function djlst_post_action_button(event) {
        {
            $(listing_target).replaceWith(response);
            djlst_listing_on_load();
-           $(document).trigger( "djlst_ajax_loaded", {listing: listing_target} );
+           $(document).trigger( "djlst_ajax_loaded", {listing_target: listing_target} );
        },
        error: function(response) {
             text = "An error occured.\n\nIndications :\n\n" + response.responseText;
@@ -420,7 +420,7 @@ function djlst_selection_changed_hook(e) {
 function djlst_fill_form(form, obj, pk) {
     let element = form.find('input[name="object_pk"]');
     element.val(pk);
-    form.find("input, select").each(function() {
+    form.find("input, select, textarea").each(function() {
         let element = $(this);
         let name = element.attr("name");
         let value;

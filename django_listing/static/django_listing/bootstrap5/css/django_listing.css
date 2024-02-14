@@ -953,6 +953,19 @@ div.django-listing-container div.django-listing.div-striped div.row-container:nt
 div.django-listing-container div.django-listing.div-striped div.row-container:nth-of-type(odd):hover {
   background: #ccc;
 }
+div.django-listing-container div.django-listing.div-separated div.row-container {
+  background: white;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  padding: 8px;
+}
+div.django-listing-container div.django-listing.div-separated div.row-container.selected {
+  background: #EEEEEE;
+  box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.4);
+  border-color: transparent;
+}
 div.django-listing-container div.django-listing.div-bordered {
   border: 1px solid #cccccc;
 }
