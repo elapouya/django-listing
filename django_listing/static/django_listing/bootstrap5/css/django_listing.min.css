@@ -1028,6 +1028,10 @@ div.django-listing-container .btn-toolbar select {
 div.django-listing-container .btn-toolbar .sortdropdowntoolbaritem a {
   font-family: django_listing, arial;
 }
+div.django-listing-container .btn-toolbar .btn-group {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
 div.django-listing-container td.cls-totalcolumn {
   font-weight: bold;
 }
