@@ -324,7 +324,12 @@ class Record:
     def get_form_serialized_labels(self, obj, labels_fields):
         data = {}
         for f in labels_fields:
-            foreign_object = getattr(obj, f)
+            if "." in f:
+                attr, foreign_attr = f.split(".", maxsplit=1)
+                foreign_object = getattr(obj, attr, None)
+                foreign_object = getattr(foreign_object, foreign_attr, None)
+            else:
+                foreign_object = getattr(obj, f, None)
             if foreign_object:
                 form_label_func = getattr(foreign_object, FORM_LABEL_METHOD_NAME, None)
                 if form_label_func is None:

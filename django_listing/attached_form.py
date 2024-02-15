@@ -178,9 +178,7 @@ class AttachedForm:
                         if col.model_field:
                             self.listing.form_model_fields.append(col.model_field.name)
                         if col.form_field_serialize_label:
-                            self.listing.form_serialize_labels.append(
-                                col.model_field.name
-                            )
+                            self.listing.form_serialize_labels.append(col.data_key)
             layout_str = ";".join(map(lambda l: ",".join(l), self.layout))
             self.listing.add_form_input_hiddens(
                 attached_form_layout=layout_str,

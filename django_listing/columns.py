@@ -626,17 +626,23 @@ class Column(metaclass=ColumnMeta):
                 self.name = re.sub(r"\W", "", header.strip().replace(" ", "_").lower())
             else:
                 self.name = "noname"
-        if listing.model:
-            try:
-                f = listing.model._meta.get_field(name)
-                if hasattr(f, "formfield"):
-                    self.model_form_field = f.formfield(validators=f.validators)
-            except FieldDoesNotExist:
-                pass
         self.set_kwargs(**kwargs)
         self.apply_template_kwargs()
         if self.data_key is None:
             self.data_key = self.name
+        if listing.model:
+            try:
+                if "." in self.data_key:
+                    attr, foreign_attr = self.data_key.split(".", maxsplit=1)
+                    f = listing.model._meta.get_field(attr)
+                    f = f.related_model._meta.get_field(foreign_attr)
+                else:
+                    f = listing.model._meta.get_field(self.data_key)
+                self.model_field = f
+                if hasattr(f, "formfield"):
+                    self.model_form_field = f.formfield(validators=f.validators)
+            except FieldDoesNotExist:
+                pass
         if self.sort_key is None:
             if isinstance(self.data_key, str):
                 self.sort_key = self.data_key.replace(".", "__")
