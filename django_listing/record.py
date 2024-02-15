@@ -321,20 +321,21 @@ class Record:
     def get_object(self):
         return self._obj
 
-    def get_form_serialized_labels(self, obj, labels_fields):
+    def get_form_serialized_cols(self, obj, cols):
         data = {}
-        for f in labels_fields:
-            if "." in f:
-                attr, foreign_attr = f.split(".", maxsplit=1)
+        for col in cols:
+            data_key = col.data_key
+            if "." in data_key:
+                attr, foreign_attr = data_key.split(".", maxsplit=1)
                 foreign_object = getattr(obj, attr, None)
                 foreign_object = getattr(foreign_object, foreign_attr, None)
             else:
-                foreign_object = getattr(obj, f, None)
+                foreign_object = getattr(obj, data_key, None)
             if foreign_object:
                 form_label_func = getattr(foreign_object, FORM_LABEL_METHOD_NAME, None)
                 if form_label_func is None:
                     form_label_func = lambda: str(foreign_object)
-                data[f] = form_label_func()
+                data[col.name] = (foreign_object.pk, form_label_func())
         return data
 
     def get_serialized_object(self, **kwargs):
@@ -342,14 +343,14 @@ class Record:
         additional_data = method() if method else {}
         method = getattr(self._obj, "get_serialized_form_data", None)
         form_data = method() if method else {}
-        labels_fields = self._listing.form_serialize_labels
-        if labels_fields:
-            func = self._listing.form_serialize_labels_func
+        form_serialize_cols = self._listing.form_serialize_cols
+        if form_serialize_cols:
+            func = self._listing.form_serialize_cols_func
             if func is None:
-                func = self.get_form_serialized_labels
+                func = self.get_form_serialized_cols
             elif isinstance(func, str):
                 func = getattr(self._obj.__class__, func)
-            additional_data.update(func(self._obj, labels_fields))
+            form_data.update(func(self._obj, form_serialize_cols))
         serialized_obj = object_serializer.serialize(
             [self._obj],
             form_data=form_data,

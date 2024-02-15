@@ -169,7 +169,7 @@ class AttachedForm:
             self.layout = list(map(lambda s: s.split(","), self.layout.split(";")))
         if self.layout:
             self.listing.form_model_fields = []
-            self.listing.form_serialize_labels = []
+            self.listing.form_serialize_cols = []
             for row in self.layout:
                 for field_name in row:
                     field_name = field_name.strip()
@@ -177,8 +177,8 @@ class AttachedForm:
                     if col:
                         if col.model_field:
                             self.listing.form_model_fields.append(col.model_field.name)
-                        if col.form_field_serialize_label:
-                            self.listing.form_serialize_labels.append(col.data_key)
+                        if col.form_field_serialize:
+                            self.listing.form_serialize_cols.append(col)
             layout_str = ";".join(map(lambda l: ",".join(l), self.layout))
             self.listing.add_form_input_hiddens(
                 attached_form_layout=layout_str,

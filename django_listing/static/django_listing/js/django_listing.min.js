@@ -437,6 +437,11 @@ function djlst_fill_form(form, obj, pk) {
              } else if (element.is("input[type='checkbox']")) {
                  element.prop("checked", value);
              } else if (element.is("select")) {
+                 let label = value;
+                 if (Array.isArray(value)) {
+                    label = value[1];
+                    value = value[0];  // this last !!
+                 }
                  if (typeof value === 'boolean') value = (value)?"True":"False";
                  if (!value) value = "";
                  let option = element.find("option[value='" + value + "']");
@@ -445,17 +450,10 @@ function djlst_fill_form(form, obj, pk) {
                      if (element.hasClass("select2-hidden-accessible")) {
                          element.empty();
                      }
-                     if (obj.data) {
-                         element.append($("<option>", {
-                             value: value,
-                             text: obj.data[name] || value
-                         }));
-                     } else {
-                         element.append($("<option>", {
-                             value: value,
-                             text: value
-                         }));
-                     }
+                     element.append($("<option>", {
+                         value: value,
+                         text: label
+                     }));
                  }
                  element.val(value);
             } else {

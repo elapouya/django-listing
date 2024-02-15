@@ -496,8 +496,8 @@ class Listing(ListingBase):
     attached_form_autofill = False
     force_order_by = None
     form_model_fields = None
-    form_serialize_labels = None
-    form_serialize_labels_func = None
+    form_serialize_cols = None
+    form_serialize_cols_func = None
     gb_annotate_cols = None
     gb_cols = None
     gb_template_name = ThemeTemplate("group_by.html")
