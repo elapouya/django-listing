@@ -1,3 +1,7 @@
+0.7.4 (2024-02-16)
+------------------
+- Fix attached_form auto-fill
+
 0.7.3 (2024-02-08)
 ------------------
 - Add animation on attached_form insert
