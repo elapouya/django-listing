@@ -793,6 +793,8 @@ class Listing(ListingBase):
         return None
 
     def is_empty(self):
+        if isinstance(self.data, QuerySet):
+            return self.data.exists()
         return not bool(self.data)
 
     def is_initialized(self):

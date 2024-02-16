@@ -682,9 +682,16 @@ class Column(metaclass=ColumnMeta):
     def editing_init(self):
         # editable attribute can be set via 'editable_columns'
         # only if not already set in the final column class
-        if self.editable is None and {"all", self.name} & self.listing.editable_columns:
+        if (
+            self.editable is None
+            and self.listing.editable_columns is not None
+            and {"all", self.name} & self.listing.editable_columns
+        ):
             self.editable = True
-        if {"all", self.name} & self.listing.editing_columns:
+        if (
+            self.listing.editing_columns is not None
+            and {"all", self.name} & self.listing.editing_columns
+        ):
             self.editing = True
         self.can_edit = (
             self.editable
@@ -1629,7 +1636,7 @@ class ForeignKeyColumn(LinkColumn):
         if "queryset" in kwargs:
             self.queryset = kwargs["queryset"]
         qs = getattr(self, "queryset", None)
-        if not qs and self.model_field:
+        if qs is None and self.model_field:
             self.queryset = self.model_field.related_model.objects.all()
 
     def get_cell_value(self, rec):
