@@ -170,6 +170,7 @@ class AttachedForm:
         if self.layout:
             self.listing.form_model_fields = []
             self.listing.form_serialize_cols = []
+            self.listing.form_no_autofill_cols = []
             for row in self.layout:
                 for field_name in row:
                     field_name = field_name.strip()
@@ -179,6 +180,8 @@ class AttachedForm:
                             self.listing.form_model_fields.append(col.model_field.name)
                         if col.form_field_serialize:
                             self.listing.form_serialize_cols.append(col)
+                        if col.form_no_autofill:
+                            self.listing.form_no_autofill_cols.append(col.name)
             layout_str = ";".join(map(lambda l: ",".join(l), self.layout))
             self.listing.add_form_input_hiddens(
                 attached_form_layout=layout_str,

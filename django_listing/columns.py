@@ -15,6 +15,7 @@ from django import forms
 from django.conf import settings
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
+from django.db.models import ForeignKey
 from django.forms import widgets
 from django.template.defaultfilters import filesizeformat
 from django.utils import formats
@@ -98,6 +99,7 @@ COLUMNS_PARAMS_KEYS = {
     "form_field_widget_class",
     "form_field_widget_params",
     "form_field_serialize",
+    "form_no_autofill",
     "has_cell_filter",
     "header",
     "header_attrs",
@@ -557,6 +559,7 @@ class Column(metaclass=ColumnMeta):
     form_field_serialize = False
     from_model_field_classes = []
     from_model_field_order = 100
+    form_no_autofill = False
     has_cell_filter = False
     header = None
     header_sortable_tpl = None
@@ -1076,6 +1079,8 @@ class Column(metaclass=ColumnMeta):
         widget = self.get_form_field_widget(cls, **kwargs)
         if self.listing.model and self.model_field:
             widget.attrs["data-model-field"] = self.model_field.name
+            if isinstance(self.model_field, ForeignKey) and "queryset" not in params:
+                params["queryset"] = self.model_field.related_model.objects.all()
         field = cls(widget=widget, **params)
         return field
 

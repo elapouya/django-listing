@@ -1,5 +1,4 @@
-function djlst_replaceUrlParam(url, param_name, param_value)
-{
+function djlst_replaceUrlParam(url, param_name, param_value) {
     if (param_value == null) {
         param_value = '';
     }
@@ -13,8 +12,7 @@ function djlst_replaceUrlParam(url, param_name, param_value)
     return url_obj.toString();
 }
 
-function djlst_removeUrlParam(url, param_name)
-{
+function djlst_removeUrlParam(url, param_name) {
     let url_obj = new URL(url);
     url_obj.searchParams.delete(param_name);
     return url_obj.toString();
@@ -39,12 +37,12 @@ function get_csrf_token() {
 
 function update_csrf_token() {
     $.ajaxSetup({
-        data: { 'csrfmiddlewaretoken': get_csrf_token() }
+        data: {'csrfmiddlewaretoken': get_csrf_token()}
     });
 }
 
 function djlst_load_listing_url(nav_obj, url) {
-    if (! $("div.django-listing-ajax").length) {
+    if (!$("div.django-listing-ajax").length) {
         window.location.href = url;
     }
     var listing_div = nav_obj.closest("div.django-listing-ajax");
@@ -52,33 +50,33 @@ function djlst_load_listing_url(nav_obj, url) {
     var listing_id = $(listing_div).attr("id");
     var listing_suffix = $(listing_div).attr("listing-suffix");
     var listing_target = nav_obj.attr("listing-target");
-    if (! listing_target) listing_target = "#"+listing_id;
+    if (!listing_target) listing_target = "#" + listing_id;
     var listing_part = nav_obj.attr("listing-part");
-    if (! listing_part) listing_part = "all";
+    if (!listing_part) listing_part = "all";
     update_csrf_token();
     $.ajax({
-       type: "POST",
-       url: url,
-       data: {
-           "listing_id": listing_id,
-           "listing_suffix": listing_suffix,
-           "listing_part": listing_part
+        type: "POST",
+        url: url,
+        data: {
+            "listing_id": listing_id,
+            "listing_suffix": listing_suffix,
+            "listing_part": listing_part
         },
-       success: function(response) {
-           $(listing_target).replaceWith(response);
-           djlst_listing_on_load();
-           $(document).trigger( "djlst_ajax_loaded", {listing_target: listing_target} );
-       },
-       error: function(response) {
-           text = "An error occured.\n\nIndications :\n\n" + response.responseText;
-           alert(text);
-       },
+        success: function (response) {
+            $(listing_target).replaceWith(response);
+            djlst_listing_on_load();
+            $(document).trigger("djlst_ajax_loaded", {listing_target: listing_target});
+        },
+        error: function (response) {
+            text = "An error occured.\n\nIndications :\n\n" + response.responseText;
+            alert(text);
+        },
     });
     return false;
 }
 
 function djlst_load_listing_href() {
-    return djlst_load_listing_url($(this),$(this).attr("href"));
+    return djlst_load_listing_url($(this), $(this).attr("href"));
 }
 
 function djlst_load_listing_val() {
@@ -86,7 +84,7 @@ function djlst_load_listing_val() {
     var param_name = $(this).attr("name");
     var ajax_url = $(this).closest("div.django-listing-ajax").attr("ajax_url");
     var url = djlst_replaceUrlParam(ajax_url, param_name, param_value);
-    return djlst_load_listing_url($(this),url);
+    return djlst_load_listing_url($(this), url);
 }
 
 function djlst_post_action_button(event) {
@@ -98,31 +96,30 @@ function djlst_post_action_button(event) {
     var listing_id = listing_div.attr("id");
     var listing_suffix = listing_div.attr("listing-suffix");
     var listing_target = nav_obj.attr("listing-target");
-    if (! listing_target) listing_target = "#"+listing_id;
+    if (!listing_target) listing_target = "#" + listing_id;
     var listing_part = nav_obj.attr("listing-part");
-    if (! listing_part) listing_part = "all";
+    if (!listing_part) listing_part = "all";
     let request_data = {
-        listing_id : listing_id,
-        listing_suffix : listing_suffix,
-        listing_part : listing_part,
-        serialized_data : nav_obj.closest('form').serialize()
+        listing_id: listing_id,
+        listing_suffix: listing_suffix,
+        listing_part: listing_part,
+        serialized_data: nav_obj.closest('form').serialize()
     };
-    request_data[$(this).attr('name')]=$(this).val();
+    request_data[$(this).attr('name')] = $(this).val();
     update_csrf_token();
     $.ajax({
-       type: "POST",
-       url: ajax_url,
-       data: request_data,
-       success: function(response)
-       {
-           $(listing_target).replaceWith(response);
-           djlst_listing_on_load();
-           $(document).trigger( "djlst_ajax_loaded", {listing_target: listing_target} );
-       },
-       error: function(response) {
+        type: "POST",
+        url: ajax_url,
+        data: request_data,
+        success: function (response) {
+            $(listing_target).replaceWith(response);
+            djlst_listing_on_load();
+            $(document).trigger("djlst_ajax_loaded", {listing_target: listing_target});
+        },
+        error: function (response) {
             text = "An error occured.\n\nIndications :\n\n" + response.responseText;
             alert(text);
-       }
+        }
     });
 }
 
@@ -141,37 +138,39 @@ function djlst_post_attached_form(event) {
         if (isNaN(confirm_msg_nb_items)) confirm_msg_nb_items = 0;
         confirm_msg = confirm_msg.replace("{nb_items}", selected_rows.length);
         nb_all_items = listing_div.attr("nb-rows");
-        if (!nb_all_items) nb_all_items="";
+        if (!nb_all_items) nb_all_items = "";
         confirm_msg = confirm_msg.replace("{nb_all_items}", nb_all_items);
         if (selected_rows.length >= confirm_msg_nb_items) {
             if (!confirm(confirm_msg)) return;
         }
     }
-    let selected_pks = selected_rows.map(function () {return $(this).attr("data-pk")}).get().join(',');
+    let selected_pks = selected_rows.map(function () {
+        return $(this).attr("data-pk")
+    }).get().join(',');
     let ajax_url = listing_div.attr("ajax_url");
     // listing_div.addClass("spinning");
     let listing_id = listing_div.attr("id");
     let listing_suffix = listing_div.attr("listing-suffix");
     let listing_target = nav_obj.attr("listing-target");
-    if (! listing_target) listing_target = "#"+listing_id;
+    if (!listing_target) listing_target = "#" + listing_id;
     let listing_part = nav_obj.attr("listing-part");
-    if (! listing_part) listing_part = "all";
+    if (!listing_part) listing_part = "all";
 
     let request_data = {
-        listing_id : listing_id,
-        listing_suffix : listing_suffix,
-        listing_part : listing_part,
-        action : "attached_form",
-        action_button : action_button,
+        listing_id: listing_id,
+        listing_suffix: listing_suffix,
+        listing_part: listing_part,
+        action: "attached_form",
+        action_button: action_button,
         selected_pks: selected_pks,
-        serialized_data : nav_obj.closest('form').serialize()
+        serialized_data: nav_obj.closest('form').serialize()
     };
     update_csrf_token();
     $.ajax({
         type: "POST",
         url: ajax_url,
         data: request_data,
-        success: function(mixed_response) {
+        success: function (mixed_response) {
             let new_attached_form;
             if (mixed_response.listing) {
                 listing_div.replaceWith(mixed_response.listing);
@@ -189,11 +188,11 @@ function djlst_post_attached_form(event) {
                 "djlst_ajax_attached_form_loaded",
                 {listing: listing_target, form: new_attached_form}
             );
-       },
-       error: function(response) {
+        },
+        error: function (response) {
             text = "An error occured.\n\nIndications :\n\n" + response.responseText;
             alert(text);
-       }
+        }
     });
 }
 
@@ -201,7 +200,7 @@ var djlst_last_selected_rows_container = null;
 var djlst_last_selected_index = null;
 
 function djlst_multiple_row_select(e) {
-    let row=$(this).closest('.row-container');
+    let row = $(this).closest('.row-container');
     let rows_container = row.parent();
     let index = row.index();
     let last_rows_container = djlst_last_selected_rows_container;
@@ -214,7 +213,7 @@ function djlst_multiple_row_select(e) {
     } else {
         action = djlst_multiple_row_do_select;
     }
-    if (selection_ctrl && ! e.ctrlKey) {
+    if (selection_ctrl && !e.ctrlKey) {
         row.siblings().removeClass('selected');
     }
     if (e.shiftKey && last_rows_container[0] === rows_container[0] && last_index != null) {
@@ -240,10 +239,10 @@ function djlst_map_children_range(container, index1, index2, func) {
 }
 
 function djlst_multiple_row_do_unselect(row) {
-    let hidden=row.find('input.row-select').first();
+    let hidden = row.find('input.row-select').first();
     row.removeClass('selected');
     hidden.removeAttr('name');
-    row.find('input.selection-box').first().prop('checked',false);
+    row.find('input.selection-box').first().prop('checked', false);
     let nb_slected = row.siblings(".selected").length;
     if (nb_slected == 1) {
         row = row.siblings(".selected").first();
@@ -264,10 +263,10 @@ function djlst_multiple_row_do_unselect(row) {
 }
 
 function djlst_multiple_row_do_select(row) {
-    let hidden=row.find('input.row-select').first();
+    let hidden = row.find('input.row-select').first();
     row.addClass('selected');
-    hidden.attr('name',hidden.attr('select-name'));
-    row.find('input.selection-box').first().prop('checked',true);
+    hidden.attr('name', hidden.attr('select-name'));
+    row.find('input.selection-box').first().prop('checked', true);
     let listing_div = row.closest('.django-listing-container');
     let form = $("#" + listing_div.attr('attached-form-id'));
     if (form.length) {
@@ -289,7 +288,7 @@ function djlst_multiple_row_do_select(row) {
 }
 
 function djlst_unique_row_select(e) {
-    let row=$(this).closest('.row-container');
+    let row = $(this).closest('.row-container');
     if (row.hasClass('selected')) {
         djlst_multiple_row_do_unselect(row);
     } else {
@@ -301,25 +300,25 @@ function djlst_unique_row_select(e) {
 
 function djlst_select_all(e) {
     let listing_id = $(this).attr('listing-target');
-    let listing = $('#'+listing_id);
+    let listing = $('#' + listing_id);
     listing.find('.row-container.row-selector').addClass('selected');
-    listing.find('input.selection-box').prop('checked',true);
+    listing.find('input.selection-box').prop('checked', true);
     listing.find('input.row-select').each(function () {
-        let hidden=$(this);
-        hidden.attr('name',hidden.attr('select-name'));
+        let hidden = $(this);
+        hidden.attr('name', hidden.attr('select-name'));
     });
     djlst_selection_changed_hook(listing);
 }
 
 function djlst_unselect_all(e) {
     let listing_id = $(this).attr('listing-target');
-    let listing = $('#'+listing_id);
+    let listing = $('#' + listing_id);
     djlst_listing_unselect_all(listing);
 }
 
 function djlst_listing_unselect_all(listing) {
     listing.find('.row-container.row-selector').removeClass('selected');
-    listing.find('input.selection-box').prop('checked',false);
+    listing.find('input.selection-box').prop('checked', false);
     listing.find('input.row-select').each(function () {
         $(this).removeAttr('name');
     });
@@ -328,15 +327,15 @@ function djlst_listing_unselect_all(listing) {
 
 function djlst_invert_selection(e) {
     let listing_id = $(this).attr('listing-target');
-    let listing = $('#'+listing_id);
+    let listing = $('#' + listing_id);
     listing.find('.row-container.row-selector').toggleClass('selected');
-    listing.find('input.selection-box').prop('checked',true);
+    listing.find('input.selection-box').prop('checked', true);
     listing.find('input.row-select').each(function () {
-        let hidden=$(this);
+        let hidden = $(this);
         if (hidden.attr("name") !== undefined) {
             hidden.removeAttr('name');
         } else {
-            hidden.attr('name',hidden.attr('select-name'));
+            hidden.attr('name', hidden.attr('select-name'));
         }
     });
     djlst_selection_changed_hook(listing);
@@ -355,10 +354,10 @@ function djlst_unselectText() {
 function djlst_activate_selection(e) {
     var listing = $(this).closest("div.django-listing-selecting");
     listing.find(".selection-overlay.hover")
-           .removeClass('hover').addClass('had-hover');
+        .removeClass('hover').addClass('had-hover');
     var selection_menu_id = listing.attr('selection-menu-id');
-    var selection_menu = $('#'+selection_menu_id);
-    selection_menu.attr('listing-id',listing.attr('id'));
+    var selection_menu = $('#' + selection_menu_id);
+    selection_menu.attr('listing-id', listing.attr('id'));
     var display_mode = selection_menu.attr('menu-display-mode');
     switch (display_mode) {
         case 'show':
@@ -377,9 +376,9 @@ function djlst_activate_selection(e) {
 function djlst_deactivate_selection(e) {
     var selection_menu = $(this).closest('.listing-selection-menu');
     var listing_id = selection_menu.attr('listing-id');
-    var listing =  $('#'+listing_id);
+    var listing = $('#' + listing_id);
     listing.find(".selection-overlay.had-hover")
-           .addClass('hover').removeClass('had-hover');
+        .addClass('hover').removeClass('had-hover');
     djlst_listing_unselect_all(listing);
     var display_mode = selection_menu.attr('menu-display-mode');
     switch (display_mode) {
@@ -420,7 +419,7 @@ function djlst_selection_changed_hook(e) {
 function djlst_fill_form(form, obj, pk) {
     let element = form.find('input[name="object_pk"]');
     element.val(pk);
-    form.find("input, select, textarea").each(function() {
+    form.find("input, select, textarea").each(function () {
         let element = $(this);
         let name = element.attr("name");
         let value;
@@ -429,86 +428,58 @@ function djlst_fill_form(form, obj, pk) {
         } else if (obj.fields !== undefined && name in obj.fields) {
             value = obj.fields[name];
         } else {
-            return true;
+            if (this.type !== "hidden" && (
+                    obj.data === undefined
+                    || obj.data.no_autofill === undefined
+                    || !obj.data.no_autofill.includes(name)
+            )) {
+                value = "";
+            } else {
+                return true;
+            }
         }
         if (element.is(":input")) {
-             if (element.is("input[type='radio']")) {
-                 element.filter("[value='" + value + "']").prop("checked", true);
-             } else if (element.is("input[type='checkbox']")) {
-                 element.prop("checked", value);
-             } else if (element.is("select")) {
-                 let label = value;
-                 if (Array.isArray(value)) {
+            if (element.is("input[type='radio']")) {
+                element.filter("[value='" + value + "']").prop("checked", true);
+            } else if (element.is("input[type='checkbox']")) {
+                element.prop("checked", value);
+            } else if (element.is("select")) {
+                let label = value;
+                if (Array.isArray(value)) {
                     label = value[1];
                     value = value[0];  // this last !!
-                 }
-                 if (typeof value === 'boolean') value = (value)?"True":"False";
-                 if (!value) value = "";
-                 let option = element.find("option[value='" + value + "']");
-                 if (option.length === 0) {
-                     // If option doesn't exist, create it and remove others
-                     if (element.hasClass("select2-hidden-accessible")) {
-                         element.empty();
-                     }
-                     element.append($("<option>", {
-                         value: value,
-                         text: label
-                     }));
-                 }
-                 element.val(value);
+                }
+                if (typeof value === 'boolean') value = (value) ? "True" : "False";
+                if (!value) value = "";
+                let option = element.find("option[value='" + value + "']");
+                if (option.length === 0) {
+                    // If option doesn't exist, create it and remove others
+                    if (element.hasClass("select2-hidden-accessible")) {
+                        element.empty();
+                    }
+                    element.append($("<option>", {
+                        value: value,
+                        text: label
+                    }));
+                }
+                element.val(value);
+                if (element.hasClass("select2-hidden-accessible")) {
+                    element.trigger('change');
+                }
             } else {
                 element.val(value);
             }
         }
 
     });
-    $(document).trigger( "djlst_form_filled", {form: form});
+    $(document).trigger("djlst_form_filled", {form: form});
 }
 
-// function djlst_fill_form(form, obj, pk) {
-//     let element = form.find('input[name="object_pk"]');
-//     element.val(pk);
-//     $.each(obj.fields, function(key, value) {
-//         let element = form.find("[data-model-field='" + key + "']");
-//         if (element.is(":input")) {
-//              if (element.is("input[type='radio']")) {
-//                  element.filter("[value='" + value + "']").prop("checked", true);
-//              } else if (element.is("input[type='checkbox']")) {
-//                  element.prop("checked", value);
-//              } else if (element.is("select")) {
-//                  if (typeof value === 'boolean') value = (value)?"True":"False";
-//                  if (!value) value = "";
-//                  let option = element.find("option[value='" + value + "']");
-//                  if (option.length === 0) {
-//                      // If option doesn't exist, create it and remove others
-//                      if (element.hasClass("select2-hidden-accessible")) {
-//                          element.empty();
-//                      }
-//                      if (obj.data) {
-//                          element.append($("<option>", {
-//                              value: value,
-//                              text: obj.data[key] || value
-//                          }));
-//                      } else {
-//                          element.append($("<option>", {
-//                              value: value,
-//                              text: value
-//                          }));
-//                      }
-//                  }
-//                  element.val(value);
-//             } else {
-//                 element.val(value);
-//             }
-//         }
-//     });
-// }
-//
 function djlst_clean_form(form) {
     form.find("input[type='text'],input[type='number'],textarea").val("");
     form.find("input[type='date'],input[type='time']").val("");
     form.find("input[type='datetime-local']").val("");
-    form.find("select").each(function(index) {
+    form.find("select").each(function (index) {
         let option = $(this).find("option[value='']");
         if (option.length === 0) {
             $(this).append($("<option>", {value: "", text: no_choice_msg}));
@@ -526,27 +497,26 @@ function djlst_view_object_popup(event) {
     var listing_id = listing_div.attr("id");
     var listing_suffix = listing_div.attr("listing-suffix");
     request_data = {
-        listing_id : listing_id,
-        listing_suffix : listing_suffix,
-        action_button : 'view_object_popup',
-        serialized_data : nav_obj.closest('form').serialize()
+        listing_id: listing_id,
+        listing_suffix: listing_suffix,
+        action_button: 'view_object_popup',
+        serialized_data: nav_obj.closest('form').serialize()
     };
     update_csrf_token();
     $.ajax({
-       type: "POST",
-       url: ajax_url,
-       data: request_data,
-       success: function(response)
-       {
-           listing_div.removeClass("spinning");
-           $("#listing-popup-container").html(response);
-           $("#listing-popup-container > div.modal").modal("show");
-       }
+        type: "POST",
+        url: ajax_url,
+        data: request_data,
+        success: function (response) {
+            listing_div.removeClass("spinning");
+            $("#listing-popup-container").html(response);
+            $("#listing-popup-container > div.modal").modal("show");
+        }
     });
 }
 
 function djlst_listing_on_load() {
-    $(".group-by-container").each(function() {
+    $(".group-by-container").each(function () {
         let group_by_select = $(this).find(".group-by-select")
         new DualListbox(group_by_select[0], {
             addButtonText: '>',
@@ -590,24 +560,26 @@ $(document).ready(function () {
         }).prop('name', '');
     });
 
-    $(document.body).on("click","div.django-listing-ajax button.listing-nav",djlst_post_action_button);
-    $(document.body).on("click","div.django-listing-ajax a.listing-nav",djlst_load_listing_href);
-    $(document.body).on("change","div.django-listing-ajax select.listing-nav",djlst_load_listing_val);
-    $(document.body).on("click","div.django-listing-selecting.selection_multiple .row-selector",djlst_multiple_row_select);
-    $(document.body).on("click","div.django-listing-selecting.selection_unique .row-selector",djlst_unique_row_select);
-    $(document.body).on("click","div.django-listing-selecting .selection-overlay.hover",djlst_activate_selection);
-    $(document.body).on("click","[listing-action='select-all']", djlst_select_all);
-    $(document.body).on("click","[listing-action='unselect-all']", djlst_unselect_all);
-    $(document.body).on("click","[listing-action='invert-selection']", djlst_invert_selection);
-    $(document.body).on("click",".listing-selection-menu .listing-menu-close", djlst_deactivate_selection);
-    $(document.body).on("click","li.action-item.view-object-popup a", djlst_view_object_popup);
+    $(document.body).on("click", "div.django-listing-ajax button.listing-nav", djlst_post_action_button);
+    $(document.body).on("click", "div.django-listing-ajax a.listing-nav", djlst_load_listing_href);
+    $(document.body).on("change", "div.django-listing-ajax select.listing-nav", djlst_load_listing_val);
+    $(document.body).on("click", "div.django-listing-selecting.selection_multiple .row-selector", djlst_multiple_row_select);
+    $(document.body).on("click", "div.django-listing-selecting.selection_unique .row-selector", djlst_unique_row_select);
+    $(document.body).on("click", "div.django-listing-selecting .selection-overlay.hover", djlst_activate_selection);
+    $(document.body).on("click", "[listing-action='select-all']", djlst_select_all);
+    $(document.body).on("click", "[listing-action='unselect-all']", djlst_unselect_all);
+    $(document.body).on("click", "[listing-action='invert-selection']", djlst_invert_selection);
+    $(document.body).on("click", ".listing-selection-menu .listing-menu-close", djlst_deactivate_selection);
+    $(document.body).on("click", "li.action-item.view-object-popup a", djlst_view_object_popup);
     $(document.body).on("click", ".button-action-group-by", function () {
         $(this).closest(".django-listing-container").find(".group-by-container").slideToggle(200);
     });
     $(document.body).on("click", "form.django-listing-ajax.attached-form button[name='action_button']", djlst_post_attached_form);
-    $(document.body).on("click", ".btn.gb-filter", function() {$(this).addClass("visited")});
+    $(document.body).on("click", ".btn.gb-filter", function () {
+        $(this).addClass("visited")
+    });
 
-    $(".django-listing-container").each(function() {
+    $(".django-listing-container").each(function () {
         djlst_selection_changed_hook($(this));
     });
 
@@ -615,19 +587,19 @@ $(document).ready(function () {
 
     var dropzoneCounter = 0;
 
-    $('.dropzone').on('dragenter', function(){
+    $('.dropzone').on('dragenter', function () {
         dropzoneCounter++;
         $(this).addClass('drag-over');
     });
 
-    $('.dropzone').bind('dragleave', function(){
+    $('.dropzone').bind('dragleave', function () {
         dropzoneCounter--;
         if (dropzoneCounter === 0) {
             $(this).removeClass('drag-over');
         }
     });
 
-    $('.dropzone').bind('drop', function(){
+    $('.dropzone').bind('drop', function () {
         dropzoneCounter = 0;
         $(this).removeClass('drag-over');
     });
@@ -640,20 +612,20 @@ $(document).ready(function () {
         form.submit();
     });
 
-    $(document).on('select2:open', function(e) {
+    $(document).on('select2:open', function (e) {
         let aria_owns = $(e.target).parent().find('.select2-selection').attr('aria-owns');
         document.querySelector('input[aria-controls="' + aria_owns + '"]').focus();
         select2_opened = true;
     });
 
-    $("form").keyup(function(e) {
+    $("form").keyup(function (e) {
         if (e.keyCode == 9) {
             const target = $(e.target)
             if (target.hasClass("select2-selection")) {
-                 if (! select2_opened) {
-                     target.closest(".select2").siblings("select").first().select2("open");
-                 }
-                 select2_opened = true;
+                if (!select2_opened) {
+                    target.closest(".select2").siblings("select").first().select2("open");
+                }
+                select2_opened = true;
             } else {
                 select2_opened = false;
             }
