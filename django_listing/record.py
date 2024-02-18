@@ -3,7 +3,7 @@
 #
 # @author: Eric Lapouyade
 #
-
+import base64
 import collections
 import os
 import re
@@ -362,9 +362,10 @@ class Record:
             [self._obj],
             form_data=form_data,
             additional_data=additional_data,
+            separators=(",", ":"),
             **kwargs,
         )
-        return quote(serialized_obj)
+        return base64.b64encode(serialized_obj.encode()).decode()
 
     def is_selected(self):
         return self._selected
