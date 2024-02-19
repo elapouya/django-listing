@@ -1,3 +1,7 @@
+0.7.5 (2024-02-19)
+------------------
+- Use base64 for attached form serialization encoding
+
 0.7.4 (2024-02-16)
 ------------------
 - Fix attached_form auto-fill
