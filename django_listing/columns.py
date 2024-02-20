@@ -89,6 +89,7 @@ COLUMNS_PARAMS_KEYS = {
     "default_value",
     "editable",
     "exportable",
+    "exported_header",
     "float_format",
     "footer",
     "footer_attrs",
@@ -249,6 +250,14 @@ class Columns(list):
 
     def names(self):
         return [c.name for c in self]
+
+    def select_exported(self, exported_cols_name):
+        cols = None
+        if isinstance(exported_cols_name, str):
+            exported_cols_name = list(map(str.strip, exported_cols_name.split(",")))
+        if exported_cols_name:
+            cols = [self.name2col[c] for c in exported_cols_name]
+        return cols
 
     def select(self, select_cols_name=None, exclude_cols_name=None):
         if isinstance(select_cols_name, str):
@@ -549,6 +558,7 @@ class Column(metaclass=ColumnMeta):
     editable = None
     editing = False
     exportable = True
+    exported_header = None
     footer = None
     footer_tpl = None
     footer_value_tpl = None
@@ -894,6 +904,11 @@ class Column(metaclass=ColumnMeta):
             attrs.add("class", "not-sortable")
         attrs.add("class", {"col-" + self.name} | self.theme_header_class)
         return attrs
+
+    def get_exported_header_value(self):
+        if self.exported_header is not None:
+            return self.exported_header
+        return self.get_header_value()
 
     def get_header_value(self):
         if self.header:

@@ -122,6 +122,7 @@ LISTING_PARAMS_KEYS = {
     "empty_table_msg",
     "exclude_columns",
     "export",
+    "export_columns",
     "filters",
     "footer_snippet",
     "footer_template_name",
@@ -489,6 +490,8 @@ class Listing(ListingBase):
     empty_listing_template_name = ThemeTemplate("empty_listing.html")
     exclude_columns = None
     export = None
+    export_columns = None
+    exported_columns = None
     filters = None
     footer_snippet = None
     footer_template_name = None
@@ -970,6 +973,10 @@ class Listing(ListingBase):
             self.selected_columns = self.columns.select(
                 self.select_columns, self.exclude_columns
             )
+            self.exported_columns = self.columns.select_exported(self.export_columns)
+            if self.exported_columns is None:
+                self.exported_columns = self.selected_columns
+
             is_exporting = self.export_data()
             if is_exporting:
                 return "Sending listing export file..."
@@ -1169,17 +1176,25 @@ class Listing(ListingBase):
 
     def exported_headers(self, use_col_name=True):
         if use_col_name:
-            return [c.name for c in self.selected_columns if c.exportable]
+            return [c.name for c in self.exported_columns if c.exportable]
         else:
             return [
-                str(c.get_header_value()) for c in self.selected_columns if c.exportable
+                str(c.get_exported_header_value())
+                for c in self.exported_columns
+                if c.exportable
             ]
+
+    def get_cell_exported_value(self, col, rec, keep_original_type):
+        cell_value_func = getattr(self, f"exported_cell_value_{col.name}", None)
+        if cell_value_func:
+            return cell_value_func(rec, keep_original_type)
+        return col.get_cell_exported_value(rec, keep_original_type)
 
     def exported_rows(self, keep_original_type=True):
         for rec in self.records.export():
             yield [
-                c.get_cell_exported_value(rec, keep_original_type)
-                for c in self.selected_columns
+                self.get_cell_exported_value(c, rec, keep_original_type)
+                for c in self.exported_columns
                 if c.exportable
             ]
 

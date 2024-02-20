@@ -1,3 +1,7 @@
+0.7.6 (2024-02-20)
+------------------
+- Columns to be exported are now customizable
+
 0.7.5 (2024-02-19)
 ------------------
 - Use base64 for attached form serialization encoding
