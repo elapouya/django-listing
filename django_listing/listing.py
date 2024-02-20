@@ -7,6 +7,7 @@
 import collections
 import logging
 import pprint
+import re
 from urllib.parse import urlsplit, urlunsplit, quote
 
 import tablib
@@ -25,6 +26,7 @@ from django_listing import (
     EXPORT_FORMATS,
     EXPORT_FORMATS_KEEP_ORIGINAL_TYPE,
     EXPORT_FORMATS_USE_COL_NAME,
+    EXPORT_EXCEL_SANITIZE_RE,
 )
 
 from .columns import (
@@ -1187,8 +1189,13 @@ class Listing(ListingBase):
     def get_cell_exported_value(self, col, rec, keep_original_type):
         cell_value_func = getattr(self, f"exported_cell_value_{col.name}", None)
         if cell_value_func:
-            return cell_value_func(rec, keep_original_type)
-        return col.get_cell_exported_value(rec, keep_original_type)
+            value = cell_value_func(rec, keep_original_type)
+        else:
+            value = col.get_cell_exported_value(rec, keep_original_type)
+        # Excel sanitization
+        if isinstance(value, str):
+            value = EXPORT_EXCEL_SANITIZE_RE.sub(" ", value)
+        return value
 
     def exported_rows(self, keep_original_type=True):
         for rec in self.records.export():

@@ -1,5 +1,6 @@
-0.7.6 (2024-02-20)
+0.7.7 (2024-02-20)
 ------------------
+- Sanitize strings for Excel export
 - Columns to be exported are now customizable
 
 0.7.5 (2024-02-19)
