@@ -1,4 +1,4 @@
-{% load django_listing %}
+{% load django_listing i18n %}
 {% get_uniq_id as uniq_id %}
 <div class="btn-group me-2 toolbar_item {{ item.css_class }}" role="group">
     <form id="toolbar-item-{{ uniq_id }}-form-id" class="form-inline">
@@ -22,7 +22,7 @@
                 {% endfor %}
             </select>
             {% if item.has_submit_button %}
-                <button type="submit" class="btn btn-secondary btn-sm ms-1 file-generation-button">{{ item.button_label }}</button>
+                <button type="submit" class="btn btn-secondary btn-sm ms-1 file-generation-button" data-empty-select-msg="{% trans "Please select a file format !" %}">{{ item.button_label }}</button>
             {% endif %}
         </div>
     </form>

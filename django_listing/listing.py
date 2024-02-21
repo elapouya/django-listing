@@ -18,9 +18,9 @@ from django.db.models.query import QuerySet
 from django.http import QueryDict
 from django.middleware.csrf import get_token as get_csrf_token
 from django.template import loader
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy, pgettext_lazy
+from django.utils import timezone
 
 from django_listing import (
     EXPORT_FORMATS,
@@ -1039,8 +1039,9 @@ class Listing(ListingBase):
                 for row in self.exported_rows(keep_original_type):
                     data.append(row)
                 self.request.export_data = data.export(export_format.lower())
-                self.request.export_filename = "{}.{}".format(
-                    self.name, self.export.lower()
+                current_date = timezone.now().strftime("%Y-%m-%d.%Hh%M")
+                self.request.export_filename = "{}.{}.{}".format(
+                    self.name, current_date, self.export.lower()
                 )
         return hasattr(self.request, "export_data")
 

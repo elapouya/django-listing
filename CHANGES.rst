@@ -1,3 +1,10 @@
+0.7.8 (2024-02-21)
+------------------
+- Add spinner while exporting listing to file
+- Check export select file format to not be empty
+- Better default listing name
+- Exported file name has now a timestamp
+
 0.7.7 (2024-02-20)
 ------------------
 - Sanitize strings for Excel export

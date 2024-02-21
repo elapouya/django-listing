@@ -626,6 +626,13 @@ $(document).ready(function () {
     });
 
     $(".file-generation-button").on('click', function() {
+        let select = $(this).siblings("select");
+        if (select.length && !select.val()) {
+            let msg = $(this).data("empty-select-msg");
+            if (!msg) msg = "Please select a value !"
+            alert(msg);
+            return false;
+        }
         Cookies.set('file_generation', 'working', {expires: 1});
         let listing_div = $(this).closest("div.django-listing-ajax");
         listing_div.addClass("spinning").removeClass('done');

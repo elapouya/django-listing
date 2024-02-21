@@ -24,7 +24,7 @@
                 {% endfor %}
             </select>
             {% if item.has_submit_button %}
-                <button type="submit" class="btn btn-secondary btn-sm ml-1">{{ item.button_label }}</button>
+                <button type="submit" class="btn btn-secondary btn-sm ml-1" data-empty-select-msg="{% trans "Please select a file format !" %}">{{ item.button_label }}</button>
             {% endif %}
         </div>
     </form>
