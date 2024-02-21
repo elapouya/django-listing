@@ -18,26 +18,9 @@ function djlst_removeUrlParam(url, param_name) {
     return url_obj.toString();
 }
 
-function get_csrf_token() {
-    name = 'csrftoken';
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue
-}
-
 function update_csrf_token() {
     $.ajaxSetup({
-        data: {'csrfmiddlewaretoken': get_csrf_token()}
+        data: {'csrfmiddlewaretoken': Cookies.get('csrftoken')}
     });
 }
 
@@ -550,6 +533,17 @@ function djlst_listing_on_load() {
     });
 }
 
+function djlst_follow_file_generation() {
+    var status = Cookies.get('file_generation');
+    console.log(status);
+    if (status !== 'done') {
+        setTimeout(djlst_follow_file_generation, 300);
+    } else {
+        Cookies.remove('file_generation');
+        $('.spinning').removeClass('spinning').addClass('done');
+    }
+}
+
 $(document).ready(function () {
 
     var select2_opened = false;
@@ -630,6 +624,13 @@ $(document).ready(function () {
                 select2_opened = false;
             }
         }
+    });
+
+    $(".file-generation-button").on('click', function() {
+        Cookies.set('file_generation', 'working', {expires: 1});
+        let listing_div = $(this).closest("div.django-listing-ajax");
+        listing_div.addClass("spinning").removeClass('done');
+        djlst_follow_file_generation();
     });
 
     djlst_listing_on_load();

@@ -124,6 +124,7 @@ class ListingViewMixin:
             response["Content-Disposition"] = 'attachment; filename="{}"'.format(
                 filename
             )
+            response.set_cookie("file_generation", "done")
             return response
         return response
 
