@@ -522,7 +522,7 @@ class Listing(ListingBase):
     attached_form_base_class = ListingBaseForm
     listing_template_name = ThemeTemplate("listing.html")
     model = None
-    name = "listing"
+    name = None
     onready_snippet = None
     orphans = 0
     page = 1
@@ -832,6 +832,9 @@ class Listing(ListingBase):
         if not self.is_initialized():
             self.set_kwargs(**kwargs)
             self.validate_parameters()
+            if not self.name:
+                self.name = re.sub(r"([A-Z])", r"_\1", self.__class__.__name__).lower()
+                self.name = self.name[1:]
             if data is None:
                 data = self.model or self.columns.get_model()
             if isinstance(data, type) and issubclass(data, Model):

@@ -535,7 +535,6 @@ function djlst_listing_on_load() {
 
 function djlst_follow_file_generation() {
     var status = Cookies.get('file_generation');
-    console.log(status);
     if (status !== 'done') {
         setTimeout(djlst_follow_file_generation, 300);
     } else {
