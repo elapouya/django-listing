@@ -58,7 +58,7 @@ class Toolbar(list):
                 items_name = map(str.strip, items[0].split(","))
                 items = []
                 for name in items_name:
-                    slug = re.sub("[_\d]+$", "", name)
+                    slug = re.sub(r"[_\d]+$", "", name)
                     cls = ToolbarItemMeta.get_class(slug)
                     item = cls(name)
                     item.set_listing(listing)
