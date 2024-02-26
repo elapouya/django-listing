@@ -213,7 +213,7 @@ msgid ""
 "Cannot find choices from model for filter \"{name}\", Please specify the "
 "choices to display"
 msgstr ""
-"Ne trouve pas 'choices' du modèle de filtrage \"{name}\", merçi de spécifier "
+"Ne trouve pas 'choices' du modèle de filtrage \"{name}\", merci de spécifier "
 "les choix à afficher"
 
 #: columns.py:1138 filters.py:650
