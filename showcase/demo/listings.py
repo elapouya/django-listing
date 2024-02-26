@@ -759,6 +759,7 @@ class InsertableListing2(FilterListingMixin, Listing):
     permission_required_for_update_all = False
     permission_required_for_delete = False
     permission_required_for_delete_all = False
+    # permission_required_for_export = False
 
     toolbar = Toolbar(
         ExportSelectToolbarItem(),

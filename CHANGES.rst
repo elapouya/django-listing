@@ -1,3 +1,7 @@
+0.7.9 (2024-02-26)
+------------------
+- Add export toolbar button permission
+
 0.7.8 (2024-02-21)
 ------------------
 - Add spinner while exporting listing to file

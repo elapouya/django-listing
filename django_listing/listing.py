@@ -1027,6 +1027,8 @@ class Listing(ListingBase):
 
     def export_data(self):
         if self.export:
+            if not self.has_permission_for_action("export"):
+                raise ListingException(_("[You do not have permission to export data]"))
             export_format = self.export.upper()
             if export_format in EXPORT_FORMATS:
                 use_col_name = export_format in EXPORT_FORMATS_USE_COL_NAME
