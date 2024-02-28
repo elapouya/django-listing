@@ -689,6 +689,9 @@ class Column(metaclass=ColumnMeta):
     def render_init(self):
         pass
 
+    def render_init_context(self, context):
+        pass
+
     def editing_init(self):
         # editable attribute can be set via 'editable_columns'
         # only if not already set in the final column class

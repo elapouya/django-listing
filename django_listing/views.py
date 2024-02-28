@@ -145,6 +145,7 @@ class ListingViewMixin:
         Listing.set_suffix(request, listing, listing_suffix)
         listing.action = request.POST.get("force_action") or request.POST.get("action")
         listing.action_col = request.POST.get("action_col")
+        listing.request = request
         return listing
 
     def manage_listing_ajax_request(self, request, *args, **kwargs):
@@ -663,6 +664,7 @@ class ListingViewMixin:
                         self.set_to_listing_instances(listing_id, instance)
         self.get_default_listing_instance()  # will update self._listing_instances
         for listing in self.yield_listing_instances():
+            listing.request = self.request
             if listing.is_initialized() and not listing.is_render_initialized():
                 listing.render_init(RequestContext(self.request))
 

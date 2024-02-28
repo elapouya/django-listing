@@ -902,6 +902,8 @@ class Listing(ListingBase):
             self.global_context["csrf_token"] = get_csrf_token(self.request)
 
     def render_init_context(self, context):
+        for col in self.columns:
+            col.render_init_context(context)
         self.manage_page_context(context)
         self.normalize_params()
         if not isinstance(self.attrs, HTMLAttributes):
@@ -915,84 +917,79 @@ class Listing(ListingBase):
         self.css_id = self.id.replace("_", "-")
         if isinstance(self.suffix, str):
             self.css_suffix = self.suffix.replace("_", "-")
+        if isinstance(self.editable_columns, str):
+            self.editable_columns = set(
+                map(str.strip, self.editable_columns.split(","))
+            )
+        if self.editing_hidden_columns is None:
+            if self.model and self.primary_key in self.columns.names():
+                self.editing_hidden_columns = {self.primary_key}
+            else:
+                self.editing_hidden_columns = set()
+        if isinstance(self.editing_hidden_columns, str):
+            self.editing_hidden_columns = set(
+                map(str.strip, self.editing_hidden_columns.split(","))
+            )
+        if self.editing is None:
+            self.editing = True
+        if self.editing_columns is None:
+            self.editing_columns = "all"
+        if isinstance(self.editing, str) and self.editing.lower() == "false":
+            self.editing = False
+        if isinstance(self.editing_columns, str):
+            self.editing_columns = set(map(str.strip, self.editing_columns.split(",")))
+        self.columns.editing_init()
+        self.can_edit = self.editable and self.editing
+        if isinstance(self.selecting, str) and self.selecting.lower() == "false":
+            self.selecting = False
+        if self.selecting is None:
+            self.selecting = True
+        self.can_select = self.selectable and self.selecting
+        self.has_hidden_selection = (
+            self.selectable and self.selecting and self.selection_position == "hidden"
+        )
+        self.columns_sort_ascending = {}
+        self.columns_sort_list = []
+        if self.sort:
+            if isinstance(self.sort, str):
+                sort_list = map(str.strip, self.sort.split(","))
+            else:
+                sort_list = self.sort
+            for col_name in sort_list:
+                ascending = True
+                if col_name.startswith("-"):
+                    col_name = col_name[1:]
+                    ascending = False
+                self.columns_sort_list.append(col_name)
+                self.columns_sort_ascending[col_name] = ascending
+        if not isinstance(self.row_attrs, HTMLAttributes):
+            self.row_attrs = HTMLAttributes(self.row_attrs)
+        self.row_attrs.add(
+            "class", {self.theme_div_row_container_class, self.theme_row_class}
+        )
+        self.selected_columns = self.columns.select(
+            self.select_columns, self.exclude_columns
+        )
+        self.exported_columns = self.columns.select_exported(self.export_columns)
+        if self.exported_columns is None:
+            self.exported_columns = self.selected_columns
+        self.can_edit_columns = [c for c in self.selected_columns if c.can_edit]
+        self.can_edit_columns_names = set(c.name for c in self.can_edit_columns)
+        self.editing_really_hidden_columns = (
+            self.editing_hidden_columns - self.can_edit_columns_names
+        )
+        self.selected_hidden_columns = self.columns.select(
+            self.editing_really_hidden_columns
+        )
 
     def render_init(self, context):
         if not self._render_initialized:
             self.render_init_context(context)
             for col in self.columns:
                 col.render_init()
-            if isinstance(self.editable_columns, str):
-                self.editable_columns = set(
-                    map(str.strip, self.editable_columns.split(","))
-                )
-            if self.editing_hidden_columns is None:
-                if self.model and self.primary_key in self.columns.names():
-                    self.editing_hidden_columns = {self.primary_key}
-                else:
-                    self.editing_hidden_columns = set()
-            if isinstance(self.editing_hidden_columns, str):
-                self.editing_hidden_columns = set(
-                    map(str.strip, self.editing_hidden_columns.split(","))
-                )
-            if self.editing is None:
-                self.editing = True
-            if self.editing_columns is None:
-                self.editing_columns = "all"
-            if isinstance(self.editing, str) and self.editing.lower() == "false":
-                self.editing = False
-            if isinstance(self.editing_columns, str):
-                self.editing_columns = set(
-                    map(str.strip, self.editing_columns.split(","))
-                )
-            self.columns.editing_init()
-            self.can_edit = self.editable and self.editing
-            if isinstance(self.selecting, str) and self.selecting.lower() == "false":
-                self.selecting = False
-            if self.selecting is None:
-                self.selecting = True
-            self.can_select = self.selectable and self.selecting
-            self.has_hidden_selection = (
-                self.selectable
-                and self.selecting
-                and self.selection_position == "hidden"
-            )
-            self.columns_sort_ascending = {}
-            self.columns_sort_list = []
-            if self.sort:
-                if isinstance(self.sort, str):
-                    sort_list = map(str.strip, self.sort.split(","))
-                else:
-                    sort_list = self.sort
-                for col_name in sort_list:
-                    ascending = True
-                    if col_name.startswith("-"):
-                        col_name = col_name[1:]
-                        ascending = False
-                    self.columns_sort_list.append(col_name)
-                    self.columns_sort_ascending[col_name] = ascending
-            if not isinstance(self.row_attrs, HTMLAttributes):
-                self.row_attrs = HTMLAttributes(self.row_attrs)
-            self.row_attrs.add(
-                "class", {self.theme_div_row_container_class, self.theme_row_class}
-            )
-            self.selected_columns = self.columns.select(
-                self.select_columns, self.exclude_columns
-            )
-            self.exported_columns = self.columns.select_exported(self.export_columns)
-            if self.exported_columns is None:
-                self.exported_columns = self.selected_columns
-
             is_exporting = self.export_data()
             if is_exporting:
                 return "Sending listing export file..."
-            self.can_edit_columns = [c for c in self.selected_columns if c.can_edit]
-            self.can_edit_columns_names = set(c.name for c in self.can_edit_columns)
-            self.editing_really_hidden_columns = (
-                self.editing_hidden_columns - self.can_edit_columns_names
-            )
-            self.selected_hidden_columns = self.columns.select(
-                self.editing_really_hidden_columns
-            )
             if self.can_edit:
                 self.datetimepicker_init()
             if self.has_upload:

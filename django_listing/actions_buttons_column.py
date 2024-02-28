@@ -78,7 +78,7 @@ class ActionsButtonsColumn(Column):
         # if not isinstance(self.listing.data, QuerySet):
         #     raise InvalidData('Actions buttons work only with QuerySet as listing data.')
 
-    def render_init(self):
+    def render_init_context(self, context):
         self.extract_action_params()
 
     def set_kwargs(self, **kwargs):
@@ -105,6 +105,8 @@ class ActionsButtonsColumn(Column):
             self.buttons_description[b] = description
 
     def extract_action_params(self):
+        if not self.listing.request:
+            return
         get_dict = self.listing.request.GET
         post_dict = self.listing.request.POST
         for qs_key in self.actions_query_string_keys:
@@ -248,7 +250,7 @@ class ActionsButtonsColumn(Column):
         last = self.listing.records.get_last_obj()
         obj = self.listing.records.get_obj(pk=self.action_pk)
         if last and obj:
-            field = self.move_up__field
+            field = self.move_down__field
             last_order = getattr(last, field)
             obj_order = getattr(obj, field)
             if last_order < obj_order:

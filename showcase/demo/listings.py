@@ -339,7 +339,7 @@ class ActionsColumnListing(Listing):
     paginator_has_first_last = True
     paginator_page_scale_size = 9
     paginator_has_page_info = False
-    actions__move_down__key = "rank"
+    # actions__move_down__key = "rank"
     columns = Columns(
         Column("first_name"),
         Column("last_name"),
