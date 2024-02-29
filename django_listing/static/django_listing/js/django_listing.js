@@ -235,7 +235,7 @@ function djlst_multiple_row_do_unselect(row) {
             if (listing_div.hasClass("attached_form_autofill")) {
                 let serialized_data = row.attr('data-serialized-object');
                 if (serialized_data) {
-                    let serialized_obj = atob(serialized_data);
+                    let serialized_obj = decodeURIComponent(escape(atob(serialized_data)));
                     let obj = JSON.parse(serialized_obj);
                     let pk = row.attr("data-pk");
                     djlst_fill_form(form, obj, pk);
@@ -260,7 +260,7 @@ function djlst_multiple_row_do_select(row) {
             } else {
                 let serialized_data = row.attr('data-serialized-object');
                 if (serialized_data) {
-                    let serialized_obj = atob(serialized_data);
+                    let serialized_obj = decodeURIComponent(escape(atob(serialized_data)));
                     let obj = JSON.parse(serialized_obj);
                     let pk = row.attr("data-pk");
                     djlst_fill_form(form, obj, pk);
