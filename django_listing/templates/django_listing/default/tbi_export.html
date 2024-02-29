@@ -1,4 +1,4 @@
-{% load django_listing %}
+{% load django_listing i18n %}
 {% get_uniq_id as uniq_id %}
 {% listing_has_permission_for_action listing "export" as has_export_perm %}
 {% if has_export_perm %}
