@@ -28,7 +28,7 @@ DUAL_LISTBOX_MIN_JS=$JS_DIR/dual-listbox.min.js
 JS_COMPRESS="google-closure-compiler --language_out=ECMASCRIPT_2015"
 CSS_COMPRESS=csso
 SAAS=/usr/local/bin/sass
-MINIFY=false
+MINIFY=true
 
 for THEME in bootstrap4 bootstrap5
 do
@@ -46,14 +46,14 @@ do
         mv ${DJL_CSS} ${DJL_CSS}.tmp
         grep -v -e '--bs.*: ;' ${DJL_CSS}.tmp > $DJL_CSS
         rm -f ${DJL_CSS}.tmp
-        if [[ $MINIFY == "true" ]]
-        then
-          $CSS_COMPRESS $DJL_CSS --output $DJL_MIN_CSS
-        else
-          cp $DJL_CSS $DJL_MIN_CSS
-        fi
-        set +x
     fi
+    if [[ $MINIFY == "true" ]]
+    then
+      $CSS_COMPRESS $DJL_CSS --output $DJL_MIN_CSS
+    else
+      cp $DJL_CSS $DJL_MIN_CSS
+    fi
+    set +x
 done
 
 if [[ -f $DJL_JS ]]
