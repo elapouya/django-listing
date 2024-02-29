@@ -313,7 +313,7 @@ class ExportSelectToolbarItem(ToolbarItem):
 
 
 class ExportDropdownToolbarItem(ExportSelectToolbarItem):
-    template_name = ThemeTemplate("tbi_dropdown.html")
+    template_name = ThemeTemplate("tbi_export_dropdown.html")
     label = _("Export to...")
     choices = EXPORT_FORMATS
 

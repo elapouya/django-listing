@@ -531,6 +531,7 @@ class Listing(ListingBase):
     paginator_class = Paginator
     per_page = LISTING_ROWS_PER_PAGE
     per_page_max = LISTING_ROWS_PER_PAGE_MAX
+    permission_required_for_export = False
     posted_columns = None
     primary_key = "id"
     processed_flash = True
@@ -1500,8 +1501,8 @@ class Listing(ListingBase):
         perm_attr_name = f"permission_required_for_{action}"
         perms = getattr(self._view, perm_attr_name, None)
         if perms is None:
-            perms = getattr(self, perm_attr_name, None)
-        if perms is None:
+            perms = getattr(self, perm_attr_name, True)
+        if perms is True:
             app_label = self.model._meta.app_label
             model_name = self.model._meta.model_name
             permission_action = self.PERMISSION_ACTIONS.get(action, action)

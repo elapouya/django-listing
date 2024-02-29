@@ -1,0 +1,22 @@
+{% load django_listing %}
+{% get_uniq_id as uniq_id %}
+{% listing_has_permission_for_action listing "export" as has_export_perm %}
+{% if has_export_perm %}
+    <div class="btn-group-sm me-2 toolbar_item {{ item.css_class }}" role="group">
+    <button id="toolbar-item-{{ uniq_id }}-dropdown-id"
+            type="button"
+            class="btn btn-secondary dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+    >
+        {{ item.label }}
+    </button>
+    <div class="dropdown-menu" aria-labelledby="toolbar-item-{{ uniq_id }}-dropdown-id">
+        {% for key,label,selected in item.selected_choices %}
+            <a class="dropdown-item listing-nav{% if selected %} {{ listing.theme_button_active_class }}{% endif %}"
+               href="{% geturl_listing_key listing item.select_name key %}">{{ label }}</a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
