@@ -49,8 +49,10 @@ do
     fi
     if [[ $MINIFY == "true" ]]
     then
+      echo "Minifying css..."
       $CSS_COMPRESS $DJL_CSS --output $DJL_MIN_CSS
     else
+      echo "Copying css unminified..."
       cp $DJL_CSS $DJL_MIN_CSS
     fi
     set +x
