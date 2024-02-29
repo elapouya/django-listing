@@ -1,3 +1,9 @@
+0.7.10 (2024-02-29)
+------------------
+- Fix #19
+- Fix action column
+
+
 0.7.9 (2024-02-26)
 ------------------
 - Add export toolbar button permission
