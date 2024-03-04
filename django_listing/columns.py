@@ -97,6 +97,7 @@ COLUMNS_PARAMS_KEYS = {
     "footer_value_tpl",
     "form_field",
     "form_field_class",
+    "form_field_params",
     "form_field_widget_class",
     "form_field_widget_params",
     "form_field_serialize",
@@ -563,6 +564,7 @@ class Column(metaclass=ColumnMeta):
     footer_tpl = None
     footer_value_tpl = None
     form_field = None
+    form_field_params = None
     form_field_class = forms.CharField
     form_field_widget_class = None
     form_field_keys = None
@@ -1045,7 +1047,10 @@ class Column(metaclass=ColumnMeta):
     ):
         # Get form field params from the listing first,
         # if not available use model informations
-        params = {}
+        if self.form_field_params:
+            params = copy.deepcopy(self.form_field_params)
+        else:
+            params = {}
         for p in COLUMNS_FORM_FIELD_KEYS:
             if p != "widget":
                 if getattr(self, p, None) is not None:

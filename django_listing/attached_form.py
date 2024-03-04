@@ -331,6 +331,17 @@ class AttachedForm:
                 return get_initial_method(self.listing)
         return None
 
+    def customize_form(self, form):
+        method = None
+        view = self.listing.get_view()
+        method_name = f"customize_{form.form_name}"
+        if view:
+            method = getattr(view, method_name, None)
+        if not method:
+            method = getattr(self.listing, method_name, None)
+        if method:
+            method(form)
+
     def get_form(self, do_not_clean=False, **kwargs):
         if not self._form:
             kwargs.setdefault("have_empty_choice", True)
@@ -345,6 +356,7 @@ class AttachedForm:
             self._form.do_not_clean = do_not_clean
             self._form.listing = self.listing
             self._form.form_name = self.name
+            self.customize_form(self._form)
         return self._form
 
     def render_init(self, context):

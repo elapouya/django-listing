@@ -317,6 +317,7 @@ class ListingVariations(ListingBase):
 
     def __init__(self, data=None, **kwargs):
         super().__init__(data, **kwargs)
+        self._view = None
         if data is not None:
             self.init(data, **kwargs)
         self.init_kwargs = kwargs
@@ -345,6 +346,7 @@ class ListingVariations(ListingBase):
             self.store_kwargs(**{attr: value})
 
     def set_view(self, view):
+        self._view = view
         if self.listing:
             self.listing.set_view(view)
 
@@ -377,6 +379,7 @@ class ListingVariations(ListingBase):
 
             cls = self.variations_classes[variation]
             listing = cls(**self.init_kwargs)
+            listing._view = self._view
             listing.variation = variation
             listing.variations = self
             if hasattr(self, "action"):
