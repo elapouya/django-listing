@@ -36,6 +36,7 @@ from .utils import init_dicts_from_class
 
 
 __all__ = [
+    "AutoCompleteColumn",
     "AvgColumn",
     "BooleanColumn",
     "ButtonColumn",
@@ -1090,7 +1091,9 @@ class Column(metaclass=ColumnMeta):
                         self.form_field_widget_class
                     )
                 )
-        widget_attrs = HTMLAttributes(self.widget_attrs)
+        widget_attrs = self.widget_attrs or {}
+        attrs = self.form_field_widget_params.pop("attrs", {})
+        widget_attrs = HTMLAttributes({**widget_attrs, **attrs})
         if issubclass(cls, forms.Select):
             widget_attrs.add("class", self.theme_form_select_widget_class)
         else:
@@ -1678,6 +1681,12 @@ class ForeignKeyColumn(LinkColumn):
             return rec[self.name].get_absolute_url()
         except (IndexError, AttributeError):
             return super().get_href(rec, ctx, value)
+
+
+class AutoCompleteColumn(ForeignKeyColumn):
+    def init(self, *args, **kwargs):
+        super().init(*args, **kwargs)
+        self.listing.need_media_for("autocomplete")
 
 
 class FileColumn(LinkColumn):

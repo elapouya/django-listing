@@ -283,7 +283,8 @@ class AttachedForm:
             form_field = getattr(self.listing, attrname, None)
         if not form_field:
             col = self.listing.columns.get(field_name)
-            form_field = col.create_form_field(**kwargs)
+            if col:
+                form_field = col.create_form_field(**kwargs)
         if not form_field:
             raise InvalidAttachedForm(
                 _(

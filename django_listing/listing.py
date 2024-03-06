@@ -155,6 +155,7 @@ LISTING_PARAMS_KEYS = {
     "processed_pks",
     "record_label",
     "record_label_plural",
+    "request_media_for",
     "row_attrs",
     "row_form_base_class",
     "row_inner_div_tpl",
@@ -478,21 +479,24 @@ class Listing(ListingBase):
         "This will process ALL items in ALL pages in the actual listing. Note that "
         "it will take in account the filter : only filtered items will be processed."
     )
+    attached_form = None
+    attached_form_autofill = False
+    attached_form_base_class = ListingBaseForm
+    attached_form_css_id = None
     data = None
     datetimepicker_date_format = "Y-m-d"
     datetimepicker_datetime_format = "Y-m-d H:i"
     datetimepicker_time_format = "H:i"
     div_template_name = ThemeTemplate("div_row.html")
-    row_attrs = {}
     edit_on_demand = False
     editable = False
     editable_columns = set()
     editing = None
     editing_columns = None
-    editing_row_pk = None
     editing_hidden_columns = None
-    empty_table_msg = gettext_lazy("Nothing to display")
+    editing_row_pk = None
     empty_listing_template_name = ThemeTemplate("empty_listing.html")
+    empty_table_msg = gettext_lazy("Nothing to display")
     exclude_columns = None
     export = None
     export_columns = None
@@ -500,8 +504,6 @@ class Listing(ListingBase):
     filters = None
     footer_snippet = None
     footer_template_name = None
-    attached_form = None
-    attached_form_autofill = False
     force_order_by = None
     form_model_fields = None
     form_serialize_cols = None
@@ -521,8 +523,6 @@ class Listing(ListingBase):
     id = None
     is_small_device_localized = False
     link_object_columns = None
-    row_form_base_class = ListingBaseForm
-    attached_form_base_class = ListingBaseForm
     listing_template_name = ThemeTemplate("listing.html")
     model = None
     name = None
@@ -539,10 +539,12 @@ class Listing(ListingBase):
     primary_key = "id"
     processed_flash = True
     processed_pks = None
-    records_class = RecordManager
     record_label = None
     record_label_plural = None
-    attached_form_css_id = None
+    records_class = RecordManager
+    request_media_for = None
+    row_attrs = {}
+    row_form_base_class = ListingBaseForm
     row_form_errors = None
     row_inner_div_tpl = None
     save_to_database = False
@@ -559,8 +561,8 @@ class Listing(ListingBase):
     selection_multiple_ctrl = False
     selection_overlay_template_name = ThemeTemplate("selection_overlay.html")
     selection_position = "hidden"  # left, right or hidden
-    small_device_max_width = "767.98px"
     small_device_header_style = "font-weight: bold"
+    small_device_max_width = "767.98px"
     sort = None
     sortable = True
     suffix = None
@@ -985,12 +987,17 @@ class Listing(ListingBase):
         self.selected_hidden_columns = self.columns.select(
             self.editing_really_hidden_columns
         )
+        if isinstance(self.request_media_for, str):
+            self.request_media_for = map(str.strip, self.request_media_for.split(","))
 
     def render_init(self, context):
         if not self._render_initialized:
             self.render_init_context(context)
             for col in self.columns:
                 col.render_init()
+            if self.request_media_for:
+                for feature in self.request_media_for:
+                    self.need_media_for(feature)
             is_exporting = self.export_data()
             if is_exporting:
                 return "Sending listing export file..."
