@@ -187,6 +187,7 @@ class AttachedForm:
                 attached_form_layout=layout_str,
                 attached_form_name=self.name,
                 action=self.action,
+                **self.get_form_hiddens(),
             )
         self.init_buttons()
 
@@ -320,26 +321,38 @@ class AttachedForm:
 
     def get_form_initial(self):
         # Look in listing then in view whether a specific method exists
-        meth_name = f"manage_attached_form_get_initial"
+        method_name = f"manage_attached_form_get_initial"
         # Search method in view object first
-        get_initial_method = getattr(self.listing, meth_name, None)
-        if get_initial_method:
-            return get_initial_method()
+        method = getattr(self.listing, method_name, None)
+        if method:
+            return method()
         else:
             view = self.listing.get_view()
-            get_initial_method = getattr(view, meth_name, None)
-            if get_initial_method:
-                return get_initial_method(self.listing)
+            method = getattr(view, method_name, None)
+            if method:
+                return method(self.listing)
         return None
 
-    def customize_form(self, form):
-        method = None
-        view = self.listing.get_view()
-        method_name = f"customize_{form.form_name}"
-        if view:
+    def get_form_hiddens(self):
+        # Look in listing then in view whether a specific method exists
+        method_name = f"manage_attached_form_get_hiddens"
+        # Search method in view object first
+        method = getattr(self.listing, method_name, None)
+        if method:
+            return method()
+        else:
+            view = self.listing.get_view()
             method = getattr(view, method_name, None)
+            if method:
+                return method(self.listing)
+        return {}
+
+    def customize_form(self, form):
+        method_name = f"manage_attached_form_customize"
+        method = getattr(self.listing, method_name, None)
         if not method:
-            method = getattr(self.listing, method_name, None)
+            view = self.listing.get_view()
+            method = getattr(view, method_name, None)
         if method:
             method(form)
 
