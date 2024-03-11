@@ -90,11 +90,13 @@ class ThemeConfigBase(metaclass=ThemeConfigMeta):
 
 
 class ThemeAttribute:
+    # This is a descriptor to dynamically get theme information
     def __init__(self, attrname):
         self.attrname = attrname
 
     def __get__(self, obj, objtype):
         try:
+            # TODO : change this line to get the right theme_config from a theme name given by user
             config = settings.django_listing_settings.theme_config
             return getattr(config, self.attrname)
         except AttributeError as e:

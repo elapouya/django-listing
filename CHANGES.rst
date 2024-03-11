@@ -1,3 +1,9 @@
+0.7.12 (2024-03-11)
+-------------------
+- Add qs-first & qs-last css class on relevant rows.
+- Add AutoCompleteColumn
+- Add attached_form customize method
+
 0.7.11 (2024-03-01)
 -------------------
 - De-serialize data into UTF-8 in attached form.

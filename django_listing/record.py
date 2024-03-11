@@ -309,6 +309,9 @@ class Record:
         self._cell_values = {}
         self._form = form
         self._selected = False
+        self._is_qs_first = False
+        self._is_qs_last = False
+        self._qs_record_index = 0
         if isinstance(self._obj, dict):
             self._format_ctx = self._obj
         elif isinstance(self._obj, (tuple, list)):
@@ -317,6 +320,13 @@ class Record:
             }
         else:
             self._format_ctx = vars(self._obj)
+        cp = listing.current_page
+        if cp:
+            self._qs_record_index = cp.start_index() + index  # 1-based index
+            if self._qs_record_index == 1:
+                self._is_qs_first = True
+            if self._qs_record_index == cp.paginator.count:
+                self._is_qs_last = True
 
     def get_object(self):
         return self._obj
@@ -366,6 +376,12 @@ class Record:
             **kwargs,
         )
         return base64.b64encode(serialized_obj.encode()).decode()
+
+    def is_first_qs_record(self):
+        return self._is_qs_first
+
+    def is_last_qs_record(self):
+        return self._is_qs_last
 
     def is_selected(self):
         return self._selected

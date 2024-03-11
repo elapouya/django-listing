@@ -483,6 +483,7 @@ class Listing(ListingBase):
     attached_form_autofill = False
     attached_form_base_class = ListingBaseForm
     attached_form_css_id = None
+    current_page = None  # set in RecordManager.compute_current_page_records()
     data = None
     datetimepicker_date_format = "Y-m-d"
     datetimepicker_datetime_format = "Y-m-d H:i"
@@ -1407,6 +1408,10 @@ class Listing(ListingBase):
                 attrs.add("class", {self.action.replace("_", "-")})
                 attrs.add("class", {self.action_button.replace("_", "-")})
         attrs.add("class", "odd" if rec.get_index() % 2 else "even")
+        if rec.is_first_qs_record():
+            attrs.add("class", "qs-first")
+        if rec.is_last_qs_record():
+            attrs.add("class", "qs-last")
         if self.can_select:
             if not self.selection_has_overlay:
                 attrs.add("class", LISTING_SELECTOR_CSS_CLASS)

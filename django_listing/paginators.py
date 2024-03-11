@@ -4,7 +4,7 @@
 # @author: Eric Lapouyade
 #
 
-from django.core.paginator import Paginator as DjangoPaginator
+from django.core.paginator import Paginator as DjangoPaginator, Page as DjangoPage
 from django.utils.translation import pgettext_lazy
 
 from .context import RenderContext
@@ -125,7 +125,8 @@ class Paginator(DjangoPaginator):
         if bottom > self.count - self.per_page:
             bottom = max(0, self.count - self.per_page)
             top = self.count
-        return self._get_page(self.object_list[bottom:top], number, self)
+        page = Page(self.object_list[bottom:top], number, self, bottom, top)
+        return page
 
     def get_context(self):
         get_url = self.listing.get_url
@@ -237,6 +238,39 @@ class Paginator(DjangoPaginator):
             current_page=page,
             paginator=self,
         )
+
+
+class Page(DjangoPage):
+    def __init__(self, object_list, number, paginator, bottom=None, top=None):
+        super().__init__(object_list, number, paginator)
+        self._bottom = bottom
+        self._top = top
+
+    def start_index(self):
+        """
+        Return the 1-based index of the first object on this page,
+        relative to total objects in the paginator.
+        """
+        # Special case, return zero if no items.
+        if self.paginator.count == 0:
+            return 0
+        # Special case for J-Gate because last page need special calculation
+        if self._bottom is not None:
+            return self._bottom + 1
+        return (self.paginator.per_page * (self.number - 1)) + 1
+
+    def end_index(self):
+        """
+        Return the 1-based index of the last object on this page,
+        relative to total objects found (hits).
+        """
+        # Special case for J-Gate because last page need special calculation
+        if self._top is not None:
+            return self._top
+        # Special case for the last page because there can be orphans.
+        if self.number == self.paginator.num_pages:
+            return self.paginator.count
+        return self.number * self.paginator.per_page
 
 
 class NoTextButtonPaginatorMixin:
