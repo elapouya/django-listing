@@ -99,15 +99,13 @@ msgstr ""
 "f}"
 
 #: attached_form.py:118
-#, fuzzy
 #| msgctxt "Filters form"
 #| msgid "Reset"
 msgctxt "Attached form"
 msgid "Reset"
-msgstr "Effacer"
+msgstr "R.A.Z"
 
 #: attached_form.py:120
-#, fuzzy
 #| msgctxt "Listing form"
 #| msgid "Add"
 msgctxt "Attached form"
@@ -115,43 +113,41 @@ msgid "Add"
 msgstr "Ajouter"
 
 #: attached_form.py:213
-#, fuzzy
 #| msgid "Delete"
 msgctxt "Attached form"
 msgid "Delete ALL"
-msgstr "Effacer"
+msgstr "Tout effacer"
 
 #: attached_form.py:220
 msgctxt "Attached form"
 msgid "Delete selected"
-msgstr ""
+msgstr "Effacer la sélection"
 
 #: attached_form.py:227
 msgctxt "Attached form"
 msgid "Clear"
-msgstr ""
+msgstr "Effacer"
 
 #: attached_form.py:234
 msgctxt "Attached form"
 msgid "Insert"
-msgstr ""
+msgstr "Insérer"
 
 #: attached_form.py:241
 msgctxt "Attached form"
 msgid "Duplicate"
-msgstr ""
+msgstr "Dupliquer"
 
 #: attached_form.py:248
 msgctxt "Attached form"
 msgid "Update selected"
-msgstr ""
+msgstr "Modifier la sélection"
 
 #: attached_form.py:255
-#, fuzzy
 #| msgid "Update"
 msgctxt "Attached form"
 msgid "Update ALL"
-msgstr "Actualiser"
+msgstr "Tout modifier"
 
 #: attached_form.py:264
 msgid ""
@@ -160,17 +156,14 @@ msgid ""
 msgstr ""
 
 #: attached_form.py:290
-#, fuzzy, python-brace-format
-#| msgid ""
-#| "In the {form_name} layout you specified the field \"{field_name}\" but "
-#| "there is no existing listing column with that name"
 msgid ""
 "In the {form_name} layout you specified the field \"{field_name}\" but there "
 "is no existing listing column with that name nor listing method "
 "\"{attrname}\"nor attached_form param \"{key}\""
 msgstr ""
 "Dans le layout de {form_name} vous avez spécifié le champ \"{field_name}\" "
-"mais il n'y a aucune colonne avec nom dans le listing"
+"mais il n'y a aucune colonne avec ce nom ni de méthode "
+"\"{attrname}\" ni de paramètre de formulaire attaché \"{key}\" dans le listing"
 
 #: attached_form.py:307
 msgid "You must specify a list of columns names in the form layout"
@@ -269,7 +262,6 @@ msgid "<td{attrs}>Overall avg:<br>{value:.{col.footer_precision}f}</td>"
 msgstr "<td{attrs}>Moyenne:<br>{value:.{col.footer_precision}f}</td>"
 
 #: columns.py:1815 columns.py:1817
-#, fuzzy
 #| msgctxt "Filters form"
 #| msgid "Filter"
 msgctxt "verb"
@@ -323,7 +315,6 @@ msgid "Sum"
 msgstr ""
 
 #: listing.py:210
-#, fuzzy
 #| msgid "Average"
 msgctxt "abbreviation"
 msgid "Avg"
@@ -524,10 +515,9 @@ msgid "Update"
 msgstr "Actualiser"
 
 #: toolbar.py:328
-#, fuzzy
 #| msgid "Select a value..."
 msgid "Select all"
-msgstr "Selectionnez une valeur..."
+msgstr "Tout selectionner"
 
 #: toolbar.py:333
 msgid "Unselect all"
@@ -538,10 +528,9 @@ msgid "Invert selection"
 msgstr ""
 
 #: toolbar.py:343
-#, fuzzy
 #| msgid "Sort by..."
 msgid "Group by..."
-msgstr "Trier par..."
+msgstr "Grouper par..."
 
 #: views.py:61
 #, python-brace-format
@@ -574,22 +563,21 @@ msgid "You do not have the required permission"
 msgstr ""
 
 #: views.py:474
-#, fuzzy
 #| msgid "Please configure at least one column in your listing"
 msgid "Please fill at least one field to update"
-msgstr "Merci de configurer au moins une colonne dans votre listing"
+msgstr "Merci de remplir au moins un champ à mettre à jour"
 
 #: views.py:480 views.py:525
 msgid "Please select at least one item"
-msgstr ""
+msgstr "Merci de selectionner au moins un élement"
 
 #: views.py:508
 msgid "Please select one item"
-msgstr ""
+msgstr "Merci de sélection un élément"
 
 #: views.py:511
 msgid "You can duplicate only one item at the same time"
-msgstr ""
+msgstr "Vous ne pouvez dupliquer qu'un élément à la fois"
 
 #~ msgctxt "Listing form"
 #~ msgid "Reset"
