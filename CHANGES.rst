@@ -1,4 +1,4 @@
-0.7.14 (2024-03-12)
+0.7.15 (2024-03-12)
 -------------------
 - Add per-action attached form initial data
 - Trigger JS event on selection change
