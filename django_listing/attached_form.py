@@ -320,17 +320,22 @@ class AttachedForm:
         return form_class
 
     def get_form_initial(self):
-        # Look in listing then in view whether a specific method exists
-        method_name = f"manage_attached_form_get_initial"
-        # Search method in view object first
-        method = getattr(self.listing, method_name, None)
-        if method:
-            return method()
-        else:
-            view = self.listing.get_view()
-            method = getattr(view, method_name, None)
+        methods_names = [
+            f"manage_attached_form_get_initial",
+        ]
+        action = getattr(self.listing, "action_button", None)
+        if action:
+            methods_names.insert(0, f"manage_attached_form_{action}_get_initial")
+        for method_name in methods_names:
+            # Look in listing then in view whether a specific method exists
+            method = getattr(self.listing, method_name, None)
             if method:
-                return method(self.listing)
+                return method()
+            else:
+                view = self.listing.get_view()
+                method = getattr(view, method_name, None)
+                if method:
+                    return method(self.listing)
         return None
 
     def get_form_hiddens(self):

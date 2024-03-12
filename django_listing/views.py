@@ -552,15 +552,6 @@ class ListingViewMixin:
         form_html = attached_form.render(RequestContext(self.request))
         return JsonResponse({"attached_form": form_html})
 
-    # def manage_listing_select(self, listing, *args, **kwargs):
-    #     if listing.selectable and listing.selecting:
-    #         return self.manage_listing_selected_rows(listing)
-    #
-    # def manage_listing_selected_rows(self, listing):
-    #     # to be overriden if needed by the developper by subclassing
-    #     # use listing.get_selected_rows() to get selected_rows
-    #     pass
-
     def listing_save_rows_to_database(self, listing, formset):
         updated_rows_pk = []
         if issubclass(listing.model, models.Model):

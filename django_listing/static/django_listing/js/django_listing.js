@@ -397,6 +397,7 @@ function djlst_selection_changed_hook(e) {
             selected_items.text(selected_items.attr('many').replace('{nb}', count));
         }
     }
+    $(document).trigger("djlst_selection_changed", {listing: listing, count: count});
 }
 
 function djlst_fill_form(form, obj, pk) {
