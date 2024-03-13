@@ -300,6 +300,22 @@ class AttachedForm:
                     key=key,
                 )
             )
+        widget = form_field.widget
+        help_prefix_method = getattr(widget, "get_help_text_prefix", None)
+        if callable(help_prefix_method):
+            prefix, new_line = help_prefix_method()
+            if prefix:
+                form_field.help_text = (
+                    prefix + (new_line and "<br>" or "") + form_field.help_text
+                )
+        help_suffix_method = getattr(widget, "get_help_text_suffix", None)
+        if callable(help_suffix_method):
+            suffix, new_line = help_suffix_method()
+            if suffix:
+                if new_line and form_field.help_text:
+                    form_field.help_text += "<br>"
+                form_field.help_text += suffix
+
         return form_field
 
     def create_form_from_layout(self, **kwargs):

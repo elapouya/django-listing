@@ -48,7 +48,7 @@
                         class="attached-form-nav btn btn-primary submit-button {{ action }}{% if not has_button_perm %} no-perm disabled{% endif %}{% if css_class %} {{ css_class }}{% endif %}"
                         {% if confirm_msg %}confirm-msg="{{ confirm_msg }}"{% endif %}
                         {% if confirm_msg_nb_items %}confirm-msg-nb-items="{{ confirm_msg_nb_items }}"{% endif %}
-                        name="action_button" value="{{ action }}">
+                        {% if action != 'reset' %}name="action_button" value="{{ action }}"{% endif %}>
                     {% if label %}
                         <span class="label">{{ label|safe }}</span>
                     {% endif %}
