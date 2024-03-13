@@ -1,3 +1,9 @@
+0.7.16 (2024-03-13)
+-------------------
+- Add widget_class and widget_params for Filter
+- Fix widget creation
+- Fix attached form reset button
+
 0.7.15 (2024-03-12)
 -------------------
 - Add per-action attached form initial data

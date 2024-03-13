@@ -1091,8 +1091,9 @@ class Column(metaclass=ColumnMeta):
                         self.form_field_widget_class
                     )
                 )
+
         widget_attrs = self.widget_attrs or {}
-        attrs = self.form_field_widget_params.pop("attrs", {})
+        attrs = self.form_field_widget_params.get("attrs", {})
         widget_attrs = HTMLAttributes({**widget_attrs, **attrs})
         if issubclass(cls, forms.Select):
             widget_attrs.add("class", self.theme_form_select_widget_class)
@@ -1102,7 +1103,8 @@ class Column(metaclass=ColumnMeta):
             "_", "-"
         )
         widget_attrs.add("id", widget_id)
-        return cls(attrs=widget_attrs, **self.form_field_widget_params)
+        params = dict(self.form_field_widget_params, attrs=widget_attrs)
+        return cls(**params)
 
     def create_form_field(self, **kwargs):
         if self.form_field:
