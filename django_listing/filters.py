@@ -65,6 +65,8 @@ FILTERS_PARAMS_KEYS = {
     "order_by",
     "shrink_width",
     "widget_attrs",
+    "widget_class",
+    "widget_params",
     "word_search",
     "url",
     "choices",
@@ -397,6 +399,8 @@ class Filter(metaclass=FilterMeta):
     required = False
     listing = None
     widget_attrs = None
+    widget_class = None
+    widget_params = None
     no_choice_msg = gettext_lazy("- No filtering -")
     help_text = None
     word_search = False
@@ -417,7 +421,9 @@ class Filter(metaclass=FilterMeta):
     def __init__(self, *args, **kwargs):
         self.init_args = args
         self.init_kwargs = kwargs
-        init_dicts_from_class(self, ["widget_attrs", "form_field_attrs"])
+        init_dicts_from_class(
+            self, ["widget_attrs", "form_field_attrs", "widget_params"]
+        )
         if isinstance(self.theme_form_widget_class, str):
             self.theme_form_widget_class = set(self.theme_form_widget_class.split())
         if isinstance(self.theme_form_select_widget_class, str):
@@ -541,17 +547,33 @@ class Filter(metaclass=FilterMeta):
         return self.form_field_class
 
     def get_form_field_widget(self, field_class, **kwargs):
+        widget_class = self.widget_class or field_class.widget
         widget_attrs = HTMLAttributes(self.widget_attrs)
         widget_attrs.add("class", self.theme_form_widget_class)
         widget_id = f"id-filter-{self.name}{self.listing.suffix}".replace("_", "-")
         widget_attrs.add("id", widget_id)
-        return field_class.widget(attrs=widget_attrs)
+        self.widget_params.pop("attrs", None)
+        return widget_class(attrs=widget_attrs, **self.widget_params)
 
     def create_form_field(self):
         cls = self.get_form_field_class()
         params = self.get_form_field_params()
         widget = self.get_form_field_widget(cls)
         field = cls(widget=widget, **params)
+
+        help_prefix_method = getattr(widget, "get_help_text_prefix", None)
+        if callable(help_prefix_method):
+            prefix, new_line = help_prefix_method()
+            if prefix:
+                field.help_text = prefix + (new_line and "<br>" or "") + field.help_text
+        help_suffix_method = getattr(widget, "get_help_text_suffix", None)
+        if callable(help_suffix_method):
+            suffix, new_line = help_suffix_method()
+            if suffix:
+                if new_line and field.help_text:
+                    field.help_text += "<br>"
+                field.help_text += suffix
+
         return field
 
     def filter_queryset(self, qs, cleaned_data=None):
@@ -714,7 +736,8 @@ class BooleanFilter(Filter):
         else:
             widget = forms.Select
             widget_attrs.add("class", self.theme_form_select_widget_class)
-        return widget(attrs=widget_attrs)
+        self.widget_params.pop("attrs", None)
+        return widget(attrs=widget_attrs, **self.widget_params)
 
     def get_form_field_params(self, **kwargs):
         params = super().get_form_field_params(**kwargs)
@@ -751,7 +774,8 @@ class ChoiceFilter(Filter):
         else:
             widget = forms.Select
             widget_attrs.add("class", self.theme_form_select_widget_class)
-        return widget(attrs=widget_attrs)
+        self.widget_params.pop("attrs", None)
+        return widget(attrs=widget_attrs, **self.widget_params)
 
     def get_form_field_params(self, **kwargs):
         params = super().get_form_field_params(**kwargs)
@@ -791,7 +815,8 @@ class MultipleChoiceFilter(Filter):
         else:
             widget = forms.CheckboxInput
             widget_attrs.add("class", self.theme_form_select_widget_class)
-        return widget(attrs=widget_attrs)
+        self.widget_params.pop("attrs", None)
+        return widget(attrs=widget_attrs, **self.widget_params)
 
     def get_form_field_params(self, **kwargs):
         params = super().get_form_field_params(**kwargs)
@@ -816,7 +841,8 @@ class ForeignKeyFilter(Filter):
         widget_attrs = HTMLAttributes(self.widget_attrs)
         widget = forms.Select
         widget_attrs.add("class", self.theme_form_select_widget_class)
-        return widget(attrs=widget_attrs)
+        self.widget_params.pop("attrs", None)
+        return widget(attrs=widget_attrs, **self.widget_params)
 
     def get_choices_order(self):
         return self.order_by
@@ -865,7 +891,9 @@ class AutocompleteForeignKeyFilter(Filter):
             raise InvalidFilters(
                 f"Please specify the url name to autocomplete view for {self.name}"
             )
-        return widget(url=self.url, attrs=widget_attrs)
+        self.widget_params.pop("url", None)
+        self.widget_params.pop("attrs", None)
+        return widget(url=self.url, attrs=widget_attrs, **self.widget_params)
 
 
 class AutocompleteMultipleForeignKeyFilter(AutocompleteForeignKeyFilter):
