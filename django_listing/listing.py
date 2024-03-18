@@ -1080,7 +1080,8 @@ class Listing(ListingBase):
             return request_for_info
         ctx = self.get_listing_context()
         template = loader.get_template(self.listing_template_name)
-        out = template.render(ctx)
+        # request is needed for context_processor processing
+        out = template.render(ctx, request=self.request)
         return out
 
     def get_listing_css_id(self):

@@ -1,3 +1,7 @@
+0.7.17 (2024-03-13)
+-------------------
+- Fix to get context processors executed during POST rendering
+
 0.7.16 (2024-03-13)
 -------------------
 - Add widget_class and widget_params for Filter
