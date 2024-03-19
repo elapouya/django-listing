@@ -4,7 +4,16 @@
 
 {% block body %}
     <h2>Read me first</h2>
-
-    TBD
-
+    <div class="list-group col-md-6 offset-md-3 django-listing-menu">
+        <a class="list-group-item list-group-item-action" href="{% url "readme1" %}">
+            <b>Introduction &amp; features</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "readme2" %}">
+            <b>Installation</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "readme3" %}">
+            <b>Many ways to create a listing</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "readme4" %}">
+            <b>Main options and methods</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "readme5" %}">
+            <b>Other documentation</b></a>
+    </div>
 {% endblock %}

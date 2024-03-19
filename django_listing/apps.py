@@ -6,7 +6,7 @@ class DjangoListingConfig(AppConfig):
     name = "django_listing"
     verbose_name = "django-listing"
 
-    THEME = "bootstrap4"
+    THEME = "bootstrap5"
     # AUTO_DECLARE_CSS : if False, developer must declare him self django_listing.min.css,
     # datetimepicker.min.css, dropzone.min.css and other libs css
     AUTO_DECLARE_CSS = True

@@ -1,0 +1,57 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load demo_extras %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'readme_first' %}">Readme first</a> : Installation</h2>
+    <h3>Packages</h3>
+    <p>To install the main package use pip :</p>
+    <pre><code class="language-bash">
+    pip install django-listing
+    </code></pre>
+    If you want to use autocomplete in filters or attached form :
+    <pre><code class="language-bash">
+    pip install django-autocomplete-light
+    </code></pre>
+    <h3>Configuration</h3>
+    <p>in settings.py :
+    <pre><code class="language-python">
+    INSTALLED_APPS = [
+        ...
+        "django_listing",
+        ...
+    ]
+    ...
+    DJANGO_LISTING = {
+        "THEME": "bootstrap5",
+    }
+    </code></pre>
+
+    In your django template you must include a django-listing header and footer templatetags
+    as well as boostrap, jquery and poper if you are using it :
+    <pre><code class="language-django">{% codelisting %}{% verbatim %}
+    &lt;html&gt;
+    &lt;head&gt;
+    ...
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    {% render_listing_header %}
+    ...
+    &lt;/head&gt;
+    &lt;body&gt;
+    ...
+    {% render_listing <some parameters> %}
+    ...
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    {% render_listing_footer %}
+    &lt;/body&gt;
+    &lt;/html>
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <b>Note : </b>jquery, popper, bootstrap javascripts are not mandatory for basic listings<br>
+    <b>Note 2 : </b>django-listing header and footer and css+js declarations are usually put in a django base template
+    <br><br>
+    </div>
+    </p>
+{% endblock %}

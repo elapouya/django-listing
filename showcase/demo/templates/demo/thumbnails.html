@@ -2,7 +2,7 @@
 {% load django_listing %}
 <div class="thumbnail-container">
     <a href="/robohash/{{ rec.first_name|cut:" " }}{{ rec.last_name|cut:" " }}/?width=800&height=800">
-        <img style="margin-top:10px" width="80" height="80"
+        <img style="margin-top:10px" width="115" height="115"
              src="/robohash/{{ rec.first_name|cut:" " }}{{ rec.last_name|cut:" " }}/?width=80&height=80">
     </a><br>
     <b>{% trans "First name" %} :</b> {{ rec.first_name }}<br>

@@ -36,6 +36,26 @@ class ReadMeFirstView(TemplateView):
     template_name = "demo/readme_first.html"
 
 
+class ReadMe1View(TemplateView):
+    template_name = "demo/readme1.html"
+
+
+class ReadMe2View(TemplateView):
+    template_name = "demo/readme2.html"
+
+
+class ReadMe3View(TemplateView):
+    template_name = "demo/readme3.html"
+
+
+class ReadMe4View(TemplateView):
+    template_name = "demo/readme4.html"
+
+
+class ReadMe5View(TemplateView):
+    template_name = "demo/readme5.html"
+
+
 class ManyWaysListingView(TemplateView):
     template_name = "demo/many_ways.html"
 
