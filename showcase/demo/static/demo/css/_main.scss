@@ -115,7 +115,7 @@ h2 a:hover {
 }
 
 h3 {
-    font-size: 1.25em;
+    font-size: 1.5em;
     font-weight: bold;
 }
 
@@ -124,6 +124,11 @@ h3::before {
     color: $primary;
     font-family: "django_listing";
     margin-right: 6px;
+}
+
+h4 {
+    font-size: 1.25em;
+    text-decoration: underline;
 }
 
 code {

@@ -15,7 +15,7 @@
     pip install django-autocomplete-light
     </code></pre>
     <h3>Configuration</h3>
-    <p>in settings.py :
+    <p>in settings.py :</p>
     <pre><code class="language-python">
     INSTALLED_APPS = [
         ...
@@ -24,13 +24,15 @@
     ]
     ...
     DJANGO_LISTING = {
-        "THEME": "bootstrap5",
+        "THEME": "bootstrap5",  # Could be default, bootstrap4, bootstrap5
     }
     </code></pre>
 
     In your django template you must include a django-listing header and footer templatetags
-    as well as boostrap, jquery and poper if you are using it :
+    as well as bootstrap, jquery and poper if you are using it :
     <pre><code class="language-django">{% codelisting %}{% verbatim %}
+    {% load django_listing %}
+    ...
     &lt;html&gt;
     &lt;head&gt;
     ...
@@ -52,6 +54,4 @@
     <b>Note : </b>jquery, popper, bootstrap javascripts are not mandatory for basic listings<br>
     <b>Note 2 : </b>django-listing header and footer and css+js declarations are usually put in a django base template
     <br><br>
-    </div>
-    </p>
 {% endblock %}

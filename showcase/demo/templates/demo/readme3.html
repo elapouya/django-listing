@@ -1,0 +1,189 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load demo_extras %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'readme_first' %}">Readme first</a> : Many ways to create a listing</h2>
+
+    <h3>Template side</h3>
+    <p>Template side means no python code is needed, options can be set in template.
+        You just have to put data (model, queryset, lists) in the context and you are ready to go.</p>
+    <p>Limitations : this is only for very simple listing. No filtering, attached forms nor ajax is possible.</p>
+    <p>One-line declaration example in a template : </p>
+    <pre><code class="language-django">{% codelisting %}{% verbatim %}
+    {% load django_listing %}
+    ...
+    {% render_listing employees per_page=20 %}
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <b>Note : </b><code>employees</code> are data given in context (model, queryset, lists)<br>
+    <br>
+    <p>If you have a lot of options, you can split them into several lines by using
+        the following syntax :
+    </p>
+    <pre><code class="language-django">{% codelisting %}{% verbatim %}
+    {% load django_listing %}
+    ...
+    {% create_listing_begin PaginationListing as listing %}
+    {% setopt_listing listing paginator_has_first_last=True %}
+    {% setopt_listing listing paginator_fast_page_step=5 %}
+    {% create_listing_end listing employees %}
+    {% render_listing listing %}
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <br><br>
+
+
+    <h3>Python side</h3>
+    <p>Python side means that options, configurations, classes and methods are defined in python.
+       Usually in a view or a listing class</p>
+    <p>Python declaration itself can be done by many ways</p>
+    <h4>Example 1 : A customized listing class used directly in a template</h4>
+    <p>This is a good practice to put listing classes into a separate file, for example <code>listing.py</code> :</p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class EmployeeListing(Listing):
+        columns = Columns(
+            Column("first_name"),
+            Column("last_name"),
+            Column("address"),
+            Column("age"),
+        )
+        per_page = 5
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <p>in views.py:</p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django.views.generic import TemplateView
+    ...
+    class MyView(TemplateView):
+        template_name = "my_template.html"
+        extra_context = dict(
+            EmployeeListing=EmployeeListing,
+            employees=Employee.objects.all(),
+        )
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <p>in <code>my_template.html</code>:</p>
+    <pre><code class="language-django">{% codelisting %}{% verbatim %}
+    {% load django_listing %}
+    ...
+    {% render_listing EmployeeListing employees %}
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <br><br>
+
+    <h4>Example 2 : A customized listing class instance build in the view</h4>
+    <p>in <code>listing.py</code> :</p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class EmployeeListing(Listing):
+        columns = Columns(
+            Column("first_name"),
+            Column("last_name"),
+            Column("address"),
+            Column("age"),
+        )
+        per_page = 5
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <p>in <code>views.py</code>:</p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django.views.generic import TemplateView
+    ...
+    class MyView(TemplateView):
+        template_name = "my_template.html"
+
+        def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            context["my_listing"] = EmployeeListing(Employee.objects.all())
+            return context
+
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <p>in <code>my_template.html</code>:</p>
+    <pre><code class="language-django">{% codelisting %}{% verbatim %}
+    {% load django_listing %}
+    ...
+    {% render_listing my_listing %}
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <br><br>
+
+
+    <h4>Example 3 : A listing fully declared in the view</h4>
+    <p>in <code>views.py</code>:</p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import ListingView
+    ...
+    class MyView(ListingView):
+        template_name = "my_template.html"
+        listing_data = Employee
+        per_page = 25
+        select_columns = (
+            "first_name,last_name,address,age,designation,"
+            "salary,joined,gender,marital_status,have_car"
+        )
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <p>in <code>my_template.html</code>:</p>
+    <pre><code class="language-django">{% codelisting %}{% verbatim %}
+    {% load django_listing %}
+    ...
+    {% render_listing %}
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <br><br>
+    <b>Note : </b><code>ListingView</code> will automatically instanciate the listing based
+    on declared options. The listing instance is automatically set in the template context,
+    as <code>listing</code>.<br>
+    <b>Note 2 :</b>When no argument is given to template tag <code>render_listing</code>,
+    it will use the <code>listing</code> context variable by default.<br>
+    <br><br>
+
+
+    <h4>Example 4 : many listings instances callable by Ajax</h4>
+    <p>in <code>views.py</code>:</p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import ListingView
+    ...
+    class MyView(ListingView):
+        template_name = "my_template.html"
+
+        def get_listing_instance_employees_listing(self):
+            return Listing(
+                Employee,
+                name="Employees",
+                exclude_columns="id,company,interests",
+                per_page=5,
+            )
+
+        def get_listing_instance_companies_listing(self):
+            return Listing(
+                Company,
+                name="Companies",
+                exclude_columns="id",
+                per_page=5,
+
+            )
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <p>in <code>my_template.html</code>:</p>
+    <pre><code class="language-django">{% codelisting %}{% verbatim %}
+    {% load django_listing %}
+    ...
+    {% render_listing employees_listing %}
+    {% render_listing companies_listing %}
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <b>Note : </b>This requires the view to inherit from <code>ListingView</code>.
+    The context is automatically fulfill with instances returned by methods <code>get_listing_instance_xxxx()</code>
+    The instances are automatically named <code>xxxx</code> in the context.
+    When using these methods, the listing options are not read in view anymore :
+    only in instance init values and in Listing class definition.<br>
+    <b>Note 2 :</b>This is actually the only way to use ajax with multiple listing instances.<br>
+    <b>Note 3 :</b>This is possible to use django-listing <code>Listing</code> class directly for simple listings.
+    <br><br>
+
+    <h3>Listing options : many locations</h3>
+    <p>As you see on previous examples, listing options can be declared : </p>
+    <ul>
+        <li>In the template, in render_listing template tag</li>
+        <li>In the template, by using setopt_listing if you need multiple lines for declaration</li>
+        <li>In a custom listing class</li>
+        <li>While instanciating a listing class</li>
+        <li>In the view if inherited from ListingView and <u>not</u> using <code>get_listing_instance_xxxx()</code> methods</li>
+    </ul>
+
+{% endblock %}
