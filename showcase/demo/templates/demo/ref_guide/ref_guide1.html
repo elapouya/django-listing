@@ -1,0 +1,22 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : Listing</h2>
+    <h3>Parameters</h3>
+    <table class="ref-guide">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>per_page</td>
+            <td>une explication...</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

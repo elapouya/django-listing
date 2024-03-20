@@ -11567,6 +11567,28 @@ table.object-popup th {
   white-space: nowrap;
 }
 
+table.ref-guide {
+  border: 1px solid #6c757d;
+  border-collapse: unset;
+  border-radius: 8px;
+  background-color: #6c757d;
+}
+table.ref-guide th {
+  padding: 4px 10px;
+  color: #fff;
+}
+table.ref-guide tbody {
+  background-color: #fff;
+}
+table.ref-guide tr > td {
+  padding: 4px 10px;
+}
+table.ref-guide tr > td:first-of-type {
+  white-space: pre-wrap;
+  font-family: "Courier New", Courier, monospace;
+  color: #5fa35f;
+}
+
 .dropzone .dz-preview .dz-details .dz-size {
   margin-bottom: 2em;
 }

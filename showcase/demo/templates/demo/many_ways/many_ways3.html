@@ -4,7 +4,7 @@
 {% load i18n %}
 
 {% block body %}
-    <h2><a href="{% url 'many_ways' %}">Many ways</a> : Many ways to override methods</h2>
+    <h2><a href="{% url 'many_ways' %}">Many ways</a> : Many ways to override or reference methods</h2>
 
     <h3>Introduction</h3>
     <p>django-listing has many methods that can be overridden.
@@ -17,7 +17,7 @@
     <pre><code class="language-python">{% codelisting %}{% verbatim %}
     from django_listing import *
     ...
-    class DatetimeListing(Listing):
+    class MyListing(Listing):
         columns = Columns(
             ...
             DateTimeColumn(
@@ -27,4 +27,124 @@
     {% endverbatim %}{% endcodelisting %}</code></pre>
     <b>Note : </b>here, a special column is created that contains the actual datetime for all rows
     <br><br>
+
+
+    <h3>In custom listing class</h3>
+    <p>The best place to override a listing method is of course in custom listing class definition.</p>
+
+    <h4>Use a listing method to get cell_value (before columns)</h4>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class MyListing(Listing):
+        @staticmethod
+        def now_cell_value(col, rec):
+            return datetime.now()
+
+        columns = Columns(
+            ...
+            DateTimeColumn(
+                "Now",
+                cell_value=now_cell_value,
+            ),
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <b>Attention : </b>The <code>now_cell_value()</code> method must be placed before columns declaration.
+    <br><br>
+
+    <h4>Use a listing method to get cell_value (after columns)</h4>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class MyListing(Listing):
+        columns = Columns(
+            ...
+            DateTimeColumn(
+                "Now",
+                cell_value=ListingMethodRef("now_cell_value"),
+            ),
+
+        @staticmethod
+        def now_cell_value(col, rec):
+            return datetime.now()
+
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <b>Attention : </b>Use <code>ListingMethodRef()</code> to lazy reference a listing method to avoid unknown symbol issue
+    <br><br>
+    <h4>Use the <code>render_&lt;colname&gt;</code> method to fully remplace the cell rendering for a spcific column</h4>
+    <p>This will replace default behaviour that builds a cell from a value and a template.</p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class MyListing(Listing):
+        columns = Columns(
+            ..
+            Column(
+                "custom1",  # will call self.render_custom1() automatically if it exists
+                sortable=False,
+                header=mark_safe("Custom<br>column 1"),
+            ),
+            ...
+        )
+
+        # define a custom rendering for column 'custom1'
+        def render_custom1(self, rec):  # rec contains row data
+            odd = bool(rec.get_index() % 2)  # get_index() return the line number on the current page
+            if odd:
+                return '<td class="text-success">Odd line</td>'
+            else:
+                return '<td class="text-danger">Even line</td>'
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <b>Note : </b>Here, a special column is created that contains the actual datetime for all rows
+    <b>Important : </b>DO NOT forget to return <code>td</code> tags for this method.
+    <br><br>
+
+
+    <h3>In models</h3>
+    <p>You can reference model methods, this is very useful when de default <code>__str__()</code> is not the wanted value.</p>
+
+    <h4>For methods present in the model used in listing data</h4>
+    In <code>listing.py</code> :
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class EmployeeListing(Listing):
+        have_car__cell_value = ModelMethodRef("get_have_car_label")
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    In <code>models.py</code> :
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django.db import models
+    ...
+    class Employee(models.Model):
+        have_car = models.BooleanField()
+        ...
+        def get_have_car_label(self):
+            return "Have car" if self.have_car else "Does not have a car"
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <b>Note : </b>This will work because django-listing is aware of the model being used in data provided
+    <br><br>
+    <h4>For methods present in a <b>FOREIGN</b> model</h4>
+    <p>This is the case when you have a model attribute which is a ForeignKey to another model</p>
+    In <code>listing.py</code> :
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class EmployeeListing(Listing):
+        company__cell_value = RelatedModelMethodRef("get_short_label")
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    In <code>models.py</code> :
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django.db import models
+    ...
+    class Employee(models.Model):
+        company = models.ForeignKey(Company, on_delete=models.CASCADE)
+        ...
+
+    class Company(models.Model):
+        name = models.CharField()
+        ...
+        def get_short_label(self):
+            return f"-> {self.name}"
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <b>Note : </b>This will work because django-listing is aware of the model being used in data provided and what field to look into.
+
 {% endblock %}

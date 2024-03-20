@@ -44,6 +44,18 @@ class ReadMe2View(TemplateView):
     template_name = "demo/readme/readme2.html"
 
 
+class RefGuideView(TemplateView):
+    template_name = "demo/ref_guide/ref_guide.html"
+
+
+class RefGuide1View(TemplateView):
+    template_name = "demo/ref_guide/ref_guide1.html"
+
+
+class RefGuide2View(TemplateView):
+    template_name = "demo/ref_guide/ref_guide2.html"
+
+
 class ManyWaysView(TemplateView):
     template_name = "demo/many_ways/many_ways.html"
 

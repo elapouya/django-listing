@@ -1,0 +1,21 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load static %}
+
+{% block body %}
+    <h2>Reference guide</h2>
+    <div class="list-group col-md-6 offset-md-3 django-listing-menu">
+        <a class="list-group-item list-group-item-action" href="{% url "ref_guide1" %}">
+            <b>Listing</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "ref_guide2" %}">
+            <b>Columns</b> (group of columns guide)</a>
+        <a class="list-group-item list-group-item-action" href="{% url "ref_guide2" %}">
+            <b>Column</b> (single column guide)</a>
+        <a class="list-group-item list-group-item-action" href="{% url "ref_guide2" %}">
+            <b>Paginator</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "ref_guide2" %}">
+            <b>Filters</b></a>
+        <a class="list-group-item list-group-item-action" href="{% url "ref_guide2" %}">
+            <b>Attached form</b></a>
+    </div>
+{% endblock %}

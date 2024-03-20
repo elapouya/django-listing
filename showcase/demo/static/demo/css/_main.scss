@@ -231,6 +231,32 @@ table.object-popup {
     }
 }
 
+table.ref-guide {
+    border: 1px solid $gray-600;
+    border-collapse: unset;
+    border-radius: 8px;
+    background-color: $gray-600;
+
+    th {
+        padding: 4px 10px;
+        color: $white;
+    }
+
+    tbody {
+        background-color: $white;
+    }
+
+    tr > td {
+        padding: 4px 10px;
+
+        &:first-of-type {
+            white-space: pre-wrap;
+            font-family: "Courier New", Courier, monospace;
+            color: $primary;
+        }
+    }
+}
+
 .dropzone .dz-preview {
     .dz-details .dz-size {
         margin-bottom: 2em;
