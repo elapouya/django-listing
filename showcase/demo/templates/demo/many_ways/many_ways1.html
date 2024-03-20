@@ -4,7 +4,7 @@
 {% load i18n %}
 
 {% block body %}
-    <h2><a href="{% url 'readme_first' %}">Readme first</a> : Many ways to create a listing</h2>
+    <h2><a href="{% url 'many_ways' %}">Many ways</a> : Many ways to create a listing</h2>
 
     <h3>Template side</h3>
     <p>Template side means no python code is needed, options can be set in template.
@@ -24,7 +24,7 @@
     <pre><code class="language-django">{% codelisting %}{% verbatim %}
     {% load django_listing %}
     ...
-    {% create_listing_begin PaginationListing as listing %}
+    {% create_listing_begin MyListingClass as listing %}
     {% setopt_listing listing paginator_has_first_last=True %}
     {% setopt_listing listing paginator_fast_page_step=5 %}
     {% create_listing_end listing employees %}

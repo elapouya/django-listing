@@ -44,20 +44,20 @@ class ReadMe2View(TemplateView):
     template_name = "demo/readme/readme2.html"
 
 
-class ReadMe3View(TemplateView):
-    template_name = "demo/readme/readme3.html"
+class ManyWaysView(TemplateView):
+    template_name = "demo/many_ways/many_ways.html"
 
 
-class ReadMe4View(TemplateView):
-    template_name = "demo/readme/readme4.html"
+class ManyWays1View(TemplateView):
+    template_name = "demo/many_ways/many_ways1.html"
 
 
-class ReadMe5View(TemplateView):
-    template_name = "demo/readme/readme5.html"
+class ManyWays2View(TemplateView):
+    template_name = "demo/many_ways/many_ways2.html"
 
 
-class ManyWaysListingView(TemplateView):
-    template_name = "demo/many_ways.html"
+class ManyWays3View(TemplateView):
+    template_name = "demo/many_ways/many_ways3.html"
 
 
 class FonticonsView(TemplateView):

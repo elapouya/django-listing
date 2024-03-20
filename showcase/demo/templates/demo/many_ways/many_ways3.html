@@ -1,0 +1,30 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load demo_extras %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'many_ways' %}">Many ways</a> : Many ways to override methods</h2>
+
+    <h3>Introduction</h3>
+    <p>django-listing has many methods that can be overridden.
+        On this page, one can see the places where it can be done.
+        To see the methods list, please have a look at the reference guide
+    </p>
+
+    <h3>Lambda's</h3>
+    <p>Sometime, it is not useful to create a method, a lambda may be enough :</p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class DatetimeListing(Listing):
+        columns = Columns(
+            ...
+            DateTimeColumn(
+                "Now",
+                cell_value=lambda col, rec: datetime.now(),
+            ),
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <b>Note : </b>here, a special column is created that contains the actual datetime for all rows
+    <br><br>
+{% endblock %}

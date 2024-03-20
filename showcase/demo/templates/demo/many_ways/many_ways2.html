@@ -4,10 +4,10 @@
 {% load i18n %}
 
 {% block body %}
-    <h2><a href="{% url 'readme_first' %}">Readme first</a> : Many ways to specify parameters</h2>
+    <h2><a href="{% url 'many_ways' %}">Many ways</a> : Many ways to specify parameters</h2>
 
     <h3>Listing parameters</h3>
-    <p>As you see on <a href="{% url 'readme3' %}">previous readme</a>, listing options can be declared : </p>
+    <p>As you see on <a href="{% url 'many_ways1' %}">previous readme</a>, listing options can be declared : </p>
     <ul>
         <li>In the template, in <code>render_listing</code> template tag</li>
         <li>In the template, by using <code>setopt_listing</code> if you need multiple lines for declaration</li>
@@ -43,6 +43,30 @@
     <b>Note : </b>This declaration is very frequently used when specifying a model or a queryset as listing data source :
     columns are automatically created and have the same name as corresponding model attributes. You just have
     to customize them by using some <code>{% codelisting %}<column name>__<column parameter> = <value>{% endcodelisting %}</code> in listing class.
+    <br><br>
+    <h4>Inside a view template :</h4>
+    <pre><code class="language-django">{% codelisting %}{% verbatim %}
+    {% load django_listing %}
+    ...
+    {% create_listing_begin MyListingClass as listing %}
+    ...
+    {% setopt_listing listing first_name__param1="value1" %}
+    {% setopt_listing listing first_name__param2="value2" %}
+    ...
+    {% create_listing_end listing employees %}
+    {% render_listing listing %}
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    or
+    <pre><code class="language-django">{% codelisting %}{% verbatim %}
+    {% load django_listing %}
+    ...
+    {% create_listing_begin MyListingClass as listing %}
+    ...
+    {% setopt_column listing "first_name" param1="value1" param2="value2" %}  {# use setopt_column tag instead #}
+    ...
+    {% create_listing_end listing employees %}
+    {% render_listing listing %}
+    {% endverbatim %}{% endcodelisting %}</code></pre>
     <br><br>
     <h4>Inside a view</h4>
     <p>in <code>views.py</code>:</p>
