@@ -33,27 +33,27 @@ class IndexView(TemplateView):
 
 
 class ReadMeFirstView(TemplateView):
-    template_name = "demo/readme_first.html"
+    template_name = "demo/readme/readme_first.html"
 
 
 class ReadMe1View(TemplateView):
-    template_name = "demo/readme1.html"
+    template_name = "demo/readme/readme1.html"
 
 
 class ReadMe2View(TemplateView):
-    template_name = "demo/readme2.html"
+    template_name = "demo/readme/readme2.html"
 
 
 class ReadMe3View(TemplateView):
-    template_name = "demo/readme3.html"
+    template_name = "demo/readme/readme3.html"
 
 
 class ReadMe4View(TemplateView):
-    template_name = "demo/readme4.html"
+    template_name = "demo/readme/readme4.html"
 
 
 class ReadMe5View(TemplateView):
-    template_name = "demo/readme5.html"
+    template_name = "demo/readme/readme5.html"
 
 
 class ManyWaysListingView(TemplateView):
@@ -148,11 +148,11 @@ class VariationsListingView(ListingView):
 
 
 class ColumnsListingIndexView(TemplateView):
-    template_name = "demo/columns.html"
+    template_name = "demo/columns/columns.html"
 
 
 class ColumnsListing1View(ListingView):
-    template_name = "demo/columns1.html"
+    template_name = "demo/columns/columns1.html"
     context_classes = (
         BoolColumnsListing,
         BoolChoicesImgColumnsListing,
@@ -166,7 +166,7 @@ class ColumnsListing1View(ListingView):
 
 
 class ColumnsListing2View(ListingView):
-    template_name = "demo/columns2.html"
+    template_name = "demo/columns/columns2.html"
     context_classes = (
         OneToManyListing,
         ManyToManyListing,
@@ -177,7 +177,7 @@ class ColumnsListing2View(ListingView):
 
 
 class ColumnsListing3View(ListingView):
-    template_name = "demo/columns3.html"
+    template_name = "demo/columns/columns3.html"
     context_classes = (TotalListing,)
     extra_context = dict(
         numbers_matrix=numbers_matrix,
@@ -188,7 +188,7 @@ class ColumnsListing3View(ListingView):
 
 
 class ColumnsListing4View(ListingView):
-    template_name = "demo/columns4.html"
+    template_name = "demo/columns/columns4.html"
     context_classes = (
         LinksListing,
         WidgetsColumnsListing,
@@ -197,7 +197,7 @@ class ColumnsListing4View(ListingView):
 
 
 class ColumnsListing5View(ListingView):
-    template_name = "demo/columns5.html"
+    template_name = "demo/columns/columns5.html"
     listing_class = ActionsColumnListing
     listing_data = Employee
 
@@ -255,11 +255,11 @@ class TranslationListingView(ListingView):
 
 
 class SpeedTestListingView(TemplateView):
-    template_name = "demo/speed_test.html"
+    template_name = "demo/speed_test/speed_test.html"
 
 
 class SpeedTest1ListingView(ListingView):
-    template_name = "demo/speed_test1.html"
+    template_name = "demo/speed_test/speed_test1.html"
     listing_data = Employee
     per_page = 25
     select_columns = (
@@ -290,7 +290,7 @@ class SpeedTest2Table(tables.Table):
 
 
 class SpeedTest2ListingView(tables.SingleTableView):
-    template_name = "demo/speed_test2.html"
+    template_name = "demo/speed_test/speed_test2.html"
     queryset = Employee.objects.all()
     table_class = SpeedTest2Table
 
@@ -314,34 +314,34 @@ class UploadListingView(ListingView):
 
 
 class FiltersListingIndexView(TemplateView):
-    template_name = "demo/filters.html"
+    template_name = "demo/filters/filters.html"
 
 
 class FiltersListing1View(ListingView):
-    template_name = "demo/filters1.html"
+    template_name = "demo/filters/filters1.html"
 
     def get_listing_instance(self):
         return FilterListing(Employee)
 
 
 class FiltersListing2View(ListingView):
-    template_name = "demo/filters2.html"
+    template_name = "demo/filters/filters2.html"
     context_classes = (Employee,)
 
 
 class FiltersListing3View(ListingView):
-    template_name = "demo/filters3.html"
+    template_name = "demo/filters/filters3.html"
 
     def get_listing_instance(self):
         return CellFilterListing(Employee)
 
 
 class EditableListingIndexView(TemplateView):
-    template_name = "demo/editable.html"
+    template_name = "demo/editable/editable.html"
 
 
 class EditableListing1View(ListingView):
-    template_name = "demo/editable1.html"
+    template_name = "demo/editable/editable1.html"
     listing_data = Employee
     # You can also customize your listing directly in the view
     # So you do not need to create a specific listing class :
@@ -360,7 +360,7 @@ class EditableListing1View(ListingView):
 
 
 class EditableListing2View(ListingView):
-    template_name = "demo/editable2.html"
+    template_name = "demo/editable/editable2.html"
 
     def get_listing_instance_employees_listing(self):
         return Listing(
@@ -402,7 +402,7 @@ class EditableListing2View(ListingView):
 
 
 class EditableListing3View(EditableListing2View):
-    template_name = "demo/editable3.html"
+    template_name = "demo/editable/editable3.html"
     update_success_redirect_url = LISTING_REDIRECT_NO_EDIT
 
     def get_listing_instance_employees_listing(self):
@@ -423,7 +423,7 @@ class EditableListing3View(EditableListing2View):
 
 
 class EditableListing4View(ToolbarListingView):
-    template_name = "demo/editable4.html"
+    template_name = "demo/editable/editable4.html"
     update_success_redirect_url = LISTING_REDIRECT_NO_EDIT
     save_to_database = True
 
@@ -440,11 +440,11 @@ class EditableListing4View(ToolbarListingView):
 
 
 class SelectableListingIndexView(ListingView):
-    template_name = "demo/selectable.html"
+    template_name = "demo/selectable/selectable.html"
 
 
 class SelectableListing1View(ListingView):
-    template_name = "demo/selectable1.html"
+    template_name = "demo/selectable/selectable1.html"
     listing_data = Employee
     exclude_columns = "id,company,interests"
     per_page = 5
@@ -478,13 +478,13 @@ class SelectableListing1View(ListingView):
 
 
 class SelectableListing2View(SelectableListing1View):
-    template_name = "demo/selectable2.html"
+    template_name = "demo/selectable/selectable2.html"
     selectable = True
     selection_multiple = True
 
 
 class SelectableListing3View(ListingView):
-    template_name = "demo/selectable3.html"
+    template_name = "demo/selectable/selectable3.html"
 
     def get_listing_instance_employees_listing(self):
         return Listing(
@@ -545,7 +545,7 @@ class SelectableListing3View(ListingView):
 
 
 class SelectableListing4View(ListingView):
-    template_name = "demo/selectable4.html"
+    template_name = "demo/selectable/selectable4.html"
 
     def get_listing_instance_divrows_listing(self):
         return EmployeeDivListing(
@@ -574,7 +574,7 @@ class SelectableListing4View(ListingView):
 
 
 class SelectableListing5View(ListingView):
-    template_name = "demo/selectable5.html"
+    template_name = "demo/selectable/selectable5.html"
 
     def get_listing_instance_divrows_listing(self):
         return EmployeeDivListing(
@@ -634,11 +634,11 @@ class SelectableListing5View(ListingView):
 
 
 class InsertableListingIndexView(TemplateView):
-    template_name = "demo/insertable.html"
+    template_name = "demo/insertable/insertable.html"
 
 
 class InsertableListing1View(ListingView):
-    template_name = "demo/insertable1.html"
+    template_name = "demo/insertable/insertable1.html"
     listing_class = InsertableListing1
     listing_data = Employee
 
@@ -666,7 +666,7 @@ class InsertableListing1View(ListingView):
 
 
 class InsertableListing2View(ListingView):
-    template_name = "demo/insertable2.html"
+    template_name = "demo/insertable/insertable2.html"
     listing_class = InsertableListing2
     listing_data = Employee
 
