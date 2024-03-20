@@ -44,6 +44,8 @@ ATTACHED_FORM_PARAMS_KEYS = {
 
 
 class ListingBaseForm(forms.BaseForm):
+    do_not_clean = False
+
     def _clean_fields(self):
         if self.do_not_clean:
             return

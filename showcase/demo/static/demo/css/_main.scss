@@ -253,6 +253,14 @@ table.ref-guide {
             white-space: pre-wrap;
             font-family: "Courier New", Courier, monospace;
             color: $primary;
+            font-weight: bold;
+        }
+
+        &:last-of-type {
+            white-space: pre-wrap;
+            font-family: "Courier New", Courier, monospace;
+            color: $primary;
+            word-break: break-all;
         }
     }
 }

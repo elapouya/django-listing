@@ -7,16 +7,121 @@
     <h3>Parameters</h3>
     <table class="ref-guide">
         <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-        </tr>
+            <tr><th>Name</th><th>Description</th><th>Default value</th></tr>
         </thead>
         <tbody>
-        <tr>
-            <td>per_page</td>
-            <td>une explication...</td>
-        </tr>
+            <tr><td>per_page</td><td>Number of rows displayed per page</td><td>20</td></tr>
+            <tr><td>accept_ajax</td><td>Use Ajax to update the listing. This requires to have listing defined at python side and the use of a view inherited from <code>ListingView</code></td><td>False</td></tr>
+            <tr><td>action_button_cancel_label</td><td>Label for cancel button displayed when listing in editing mode</td><td>"Cancel"</td></tr>
+            <tr><td>action_button_edit_label</td><td>Label for edit button displayed when listing in editing mode</td><td>"Edit"</td></tr>
+            <tr><td>action_button_update_label</td><td>Label for update button displayed when listing in editing mode</td><td>"Update"</td></tr>
+            <tr><td>action_button_upload_label</td><td>Label for upload button displayed when listing in editing mode</td><td>"Upload"</td></tr>
+            <tr><td>action_footer_template_name</td><td>Template to use to display action buttons below the listing</td><td>"django_listing/&lt;THEME&gt;/action_footer.html"</td></tr>
+            <tr><td>action_header_template_name</td><td>Template to use to display action buttons above the listing</td><td>"django_listing/&lt;THEME&gt;/action_header.html"</td></tr>
+            <tr><td>ajax_part</td><td></td><td></td></tr>
+            <tr><td>ajax_request</td><td></td><td></td></tr>
+            <tr><td>allow_empty_first_page</td><td></td><td></td></tr>
+            <tr><td>anchor_hash</td><td></td><td></td></tr>
+            <tr><td>attrs</td><td></td><td></td></tr>
+            <tr><td>columns_headers</td><td></td><td></td></tr>
+            <tr><td>confirm_msg_for_delete</td><td></td><td></td></tr>
+            <tr><td>confirm_msg_nb_items_for_delete</td><td></td><td></td></tr>
+            <tr><td>confirm_msg_for_update</td><td></td><td></td></tr>
+            <tr><td>confirm_msg_nb_items_for_update</td><td></td><td></td></tr>
+            <tr><td>data</td><td></td><td></td></tr>
+            <tr><td>datetimepicker_date_format</td><td></td><td></td></tr>
+            <tr><td>datetimepicker_datetime_format</td><td></td><td></td></tr>
+            <tr><td>datetimepicker_time_format</td><td></td><td></td></tr>
+            <tr><td>div_row_template_name</td><td></td><td></td></tr>
+            <tr><td>div_rows</td><td></td><td></td></tr>
+            <tr><td>div_template_name</td><td></td><td></td></tr>
+            <tr><td>edit_on_demand</td><td></td><td></td></tr>
+            <tr><td>editable</td><td></td><td></td></tr>
+            <tr><td>editable_columns</td><td></td><td></td></tr>
+            <tr><td>editing</td><td></td><td></td></tr>
+            <tr><td>editing_columns</td><td></td><td></td></tr>
+            <tr><td>editing_hidden_columns</td><td></td><td></td></tr>
+            <tr><td>editing_row_pk</td><td></td><td></td></tr>
+            <tr><td>empty_listing_template_name</td><td></td><td></td></tr>
+            <tr><td>empty_table_msg</td><td></td><td></td></tr>
+            <tr><td>exclude_columns</td><td></td><td></td></tr>
+            <tr><td>export</td><td></td><td></td></tr>
+            <tr><td>export_columns</td><td></td><td></td></tr>
+            <tr><td>filters</td><td></td><td></td></tr>
+            <tr><td>footer_snippet</td><td></td><td></td></tr>
+            <tr><td>footer_template_name</td><td></td><td></td></tr>
+            <tr><td>form</td><td>Form associated to listing when editable</td><td></td></tr>
+            <tr><td>attached_form_autofill</td><td>Attached form is automatically filled when a listing row is selected</td><td>False</td></tr>
+            <tr><td>gb_annotate_cols</td><td>group_by annotation columns</td><td></td></tr>
+            <tr><td>gb_cols</td><td>group_by columns</td><td></td></tr>
+            <tr><td>global_context</td><td></td><td></td></tr>
+            <tr><td>gb_template_name</td><td></td><td></td></tr>
+            <tr><td>has_footer</td><td></td><td></td></tr>
+            <tr><td>has_footer_action_buttons</td><td></td><td></td></tr>
+            <tr><td>has_header</td><td></td><td></td></tr>
+            <tr><td>has_paginator</td><td></td><td></td></tr>
+            <tr><td>has_upload</td><td></td><td></td></tr>
+            <tr><td>id</td><td></td><td></td></tr>
+            <tr><td>is_small_device_localized</td><td></td><td></td></tr>
+            <tr><td>link_object_columns</td><td></td><td></td></tr>
+            <tr><td>listing_template_name</td><td></td><td></td></tr>
+            <tr><td>name</td><td></td><td></td></tr>
+            <tr><td>onready_snippet</td><td></td><td></td></tr>
+            <tr><td>orphans</td><td></td><td></td></tr>
+            <tr><td>page</td><td></td><td></td></tr>
+            <tr><td>paginator_class</td><td></td><td></td></tr>
+            <tr><td>per_page</td><td></td><td></td></tr>
+            <tr><td>per_page_max</td><td></td><td></td></tr>
+            <tr><td>primary_key</td><td></td><td></td></tr>
+            <tr><td>processed_flash</td><td></td><td></td></tr>
+            <tr><td>processed_pks</td><td></td><td></td></tr>
+            <tr><td>record_label</td><td></td><td></td></tr>
+            <tr><td>record_label_plural</td><td></td><td></td></tr>
+            <tr><td>request_media_for</td><td></td><td></td></tr>
+            <tr><td>row_attrs</td><td></td><td></td></tr>
+            <tr><td>row_form_base_class</td><td></td><td></td></tr>
+            <tr><td>row_inner_div_tpl</td><td></td><td></td></tr>
+            <tr><td>save_to_database</td><td></td><td></td></tr>
+            <tr><td>select_columns</td><td></td><td></td></tr>
+            <tr><td>selectable</td><td></td><td></td></tr>
+            <tr><td>selecting</td><td></td><td></td></tr>
+            <tr><td>selection_initial</td><td></td><td></td></tr>
+            <tr><td>selection_key</td><td></td><td></td></tr>
+            <tr><td>selection_menu_id</td><td></td><td></td></tr>
+            <tr><td>selection_mode</td><td></td><td></td></tr>
+            <tr><td>selection_multiple</td><td></td><td></td></tr>
+            <tr><td>selection_multiple_ctrl</td><td></td><td></td></tr>
+            <tr><td>selection_overlay_template_name</td><td></td><td></td></tr>
+            <tr><td>selection_position</td><td></td><td></td></tr>
+            <tr><td>small_device_header_style</td><td></td><td></td></tr>
+            <tr><td>small_device_max_width</td><td></td><td></td></tr>
+            <tr><td>sort</td><td></td><td></td></tr>
+            <tr><td>sortable</td><td></td><td></td></tr>
+            <tr><td>suffix</td><td></td><td></td></tr>
+            <tr><td>theme</td><td></td><td></td></tr>
+            <tr><td>theme_action_button_cancel_icon</td><td></td><td></td></tr>
+            <tr><td>theme_action_button_class</td><td></td><td></td></tr>
+            <tr><td>theme_action_button_edit_icon</td><td></td><td></td></tr>
+            <tr><td>theme_action_button_update_icon</td><td></td><td></td></tr>
+            <tr><td>theme_action_button_upload_icon</td><td></td><td></td></tr>
+            <tr><td>theme_button_active_class</td><td></td><td></td></tr>
+            <tr><td>theme_button_disabled_class</td><td></td><td></td></tr>
+            <tr><td>theme_div_row_container_class</td><td></td><td></td></tr>
+            <tr><td>theme_localized_small_device_styles_width</td><td></td><td></td></tr>
+            <tr><td>theme_sort_asc_class</td><td></td><td></td></tr>
+            <tr><td>theme_sort_asc_icon</td><td></td><td></td></tr>
+            <tr><td>theme_sort_desc_class</td><td></td><td></td></tr>
+            <tr><td>theme_sort_desc_icon</td><td></td><td></td></tr>
+            <tr><td>theme_sort_none_icon</td><td></td><td></td></tr>
+            <tr><td>theme_sortable_class</td><td></td><td></td></tr>
+            <tr><td>theme_sorted_class</td><td></td><td></td></tr>
+            <tr><td>theme_spinner_icon</td><td></td><td></td></tr>
+            <tr><td>toolbar</td><td></td><td></td></tr>
+            <tr><td>toolbar_placement</td><td></td><td></td></tr>
+            <tr><td>unsortable</td><td></td><td></td></tr>
+            <tr><td>use_datetimepicker</td><td></td><td></td></tr>
+            <tr><td>variation</td><td></td><td></td></tr>
+            <tr><td>variations</td><td></td><td></td></tr>
         </tbody>
     </table>
 {% endblock %}

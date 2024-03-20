@@ -11587,6 +11587,13 @@ table.ref-guide tr > td:first-of-type {
   white-space: pre-wrap;
   font-family: "Courier New", Courier, monospace;
   color: #5fa35f;
+  font-weight: bold;
+}
+table.ref-guide tr > td:last-of-type {
+  white-space: pre-wrap;
+  font-family: "Courier New", Courier, monospace;
+  color: #5fa35f;
+  word-break: break-all;
 }
 
 .dropzone .dz-preview .dz-details .dz-size {
