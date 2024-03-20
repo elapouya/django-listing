@@ -1,0 +1,96 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load demo_extras %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'readme_first' %}">Readme first</a> : Many ways to specify parameters</h2>
+
+    <h3>Listing parameters</h3>
+    <p>As you see on <a href="{% url 'readme3' %}">previous readme</a>, listing options can be declared : </p>
+    <ul>
+        <li>In the template, in <code>render_listing</code> template tag</li>
+        <li>In the template, by using <code>setopt_listing</code> if you need multiple lines for declaration</li>
+        <li>In a custom listing class</li>
+        <li>While instanciating a listing class</li>
+        <li>In the view if inherited from ListingView and <u>not</u> using <code>get_listing_instance_xxxx()</code> methods</li>
+    </ul>
+
+    <h3>Columns parameters</h3>
+    <p>Columns options can also be set in various ways:</p>
+    <h4>During column object creation :</h4>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class EmployeeListing(Listing):
+        columns = Columns(
+            Column("first_name", param1="value1", param2="value2",...),
+            Column("last_name", param3="value3", param4="value4",...),
+        )
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <br><br>
+    <h4>Inside listing class definition by using double underscore syntax :</h4>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class EmployeeListing(Listing):
+        first_name__param1="value1"
+        first_name__param2="value2"
+        last_name__param3="value3"
+        last_name__param4="value4"
+        select_columns = "first_name,last_name"
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <b>Note : </b>This declaration is very frequently used when specifying a model or a queryset as listing data source :
+    columns are automatically created and have the same name as corresponding model attributes. You just have
+    to customize them by using some <code>{% codelisting %}<column name>__<column parameter> = <value>{% endcodelisting %}</code> in listing class.
+    <br><br>
+    <h4>Inside a view</h4>
+    <p>in <code>views.py</code>:</p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import ListingView
+    ...
+    class MyView(ListingView):
+        template_name = "my_template.html"
+        listing_data = Employee
+        per_page = 25
+        first_name__param1="value1"
+        first_name__param2="value2"
+        last_name__param3="value3"
+        last_name__param4="value4"
+        select_columns = "first_name,last_name"
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <b>Important : </b>This does <u>not</u> work if you are using <code>get_listing_instance_xxxx()</code> methods
+    <br><br>
+    <h4>Set the same parameter/value for all columns at once:</h4>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class EmployeeListing(Listing):
+        columns_true_tpl = '<span class="listing-icon-ok"></span>'
+        columns_false_tpl = '<span class="listing-icon-cancel"></span>'
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    You just have to prefix parameter by <code>columns_</code><br>
+    <b>Note : </b>In this example, 2 icons are specified for all Boolean columns that may exist in the listing.
+    <br><br>
+    <h3>Parameters sharing</h3>
+    This is a good practice to share Listing/Columns parameters accross many listing classes you may have to create.
+    To do so, just create a mixin class :
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class BaseListingMixin:
+        columns_true_tpl = '<span class="listing-icon-ok"></span>'
+        columns_false_tpl = '<span class="listing-icon-cancel"></span>'
+
+    class MyListing1(BaseListingMixin):
+        some_specific_column_name__specific_parameter = specific_value
+        ...
+
+    class MyListing2(BaseListingMixin):
+        other_column_name__other_parameter = other_value
+        ...
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <b>Note : </b>In this example, 2 icons are specified for all Boolean columns that may exist
+    in both <code>MyListing1</code> and <code>MyListing2</code>
+    <br><br>
+{% endblock %}
