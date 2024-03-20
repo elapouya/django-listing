@@ -447,6 +447,7 @@ class Listing(ListingBase):
     action_col = None
     action_footer_template_name = ThemeTemplate("action_footer.html")
     action_header_template_name = ThemeTemplate("action_header.html")
+    ajax_request = False
     ajax_part = None
     allow_empty_first_page = True
     anchor_hash = None

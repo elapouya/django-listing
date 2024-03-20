@@ -12,17 +12,17 @@
         <tbody>
             <tr><td>per_page</td><td>Number of rows displayed per page</td><td>20</td></tr>
             <tr><td>accept_ajax</td><td>Use Ajax to update the listing. This requires to have listing defined at python side and the use of a view inherited from <code>ListingView</code></td><td>False</td></tr>
-            <tr><td>action_button_cancel_label</td><td>Label for cancel button displayed when listing in editing mode</td><td>"Cancel"</td></tr>
-            <tr><td>action_button_edit_label</td><td>Label for edit button displayed when listing in editing mode</td><td>"Edit"</td></tr>
-            <tr><td>action_button_update_label</td><td>Label for update button displayed when listing in editing mode</td><td>"Update"</td></tr>
-            <tr><td>action_button_upload_label</td><td>Label for upload button displayed when listing in editing mode</td><td>"Upload"</td></tr>
+            <tr><td>action_button_cancel_label</td><td>Label for cancel button displayed when listing in editing mode</td><td>_("Cancel")</td></tr>
+            <tr><td>action_button_edit_label</td><td>Label for edit button displayed when listing in editing mode</td><td>_("Edit")</td></tr>
+            <tr><td>action_button_update_label</td><td>Label for update button displayed when listing in editing mode</td><td>_("Update")</td></tr>
+            <tr><td>action_button_upload_label</td><td>Label for upload button displayed when listing in editing mode</td><td>_("Upload")</td></tr>
             <tr><td>action_footer_template_name</td><td>Template to use to display action buttons below the listing</td><td>"django_listing/&lt;THEME&gt;/action_footer.html"</td></tr>
             <tr><td>action_header_template_name</td><td>Template to use to display action buttons above the listing</td><td>"django_listing/&lt;THEME&gt;/action_header.html"</td></tr>
-            <tr><td>ajax_part</td><td></td><td></td></tr>
-            <tr><td>ajax_request</td><td></td><td></td></tr>
-            <tr><td>allow_empty_first_page</td><td></td><td></td></tr>
-            <tr><td>anchor_hash</td><td></td><td></td></tr>
-            <tr><td>attrs</td><td></td><td></td></tr>
+            <tr><td>ajax_part</td><td>Limit ajax refresh to a part of the listing. Not implemented yet</td><td>"all"</td></tr>
+            <tr><td>ajax_request</td><td><b>Read-only value :</b> tells whether a listing is being rendered through an ajax request</td><td>False</td></tr>
+            <tr><td>allow_empty_first_page</td><td>Tells the paginator to generate a page even if there no object to display</td><td>True</td></tr>
+            <tr><td>anchor_hash</td><td>An html anchor is set on the listing so it can be reached through a simple hashtag link</td><td>None</td></tr>
+            <tr><td>attrs</td><td>Html attributes to set on the main listing div</td><td>{"class": "table table-hover table-bordered table-striped table-sm"}</td></tr>
             <tr><td>columns_headers</td><td></td><td></td></tr>
             <tr><td>confirm_msg_for_delete</td><td></td><td></td></tr>
             <tr><td>confirm_msg_nb_items_for_delete</td><td></td><td></td></tr>
