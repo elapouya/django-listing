@@ -459,11 +459,11 @@ class Listing(ListingBase):
     confirm_msg_for_delete = gettext_lazy(
         "Do you really want to DELETE {nb_items} item(s) ?"
     )
-    confirm_msg_nb_items_for_delete = 1
+    confirm_msg_nb_items_for_delete = 0
     confirm_msg_for_update = gettext_lazy(
         "Do you really want to UPDATE {nb_items} items ?"
     )
-    confirm_msg_nb_items_for_update = 2
+    confirm_msg_nb_items_for_update = 0
     confirm_msg_for_update_all = gettext_lazy(
         "WARNING : Do you really want to UPDATE absolutely all {nb_all_items} items ?"
         "\n\n"
@@ -515,7 +515,6 @@ class Listing(ListingBase):
     gb_template_name = ThemeTemplate("group_by.html")
     has_footer = False
     has_footer_action_buttons = True
-    has_form = False
     has_group_by = False
     has_header = True
     has_hidden_selection = False

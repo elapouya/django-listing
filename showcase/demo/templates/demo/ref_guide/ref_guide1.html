@@ -12,10 +12,10 @@
         <tbody>
             <tr><td>per_page</td><td>Number of rows displayed per page</td><td>20</td></tr>
             <tr><td>accept_ajax</td><td>Use Ajax to update the listing. This requires to have listing defined at python side and the use of a view inherited from <code>ListingView</code></td><td>False</td></tr>
-            <tr><td>action_button_cancel_label</td><td>Label for cancel button displayed when listing in editing mode</td><td>_("Cancel")</td></tr>
-            <tr><td>action_button_edit_label</td><td>Label for edit button displayed when listing in editing mode</td><td>_("Edit")</td></tr>
-            <tr><td>action_button_update_label</td><td>Label for update button displayed when listing in editing mode</td><td>_("Update")</td></tr>
-            <tr><td>action_button_upload_label</td><td>Label for upload button displayed when listing in editing mode</td><td>_("Upload")</td></tr>
+            <tr><td>action_button_cancel_label</td><td>Label for cancel button displayed when listing in editing mode</td><td>"Cancel"</td></tr>
+            <tr><td>action_button_edit_label</td><td>Label for edit button displayed when listing in editing mode</td><td>"Edit"</td></tr>
+            <tr><td>action_button_update_label</td><td>Label for update button displayed when listing in editing mode</td><td>"Update"</td></tr>
+            <tr><td>action_button_upload_label</td><td>Label for upload button displayed when listing in editing mode</td><td>"Upload"</td></tr>
             <tr><td>action_footer_template_name</td><td>Template to use to display action buttons below the listing</td><td>"django_listing/&lt;THEME&gt;/action_footer.html"</td></tr>
             <tr><td>action_header_template_name</td><td>Template to use to display action buttons above the listing</td><td>"django_listing/&lt;THEME&gt;/action_header.html"</td></tr>
             <tr><td>ajax_part</td><td>Limit ajax refresh to a part of the listing. Not implemented yet</td><td>"all"</td></tr>
@@ -23,105 +23,136 @@
             <tr><td>allow_empty_first_page</td><td>Tells the paginator to generate a page even if there no object to display</td><td>True</td></tr>
             <tr><td>anchor_hash</td><td>An html anchor is set on the listing so it can be reached through a simple hashtag link</td><td>None</td></tr>
             <tr><td>attrs</td><td>Html attributes to set on the main listing div</td><td>{"class": "table table-hover table-bordered table-striped table-sm"}</td></tr>
-            <tr><td>columns_headers</td><td></td><td></td></tr>
-            <tr><td>confirm_msg_for_delete</td><td></td><td></td></tr>
-            <tr><td>confirm_msg_nb_items_for_delete</td><td></td><td></td></tr>
-            <tr><td>confirm_msg_for_update</td><td></td><td></td></tr>
-            <tr><td>confirm_msg_nb_items_for_update</td><td></td><td></td></tr>
-            <tr><td>data</td><td></td><td></td></tr>
-            <tr><td>datetimepicker_date_format</td><td></td><td></td></tr>
-            <tr><td>datetimepicker_datetime_format</td><td></td><td></td></tr>
-            <tr><td>datetimepicker_time_format</td><td></td><td></td></tr>
-            <tr><td>div_row_template_name</td><td></td><td></td></tr>
-            <tr><td>div_rows</td><td></td><td></td></tr>
-            <tr><td>div_template_name</td><td></td><td></td></tr>
-            <tr><td>edit_on_demand</td><td></td><td></td></tr>
-            <tr><td>editable</td><td></td><td></td></tr>
-            <tr><td>editable_columns</td><td></td><td></td></tr>
-            <tr><td>editing</td><td></td><td></td></tr>
-            <tr><td>editing_columns</td><td></td><td></td></tr>
-            <tr><td>editing_hidden_columns</td><td></td><td></td></tr>
-            <tr><td>editing_row_pk</td><td></td><td></td></tr>
-            <tr><td>empty_listing_template_name</td><td></td><td></td></tr>
-            <tr><td>empty_table_msg</td><td></td><td></td></tr>
-            <tr><td>exclude_columns</td><td></td><td></td></tr>
-            <tr><td>export</td><td></td><td></td></tr>
-            <tr><td>export_columns</td><td></td><td></td></tr>
-            <tr><td>filters</td><td></td><td></td></tr>
-            <tr><td>footer_snippet</td><td></td><td></td></tr>
-            <tr><td>footer_template_name</td><td></td><td></td></tr>
-            <tr><td>form</td><td>Form associated to listing when editable</td><td></td></tr>
-            <tr><td>attached_form_autofill</td><td>Attached form is automatically filled when a listing row is selected</td><td>False</td></tr>
-            <tr><td>gb_annotate_cols</td><td>group_by annotation columns</td><td></td></tr>
-            <tr><td>gb_cols</td><td>group_by columns</td><td></td></tr>
-            <tr><td>global_context</td><td></td><td></td></tr>
-            <tr><td>gb_template_name</td><td></td><td></td></tr>
-            <tr><td>has_footer</td><td></td><td></td></tr>
-            <tr><td>has_footer_action_buttons</td><td></td><td></td></tr>
-            <tr><td>has_header</td><td></td><td></td></tr>
-            <tr><td>has_paginator</td><td></td><td></td></tr>
-            <tr><td>has_upload</td><td></td><td></td></tr>
-            <tr><td>id</td><td></td><td></td></tr>
-            <tr><td>is_small_device_localized</td><td></td><td></td></tr>
-            <tr><td>link_object_columns</td><td></td><td></td></tr>
-            <tr><td>listing_template_name</td><td></td><td></td></tr>
-            <tr><td>name</td><td></td><td></td></tr>
-            <tr><td>onready_snippet</td><td></td><td></td></tr>
-            <tr><td>orphans</td><td></td><td></td></tr>
-            <tr><td>page</td><td></td><td></td></tr>
-            <tr><td>paginator_class</td><td></td><td></td></tr>
-            <tr><td>per_page</td><td></td><td></td></tr>
-            <tr><td>per_page_max</td><td></td><td></td></tr>
-            <tr><td>primary_key</td><td></td><td></td></tr>
-            <tr><td>processed_flash</td><td></td><td></td></tr>
-            <tr><td>processed_pks</td><td></td><td></td></tr>
-            <tr><td>record_label</td><td></td><td></td></tr>
-            <tr><td>record_label_plural</td><td></td><td></td></tr>
-            <tr><td>request_media_for</td><td></td><td></td></tr>
-            <tr><td>row_attrs</td><td></td><td></td></tr>
-            <tr><td>row_form_base_class</td><td></td><td></td></tr>
-            <tr><td>row_inner_div_tpl</td><td></td><td></td></tr>
-            <tr><td>save_to_database</td><td></td><td></td></tr>
-            <tr><td>select_columns</td><td></td><td></td></tr>
-            <tr><td>selectable</td><td></td><td></td></tr>
-            <tr><td>selecting</td><td></td><td></td></tr>
-            <tr><td>selection_initial</td><td></td><td></td></tr>
-            <tr><td>selection_key</td><td></td><td></td></tr>
-            <tr><td>selection_menu_id</td><td></td><td></td></tr>
-            <tr><td>selection_mode</td><td></td><td></td></tr>
-            <tr><td>selection_multiple</td><td></td><td></td></tr>
-            <tr><td>selection_multiple_ctrl</td><td></td><td></td></tr>
-            <tr><td>selection_overlay_template_name</td><td></td><td></td></tr>
-            <tr><td>selection_position</td><td></td><td></td></tr>
-            <tr><td>small_device_header_style</td><td></td><td></td></tr>
-            <tr><td>small_device_max_width</td><td></td><td></td></tr>
-            <tr><td>sort</td><td></td><td></td></tr>
-            <tr><td>sortable</td><td></td><td></td></tr>
-            <tr><td>suffix</td><td></td><td></td></tr>
-            <tr><td>theme</td><td></td><td></td></tr>
-            <tr><td>theme_action_button_cancel_icon</td><td></td><td></td></tr>
-            <tr><td>theme_action_button_class</td><td></td><td></td></tr>
-            <tr><td>theme_action_button_edit_icon</td><td></td><td></td></tr>
-            <tr><td>theme_action_button_update_icon</td><td></td><td></td></tr>
-            <tr><td>theme_action_button_upload_icon</td><td></td><td></td></tr>
-            <tr><td>theme_button_active_class</td><td></td><td></td></tr>
-            <tr><td>theme_button_disabled_class</td><td></td><td></td></tr>
-            <tr><td>theme_div_row_container_class</td><td></td><td></td></tr>
-            <tr><td>theme_localized_small_device_styles_width</td><td></td><td></td></tr>
-            <tr><td>theme_sort_asc_class</td><td></td><td></td></tr>
-            <tr><td>theme_sort_asc_icon</td><td></td><td></td></tr>
-            <tr><td>theme_sort_desc_class</td><td></td><td></td></tr>
-            <tr><td>theme_sort_desc_icon</td><td></td><td></td></tr>
-            <tr><td>theme_sort_none_icon</td><td></td><td></td></tr>
-            <tr><td>theme_sortable_class</td><td></td><td></td></tr>
-            <tr><td>theme_sorted_class</td><td></td><td></td></tr>
-            <tr><td>theme_spinner_icon</td><td></td><td></td></tr>
-            <tr><td>toolbar</td><td></td><td></td></tr>
-            <tr><td>toolbar_placement</td><td></td><td></td></tr>
-            <tr><td>unsortable</td><td></td><td></td></tr>
-            <tr><td>use_datetimepicker</td><td></td><td></td></tr>
-            <tr><td>variation</td><td></td><td></td></tr>
-            <tr><td>variations</td><td></td><td></td></tr>
+            <tr><td>columns_headers</td><td>A list of strings corresponding to columns title. One can also specify only one coma separated string instead of a list</td><td>None</td></tr>
+            <tr><td>confirm_msg_for_delete</td><td>Message to display to confirm selected lines deletion in attached form</td><td>"Do you really want to DELETE {nb_items} item(s) ?"</td></tr>
+            <tr><td>confirm_msg_nb_items_for_delete</td><td><b>Read-only value :</b> Nb items to delete</td><td></td></tr>
+            <tr><td>confirm_msg_for_update</td><td>Message to display to confirm selected lines update in attached form</td><td>"Do you really want to UPDATE {nb_items} item(s) ?"</td></tr>
+            <tr><td>confirm_msg_nb_items_for_update</td><td><b>Read-only value :</b> Nb items to update</td><td></td></tr>
+            <tr><td>confirm_msg_for_delete_all</td><td>Message to display to confirm all records deletion in attached form</td><td>"WARNING : Do you really want to DELETE absolutely all {nb_all_items} items ? ..."</td></tr>
+            <tr><td>confirm_msg_for_update_all</td><td>Message to display to confirm all records update in attached form</td><td>"WARNING : Do you really want to UPDATE absolutely all {nb_all_items} items ? ..."</td></tr>
+            <tr><td>data</td><td>Data to use for the listing</td><td>None</td></tr>
+            <tr><td>attached_form</td><td>AttachedForm object for insertable listing</td><td>None</td></tr>
+            <tr><td>attached_form_autofill</td><td>Fill the attached form when selecting a line</td><td>False</td></tr>
+            <tr><td>attached_form_base_class</td><td>Base class to use when dynamically creating the attached form</td><td>ListingBaseForm</td></tr>
+            <tr><td>attached_form_css_id</td><td>HTML/CSS <code>id</code> atttribute to set on attached form</td><td>None</td></tr>
+            <tr><td>current_page</td><td><b>Read-only value :</b> Paginator object for current page</td><td></td></tr>
+            <tr><td>data</td><td>Listing data to use</td><td>None</td></tr>
+            <tr><td>datetimepicker_date_format</td><td>When activated, the date format return by datetimepicker widget</td><td>"Y-m-d"</td></tr>
+            <tr><td>datetimepicker_datetime_format</td><td>When activated, the datetime format return by datetimepicker widget</td><td>"Y-m-d H:i"</td></tr>
+            <tr><td>datetimepicker_time_format</td><td>When activated, the time format return by datetimepicker widget</td><td>"H:i"</td></tr>
+            <tr><td>div_template_name</td><td>Template to use when using <code>DivListing</code></td><td>"django_listing/&lt;THEME&gt;/div_row.html"</td></tr>
+            <tr><td>edit_on_demand</td><td>Add EDIT action button to activate listing edition mode</td><td>False</td></tr>
+            <tr><td>editable</td><td>Set listing as editable (but edition is not activated yet)</td><td>False</td></tr>
+            <tr><td>editable_columns</td><td>List of editable columns (listing edition can be partial). This must by set to activate edition. It must be a <code>set</code> or a comma separated string or <code>"all"</code> to activate edition for all columns</td><td>set()</td></tr>
+            <tr><td>editing</td><td>Activate edition of all editable columns. It must be a <code>set</code> or a comma separated string or <code>"all"</code></td><td>None</td></tr>
+            <tr><td>editing_columns</td><td>Activate edition of all specified editable columns. It must be a <code>set</code> or a comma separated string or <code>"all"</code></td><td>None</td></tr>
+            <tr><td>editing_hidden_columns</td><td>In edition mode, put specified columns data into html hidden field so it will be in POST data. It must be a <code>set</code> or a comma separated string or <code>None</code></td><td>None</td></tr>
+            <tr><td>editing_row_pk</td><td>Use to restrict edition to a single line. Specify the pk of the object to edit.</td><td>None</td></tr>
+            <tr><td>empty_listing_template_name</td><td>Template to use when the listing is empty</td><td>"django_listing/&lt;THEME&gt;/empty_listing.html"</td></tr>
+            <tr><td>empty_table_msg</td><td>Message to display when the listing is empty</td><td>"Nothing to display"</td></tr>
+            <tr><td>exclude_columns</td><td>List or comma separated string of columns to NOT display. Useful when listing data are model or queryset</td><td>None</td></tr>
+            <tr><td>export</td><td>If set, listing will generate an export file with the given format. Value can be : <code>"CSV", "DBF", "HTML", "JSON", "ODS", "TSV", "XLS", "XLSX", "YAML"</code>. The generated file name will be composed with listing name, a timestamping and the relevant extension.</td><td>None</td></tr>
+            <tr><td>export_columns</td><td>Force the listing to export the specified columns. Otherwise only displayed columns will be exported.</td><td>None</td></tr>
+            <tr><td>exported_columns</td><td><b>Read-only value :</b> Column objects to be exported</td><td>None</td></tr>
+            <tr><td>filters</td><td>List of filters that has to be defined in custom listing class definition if filtering is wanted</td><td>None</td></tr>
+            <tr><td>footer_snippet</td><td>Put here the javascript code you want to be added after the listing.</td><td>None</td></tr>
+            <tr><td>footer_template_name</td><td>Path to a template to use to fill the <code>tfoot</code> section of the listing</td><td>None</td></tr>
+            <tr><td>force_order_by</td><td>To force specific ordering even if user select another one, specify a list of columns to order by. For example <code>["last_name", "first_name"]</code> will force ordering by last_name then by first_name</td><td>None</td></tr>
+            <tr><td>form_model_fields</td><td><b>Read-only value :</b> List of model attributes name to used in a model</td><td>None</td></tr>
+            <tr><td>form_serialize_cols</td><td><b>Read-only value : Computed columns to serialize for attached forms</b> </td><td>None</td></tr>
+            <tr><td>form_serialize_cols_func</td><td>Optional function to build data dict from model objects and columns objects. Mainly used in attached forms</td><td>None</td></tr>
+            <tr><td>gb_annotate_cols</td><td><b>Read-only value : </b> Group-By computed cols annotation dict</td><td>None</td></tr>
+            <tr><td>gb_cols</td><td>Columns name to group by. If present, django-listing will build a specific listings by replacing all columns by those specified in this paramter + add selected annotations (Min, max, avg, sum ....)</td><td>None</td></tr>
+            <tr><td>gb_template_name</td><td>Template use to build Group By menu</td><td>"django_listing/&lt;THEME&gt;/group_by.html"</td></tr>
+            <tr><td>has_footer</td><td>Display the <code>tfoot</code> section of the listing</td><td>False</td></tr>
+            <tr><td>has_footer_action_buttons</td><td>Display action buttons below the listing</td><td>True</td></tr>
+            <tr><td>has_group_by</td><td>Activate group_by menu. This require the listing to have a toolbar with a <code>GroupByToolbarItem</code></td><td>False</td></tr>
+            <tr><td>has_header</td><td>Display listing's<code>theader</code> section. That is colmuns titles</td><td>True</td></tr>
+            <tr><td>has_hidden_selection</td><td></td><td>False</td></tr>
+            <tr><td>has_paginator</td><td></td><td>True</td></tr>
+            <tr><td>has_toolbar</td><td></td><td>False</td></tr>
+            <tr><td>has_upload</td><td></td><td>False</td></tr>
+            <tr><td>id</td><td></td><td>None</td></tr>
+            <tr><td>is_small_device_localized</td><td></td><td>False</td></tr>
+            <tr><td>link_object_columns</td><td></td><td>None</td></tr>
+            <tr><td>listing_template_name</td><td></td><td>"django_listing/&lt;THEME&gt;/listing.html"</td></tr>
+            <tr><td>model</td><td></td><td>None</td></tr>
+            <tr><td>name</td><td></td><td>None</td></tr>
+            <tr><td>onready_snippet</td><td></td><td>None</td></tr>
+            <tr><td>orphans</td><td></td><td>0</td></tr>
+            <tr><td>page</td><td></td><td>1</td></tr>
+            <tr><td>pagination</td><td></td><td>True</td></tr>
+            <tr><td>paginator</td><td></td><td>None</td></tr>
+            <tr><td>paginator_class</td><td></td><td>Paginator</td></tr>
+            <tr><td>params_keys</td><td></td><td>set()</td></tr>
+            <tr><td>per_page</td><td></td><td>LISTING_ROWS_PER_PAGE</td></tr>
+            <tr><td>per_page_max</td><td></td><td>LISTING_ROWS_PER_PAGE_MAX</td></tr>
+            <tr><td>permission_required_for_clear</td><td></td><td>False</td></tr>
+            <tr><td>permission_required_for_export</td><td></td><td>False</td></tr>
+            <tr><td>permission_required_for_reset</td><td></td><td>False</td></tr>
+            <tr><td>posted_columns</td><td></td><td>None</td></tr>
+            <tr><td>primary_key</td><td></td><td>"id"</td></tr>
+            <tr><td>processed_flash</td><td></td><td>True</td></tr>
+            <tr><td>processed_pks</td><td></td><td>None</td></tr>
+            <tr><td>record_label</td><td></td><td>None</td></tr>
+            <tr><td>record_label_plural</td><td></td><td>None</td></tr>
+            <tr><td>records_class</td><td></td><td>RecordManager</td></tr>
+            <tr><td>request_media_for</td><td></td><td>None</td></tr>
+            <tr><td>row_attrs</td><td></td><td>{}</td></tr>
+            <tr><td>row_form_base_class</td><td></td><td>ListingBaseForm</td></tr>
+            <tr><td>row_form_errors</td><td></td><td>None</td></tr>
+            <tr><td>row_inner_div_tpl</td><td></td><td>None</td></tr>
+            <tr><td>save_to_database</td><td></td><td>False</td></tr>
+            <tr><td>select_columns</td><td></td><td>None</td></tr>
+            <tr><td>selectable</td><td></td><td>False</td></tr>
+            <tr><td>selected_columns</td><td></td><td>None</td></tr>
+            <tr><td>selected_hidden_columns</td><td></td><td>None</td></tr>
+            <tr><td>selecting</td><td></td><td>None</td></tr>
+            <tr><td>selection_initial</td><td></td><td>None</td></tr>
+            <tr><td>selection_key</td><td></td><td>"id"</td></tr>
+            <tr><td>selection_menu_id</td><td></td><td>None</td></tr>
+            <tr><td>selection_mode</td><td></td><td>"default"  # default, overlay, hover</td></tr>
+            <tr><td>selection_multiple</td><td></td><td>False</td></tr>
+            <tr><td>selection_multiple_ctrl</td><td></td><td>False</td></tr>
+            <tr><td>selection_overlay_template_name</td><td></td><td>"django_listing/&lt;THEME&gt;/selection_overlay.html"</td></tr>
+            <tr><td>selection_position</td><td></td><td>"hidden"  # left, right or hidden</td></tr>
+            <tr><td>small_device_header_style</td><td></td><td>"font-weight: bold"</td></tr>
+            <tr><td>small_device_max_width</td><td></td><td>"767.98px"</td></tr>
+            <tr><td>sort</td><td></td><td>None</td></tr>
+            <tr><td>sortable</td><td></td><td>True</td></tr>
+            <tr><td>suffix</td><td></td><td>None</td></tr>
+            <tr><td>theme_action_button_cancel_icon</td><td></td><td>"theme_action_button_cancel_icon"</td></tr>
+            <tr><td>theme_action_button_class</td><td></td><td>"theme_action_button_class"</td></tr>
+            <tr><td>theme_action_button_edit_icon</td><td></td><td>"theme_action_button_edit_icon"</td></tr>
+            <tr><td>theme_action_button_update_icon</td><td></td><td>"theme_action_button_update_icon"</td></tr>
+            <tr><td>theme_action_button_upload_icon</td><td></td><td>"theme_action_button_upload_icon"</td></tr>
+            <tr><td>theme_button_active_class</td><td></td><td>"theme_button_active_class"</td></tr>
+            <tr><td>theme_button_class</td><td></td><td>"theme_button_class"</td></tr>
+            <tr><td>theme_button_disabled_class</td><td></td><td>"theme_button_disabled_class"</td></tr>
+            <tr><td>theme_class</td><td></td><td>"theme_class"</td></tr>
+            <tr><td>theme_container_class</td><td></td><td>"theme_container_class"</td></tr>
+            <tr><td>theme_div_row_container_class</td><td></td><td>"theme_div_row_container_class"</td></tr>
+            <tr><td>theme_listing_class</td><td></td><td>"theme_listing_class"</td></tr>
+            <tr><td>theme_localized_small_device_styles_width</td><td></td><td>"theme_localized_small_device_styles_width"</td></tr>
+            <tr><td>theme_row_class</td><td></td><td>"theme_row_class"</td></tr>
+            <tr><td>theme_sort_asc_class</td><td></td><td>"theme_sort_asc_class"</td></tr>
+            <tr><td>theme_sort_asc_icon</td><td></td><td>"theme_sort_asc_icon"</td></tr>
+            <tr><td>theme_sort_desc_class</td><td></td><td>"theme_sort_desc_class"</td></tr>
+            <tr><td>theme_sort_desc_icon</td><td></td><td>"theme_sort_desc_icon"</td></tr>
+            <tr><td>theme_sort_none_icon</td><td></td><td>"theme_sort_none_icon"</td></tr>
+            <tr><td>theme_sortable_class</td><td></td><td>"theme_sortable_class"</td></tr>
+            <tr><td>theme_sorted_class</td><td></td><td>"theme_sorted_class"</td></tr>
+            <tr><td>theme_spinner_icon</td><td></td><td>"theme_spinner_icon"</td></tr>
+            <tr><td>toolbar</td><td></td><td>None</td></tr>
+            <tr><td>toolbar_placement</td><td></td><td>"both"</td></tr>
+            <tr><td>unsortable</td><td></td><td>True</td></tr>
+            <tr><td>use_datetimepicker</td><td></td><td>False</td></tr>
+            <tr><td>variation</td><td></td><td>None</td></tr>
+            <tr><td>variations</td><td></td><td>None</td></tr>
         </tbody>
     </table>
+
+    form_serialize_cols_func
+    get_serialized_additional_data : model method that returns additional informations for object serialization for attached form. To be used when no relative to a form field.
+    get_serialized_form_data model : method that returns informations to be serialized for the attached form
 {% endblock %}
