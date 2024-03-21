@@ -534,7 +534,6 @@ class Listing(ListingBase):
     per_page = LISTING_ROWS_PER_PAGE
     per_page_max = LISTING_ROWS_PER_PAGE_MAX
     permission_required_for_export = False
-    posted_columns = None
     primary_key = "id"
     processed_flash = True
     processed_pks = None

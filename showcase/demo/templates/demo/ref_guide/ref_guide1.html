@@ -84,17 +84,16 @@
             <tr><td>params_keys</td><td>Additionnal parameters that can be used for a specific column</td><td>set()</td></tr>
             <tr><td>per_page</td><td>Nb rows per page a user can select</td><td>LISTING_ROWS_PER_PAGE</td></tr>
             <tr><td>per_page_max</td><td>Hard coded max rows per page allowed. It cannot be greater for an end-user</td><td>LISTING_ROWS_PER_PAGE_MAX</td></tr>
-            <tr><td>permission_required_for_clear</td><td></td><td>False</td></tr>
-            <tr><td>permission_required_for_export</td><td></td><td>False</td></tr>
-            <tr><td>permission_required_for_reset</td><td></td><td>False</td></tr>
-            <tr><td>posted_columns</td><td></td><td>None</td></tr>
-            <tr><td>primary_key</td><td></td><td>"id"</td></tr>
-            <tr><td>processed_flash</td><td></td><td>True</td></tr>
-            <tr><td>processed_pks</td><td></td><td>None</td></tr>
-            <tr><td>record_label</td><td></td><td>None</td></tr>
-            <tr><td>record_label_plural</td><td></td><td>None</td></tr>
-            <tr><td>records_class</td><td></td><td>RecordManager</td></tr>
-            <tr><td>request_media_for</td><td></td><td>None</td></tr>
+            <tr><td>permission_required_for_clear</td><td>For attached form, permission name required to clear the form. If <code>False</code>, no permission is needed.</td><td>False</td></tr>
+            <tr><td>permission_required_for_export</td><td>Permission name required to export listing data. If <code>False</code>, no permission is needed.</td><td>False</td></tr>
+            <tr><td>permission_required_for_reset</td><td>For attached form, permission name required to reset the form. If <code>False</code>, no permission is needed.</td><td>False</td></tr>
+            <tr><td>primary_key</td><td>Model primary key name</td><td>"id"</td></tr>
+            <tr><td>processed_flash</td><td>For attached form, make updated/created line flash</td><td>True</td></tr>
+            <tr><td>processed_pks</td><td><b>Read-only value :</b> For attached form, contains updated/created objects PKs</td><td>None</td></tr>
+            <tr><td>record_label</td><td>Label used in messages for "record"</td><td>None</td></tr>
+            <tr><td>record_label_plural</td><td>Label used in messages for "records"</td><td>None</td></tr>
+            <tr><td>records_class</td><td>Record manager class to use</td><td>RecordManager</td></tr>
+            <tr><td>request_media_for</td><td>Ask django-listing to add JS/CSS for a feature. Could be a list or a come separated string. Values can be one or more of these : <code>"datetimepicker" "dropzone" "dual_listbox" "autocomplete"</code></td><td>None</td></tr>
             <tr><td>row_attrs</td><td></td><td>{}</td></tr>
             <tr><td>row_form_base_class</td><td></td><td>ListingBaseForm</td></tr>
             <tr><td>row_form_errors</td><td></td><td>None</td></tr>
