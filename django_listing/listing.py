@@ -140,7 +140,6 @@ LISTING_PARAMS_KEYS = {
     "has_paginator",
     "has_upload",
     "id",
-    "is_small_device_localized",
     "link_object_columns",
     "listing_template_name",
     "name",
@@ -522,7 +521,6 @@ class Listing(ListingBase):
     has_toolbar = False
     has_upload = False
     id = None
-    is_small_device_localized = False
     link_object_columns = None
     listing_template_name = ThemeTemplate("listing.html")
     model = None

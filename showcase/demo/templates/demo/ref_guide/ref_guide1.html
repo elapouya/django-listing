@@ -59,7 +59,7 @@
             <tr><td>footer_template_name</td><td>Path to a template to use to fill the <code>tfoot</code> section of the listing</td><td>None</td></tr>
             <tr><td>force_order_by</td><td>To force specific ordering even if user select another one, specify a list of columns to order by. For example <code>["last_name", "first_name"]</code> will force ordering by last_name then by first_name</td><td>None</td></tr>
             <tr><td>form_model_fields</td><td><b>Read-only value :</b> List of model attributes name to used in a model</td><td>None</td></tr>
-            <tr><td>form_serialize_cols</td><td><b>Read-only value : Computed columns to serialize for attached forms</b> </td><td>None</td></tr>
+            <tr><td>form_serialize_cols</td><td><b>Read-only value : </b>Computed columns to serialize for attached forms</td><td>None</td></tr>
             <tr><td>form_serialize_cols_func</td><td>Optional function to build data dict from model objects and columns objects. Mainly used in attached forms</td><td>None</td></tr>
             <tr><td>gb_annotate_cols</td><td><b>Read-only value : </b> Group-By computed cols annotation dict</td><td>None</td></tr>
             <tr><td>gb_cols</td><td>Columns name to group by. If present, django-listing will build a specific listings by replacing all columns by those specified in this paramter + add selected annotations (Min, max, avg, sum ....)</td><td>None</td></tr>
@@ -68,25 +68,22 @@
             <tr><td>has_footer_action_buttons</td><td>Display action buttons below the listing</td><td>True</td></tr>
             <tr><td>has_group_by</td><td>Activate group_by menu. This require the listing to have a toolbar with a <code>GroupByToolbarItem</code></td><td>False</td></tr>
             <tr><td>has_header</td><td>Display listing's<code>theader</code> section. That is colmuns titles</td><td>True</td></tr>
-            <tr><td>has_hidden_selection</td><td></td><td>False</td></tr>
-            <tr><td>has_paginator</td><td></td><td>True</td></tr>
-            <tr><td>has_toolbar</td><td></td><td>False</td></tr>
-            <tr><td>has_upload</td><td></td><td>False</td></tr>
-            <tr><td>id</td><td></td><td>None</td></tr>
-            <tr><td>is_small_device_localized</td><td></td><td>False</td></tr>
-            <tr><td>link_object_columns</td><td></td><td>None</td></tr>
-            <tr><td>listing_template_name</td><td></td><td>"django_listing/&lt;THEME&gt;/listing.html"</td></tr>
-            <tr><td>model</td><td></td><td>None</td></tr>
-            <tr><td>name</td><td></td><td>None</td></tr>
-            <tr><td>onready_snippet</td><td></td><td>None</td></tr>
-            <tr><td>orphans</td><td></td><td>0</td></tr>
-            <tr><td>page</td><td></td><td>1</td></tr>
-            <tr><td>pagination</td><td></td><td>True</td></tr>
-            <tr><td>paginator</td><td></td><td>None</td></tr>
-            <tr><td>paginator_class</td><td></td><td>Paginator</td></tr>
-            <tr><td>params_keys</td><td></td><td>set()</td></tr>
-            <tr><td>per_page</td><td></td><td>LISTING_ROWS_PER_PAGE</td></tr>
-            <tr><td>per_page_max</td><td></td><td>LISTING_ROWS_PER_PAGE_MAX</td></tr>
+            <tr><td>has_paginator</td><td>Display listing pagination</td><td>True</td></tr>
+            <tr><td>has_toolbar</td><td>Read-only value : </b> Display listing toolbar</td><td>False</td></tr>
+            <tr><td>id</td><td>A string that uniquely identify a listing. By default, it is based on listing class name followed by a suffix which is a number that is automatically incremented for each listing.</td><td>None</td></tr>
+            <tr><td>link_object_columns</td><td>Automatically add links on cells for the specified columns that leads to the row <code>object.get_abosulte_url()</code>. Can be a list or comma separated string.</td><td>None</td></tr>
+            <tr><td>listing_template_name</td><td>Main template path that is used to render the listing</td><td>"django_listing/&lt;THEME&gt;/listing.html"</td></tr>
+            <tr><td>model</td><td>The model to use to query data. If not present, django-listing will get it from the queryset given as data.</td><td>None</td></tr>
+            <tr><td>name</td><td>Name to give to the listing. It is mainly used in messages and for building export file name.</td><td>None</td></tr>
+            <tr><td>onready_snippet</td><td>Javascript code to add in the <code>$(document).ready(function () {...});</code> listing section</td><td>None</td></tr>
+            <tr><td>orphans</td><td>Paginator parameter : Number of orphans accepted on last page</td><td>0</td></tr>
+            <tr><td>page</td><td>Actual page number (starts at 1)</td><td>1</td></tr>
+            <tr><td>pagination</td><td>Display pagination bar</td><td>True</td></tr>
+            <tr><td>paginator</td><td>Paginator object instanciated from <code>paginator_class</code></td><td>None</td></tr>
+            <tr><td>paginator_class</td><td>Class to use for paginator object</td><td>Paginator</td></tr>
+            <tr><td>params_keys</td><td>Additionnal parameters that can be used for a specific column</td><td>set()</td></tr>
+            <tr><td>per_page</td><td>Nb rows per page a user can select</td><td>LISTING_ROWS_PER_PAGE</td></tr>
+            <tr><td>per_page_max</td><td>Hard coded max rows per page allowed. It cannot be greater for an end-user</td><td>LISTING_ROWS_PER_PAGE_MAX</td></tr>
             <tr><td>permission_required_for_clear</td><td></td><td>False</td></tr>
             <tr><td>permission_required_for_export</td><td></td><td>False</td></tr>
             <tr><td>permission_required_for_reset</td><td></td><td>False</td></tr>
