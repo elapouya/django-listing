@@ -94,61 +94,64 @@
             <tr><td>record_label_plural</td><td>Label used in messages for "records"</td><td>None</td></tr>
             <tr><td>records_class</td><td>Record manager class to use</td><td>RecordManager</td></tr>
             <tr><td>request_media_for</td><td>Ask django-listing to add JS/CSS for a feature. Could be a list or a come separated string. Values can be one or more of these : <code>"datetimepicker" "dropzone" "dual_listbox" "autocomplete"</code></td><td>None</td></tr>
-            <tr><td>row_attrs</td><td></td><td>{}</td></tr>
-            <tr><td>row_form_base_class</td><td></td><td>ListingBaseForm</td></tr>
-            <tr><td>row_form_errors</td><td></td><td>None</td></tr>
-            <tr><td>row_inner_div_tpl</td><td></td><td>None</td></tr>
-            <tr><td>save_to_database</td><td></td><td>False</td></tr>
-            <tr><td>select_columns</td><td></td><td>None</td></tr>
-            <tr><td>selectable</td><td></td><td>False</td></tr>
-            <tr><td>selected_columns</td><td></td><td>None</td></tr>
-            <tr><td>selected_hidden_columns</td><td></td><td>None</td></tr>
-            <tr><td>selecting</td><td></td><td>None</td></tr>
-            <tr><td>selection_initial</td><td></td><td>None</td></tr>
-            <tr><td>selection_key</td><td></td><td>"id"</td></tr>
-            <tr><td>selection_menu_id</td><td></td><td>None</td></tr>
-            <tr><td>selection_mode</td><td></td><td>"default"  # default, overlay, hover</td></tr>
-            <tr><td>selection_multiple</td><td></td><td>False</td></tr>
-            <tr><td>selection_multiple_ctrl</td><td></td><td>False</td></tr>
-            <tr><td>selection_overlay_template_name</td><td></td><td>"django_listing/&lt;THEME&gt;/selection_overlay.html"</td></tr>
-            <tr><td>selection_position</td><td></td><td>"hidden"  # left, right or hidden</td></tr>
-            <tr><td>small_device_header_style</td><td></td><td>"font-weight: bold"</td></tr>
-            <tr><td>small_device_max_width</td><td></td><td>"767.98px"</td></tr>
-            <tr><td>sort</td><td></td><td>None</td></tr>
-            <tr><td>sortable</td><td></td><td>True</td></tr>
-            <tr><td>suffix</td><td></td><td>None</td></tr>
-            <tr><td>theme_action_button_cancel_icon</td><td></td><td>"theme_action_button_cancel_icon"</td></tr>
-            <tr><td>theme_action_button_class</td><td></td><td>"theme_action_button_class"</td></tr>
-            <tr><td>theme_action_button_edit_icon</td><td></td><td>"theme_action_button_edit_icon"</td></tr>
-            <tr><td>theme_action_button_update_icon</td><td></td><td>"theme_action_button_update_icon"</td></tr>
-            <tr><td>theme_action_button_upload_icon</td><td></td><td>"theme_action_button_upload_icon"</td></tr>
-            <tr><td>theme_button_active_class</td><td></td><td>"theme_button_active_class"</td></tr>
-            <tr><td>theme_button_class</td><td></td><td>"theme_button_class"</td></tr>
-            <tr><td>theme_button_disabled_class</td><td></td><td>"theme_button_disabled_class"</td></tr>
-            <tr><td>theme_class</td><td></td><td>"theme_class"</td></tr>
-            <tr><td>theme_container_class</td><td></td><td>"theme_container_class"</td></tr>
-            <tr><td>theme_div_row_container_class</td><td></td><td>"theme_div_row_container_class"</td></tr>
-            <tr><td>theme_listing_class</td><td></td><td>"theme_listing_class"</td></tr>
-            <tr><td>theme_localized_small_device_styles_width</td><td></td><td>"theme_localized_small_device_styles_width"</td></tr>
-            <tr><td>theme_row_class</td><td></td><td>"theme_row_class"</td></tr>
-            <tr><td>theme_sort_asc_class</td><td></td><td>"theme_sort_asc_class"</td></tr>
-            <tr><td>theme_sort_asc_icon</td><td></td><td>"theme_sort_asc_icon"</td></tr>
-            <tr><td>theme_sort_desc_class</td><td></td><td>"theme_sort_desc_class"</td></tr>
-            <tr><td>theme_sort_desc_icon</td><td></td><td>"theme_sort_desc_icon"</td></tr>
-            <tr><td>theme_sort_none_icon</td><td></td><td>"theme_sort_none_icon"</td></tr>
-            <tr><td>theme_sortable_class</td><td></td><td>"theme_sortable_class"</td></tr>
-            <tr><td>theme_sorted_class</td><td></td><td>"theme_sorted_class"</td></tr>
-            <tr><td>theme_spinner_icon</td><td></td><td>"theme_spinner_icon"</td></tr>
-            <tr><td>toolbar</td><td></td><td>None</td></tr>
-            <tr><td>toolbar_placement</td><td></td><td>"both"</td></tr>
-            <tr><td>unsortable</td><td></td><td>True</td></tr>
-            <tr><td>use_datetimepicker</td><td></td><td>False</td></tr>
-            <tr><td>variation</td><td></td><td>None</td></tr>
-            <tr><td>variations</td><td></td><td>None</td></tr>
+            <tr><td>row_attrs</td><td>HTML attributes to add on each listing row. See HTMLAttributes documentation.</td><td>{}</td></tr>
+            <tr><td>row_form_base_class</td><td>The base class to use to build attached form and form used when listing is in edit mode</td><td>ListingBaseForm</td></tr>
+            <tr><td>row_form_errors</td><td><b>Read-only value :</b> form validation errors</td><td>None</td></tr>
+            <tr><td>save_to_database</td><td>For listing in edit mode : save modified objects in database</td><td>False</td></tr>
+            <tr><td>select_columns</td><td>List or comma separated string of columns to display. Useful when listing data are model or queryset</td><td>None</td></tr>
+            <tr><td>selectable</td><td>Tells django-listing that the listing rows are selectable</td><td>False</td></tr>
+            <tr><td>selected_columns</td><td><b>Read-only value :</b> Computed columns objects that has to be displayed. Takes in account <code>select_columns</code> and exclude_columns</td><td>None</td></tr>
+            <tr><td>selected_hidden_columns</td><td><b>Read-only value :</b> Computed columns objects that will have values put into html input hidden fields</td><td>None</td></tr>
+            <tr><td>selecting</td><td>Activate selection (need <code>selectable</code> to be true)</td><td>None</td></tr>
+            <tr><td>selection_initial</td><td>List of objects PK to pre-select</td><td>None</td></tr>
+            <tr><td>selection_key</td><td>Use this model atttribute to get selection value</td><td>"id"</td></tr>
+            <tr><td>selection_menu_id</td><td>HTML/CSS <code>id</code> for selection menu</td><td>None</td></tr>
+            <tr><td>selection_mode</td><td>How selection box is displayed : could be <code>"default", "overlay" or "hover"</code></td><td>"default"</td></tr>
+            <tr><td>selection_multiple</td><td>If set multiple rows selection can be done</td><td>False</td></tr>
+            <tr><td>selection_multiple_ctrl</td><td>Use CTRL key to toggle one row selection keeping others selected</td><td>False</td></tr>
+            <tr><td>selection_overlay_template_name</td><td>Template name to use for selection overlay</td><td>"django_listing/&lt;THEME&gt;/selection_overlay.html"</td></tr>
+            <tr><td>selection_position</td><td>Where to add selection checkbox column, could be <code>"left", "right" or "hidden"</code></td><td>"hidden"</td></tr>
+            <tr><td>small_device_header_style</td><td>Add css styling for column header (title) when displayed on small device (smartphone etc...)</td><td>"font-weight: bold"</td></tr>
+            <tr><td>sort</td><td>The column name to sort the listing with. Use the prefix <code>"-"</code> to sort in reverse order.</td><td>None</td></tr>
+            <tr><td>sortable</td><td>You can disable sorting by setting <code>False</code></td><td>True</td></tr>
+            <tr><td>suffix</td><td>This is the suffix which is added to listing id and each query parameters to avoid clash when more than one listing is present on the screen. django-listing automaticall increment a number for each listing encountered on template rendering.</td><td>None</td></tr>
+            <tr><td>toolbar</td><td>Toolbar object. To be defined in custom listing class definition if wanted</td><td>None</td></tr>
+            <tr><td>toolbar_placement</td><td>Could be <code>"top", "bottom", "both"</code></td><td>"both"</td></tr>
+            <tr><td>unsortable</td><td>Tells django-listing the listing can be left unsorted. When <code>True</code>, this means column sorting has 3 orders : ascending, descending and unsorted. When <code>False</code>, this means sorting has only 2 orders : ascending or descending. Unsorted means : let the database give its own default ordering, usually, by primary key ascending.</td><td>True</td></tr>
+            <tr><td>use_datetimepicker</td><td>Use datetimepicker widget. This is useless with modern browser as input field with <code>type="date"</code> can do similar job.</td><td>False</td></tr>
+            <tr><td>variation</td><td>The listing variation to display. This is an index for <code>variations</code> list</td><td>None</td></tr>
+            <tr><td>variations</td><td>List of custom listing classes that can be used at the same place.</td><td>None</td></tr>
         </tbody>
     </table>
-
-    form_serialize_cols_func
-    get_serialized_additional_data : model method that returns additional informations for object serialization for attached form. To be used when no relative to a form field.
-    get_serialized_form_data model : method that returns informations to be serialized for the attached form
+    <br><br>
+    <h3>Icons and css classes</h3>
+    <table class="ref-guide">
+        <thead>
+            <tr><th>Attribute</th><th>Description</th><th>Default value</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>theme_class</td><td></td><td>"theme-&lt;THEME&gt;"</td></tr>
+            <tr><td>theme_action_button_cancel_icon</td><td></td><td>""</td></tr>
+            <tr><td>theme_action_button_class</td><td></td><td>"btn btn-primary"</td></tr>
+            <tr><td>theme_action_button_edit_icon</td><td></td><td>""</td></tr>
+            <tr><td>theme_action_button_update_icon</td><td></td><td>""</td></tr>
+            <tr><td>theme_action_button_upload_icon</td><td></td><td>""</td></tr>
+            <tr><td>theme_button_active_class</td><td></td><td>"active"</td></tr>
+            <tr><td>theme_button_class</td><td></td><td>"btn btn-primary"</td></tr>
+            <tr><td>theme_button_disabled_class</td><td></td><td>"disabled"</td></tr>
+            <tr><td>theme_container_class</td><td></td><td>"django-listing-container"</td></tr>
+            <tr><td>theme_div_row_container_class</td><td></td><td>""</td></tr>
+            <tr><td>theme_listing_class</td><td></td><td>"django-listing"  # do not modify</td></tr>
+            <tr><td>theme_row_class</td><td></td><td>"row-container"</td></tr>
+            <tr><td>theme_sort_asc_class</td><td></td><td>"asc"</td></tr>
+            <tr><td>theme_sort_asc_icon</td><td></td><td>"listing-icon-angle-up"</td></tr>
+            <tr><td>theme_sort_desc_class</td><td></td><td>"desc"</td></tr>
+            <tr><td>theme_sort_desc_icon</td><td></td><td>"listing-icon-angle-down"</td></tr>
+            <tr><td>theme_sort_none_icon</td><td></td><td>""</td></tr>
+            <tr><td>theme_sortable_class</td><td></td><td>"sortable"</td></tr>
+            <tr><td>theme_sorted_class</td><td></td><td>"sorted"</td></tr>
+            <tr><td>theme_spinner_icon</td><td></td><td>"animate-spin listing-icon-spin2"</td></tr>
+            <tr><td>theme_localized_small_device_styles_width</td><td></td><td>"991px"</td></tr>
+        </tbody>
+    </table>
 {% endblock %}

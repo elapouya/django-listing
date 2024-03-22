@@ -157,7 +157,6 @@ LISTING_PARAMS_KEYS = {
     "request_media_for",
     "row_attrs",
     "row_form_base_class",
-    "row_inner_div_tpl",
     "save_to_database",
     "select_columns",
     "selectable",
@@ -171,7 +170,6 @@ LISTING_PARAMS_KEYS = {
     "selection_overlay_template_name",
     "selection_position",
     "small_device_header_style",
-    "small_device_max_width",
     "sort",
     "sortable",
     "suffix",
@@ -544,7 +542,6 @@ class Listing(ListingBase):
     row_attrs = {}
     row_form_base_class = ListingBaseForm
     row_form_errors = None
-    row_inner_div_tpl = None
     save_to_database = False
     select_columns = None
     selectable = False
@@ -560,7 +557,6 @@ class Listing(ListingBase):
     selection_overlay_template_name = ThemeTemplate("selection_overlay.html")
     selection_position = "hidden"  # left, right or hidden
     small_device_header_style = "font-weight: bold"
-    small_device_max_width = "767.98px"
     sort = None
     sortable = True
     suffix = None
