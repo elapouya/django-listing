@@ -56,6 +56,26 @@ class RefGuide2View(TemplateView):
     template_name = "demo/ref_guide/ref_guide2.html"
 
 
+class RefGuide3View(TemplateView):
+    template_name = "demo/ref_guide/ref_guide3.html"
+
+
+class RefGuide4View(TemplateView):
+    template_name = "demo/ref_guide/ref_guide4.html"
+
+
+class RefGuide5View(TemplateView):
+    template_name = "demo/ref_guide/ref_guide5.html"
+
+
+class RefGuide6View(TemplateView):
+    template_name = "demo/ref_guide/ref_guide6.html"
+
+
+class RefGuide7View(TemplateView):
+    template_name = "demo/ref_guide/ref_guide7.html"
+
+
 class ManyWaysView(TemplateView):
     template_name = "demo/many_ways/many_ways.html"
 

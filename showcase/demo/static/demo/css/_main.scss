@@ -237,6 +237,15 @@ table.ref-guide {
     border-radius: 8px;
     background-color: $gray-600;
 
+    &.methods {
+        tr td:last-of-type {
+            white-space: inherit;
+            font-family: inherit;
+            color: inherit;
+            word-break: inherit;
+        }
+    }
+
     th {
         padding: 4px 10px;
         color: $white;

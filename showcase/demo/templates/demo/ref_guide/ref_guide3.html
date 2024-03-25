@@ -1,0 +1,35 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : <code>Cells</code></h2>
+
+    <h3>Introduction</h3>
+    <p>When using standard listing, cells are values that are displayed on the page. There are 3 kind of cells :</p>
+    <ul>
+        <li>Header cells : they are located at the top which correspond to columns title. Rendered inside table <code>&lt;thead&gt;</code> tag</li>
+        <li>Footer cells : they are located at the bottom. usually used for aggregation values (sum, min, max, avg). Rendered inside table <code>&lt;tfoot&gt;</code> tag</li>
+        <li>Standard cells : They display records values. Rendered inside table <code>&lt;tbody&gt;</code> tag</li>
+    </ul>
+    <h3>Cell rendering</h3>
+    <p>It is important to know how a cell is rendered to know how to customize them.</p>
+    <p>The main pattern is :</p>
+    <ul>
+        <li>get cell value by using <code>get_cell_value(rec)</code> method</li>
+        <li>get cell context by using <code>get_cell_context(rec, value)</code> method. The context is a django-listing <code>RenderContext</code> object, which inherit from <code>dict</code> and is used as <code>format()</code> kwargs</li>
+        <li>get cell HTML attributes, that is what is put in <code>td</code> tag. It uses <code>get_cell_attrs(rec, context, value)</code> and store the result in context in <code>attrs</code> key</li>
+        <li>get cell filter icon url if activated (feature that enables the user to click on the icon next to the value to filter the listing with that value).
+            It uses <code>get_cell_filter_link(rec, context, value)</code> and store the result in context in <code>filter_link</code> key</li>
+        <li>get cell template by using <code>get_cell_template(rec, context, value)</code> method.<br>
+            It returns a format string where the value has been already rendered :<br>
+            It uses the <code>cell_tpl</code> or <code>cell_with_filter_tpl</code> parameters for that. Default for <code>cell_tpl</code> is <code>"&lt;td{attrs}&gt;%s&lt;/td&gt;"</code>.
+            <code>get_cell_template(rec, context, value)</code> will remplace <code>%s</code> by record value before returning.<br>
+            <b>Note :</b> django-listing is using <code>%s</code> as placeholder for value to not clash with <code>{value}</code> that can be used as attribute for form fields.</b>
+        </li>
+    </ul>
+    <p>The cell rendering is about the same for both header and footer cells</p>
+    <h3>Parameters and methods</h3>
+    <p>For speed reason, there is no cell objects : Parameters and methods are defined in <code>Column</code> objects.</p>
+    <br><br>
+{% endblock %}

@@ -3,55 +3,31 @@
 {% load i18n %}
 
 {% block body %}
-    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : Columns parameters</h2>
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : <code>HTMLAttribute</code></h2>
 
     <h3>Introduction</h3>
-    <p>Django-listing has been created at the beginning to gather a listing and a filter form to ease
-    data representation and filtering. Multiple utilities has been added like toolbars and pagination
-    customisations.</p>
-    <p>Django-listing is able to show a listing in a hybrid way :
-    First page is rendered as usual with django templating, but when you change pagination or sorting,
-    the listing may be built through an Ajax request so it is fast, no need to redraw the whole page,
-    the page does not blink. When using Ajax, django-listing is still using Django templating, no
-    need to have specific front-end, it is totally transparent. The only difference is the spinner that
-    is briefly shown during Ajax requests.</p>
-    <p>Django-listing is highly customisable through themes, templates, listing class and/or views</p>
-    <p>Many others features has been added meanwhile since 2018</p>
-    <h3>Features</h3>
-    <p>
-    <ul>
-        <li>Any iterable, Django QuerySet or model can be used.</li>
-        <li>Most listings can be configured into a template file without touching a python file</li>
-        <li>A class-based ListingView is provided if you want to code a listing at python side</li>
-        <li>It as an Ajax mode to save requests to the server</li>
-        <li>Uses JQuery if ajax is activated</li>
-        <li>Customized for Bootstrap by default, but can be easily customized in many way (templates, icons, etc...)</li>
-        <li>You can select columns to display, columns title, default sorting etc..</li>
-        <li>Pagination is highly customizable (buttons to display, goto page, ellipsis, icons et labels)</li>
-        <li>Rows can be &lt;div&gt; instead of &lt;tr&gt;, so it is possible to format data in many ways</li>
-        <li>A lot of column types are provided, they are automatically created when a
-        QuerySet or a model is provided</li>
-        <li>Columns are class-bases and one can create custom ones</li>
-        <li>Columns manage One-to-many, Many-to-many and foreign relations</li>
-        <li>Provides aggregation columns : sum, avg, min, max values</li>
-        <li>Provides page-level and global aggregation : sum, avg, min, max values displayed at listing last row</li>
-        <li>Provides columns to make a link to the object, a custom link, checkbox, select box, text input...</li>
-        <li>Provides "action column" that comes with many actions : show, edit, delete, move up, move down...</li>
-        <li>is able to manage multiple variations to present data in multiple way at the same place
-        (text only listing, text+image listing, image only listing for example)</li>
-        <li>Uses Django translation framework : one can translate the listing as needed</li>
-        <li>Toolbars can be added at the top and/or at the bottom to make actions</li>
-        <li>Built-in toolbar action are : sorting, select a listing variation, number of rows per page,
-        export data. They are customizable.</li>
-        <li>Toolbar items are class-based : one can create a custom one easily</li>
-        <li>django-listing can automatically create a filter form (aka search form)</li>
-        <li>Listing rows can be selectable in order to apply some actions</li>
-        <li>Listings can be editable for mass updates</li>
-        <li>In toolbar, you can add the "Group BY" button which enables users to group by one or many columns as well as displaying min, max, average and sum values</li>
-        <li>django-listing can automatically create a form for inserting data to database</li>
-        <li>ListingView can manage itself database inserting, editing, deleting, filtering, uploads and actions :
-        no need to develop any code for that.</li>
-        <li>django-listing comes with hundreds of icons as a scalable font</li>
-    </ul>
-    </p>
+    <p><code>HTMLAttribute</code> objects are used to build and render attributes that are in HTML tags.
+        It is composed of <code>id, class, style, url</code> as well as custom attributes</p>
+    <p>With django-listing, many parameters with the form <code>xxx_attrs</code> can have <code>HTMLAttribute</code> object as value.
+    But this is not mandatory, it could be a dictionary that contains HTML tag attributes and values :
+        Django internally convert them into HTMAttribute objects</p>
+    <p>HTMLAttribute objects are basically <code>dict</code> where values are strings but act like a <code>set()</code> objects.
+        This is useful for adding many values to a same attribute (ie : <code>class</code> and <code>style</code>) and ensure they are unique.</p>
+    <p>For <code>style</code> attribute rendering, <code>HTMLAttribute</code> use <code>;</code> as separator</p>
+    <br><br>
+    <h3>Methods</h3>
+    <table class="ref-guide methods">
+        <thead>
+            <tr><th>Name</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>add(attr, value)</td><td>Adds a value to an attribute</td></tr>
+            <tr><td>remove(attr, value)</td><td>Remove a value to an attribute</td></tr>
+            <tr><td>set(attr, value)</td><td>Set a value to an attribute. Can also use <code>dict</code> syntax : <code>myattrs[attr] = value</code></td></tr>
+            <tr><td>update(*args, **kwargs)</td><td>Act like <code>dict.update()</code> except you can use <code>_class</code> to set <code>class</code></td></tr>
+            <tr><td>copy()</td><td>Gives a copy of the HTMLAttribute object</td></tr>
+            <tr><td>__str__()</td><td>Renders the attributes with this form : <code>attr1="value1 value2..." style="value3; value4; ..."</code></td></tr>
+        </tbody>
+    </table>
+    <br><br>
 {% endblock %}
