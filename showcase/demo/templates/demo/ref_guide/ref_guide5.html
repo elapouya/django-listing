@@ -1,0 +1,59 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load demo_extras %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : <code>Colomn</code> (single column)</h2>
+
+    <h3>Introduction</h3>
+    <p>This page is about <code>Column</code> objects</p>
+    <p>The django-listing column is responsible for displaying all data inside this column as well as its header (column title with sorting icons) and its footer (aggregation value if activated)</p>
+    <p>There are many pre-defined column classes : If relevant, django-listing automatically choose the right classes based on model attributes.
+        You can create custom column class and tell django-listing to use them by many ways.</p>
+    <p><code>Column</code> objects are used in "filter form" and "attached form" as they contain form fields informations.</p>
+    <br>
+    <h3>Classes</h3>
+    <table class="ref-guide name-desc">
+        <thead>
+            <tr><th>Name</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>AutoCompleteColumn(ForeignKeyColumn)</td><td>Same as <code>ForeignKeyColumn</code> except it has autocomplete widget when used in forms</td></tr>
+            <tr><td>AvgColumn(ComputedColumnMixin, Column)</td><td>Compute average of all numbers on the same line</td></tr>
+            <tr><td>BooleanColumn(Column)</td><td>Display boolean value. <code>True</code> and <code>False</code> representation can be customized</td></tr>
+            <tr><td>ButtonColumn(Column)</td><td>Add a button in each cell in the column</td></tr>
+            <tr><td>ButtonLinkColumn(LinkColumn)</td><td>Build a button to got to another page</td></tr>
+            <tr><td>CheckboxColumn(Column)</td><td>Add a checkbox in each cell in the column</td></tr>
+            <tr><td>ChoiceColumn(Column)</td><td>In forms, display a select box</td></tr>
+            <tr><td>Column(metaclass=ColumnMeta)</td><td>Base Column class. It can be used directly.</td></tr>
+            <tr><td>ComputedColumnMixin</td><td>Mixin that gathers all numbers on the same line for aggregation purposes</td></tr>
+            <tr><td>DateColumn(Column)</td><td>Display date value. Output format can be customized.</td></tr>
+            <tr><td>DateTimeColumn(Column)</td><td>Display datetime value. Output format can be customized.</td></tr>
+            <tr><td>DecimalColumn(FloatColumn)</td><td>Display decimal value. Output format can be customized.</td></tr>
+            <tr><td>EmailColumn(LinkColumn)</td><td>Create <code>mailto:</code> links</td></tr>
+            <tr><td>FileColumn(LinkColumn)</td><td>Create a link to down the file</td></tr>
+            <tr><td>FileSizeColumn(Column)</td><td>Display human-readable file size</td></tr>
+            <tr><td>FloatColumn(Column)</td><td>Display float value. Output format can be customized.</td></tr>
+            <tr><td>ForeignKeyColumn(LinkColumn)</td><td>Create a link to <code>object.get_absolute_url()</code>. In forms, a select menu is displayed.</td></tr>
+            <tr><td>GroupByFilterColumn(Column)</td><td>Create a button to open a new tab and display the same listing but with relevant filtering</td></tr>
+            <tr><td>InputColumn(Column)</td><td>Display an input text field in each cell in the column</td></tr>
+            <tr><td>IntegerColumn(Column)</td><td>Used for integer values</td></tr>
+            <tr><td>JsonDateTimeColumn(Column)</td><td>Transform JSON datetime string into Python datetime object then display it. Output format can be customized.</td></tr>
+            <tr><td>LineNumberColumn(Column)</td><td>Display line number. Takes in account the current page number.</td></tr>
+            <tr><td>LinkColumn(Column)</td><td>Display a custom link based on current record</td></tr>
+            <tr><td>LinkObjectColumn(LinkColumn)</td><td>Create a link to <code>object.get_absolute_url()</td></tr>
+            <tr><td>ManyColumn(Column)</td><td>Display a many-to-many object attribute</td></tr>
+            <tr><td>MaxColumn(ComputedColumnMixin, Column)</td><td>Compute maximum of all numbers on the same line</td></tr>
+            <tr><td>MinColumn(ComputedColumnMixin, Column)</td><td>Compute minimum of all numbers on the same line</td></tr>
+            <tr><td>MultipleChoiceColumn(Column)</td><td>In forms, display a select box where multiple choices are possible</td></tr>
+            <tr><td>SelectColumn(Column)</td><td>Add a select menu in each cell in the column</td></tr>
+            <tr><td>SelectionColumn(Column)</td><td>Add a checkbox for line selection in each cell in the column</td></tr>
+            <tr><td>TextColumn(Column)</td><td>In forms, display a textarea widget.</td></tr>
+            <tr><td>TimeColumn(Column)</td><td>Display time. Output format can be customized.</td></tr>
+            <tr><td>TotalColumn(ComputedColumnMixin, Column)</td><td>Compute sum of all numbers on the same line</td></tr>
+            <tr><td>URLColumn(LinkColumn)</td><td>Display URLs</td></tr>
+        </tbody>
+    </table>
+    <br><br>
+{% endblock %}

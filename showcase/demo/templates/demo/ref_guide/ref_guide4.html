@@ -20,7 +20,7 @@
         <tbody>
             <tr><td>Columns</td><td>Base class for all <code>Columns</code> classes.
                 Inherited from <code>list</code>, one can optionally add <code>params={"param1": "value1"...}</code> to give common parameters to all columns listed inside.<br>
-                You can use <code>Columns</code> class if you do not want a listing based on model attributes (but you can still use model and queryset as data).<br>
+                You can explicitly use <code>Columns</code> object if you do not want a listing based on model attributes (but you can still use model and queryset as data).<br>
                 Use this syntax in your custom listing class :<br>
                 <pre><code class="language-python">{% codelisting %}{% verbatim %}
                 from django_listing import *

@@ -402,9 +402,18 @@ class Aggregation5Listing(Listing):
 
 
 class Aggregation3Listing(Listing):
-    columns = SequenceColumns(numbers_matrix)
-    columns += [TotalColumn(), AvgColumn(precision=1), MaxColumn(), MinColumn()]
-    has_footer = True
+    columns = Columns(
+        Column("col1", data_key=0),
+        Column("col2", data_key=1),
+        Column("col3", data_key=2),
+        Column("col4", data_key=3),
+        Column("col5", data_key=4),
+        Column("col6", data_key=5),
+        TotalColumn(),
+        AvgColumn(precision=1),
+        MaxColumn(),
+        MinColumn(),
+    )
 
 
 class ToolbarSimpleListing(SimpleListing):
