@@ -1,0 +1,64 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load demo_extras %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : <code>Colomns</code> (group of colums)</h2>
+
+    <h3>Introduction</h3>
+    <p>This page is about <code>Columns</code> (plural) object and <u>NOT</u> about <code>Column</code> objects</p>
+    <p>When a listing is defined, one <code>Columns</code> object has to be defined. It can be explicit or implicit</p>
+    <p>When not explicitly defined, the <code>Columns</code> object is deduced by django-listing from the data to be displayed.</p>
+    <p><code>Columns</code> object is basically a list of <code>Column</code> objects with some optional parameters</p>
+    <br>
+    <h3>Classes</h3>
+    <table class="ref-guide name-desc">
+        <thead>
+            <tr><th>Name</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Columns</td><td>Base class for all <code>Columns</code> classes.
+                Inherited from <code>list</code>, one can optionally add <code>params={"param1": "value1"...}</code> to give common parameters to all columns listed inside.<br>
+                You can use <code>Columns</code> class if you do not want a listing based on model attributes (but you can still use model and queryset as data).<br>
+                Use this syntax in your custom listing class :<br>
+                <pre><code class="language-python">{% codelisting %}{% verbatim %}
+                from django_listing import *
+                ...
+                class MyListing(Listing):
+                    ...
+                    columns = Columns(
+                        Column("col1", parameters....),
+                        Column("col2", parameters....),
+                        params={"param1": "value1"...}  # optional : parameters for all columns
+                        )
+                    ...
+                ...
+                {% endverbatim %}{% endcodelisting %}</code></pre>
+            </td></tr>
+            <tr><td>ModelColumns</td><td>Inherited from <code>Columns</code> class. It is implicitly used by django-listing when a model or a queryset is given as data.
+                django-listing will read model attributes and create <code>Column</code> objects accordingly and add them into a <code>ModelColumns</code> object automatically.<br>
+                One can explicitly define <code>ModelColumns</code> object in custom listing class, this useful to add or override some columns over the columns deduced from the model.<br>
+                Use this syntax in your custom listing class :<br>
+                <pre><code class="language-python">{% codelisting %}{% verbatim %}
+                from django_listing import *
+                ...
+                class MyListing(Listing):
+                    ...
+                    columns = ModelColumns(
+                        MyModel,  # will automatically add all columns based on model's attributes
+                        Column("a_column_to_add_or_override1", parameters....),
+                        Column("a_column_to_add_or_override2", parameters....),
+                        params={"param1": "value1"...}  # optional : parameters for all columns
+                        )
+                    ...
+                ...
+                {% endverbatim %}{% endcodelisting %}</code></pre>
+            </td></tr>
+            <tr><td>SequenceColumns</td><td>Inherited from <code>Columns</code> class. It is implicitly used by django-listing when a list is given as data.
+                It should not be explicitly defined in custom listing class.
+            </td></tr>
+        </tbody>
+    </table>
+    <br><br>
+{% endblock %}

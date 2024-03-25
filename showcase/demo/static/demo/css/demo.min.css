@@ -11573,7 +11573,7 @@ table.ref-guide {
   border-radius: 8px;
   background-color: #6c757d;
 }
-table.ref-guide.methods tr td:last-of-type {
+table.ref-guide.name-desc tr td:last-of-type {
   white-space: inherit;
   font-family: inherit;
   color: inherit;
