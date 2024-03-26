@@ -1,0 +1,26 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : Toolbar &amp; ToolbarItem</h2>
+    <p>When defining a custom listing, you can specify a <code>Toolbar</code> instance which
+    is a list of <code>ToolbarItem</code> instances</p>
+    <h3>ToolbarItem classes</h3>
+    <table class="ref-guide">
+        <thead>
+            <tr><th>Name</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>ExportDropdownToolbarItem</td><td></td></tr>
+            <tr><td>ExportSelectToolbarItem</td><td></td></tr>
+            <tr><td>PerPageDropdownToolbarItem</td><td></td></tr>
+            <tr><td>PerPageSelectToolbarItem</td><td></td></tr>
+            <tr><td>SortDropdownToolbarItem</td><td></td></tr>
+            <tr><td>SortSelectToolbarItem</td><td></td></tr>
+            <tr><td>UpdateToolbarItem</td><td></td></tr>
+            <tr><td>VariationsToolbarItem</td><td></td></tr>
+            <tr><td>GroupByToolbarItem</td><td></td></tr>
+        </tbody>
+    </table>
+{% endblock %}
