@@ -1,0 +1,102 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load demo_extras %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : <code>RecordManager &amp; Record</code></h2>
+
+    <h3>RecordManager</h3>
+    <p>This class is used to compute the current page <code>Record</code> objects.
+        This includes filtering. It manages Django querysets as well as sequences.</p>
+    <h4>RecordManager methods</h4>
+    <table class="ref-guide name-desc">
+        <thead>
+            <tr><th>Name</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>bind_formset()</td><td></td></tr>
+            <tr><td>clear_first_last_cache()</td><td></td></tr>
+            <tr><td>compute_current_page_records()</td><td></td></tr>
+            <tr><td>current_page()</td><td></td></tr>
+            <tr><td>export()</td><td></td></tr>
+            <tr><td>filter_queryset(qs)</td><td></td></tr>
+            <tr><td>filter_sequence(seq)</td><td></td></tr>
+            <tr><td>get_all()</td><td></td></tr>
+            <tr><td>get_filtered_queryset()</td><td></td></tr>
+            <tr><td>get_first_obj()</td><td></td></tr>
+            <tr><td>get_last_obj()</td><td></td></tr>
+            <tr><td>get_obj(**kwargs)</td><td></td></tr>
+            <tr><td>get_objs_from_queryset()</td><td></td></tr>
+            <tr><td>get_objs_from_sequence()</td><td></td></tr>
+            <tr><td>get_rec(**kwargs)</td><td></td></tr>
+            <tr><td>group_by_foreignkey_object_map(records)</td><td></td></tr>
+            <tr><td>move_obj_order(obj, field, delta)</td><td></td></tr>
+        </tbody>
+    </table>
+    <br><br>
+    <h3>Record</h3>
+    <p>As querysets and sequences can be used with django listing, the <code>Record</code> class has been created to access row data.</p>
+    <p>There are many ways to get record field data : by attribute or by key. For querysets, one can get corresponding object. Finally multiple dot reference are accepted</p>
+    <p>Let's have a look to a custom column rendering : </p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+        from django_listing import *
+        ...
+        class MyListing(Listing):
+            columns = Columns(
+                Column("my_custom_col"),
+                ...
+            )
+            ...
+            def render_my_custom_col(self, rec):
+                address = rec.address  # access by attribute
+                address = rec["address"]  # access by key
+                address = rec.get("address", "no address field")  # access with get()
+                address = rec.get_object().address  # access queryset object then to address attribute
+                # You can chain access if you have many foreign key or dict in value:
+                flag = rec.address__country__flag
+                flag = rec["rec.address.country.flag"]
+                # If a method without parameter is specified in the chain, it is executed.
+                # Here get_country() is a method of Address model :
+                flag = rec.address__get_country__flag
+                flag = rec["rec.address.get_country.flag"]
+                # You can format a string directly from record object :
+                full_name = rec.format_str("{first_name} {last_name}"),
+                # For queryset data, you can get object.get_absolute_url():
+                view_object_url = rec.get_href()
+                ...
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <br><br>
+    <h4>Record methods</h4>
+    <table class="ref-guide name-desc">
+        <thead>
+            <tr><th>Name</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>format_str(str_to_format, extra_context=None)</td><td></td></tr>
+            <tr><td>get_cached_cell_value(col)</td><td></td></tr>
+            <tr><td>get_filter(obj, filter_name, params)</td><td></td></tr>
+            <tr><td>get_form()</td><td></td></tr>
+            <tr><td>get_format_ctx()</td><td></td></tr>
+            <tr><td>get_form_serialized_cols(obj, cols)</td><td></td></tr>
+            <tr><td>get_href()</td><td></td></tr>
+            <tr><td>get_index()</td><td>Get record index in the page. <code>0</code> is the record index corresponding to first row in the page.</td></tr>
+            <tr><td>get(key, default=None)</td><td></td></tr>
+            <tr><td>get_listing()</td><td></td></tr>
+            <tr><td>get_object()</td><td></td></tr>
+            <tr><td>get_serialized_object(**kwargs)</td><td></td></tr>
+            <tr><td>get_url(filters=None, **kwargs)</td><td>Build an url base on filters arguments.
+                It is a dict where keys are filter names and values are record field name.
+                This is useful to build URL to re-filter a listing based on record values.
+                It is used by <code>GroupByFilterColumn</code></td></tr>
+            <tr><td>is_first_qs_record()</td><td>True if the record is the very first for the queryset</td></tr>
+            <tr><td>is_last_qs_record()</td><td>True if the record is the very last for the queryset</td></tr>
+            <tr><td>is_selected()</td><td>Return true if row is pre-selected</td></tr>
+            <tr><td>set_cached_cell_value(col, value)</td><td></td></tr>
+            <tr><td>set_form(form)</td><td></td></tr>
+            <tr><td>set(item, value)</td><td></td></tr>
+            <tr><td>set_selected()</td><td>Used by django-listing when the row id is in listing.selection_initial</td></tr>
+        </tbody>
+    </table>
+
+{% endblock %}

@@ -1412,7 +1412,7 @@ class Listing(ListingBase):
             selection_value = rec.get(self.selection_key)
             if self.selection_initial and selection_value in self.selection_initial:
                 attrs.add("class", "selected")
-                rec._selected = True
+                rec.set_selected()
         return attrs
 
     def get_row_context(self, rec):
