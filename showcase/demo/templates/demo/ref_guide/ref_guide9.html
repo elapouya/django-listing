@@ -1,0 +1,46 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : Filters &amp; Filter objects</h2>
+    <p>When defining a custom listing, you can specify a <code>Filters</code> instance which
+    is a list of <code>Filter</code> instances</p>
+
+    <h3>Filters parameters</h3>
+    <p>This is mainly parameters to customize filters form and its button</p>
+    <table class="ref-guide">
+        <thead>
+            <tr><th>Name</th><th>Description</th><th>Default value</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>form_attrs</td><td></td><td>{}</td></tr>
+            <tr><td>form_buttons</td><td></td><td>"reset,submit"</td></tr>
+            <tr><td>form_layout</td><td></td><td>None</td></tr>
+            <tr><td>form_reset_label</td><td></td><td>"Reset"</td></tr>
+            <tr><td>form_submit_label</td><td></td><td>"Filter"</td></tr>
+            <tr><td>form_template_name</td><td></td><td>"django_listing/&lt;THEME&gt;/filters_form.html"</td></tr>
+        </tbody>
+    </table>
+    <br><br>
+    <h3>Filter classes</h3>
+    <table class="ref-guide">
+        <thead>
+            <tr><th>Name</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>AutocompleteForeignKeyFilter</td><td></td></tr>
+            <tr><td>AutocompleteMultipleForeignKeyFilter</td><td></td></tr>
+            <tr><td>BooleanFilter</td><td></td></tr>
+            <tr><td>ChoiceFilter</td><td></td></tr>
+            <tr><td>DateFilter</td><td></td></tr>
+            <tr><td>DateTimeFilter</td><td></td></tr>
+            <tr><td>Filter</td><td></td></tr>
+            <tr><td>FloatFilter</td><td></td></tr>
+            <tr><td>ForeignKeyFilter</td><td></td></tr>
+            <tr><td>IntegerFilter</td><td></td></tr>
+            <tr><td>MultipleChoiceFilter</td><td></td></tr>
+            <tr><td>TimeFilter</td><td></td></tr>
+        </tbody>
+    </table>
+{% endblock %}
