@@ -16,7 +16,7 @@
     <p>It is important to know how a cell is rendered to know how to customize them.</p>
     <p>The main pattern is :</p>
     <ul>
-        <li>get cell value by using <code>get_cell_value(rec)</code> method</li>
+        <li>get cell raw value by using <code>get_cell_value(rec)</code> method</li>
         <li>get cell context by using <code>get_cell_context(rec, value)</code> method. The context is a django-listing <code>RenderContext</code> object, which inherit from <code>dict</code> and is used as <code>format()</code> kwargs</li>
         <li>get cell HTML attributes, that is what is put in <code>td</code> tag. It uses <code>get_cell_attrs(rec, context, value)</code> and store the result in context in <code>attrs</code> key</li>
         <li>get cell filter icon url if activated (feature that enables the user to click on the icon next to the value to filter the listing with that value).
@@ -25,7 +25,12 @@
             It returns a format string where the value has been already rendered :<br>
             It uses the <code>cell_tpl</code> or <code>cell_with_filter_tpl</code> parameters for that. Default for <code>cell_tpl</code> is <code>"&lt;td{attrs}&gt;%s&lt;/td&gt;"</code>.
             <code>get_cell_template(rec, context, value)</code> will remplace <code>%s</code> by record value before returning.<br>
-            <b>Note :</b> django-listing is using <code>%s</code> as placeholder for value to not clash with <code>{value}</code> that can be used as attribute for form fields.</b>
+            <b>Note :</b> Cell template is responsible of the whole cell rendering, including <code>td</code> tags. The template shows where rendered value will take place.<br>
+            <b>Note 2 :</b> django-listing is using <code>%s</code> as placeholder for rendered value to not clash with <code>{value}</code> that can be used as attribute for form fields.
+        </li>
+        <li>The rendered value used by <code>get_cell_template(rec, context, value)</code>
+            comes from the raw cell value rendered through a specific value template (<code>get_value_tpl(rec, ctx, value)</code> method or <code>value_tpl</code> parameter) :
+            this is useful to customize value formatting like adding unit, limiting the number of digits, displaying icons for <code>True/False</code> values etc...<br>
         </li>
     </ul>
     <p>The cell rendering is about the same for both header and footer cells</p>

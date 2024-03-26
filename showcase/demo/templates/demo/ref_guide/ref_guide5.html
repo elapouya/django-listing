@@ -65,6 +65,7 @@
         <tr><td>aggregation</td><td>Aggregate all values on the page or on whole queryset then display result in listing footer (activate footer with listing parameter <code>has_footer = True</code>).<br>Possible values are : <code>sum, avg, min, max</code> for page aggregation and <code>global_sum, global_avg, global_min, global_max</code> for whole data</td><td>None</td></tr>
         <tr><td>ascending_by_default</td><td></td><td>True</td></tr>
         <tr><td>can_edit</td><td></td><td>False</td></tr>
+        <tr><td>cell_attrs</td><td>HTML attributes to use in cell <code>td</code> tag</td><td>{}</td></tr>
         <tr><td>cell_tpl</td><td></td><td>&quot;&lt;td{attrs}&gt;%s&lt;/td&gt;&quot;</td></tr>
         <tr><td>cell_edit_tpl</td><td>Template to use when in listing in edit mode</td><td>Use cell_tpl</td></tr>
         <tr><td>cell_value</td><td>Can be :<ul>
@@ -73,8 +74,8 @@
             <li>a ListingMethodRef object to reference listing method</li>
             <li>a callable</li>
         </ul>Method and callable will receive as parameter the record to be rendered</td><td>None</td></tr>
-        <tr><td>cell_with_filter_link</td><td></td><td>None</td></tr>
-        <tr><td>cell_with_filter_name</td><td></td><td>None</td></tr>
+        <tr><td>cell_with_filter_link</td><td>Callable to override filter link generation. Will receive <code>rec, ctx, value</code> arguments</td><td>None</td></tr>
+        <tr><td>cell_with_filter_name</td><td>Filter name to use to compute filter link</td><td>column name</td></tr>
         <tr><td>cell_with_filter_tpl</td><td></td><td>
 {% codelisting %}<td{attrs}><span class="cell-with-filter">
 <span class="cell-value">%s</span>
@@ -82,45 +83,51 @@
 class="cell-filter {col.theme_cell_with_filter_icon}">
 </a></span></td>{% endcodelisting %}
         </td></tr>
-        <tr><td>data_key</td><td></td><td>None</td></tr>
+        <tr><td>data_key</td><td>Specify where to get the value to display.<br>For model/queryset data : The model attribute name<br>For list of dicts : the key</td><td>column name</td></tr>
         <tr><td>default_footer_value</td><td></td><td>""</td></tr>
         <tr><td>default_value</td><td></td><td>"-"</td></tr>
         <tr><td>editable</td><td></td><td>None</td></tr>
         <tr><td>editing</td><td></td><td>False</td></tr>
         <tr><td>exportable</td><td></td><td>True</td></tr>
         <tr><td>exported_header</td><td></td><td>None</td></tr>
-        <tr><td>footer</td><td></td><td>None</td></tr>
-        <tr><td>footer_tpl</td><td></td><td>None</td></tr>
-        <tr><td>footer_value_tpl</td><td></td><td>None</td></tr>
-        <tr><td>form_field</td><td></td><td>None</td></tr>
-        <tr><td>form_field_params</td><td></td><td>None</td></tr>
-        <tr><td>form_field_class</td><td></td><td>forms.CharField</td></tr>
-        <tr><td>form_field_widget_class</td><td></td><td>None</td></tr>
-        <tr><td>form_field_keys</td><td></td><td>None</td></tr>
-        <tr><td>form_field_serialize</td><td></td><td>False</td></tr>
-        <tr><td>from_model_field_classes</td><td></td><td>[]</td></tr>
-        <tr><td>from_model_field_order</td><td></td><td>100</td></tr>
-        <tr><td>form_no_autofill</td><td></td><td>False</td></tr>
-        <tr><td>has_cell_filter</td><td></td><td>False</td></tr>
-        <tr><td>header</td><td></td><td>None</td></tr>
-        <tr><td>header_sortable_tpl</td><td></td><td>None</td></tr>
-        <tr><td>header_tpl</td><td></td><td>None</td></tr>
-        <tr><td>help_text</td><td></td><td>None</td></tr>
-        <tr><td>input_type</td><td></td><td>None</td></tr>
+        <tr><td>footer</td><td>A callable to render a custom footer for the column. Will receive column and listing objects as argument</td><td>None</td></tr>
+        <tr><td>footer_tpl</td><td></td><td>&quot;&lt;td{attrs}&gt;%s&lt;/td&gt;&quot;</td></tr>
+        <tr><td>footer_attrs</td><td>HTML attributes to use in cell <code>td</code> tag</td><td>{}</td></tr>
+        <tr><td>footer_value_tpl</td><td>To customize value string in footer</td><td>"{value}"</td></tr>
+        <tr><td>form_field</td><td>This is used to force the django form field INSTANCE to use in forms. This override default behaviour which to user <code>form_field_class</code> and <code>form_field_params</code> parameters</td><td>None</td></tr>
+        <tr><td>form_field_class</td><td>Django form field class to use in forms</td><td>forms.CharField</td></tr>
+        <tr><td>form_field_params</td><td>Parameters used to instanciate <code>form_field_class</code></td><td>None</td></tr>
+        <tr><td>form_field_widget_class</td><td>Django form field widget class to use in forms</td><td>None</td></tr>
+        <tr><td>form_field_widget_params</td><td>Parameters used to instanciate <code>form_field_widget_class</code></td><td>{}</td></tr>
+        <tr><td>form_field_serialize</td><td>Tells django-listing to serialize column value and store it in <code>data-serialized-object</code> row HTML attribute. This is required when auto_fill is wanted in attached form and you have added column in <code>ModelColumns</code></td><td>False</td></tr>
+        <tr><td>from_model_field_classes</td><td>Used by django-listing to build <code>Columns</code> object to choose the right column class from the model field class</td><td>[]</td></tr>
+        <tr><td>from_model_field_order</td><td>Helps django-listing to prioritize the class to choose when many are possible. Lower value has higher priority</td><td>100</td></tr>
+        <tr><td>form_no_autofill</td><td>Tells django-listing to not auto-fill the form input corresponding to the column in attached form</td><td>False</td></tr>
+        <tr><td>has_cell_filter</td><td>If <code>True</code> add an icon next to cell value to filter data accordingly. Uses <code>cell_with_filter_tpl</code></td><td>False</td></tr>
+        <tr><td>header</td><td>Column header/title value. Can be a callable which will receiver the column and listing objects as arguments</td><td>None</td></tr>
+        <tr><td>header_attrs</td><td>HTML attributes to use in cell <code>td</code> tag</td><td>{}</td></tr>
+        <tr><td>header_sortable_tpl</td><td>Header template to use when the column is sortable</td><td>
+{% codelisting %}"<th{attrs}><a class="listing-nav" href="{sort_url}">{value}
+<span class="sorting{icon}"></span></a></th>"{% endcodelisting %}
+        </td></tr>
+        <tr><td>header_tpl</td><td>Header template to use when the column is <u>NOT</u> sortable</td><td>"&lt;th{attrs}&gt;&lt;span class={col.theme_header_icon}&gt;&lt;/span&gt;&lt;/th&gt;"</td></tr>
+        <tr><td>help_text</td><td>Help text to display in forms.</td><td>"&nbsp;"  # otherwise formfields may me not aligned vertically. keep align-items: flex-end; on row</td></tr>
+        <tr><td>input_type</td><td>Used by <code>ChoiceColumn</code> and <code>MultipleChoiceColumn</code> to select the right widget to use when in edit mode. Possible values are <code>checkboxinline, checkboxinline, other</code></td><td>None</td></tr>
         <tr><td>is_safe_value</td><td></td><td>False  # to avoid XSS attack</td></tr>
-        <tr><td>listing</td><td></td><td>None</td></tr>
-        <tr><td>link_target</td><td></td><td>None</td></tr>
-        <tr><td>model_field</td><td></td><td>None</td></tr>
-        <tr><td>model_form_field</td><td></td><td>None</td></tr>
-        <tr><td>name</td><td></td><td>None</td></tr>
-        <tr><td>no_choice_msg</td><td></td><td>"Please choose..."</td></tr>
-        <tr><td>true_msg</td><td></td><td>"Yes"</td></tr>
-        <tr><td>false_msg</td><td></td><td>"No"</td></tr>
-        <tr><td>params_keys</td><td></td><td>""</td></tr>
-        <tr><td>sort_key</td><td></td><td>None</td></tr>
+        <tr><td>listing</td><td>You can have access to listing instance from the column when fully initialized</td><td></td></tr>
+        <tr><td>link_target</td><td>Used by <code>GroupByFilterColumn</code> to specify where to open the new filtered listing.</td><td>"_blank"</td></tr>
+        <tr><td>model_field</td><td>model field instance used</td><td>None</td></tr>
+        <tr><td>model_form_field</td><td>model form field instance used in forms</td><td>None</td></tr>
+        <tr><td>name</td><td>Column name</td><td>None</td></tr>
+        <tr><td>no_choice_msg</td><td>Message to display on select widgets when no choice has been done</td><td>"Please choose..."</td></tr>
+        <tr><td>true_msg</td><td>Used in <code>BooleanFilter</code></td><td>"Yes"</td></tr>
+        <tr><td>false_msg</td><td>Used in <code>BooleanFilter</code></td><td>"No"</td></tr>
+        <tr><td>params_keys</td><td>Publish specific column class parameters</td><td>""</td></tr>
+        <tr><td>sort_key</td><td>Model attribute name or dict key to use for sorting</td><td>None</td></tr>
         <tr><td>sortable</td><td></td><td>True</td></tr>
-        <tr><td>use_raw_value</td><td></td><td>False</td></tr>
-        <tr><td>value_tpl</td><td></td><td>"{value}"</td></tr>
+        <tr><td>use_raw_value</td><td>If True, choices are not solved</td><td>False</td></tr>
+        <tr><td>value_tpl</td><td>Template to use to format a value. This is useful to customize value formatting like adding unit, limiting the number of digits, displaying icons for <code>True/False</code> values etc...</td><td>"{value}"</td></tr>
+        <tr><td>widget_attrs</td><td>HTML attributes to use in widget</td><td>{}</td></tr>
         </tbody>
     </table>
     <br><br>
