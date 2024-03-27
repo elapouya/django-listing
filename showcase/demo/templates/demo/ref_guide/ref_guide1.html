@@ -10,7 +10,6 @@
             <tr><th>Name</th><th>Description</th><th>Default value</th></tr>
         </thead>
         <tbody>
-            <tr><td>per_page</td><td>Number of rows displayed per page</td><td>20</td></tr>
             <tr><td>accept_ajax</td><td>Use Ajax to update the listing. This requires to have listing defined at python side and the use of a view inherited from <code>ListingView</code></td><td>False</td></tr>
             <tr><td>action_button_cancel_label</td><td>Label for cancel button displayed when listing in editing mode</td><td>"Cancel"</td></tr>
             <tr><td>action_button_edit_label</td><td>Label for edit button displayed when listing in editing mode</td><td>"Edit"</td></tr>
@@ -22,20 +21,20 @@
             <tr><td>ajax_request</td><td><b>Read-only value :</b> tells whether a listing is being rendered through an ajax request</td><td>False</td></tr>
             <tr><td>allow_empty_first_page</td><td>Tells the paginator to generate a page even if there no object to display</td><td>True</td></tr>
             <tr><td>anchor_hash</td><td>An html anchor is set on the listing so it can be reached through a simple hashtag link</td><td>None</td></tr>
-            <tr><td>attrs</td><td>Html attributes to set on the main listing div</td><td>{"class": "table table-hover table-bordered table-striped table-sm"}</td></tr>
-            <tr><td>columns_headers</td><td>A list of strings corresponding to columns title. One can also specify only one coma separated string instead of a list</td><td>None</td></tr>
-            <tr><td>confirm_msg_for_delete</td><td>Message to display to confirm selected lines deletion in attached form</td><td>"Do you really want to DELETE {nb_items} item(s) ?"</td></tr>
-            <tr><td>confirm_msg_nb_items_for_delete</td><td><b>Read-only value :</b> Nb items to delete</td><td></td></tr>
-            <tr><td>confirm_msg_for_update</td><td>Message to display to confirm selected lines update in attached form</td><td>"Do you really want to UPDATE {nb_items} item(s) ?"</td></tr>
-            <tr><td>confirm_msg_nb_items_for_update</td><td><b>Read-only value :</b> Nb items to update</td><td></td></tr>
-            <tr><td>confirm_msg_for_delete_all</td><td>Message to display to confirm all records deletion in attached form</td><td>"WARNING : Do you really want to DELETE absolutely all {nb_all_items} items ? ..."</td></tr>
-            <tr><td>confirm_msg_for_update_all</td><td>Message to display to confirm all records update in attached form</td><td>"WARNING : Do you really want to UPDATE absolutely all {nb_all_items} items ? ..."</td></tr>
-            <tr><td>data</td><td>Data to use for the listing</td><td>None</td></tr>
             <tr><td>attached_form</td><td>AttachedForm object for insertable listing</td><td>None</td></tr>
             <tr><td>attached_form_autofill</td><td>Fill the attached form when selecting a line</td><td>False</td></tr>
             <tr><td>attached_form_base_class</td><td>Base class to use when dynamically creating the attached form</td><td>ListingBaseForm</td></tr>
             <tr><td>attached_form_css_id</td><td>HTML/CSS <code>id</code> atttribute to set on attached form</td><td>None</td></tr>
+            <tr><td>attrs</td><td>Html attributes to set on the main listing div</td><td>{"class": "table table-hover table-bordered table-striped table-sm"}</td></tr>
+            <tr><td>columns_headers</td><td>A list of strings corresponding to columns title. One can also specify only one coma separated string instead of a list</td><td>None</td></tr>
+            <tr><td>confirm_msg_for_delete</td><td>Message to display to confirm selected lines deletion in attached form</td><td>"Do you really want to DELETE {nb_items} item(s) ?"</td></tr>
+            <tr><td>confirm_msg_for_delete_all</td><td>Message to display to confirm all records deletion in attached form</td><td>"WARNING : Do you really want to DELETE absolutely all {nb_all_items} items ? ..."</td></tr>
+            <tr><td>confirm_msg_for_update</td><td>Message to display to confirm selected lines update in attached form</td><td>"Do you really want to UPDATE {nb_items} item(s) ?"</td></tr>
+            <tr><td>confirm_msg_for_update_all</td><td>Message to display to confirm all records update in attached form</td><td>"WARNING : Do you really want to UPDATE absolutely all {nb_all_items} items ? ..."</td></tr>
+            <tr><td>confirm_msg_nb_items_for_delete</td><td><b>Read-only value :</b> Nb items to delete</td><td></td></tr>
+            <tr><td>confirm_msg_nb_items_for_update</td><td><b>Read-only value :</b> Nb items to update</td><td></td></tr>
             <tr><td>current_page</td><td><b>Read-only value :</b> Paginator object for current page</td><td></td></tr>
+            <tr><td>data</td><td>Data to use for the listing</td><td>None</td></tr>
             <tr><td>data</td><td>Listing data to use</td><td>None</td></tr>
             <tr><td>datetimepicker_date_format</td><td>When activated, the date format return by datetimepicker widget</td><td>"Y-m-d"</td></tr>
             <tr><td>datetimepicker_datetime_format</td><td>When activated, the datetime format return by datetimepicker widget</td><td>"Y-m-d H:i"</td></tr>
@@ -64,6 +63,7 @@
             <tr><td>gb_annotate_cols</td><td><b>Read-only value : </b> Group-By computed cols annotation dict</td><td>None</td></tr>
             <tr><td>gb_cols</td><td>Columns name to group by. If present, django-listing will build a specific listings by replacing all columns by those specified in this paramter + add selected annotations (Min, max, avg, sum ....)</td><td>None</td></tr>
             <tr><td>gb_template_name</td><td>Template use to build Group By menu</td><td>"django_listing/&lt;THEME&gt;/group_by.html"</td></tr>
+            <tr><td>global_context</td><td>Additional information to put in templates context</td><td>{}</td></tr>
             <tr><td>has_footer</td><td>Display the <code>tfoot</code> section of the listing</td><td>False</td></tr>
             <tr><td>has_footer_action_buttons</td><td>Display action buttons below the listing</td><td>True</td></tr>
             <tr><td>has_group_by</td><td>Activate group_by menu. This require the listing to have a toolbar with a <code>GroupByToolbarItem</code></td><td>False</td></tr>
@@ -83,6 +83,7 @@
             <tr><td>paginator_class</td><td>Class to use for paginator object</td><td>Paginator</td></tr>
             <tr><td>params_keys</td><td>Additionnal parameters that can be used for a specific column</td><td>set()</td></tr>
             <tr><td>per_page</td><td>Nb rows per page a user can select</td><td>LISTING_ROWS_PER_PAGE</td></tr>
+            <tr><td>per_page</td><td>Number of rows displayed per page</td><td>20</td></tr>
             <tr><td>per_page_max</td><td>Hard coded max rows per page allowed. It cannot be greater for an end-user</td><td>LISTING_ROWS_PER_PAGE_MAX</td></tr>
             <tr><td>permission_required_for_clear</td><td>For attached form, permission name required to clear the form. If <code>False</code>, no permission is needed.</td><td>False</td></tr>
             <tr><td>permission_required_for_export</td><td>Permission name required to export listing data. If <code>False</code>, no permission is needed.</td><td>False</td></tr>
@@ -152,6 +153,18 @@
             <tr><td>theme_sorted_class</td><td></td><td>"sorted"</td></tr>
             <tr><td>theme_spinner_icon</td><td></td><td>"animate-spin listing-icon-spin2"</td></tr>
             <tr><td>theme_localized_small_device_styles_width</td><td></td><td>"991px"</td></tr>
+        </tbody>
+    </table>
+    <br><br>
+    <h3>Methods</h3>
+    <h4>Calculated methods</h4>
+    <table class="ref-guide name-desc">
+        <thead>
+            <tr><th>Name</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>filter_queryset_&lt;filter name&gt;</td><td>Method that will filter the queryset with a word provided by user in the field corresponding to filter <code>&lt;filter name&gt</code>.
+                The given parameters are : <code>queryset</code>, <code>word</code></td></tr>
         </tbody>
     </table>
 {% endblock %}

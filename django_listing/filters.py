@@ -448,7 +448,6 @@ class Filter(metaclass=FilterMeta):
     def init(self, listing, name=None, **kwargs):
         self.set_listing(listing)
         lsg = self.listing
-        suffix = lsg.suffix
         if name:
             self.name = re.sub(r"\W", "", name)
         self.set_kwargs(**kwargs)
@@ -576,7 +575,7 @@ class Filter(metaclass=FilterMeta):
             if self.default_value is None:
                 return qs
             cleaned_value = self.default_value
-        method_name = f"filter_queryset_{self.filter_key}"
+        method_name = f"filter_queryset_{self.name}"
         method = getattr(self.listing, method_name, None)
         if not method and self.filter_queryset_method:
             if isinstance(self.filter_queryset_method, str):
