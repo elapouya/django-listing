@@ -151,7 +151,10 @@ class Filters(list):
     form_layout = None
     form_buttons = "reset,submit"
 
-    def __init__(self, *filters, params=None):
+    def __init__(self, *filters, params=None, **kwargs):
+        self.init_kwargs = kwargs
+        # params contains Filter objects parameters, ex :
+        # params = {"filter1": {"param1" : "value1" ...}, "filter2": {"param2" : "value2" ...}
         if params is None:
             params = {}
         self._params = params
@@ -183,16 +186,18 @@ class Filters(list):
         ]
 
     def bind_to_listing(self, listing):
-        filters = Filters(params=self._params)
+        filters = Filters(params=self._params, **self.init_kwargs)
         for k in FILTERS_KEYS:
-            if hasattr(self, k):
+            if k in self.init_kwargs:
+                setattr(filters, k, self.init_kwargs[k])
+            elif hasattr(self, k):
                 setattr(filters, k, getattr(self, k))
             listing_key = "filters_" + k
             if hasattr(listing, listing_key):
                 setattr(filters, k, getattr(listing, listing_key))
-        if isinstance(self.form_layout, str):
+        if isinstance(filters.form_layout, str):
             # transform layout string into list of lists of lists
-            self.form_layout = re.sub(r"\s", "", self.form_layout)
+            filters.form_layout = re.sub(r"\s", "", filters.form_layout)
             filters.form_layout = list(
                 map(
                     lambda s: list(
@@ -201,7 +206,7 @@ class Filters(list):
                             filter(None, s.split(",")),
                         )
                     ),
-                    filter(None, self.form_layout.split(";")),
+                    filter(None, filters.form_layout.split(";")),
                 )
             )
         for filtr in self:

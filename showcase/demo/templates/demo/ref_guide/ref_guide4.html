@@ -19,8 +19,8 @@
         </thead>
         <tbody>
             <tr><td>Columns</td><td>Base class for all <code>Columns</code> classes.
-                Inherited from <code>list</code>, one can optionally add <code>params={"param1": "value1"...}</code> to give common parameters to all columns listed inside.<br>
-                You can explicitly use <code>Columns</code> object if you do not want a listing based on model attributes (but you can still use model and queryset as data).<br>
+                Inherited from <code>list</code>, You can explicitly use <code>Columns</code> object
+                if you do not want a listing based on model attributes (but you can still use model and queryset as data).<br>
                 Use this syntax in your custom listing class :<br>
                 <pre><code class="language-python">{% codelisting %}{% verbatim %}
                 from django_listing import *
@@ -30,8 +30,8 @@
                     columns = Columns(
                         Column("col1", parameters....),
                         Column("col2", parameters....),
-                        params={"param1": "value1"...}  # optional : parameters for all columns
-                        )
+                        ...
+                    )
                     ...
                 ...
                 {% endverbatim %}{% endcodelisting %}</code></pre>
@@ -46,11 +46,12 @@
                 class MyListing(Listing):
                     ...
                     columns = ModelColumns(
-                        MyModel,  # will automatically add all columns based on model's attributes
+                        MyModel,  # will automatically add all columns based on model's attributes (let's say it has first_name,last_name,age,address attributes)
                         Column("a_column_to_add_or_override1", parameters....),
                         Column("a_column_to_add_or_override2", parameters....),
-                        params={"param1": "value1"...}  # optional : parameters for all columns
+                        ...
                         )
+                    select_columns = "first_name,last_name"  # display only some columns
                     ...
                 ...
                 {% endverbatim %}{% endcodelisting %}</code></pre>

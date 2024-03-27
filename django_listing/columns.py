@@ -227,6 +227,8 @@ class RelatedModelMethodRef:
 
 class Columns(list):
     def __init__(self, *cols, params=None):
+        # params contains Column objects parameters, ex :
+        # params = {"col1": {"param1" : "value1" ...}, "col2": {"param2" : "value2" ...}
         if params is None:
             params = {}
         self._params = params

@@ -1,5 +1,6 @@
 {% extends "demo/base.html" %}
 {% load django_listing %}
+{% load demo_extras %}
 {% load i18n %}
 
 {% block body %}
@@ -23,6 +24,53 @@
         </tbody>
     </table>
     <br><br>
+    <h3>Filters layout and form buttons</h3>
+    <p>To declare filters layout, specify filters names for each line you want inside the form.</p>
+    <p>You can use list of lists or one string seperated by a <code>,</code> between each form field an by a <code>;</code> for each line.
+        The <code>form_layout</code> parameter can be defined in <code>Filters</code> creation parameters or in its instance.</p>
+    <p>To declare form buttons, use <code>form_buttons</code> parameters to specify a list or a comma separated string of buttons name.
+        Possible values are <code>"submit", "reset"</code></p>
+    <p>See 2 examples below :</p>
+
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class MyListing(Listing):
+        ...
+        filters = Filters(
+            Filter("filter1", parameters....),
+            Filter("filter2", parameters....),
+            Filter("filter3", parameters....),
+            Filter("filter4", parameters....),
+            ...
+            form_layout="filter1,filter2;filter3,filter4"  # 2 filter form fields per line in the form
+            form_buttons="submit,reset",
+            ...
+        )
+        ...
+    ...
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+
+    or
+
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class MyListing(Listing):
+        ...
+        filters = Filters(
+            Filter("filter1", parameters....),
+            Filter("filter2", parameters....),
+            Filter("filter3", parameters....),
+            Filter("filter4", parameters....),
+            ...
+        )
+        filters.form_layout=[["filter1","filter2"],["filter3","filter4"]]  # 2 filter form fields per line in form
+        filters.form_buttons=["submit","reset"],
+        ...
+    ...
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+
     <h3>Filter classes</h3>
     <table class="ref-guide">
         <thead>

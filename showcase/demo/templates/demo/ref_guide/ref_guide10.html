@@ -1,28 +1,73 @@
 {% extends "demo/base.html" %}
 {% load django_listing %}
+{% load demo_extras %}
 {% load i18n %}
 
 {% block body %}
     <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : Attached form</h2>
-    <p>You can attach a form to a listing in order to interact with it. Many actions are available and custom ones can be done</p>
+    <p>You can attach a form to a listing in order to interact with it. Many actions are available and custom ones can be created</p>
 
-    <h3>Filters parameters</h3>
-    <p>This is mainly parameters to customize filters form and its buttons</p>
+    <h3>Basic parameters</h3>
     <table class="ref-guide">
         <thead>
             <tr><th>Name</th><th>Description</th><th>Default value</th></tr>
         </thead>
         <tbody>
-            <tr><td>form_attrs</td><td>HTML attributes for filter form</td><td>{}</td></tr>
-            <tr><td>form_buttons</td><td></td><td>"reset,submit"</td></tr>
-            <tr><td>form_layout</td><td></td><td>None</td></tr>
-            <tr><td>form_reset_label</td><td></td><td>"Reset"</td></tr>
-            <tr><td>form_submit_label</td><td></td><td>"Filter"</td></tr>
-            <tr><td>form_template_name</td><td></td><td>"django_listing/&lt;THEME&gt;/filters_form.html"</td></tr>
+            <tr><td>attrs</td><td>HTML attribute for the form</td><td>{"class": "listing-form"}</td></tr>
+            <tr><td>buttons</td><td>Buttons to display at the bottom of the form</td><td>"reset,submit"</td></tr>
+            <tr><td>display_errors</td><td>Display form validation errors</td><td>True</td></tr>
+            <tr><td>form_base_class</td><td></td><td>ListingBaseForm</td></tr>
+            <tr><td>layout</td><td>form fields layout</td><td>None</td></tr>
+            <tr><td>listing</td><td><b>Read-only value :</b> The listing instance the attached form is bound with</td><td>None</td></tr>
+            <tr><td>name</td><td></td><td>"attached_form"</td></tr>
+            <tr><td>reset_icon</td><td></td><td>None</td></tr>
+            <tr><td>reset_label</td><td></td><td>"Reset"</td></tr>
+            <tr><td>submit_action</td><td></td><td>"insert"</td></tr>
+            <tr><td>submit_icon</td><td></td><td>None</td></tr>
+            <tr><td>submit_label</td><td></td><td>"Add"</td></tr>
+            <tr><td>template_name</td><td></td><td>ThemeTemplate("attached_form.html")</td></tr>
         </tbody>
     </table>
     <br><br>
-    <h3>Filter classes</h3>
+    <h3>Layout</h3>
+    <p> Django-listing uses column declaration to deduce the form field to use when creating dynamically the attached form.
+        If you want an additional form field in the attached form, you must declare a custom column in listing columns parameter even if it's not displayed in the listing itself.</p>
+    <p>To declare form field layout, specify columns names for each line you want inside the form. You can use list of lists or one string seperated by a <code>,</code> between each form field an by a <code>;</code> for each line.
+        The <code>layout</code> parameter can be defined in <code>AttachedForm</code> creation parameters or in its instance.</p>
+    <p>Example :</p>
+
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+    from django_listing import *
+    ...
+    class MyListing(Listing):
+        ...
+        columns = ModelColumns(
+            MyModel,  # let's say model has first_name,last_name,age,address attributes
+            Column("additional_col1", parameters....),  # just created for specific form field in attached form
+            Column("additional_col2", parameters....),  # just created for specific form field in attached form
+            ...
+        )
+        select_columns = "first_name,last_name"  # display only some columns in listing
+        ...
+        attached_form = AttachedForm(
+            "attached_edit_form",  # attached form's name
+            layout=(
+                "id,first_name,last_name,age;"  # "id" is the implicit primary key : exists by default in Django model attributes
+                "address;"
+                "additional_col1,additional_col2"  # Specific columns names to get specific form field
+            ),
+            buttons="delete_all,delete,reset,clear,insert,duplicate,update,update_all",  # buttons to display at the form's bottom
+        )
+    ...
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+
+
+
+
+
+
+
+
     <table class="ref-guide">
         <thead>
             <tr><th>Name</th><th>Description</th></tr>
