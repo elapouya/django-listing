@@ -13,6 +13,7 @@
             <tr><th>Name</th><th>Description</th><th>Default value</th></tr>
         </thead>
         <tbody>
+            <tr><td>template_name</td><td>django template to use to render attached form</td><td>"django_listing/&lt;THEME&gt;/attached_form.html"</td></tr>
             <tr><td>attrs</td><td>HTML attribute for the form</td><td>{"class": "listing-form"}</td></tr>
             <tr><td>buttons</td><td>Buttons to display at the bottom of the form</td><td>"reset,submit"</td></tr>
             <tr><td>display_errors</td><td>Display form validation errors</td><td>True</td></tr>
@@ -60,9 +61,41 @@
         )
     ...
     {% endverbatim %}{% endcodelisting %}</code></pre>
+    <br><br>
+    <h3>Buttons</h3>
+    <p>By default, attached form buttons are displayed at the bottom. Many of them are already coded : "delete_all", "delete", "reset", "clear", "insert", "duplicate", "update", "update_all"<br>
+        You can choose the buttons to display et their order. You can also define some custom ones.</p>
+    <p>To declare buttons, specify buttons action name in a list or a comma separated string.
 
+    <p>Example :</p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+        ...
+        attached_form = AttachedForm(
+            ...
+            buttons="reset, insert, update",  # buttons to display at the form's bottom
+        )
+    ...
+    {% endverbatim %}{% endcodelisting %}</code></pre>
 
-
+    <p>You can also specify an icon, a label and css classes on an existing or a new button.
+        In such a case, a button is to be declared into a tuple with the form :<br>
+        <code>(&lt;action name&gt;,&lt;button label&gt;,&lt;icon css class&gt;,&lt;button css classes&gt;)</code>.<br>
+        For buttons declaration you have then to specify a list of either an pre-defined action name either a tuple like above.
+    </p>
+    <p>Example :</p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+        ...
+        attached_form = AttachedForm(
+            ...
+            buttons=[
+                "reset",
+                ("insert", "Insert a line", "icon-insert", "blue-color"),
+                "update",
+                ("custom_action", "Do custom action", "icon-myicon", "other-color"),
+            ]
+        )
+    ...
+    {% endverbatim %}{% endcodelisting %}</code></pre>
 
 
 
