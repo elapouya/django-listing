@@ -467,18 +467,15 @@ class ListingViewMixin:
         listing.sort = "id"
 
     def manage_attached_form_update_get_form(self, listing, *args, **kwargs):
+        # Fields are not required only in mass update (more than one row selected)
         form = listing.attached_form.get_form(
             force_not_required=len(listing.get_selected_rows()) > 1
         )
+        # trigger default checks
         form.full_clean()
-        if not any(form.cleaned_data.values()):
-            form.add_error(None, gettext("Please fill at least one field to update"))
-        return form
-
-    def manage_attached_form_update_get_form(self, listing, *args, **kwargs):
-        form = listing.attached_form.get_form(force_not_required=True)
+        # add error if no row selected
         if len(listing.get_selected_rows()) == 0:
-            form.add_error(None, gettext("Please select at least one item"))
+            form.add_error(None, gettext("Please select at least one item in the listing"))
         return form
 
     def manage_attached_form_update_process(

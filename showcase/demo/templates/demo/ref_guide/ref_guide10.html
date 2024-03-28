@@ -186,10 +186,66 @@ permission_required_for_custom_action = False
     <b>Note :</b> The parameters above can be specified in both listing and view.
     </p>
     <h3>Actions processing</h3>
-    <p>Action processing follows this pattern :</p>
+    <p>Actions processing follows this pattern :</p>
     <ul>
-        <li>The user press an action button</li>
-        <
+        <li>The user press an action button, for example the "Delete All" button that is associated with <code>delete_all</code> action</li>
+        <li>The <code>ListingViewMixin</code> receive a POST request where the parameter <code>action_button</code> contains the <code>&lt;action&gt;</code> value.</li>
+        <li>The view method <code>manage_listing_attached_form(listing)</code> is executed
+        <li>The permissions are checked with the listing method <code>has_permission_for_action(action)</code></li>
+        <li>If granted, django-listing searches whether a specific action method is available in view then in listing and use it :<br>
+            <b>In view : </b><code>manage_attached_form_&lt;action&gt;_action(listing)</code><br>
+            <b>In listing : </b><code>manage_attached_form_&lt;action&gt;_action()</code><br>
+            <b>Note :</b> this is not the recommended way to manage actions, as it is difficult to handle.<br>
+            <u>If a specific action method is not found</u>, the default behaviour is hereafter :
+        </li>
+        <li>django-listing will look for a specific action get_form method and use it if present, otherwise use default method for that action.<br>
+            <b>In view : </b><code>manage_attached_form_&lt;action&gt;_get_form(listing)</code><br>
+            <b>In listing : </b><code>manage_attached_form_&lt;action&gt;_get_form()</code><br><br>
+            This method is a good place to modify the form before rendering, for example to deactivate field value presence checking by using <code>force_not_required</code> parameter :
+            <pre><code class="language-python">{% codelisting %}def manage_attached_form_delete_all_get_form(self, listing, *args, **kwargs):
+    # call the default AttachedForm.get_form() method : it is dynamically created based on specified layout.
+    return listing.attached_form.get_form(force_not_required=True){% endcodelisting %}</code></pre>
+            You can change standard form error management, here for updating selected rows, it depends on selected rows number :
+
+    <pre><code class="language-python">{% codelisting %}def manage_attached_form_update_get_form(self, listing, *args, **kwargs):
+    # Fields are not required only in mass update (more than one row selected)
+    form = listing.attached_form.get_form(
+        force_not_required=len(listing.get_selected_rows()) > 1
+    )
+    # trigger default checks
+    form.full_clean()
+    # add error if no row selected
+    if len(listing.get_selected_rows()) == 0:
+        form.add_error(None, gettext("Please select at least one item in the listing"))
+    return form{% endcodelisting %}</code></pre>
+        </li>
+        <li>A model object instance is created. If the PK has been transmitted in POST (when row has been selected in the listing), the object is taken from database.</li>
+        <li>The form values are applied onto the instance.</li>
+        <li>django-listing will look for a specific action processing and use it if present, otherwise use default processing.<br>
+            <b>In view : </b><code>manage_attached_form_&lt;action&gt;_process(listing, form, instance)</code><br>
+            <b>In listing : </b><code>manage_attached_form_&lt;action&gt;_process(form, instance)</code><br><br>
+            For processing, you can use <code>listing.records.get_filtered_queryset()</code> to get the queryset of what has be filtered by the user. 
+            To get all selected objects primary keys, use <code>listing.get_selected_rows()</code><br><br>
+            Here is the default processing for <code>delete_all</code> action (delete all rows filtered by user via filter form) :
+
+            <pre><code class="language-python">{% codelisting %}def manage_attached_form_delete_all_process(self, listing, form, instance, *args, **kwargs):
+        listing.records.get_filtered_queryset().delete(){% endcodelisting %}</code></pre>
+            Here is the default processing for <code>delete</code> action (delete selected rows):
+
+            <pre><code class="language-python">{% codelisting %}def manage_attached_form_delete_process(self, listing, form, instance, *args, **kwargs):
+    selected_rows = listing.get_selected_rows()
+    if len(selected_rows) == 1 and instance.pk:
+        instance.delete()
+    else:
+        listing.model.objects.filter(pk__in=selected_rows).delete(){% endcodelisting %}</code></pre>
+        Process methods can return a dict that will be returned as JSON to the navigator for displaying both listing and attached form.
+        If not returned by the process methods, django-listing will automatically build it with this form:
+        <pre><code class="language-python">{% codelisting %}{
+    "listing": listing_html,  # the rendered listing as HTML
+    "attached_form": form_html,  # the rendered attached form as HTML
+    "object_pk": instance.pk,  # the newly create Model instance PK if relevant
+}{% endcodelisting %}</code></pre>
+        </li>
     </ul>
 
 {% endblock %}
