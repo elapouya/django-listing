@@ -5,28 +5,28 @@
 
 {% block body %}
     <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : Attached form</h2>
-    <p>You can attach a form to a listing in order to interact with it. Many actions are available and custom ones can be created</p>
-
+    <p>You can attach a form to a listing in order to interact with it. Many actions are available and custom ones can be created.</p>
+    <p>In order to work, you need to activate Ajax requests (<code>accept_ajax = True</code>) and define <code>attached_form</code> parameter in listing definition</p>
+    <p>listing <code>attached_form</code> must contain an <code>AttachedForm</code> instance with parameters below :</p>
     <h3>Basic parameters</h3>
     <table class="ref-guide">
         <thead>
             <tr><th>Name</th><th>Description</th><th>Default value</th></tr>
         </thead>
         <tbody>
-            <tr><td>template_name</td><td>django template to use to render attached form</td><td>"django_listing/&lt;THEME&gt;/attached_form.html"</td></tr>
             <tr><td>attrs</td><td>HTML attribute for the form</td><td>{"class": "listing-form"}</td></tr>
             <tr><td>buttons</td><td>Buttons to display at the bottom of the form</td><td>"reset,submit"</td></tr>
             <tr><td>display_errors</td><td>Display form validation errors</td><td>True</td></tr>
             <tr><td>form_base_class</td><td></td><td>ListingBaseForm</td></tr>
             <tr><td>layout</td><td>form fields layout</td><td>None</td></tr>
             <tr><td>listing</td><td><b>Read-only value :</b> The listing instance the attached form is bound with</td><td>None</td></tr>
-            <tr><td>name</td><td></td><td>"attached_form"</td></tr>
+            <tr><td>name</td><td>Be careful : The form's name is used on some method's name. It is suggested to not customize it.</td><td>"attached_form"</td></tr>
             <tr><td>reset_icon</td><td></td><td>None</td></tr>
             <tr><td>reset_label</td><td></td><td>"Reset"</td></tr>
             <tr><td>submit_action</td><td></td><td>"insert"</td></tr>
             <tr><td>submit_icon</td><td></td><td>None</td></tr>
             <tr><td>submit_label</td><td></td><td>"Add"</td></tr>
-            <tr><td>template_name</td><td></td><td>ThemeTemplate("attached_form.html")</td></tr>
+            <tr><td>template_name</td><td>django template to use to render attached form</td><td>"django_listing/&lt;THEME&gt;/attached_form.html"</td></tr>
         </tbody>
     </table>
     <br><br>
@@ -41,6 +41,8 @@
     from django_listing import *
     ...
     class MyListing(Listing):
+        ...
+        accept_ajax = True
         ...
         columns = ModelColumns(
             MyModel,  # let's say model has first_name,last_name,age,address attributes
@@ -60,6 +62,36 @@
             buttons="delete_all,delete,reset,clear,insert,duplicate,update,update_all",  # buttons to display at the form's bottom
         )
     ...
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <p>Your view must inheritate from <code>ListingView</code> or <code>ListingViewMixin</code> :</p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}class MyView(ListingView):
+    template_name = "my_template.html"
+    listing_class = MyListing
+    listing_data = MyModel
+{% endverbatim %}{% endcodelisting %}</code></pre>
+    <p>In your view template, you need this kind of code to have the filter fom, the listing and the attached form on the same page :</p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+...
+{% load django_listing %}
+...
+{% block body %}
+    ...
+    {% render_listing listing as listing_frame %}  {# listing must be rendered before filters form #}
+    {% render_filters_form listing as filter_frame %}
+
+    <div class="row justify-content-center">
+        <div class="col col-lg-auto">
+            {{ filter_frame }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ listing_frame }}
+        </div>
+    </div>
+
+    {% render_attached_form listing %}
+{% endblock %}
     {% endverbatim %}{% endcodelisting %}</code></pre>
     <br><br>
     <h3>Buttons</h3>
@@ -97,93 +129,67 @@
     ...
     {% endverbatim %}{% endcodelisting %}</code></pre>
 
-
-
-
-
-    <table class="ref-guide">
-        <thead>
-            <tr><th>Name</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-            <tr><td>AutocompleteForeignKeyFilter</td><td></td></tr>
-            <tr><td>AutocompleteMultipleForeignKeyFilter</td><td></td></tr>
-            <tr><td>BooleanFilter</td><td></td></tr>
-            <tr><td>ChoiceFilter</td><td></td></tr>
-            <tr><td>DateFilter</td><td></td></tr>
-            <tr><td>DateTimeFilter</td><td></td></tr>
-            <tr><td>Filter</td><td></td></tr>
-            <tr><td>FloatFilter</td><td></td></tr>
-            <tr><td>ForeignKeyFilter</td><td></td></tr>
-            <tr><td>IntegerFilter</td><td></td></tr>
-            <tr><td>MultipleChoiceFilter</td><td></td></tr>
-            <tr><td>TimeFilter</td><td></td></tr>
-        </tbody>
-    </table>
     <br><br>
-    <h3>Filter parameters</h3>
-    <p>There are many ways to specify Filter parameters :</p>
-    <p>
-    <ul>
-        <li>In listing class to configure all Filter objects with the same parameter, syntax is : <code>filters_&lt;parameter&gt; = &lt;value&gt;</code></li>
-        <li>In listing class to configure one specific Filter object, syntax is : <code>f_&lt;filter name&gt;__&lt;parameter&gt; = &lt;value&gt;</code></li>
-        <li>In Filter object creation, in kwargs : <code>Filter("filter_name", parameter1="value1",...)</code></li>
-        <li>In templates with this syntax : {% verbatim %}<code>{% setopt_filter listing "filter_name" parameter1="value1" ... %}</code>{% endverbatim %}</li>
-        <li>In templates with this syntax for html attributes : {% verbatim %}<code>{% setopt_filter_html_attr listing "filter_name" "xxx_attrs" "html_attribute" "attribute_value" %}</code>{% endverbatim %}</li>
-    </ul>
+    <h3>Permissions</h3>
+    <p>Buttons displayed at the bottom requires some permissions to be used. <br>
+        Each action has got its own permission. By default, permissions are required.
+        As their name are calculated, it would be tedious to declare all of them for all models an attached form will be used.
+        There are many solutions :
+        <ul>
+            <li>
+                You can specify the permission name for each action in the listing, thus you can use the same for all attached forms.
+                to do so, for pre-defined actions, you can modify these attributes :<br>
+<pre><code class="language-python">permission_required_for_duplicate = "my_perm_for_duplicate"
+permission_required_for_insert = "my_perm_for_insert"
+permission_required_for_update = "my_perm_for_update"
+permission_required_for_update_all = "my_perm_for_update_all"
+permission_required_for_delete = "my_perm_for_delete"
+permission_required_for_delete_all = "my_perm_for_delete_all"
+permission_required_for_export = "my_perm_for_export"
+# For this example, do not forget to declare permissions "my_perm_for_xxx" in a model Meta class
+
+# if you have custom action :
+permission_required_for_custom_action = "my_perm_custom_action"
+</code></pre>
+            </li>
+            <li>
+                You can let django-listing compute permissions names, it will use this syntax :<br>
+                <code>"&lt;app_label&gt;.&lt;permission_action&gt;_&lt;model_name&gt;"</code><br>
+                Where <code>permission_action</code> is deduced from action name with this conversion table : <br>
+<pre><code class="language-python">PERMISSION_ACTIONS = dict(
+    insert="add",
+    update="change",
+    update_all="change",
+    delete_all="delete",
+)</code></pre>
+                So if you have an aplication <code>myapp</code> with a model <code>MyModel</code>, the permission for the <code>insert</code> button will be:<br>
+                <code>myapp.add_mymodel</code><br>
+                And, this is wonderful, because Django will have already added this permission while migrating you model <code>MyModel</code>.
+            </li>
+            <li>
+                You can deactivate permission checking for one or more action by using <code>False</code> for its name : <br>
+<pre><code class="language-python">permission_required_for_duplicate = False
+permission_required_for_insert = False
+permission_required_for_update = False
+permission_required_for_update_all = False
+permission_required_for_delete = False
+permission_required_for_delete_all = False
+permission_required_for_export = False
+permission_required_for_custom_action = False
+</code></pre>
+            </li>
+            <li>
+                You can also deactivate all actions permissions checking by using :<br>
+                <code>no_permission_required_for_actions = True</code>
+            </li>
+        </ul>
+    <b>Note :</b> The parameters above can be specified in both listing and view.
     </p>
-    <table class="ref-guide">
-        <thead>
-            <tr><th>Name</th><th>Description</th><th>Default value</th></tr>
-        </thead>
-        <tbody>
-            <tr><td>container_attrs</td><td>HTML attributes for the DIV that contains the input widget</td><td>{"class": "form-field"}</td></tr>
-            <tr><td>default_value</td><td></td><td>None</td></tr>
-            <tr><td>field_name</td><td>Model field name to query</td><td>filter_key without __</td></tr>
-            <tr><td>filter_key</td><td>Django syntax for queryset filtering, ex: <code>name__icontains</code></td><td>filter name</td></tr>
-            <tr><td>filter_queryset_method</td><td>Listing method name or callable that will filter the queryset.
-                The given parameters are : a <code>queryset</code> and a <code>word</code> to use for filtering</td><td>None</td></tr>
-            <tr><td>form_field_class</td><td>Form field to use instead of default one</td><td>Depends on <code>Filter</code> class. Usually : forms.CharField</td></tr>
-            <tr><td>form_field_keys</td><td><b>Internal use :</b> specify specific parameters names available for a specific <code>Filter</code> form field class</td><td>None</td></tr>
-            <tr><td>format_label</td><td>Used in choices/select to customize labels. If a string is specified, this will correspond to the field to display as a label.
-                If it is a callable, it will receive the model object and need to return the label string to display</td><td>lambda obj: str(obj)</td></tr>
-            <tr><td>from_model_field_classes</td><td>Helps django-listing to choose the right <code>Filter</code> class when a model attribute name is given instead of a <code>Filter</code> object</td><td>depends on <code>Filter</code> class</td></tr>
-            <tr><td>from_model_field_name</td><td></td><td>None  # used by GroupBy<code>Filter</code>Column indirectly</td></tr>
-            <tr><td>from_model_field_order</td><td>Helps django-listing to choose the right <code>Filter</code> class when a model attribute name is given instead of a <code>Filter</code> object</td><td>100</td></tr>
-            <tr><td>help_text</td><td></td><td>None</td></tr>
-            <tr><td>input_name</td><td></td><td>None</td></tr>
-            <tr><td>input_type</td><td></td><td>None</td></tr>
-            <tr><td>key_type</td><td></td><td>None</td></tr>
-            <tr><td>label</td><td></td><td>None</td></tr>
-            <tr><td>listing</td><td><b>Read-only value :</b> The listing instance the filter is bound with</td><td>None</td></tr>
-            <tr><td>name</td><td></td><td>None</td></tr>
-            <tr><td>no_choice_msg</td><td>Select widget no choice message</td><td>"- No filtering -"</td></tr>
-            <tr><td>order_by</td><td>Customize ModelChoiceField choices order</td><td>None</td></tr>
-            <tr><td>params_keys</td><td><b>Internal use :</b> specify specific parameters names available for a specific <code>Filter</code> class</td><td>None</td></tr>
-            <tr><td>required</td><td></td><td>False</td></tr>
-            <tr><td>shrink_width</td><td>This customizes CSS flex-shrink value. You may have to specify this parameter on all Filter objects on the same line.
-                the smaller the value is, the larger the field is on the same line.
-            </td><td>None</td></tr>
-            <tr><td>url</td><td></td><td>None</td></tr>
-            <tr><td>value</td><td></td><td>None</td></tr>
-            <tr><td>widget_attrs</td><td>HTML attributes for the widget itself</td><td>{}</td></tr>
-            <tr><td>widget_class</td><td>You can override default widget class here</td><td>The widget class defined in <code>Filter</code> Class</td></tr>
-            <tr><td>widget_params</td><td>Parameters to use to intanciate the widget</td><td>{}</td></tr>
-            <tr><td>word_search</td><td>If True, each word in the phrase will be use</td><td>False</td></tr>
-        </tbody>
-    </table>
-    <br><br>
-    <br><br>
-    <h3>Icons and css classes</h3>
-    <table class="ref-guide">
-        <thead>
-            <tr><th>Attribute</th><th>Description</th><th>Default value</th></tr>
-        </thead>
-        <tbody>
-            <tr><td>theme_form_checkbox_widget_class</td><td></td><td>"form-control form-control-sm"</td></tr>
-            <tr><td>theme_form_radio_widget_class</td><td></td><td>"form-control form-control-sm"</td></tr>
-            <tr><td>theme_form_select_widget_class</td><td></td><td>"form-control form-control-sm"</td></tr>
-            <tr><td>theme_form_widget_class</td><td></td><td>"form-control form-control-sm"</td></tr>
-        </tbody>
-    </table>
+    <h3>Actions processing</h3>
+    <p>Action processing follows this pattern :</p>
+    <ul>
+        <li>The user press an action button</li>
+        <
+    </ul>
+
 {% endblock %}

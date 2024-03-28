@@ -143,6 +143,7 @@ LISTING_PARAMS_KEYS = {
     "link_object_columns",
     "listing_template_name",
     "name",
+    "no_permission_required_for_actions",
     "onready_snippet",
     "orphans",
     "page",
@@ -523,6 +524,7 @@ class Listing(ListingBase):
     listing_template_name = ThemeTemplate("listing.html")
     model = None
     name = None
+    no_permission_required_for_actions = False
     onready_snippet = None
     orphans = 0
     page = 1
@@ -1507,6 +1509,13 @@ class Listing(ListingBase):
     def has_permission_for_action(self, action):
         if not action:
             raise ListingException("self.action_button value is empty")
+        no_permission_required = getattr(
+            self._view, "no_permission_required_for_actions", None
+        )
+        if no_permission_required is None:
+            no_permission_required = getattr(self, "no_permission_required_for_actions")
+        if no_permission_required:
+            return True
         perm_attr_name = f"permission_required_for_{action}"
         perms = getattr(self._view, perm_attr_name, None)
         if perms is None:

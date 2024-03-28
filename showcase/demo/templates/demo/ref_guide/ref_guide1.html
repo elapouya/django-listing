@@ -75,6 +75,7 @@
             <tr><td>listing_template_name</td><td>Main template path that is used to render the listing</td><td>"django_listing/&lt;THEME&gt;/listing.html"</td></tr>
             <tr><td>model</td><td>The model to use to query data. If not present, django-listing will get it from the queryset given as data.</td><td>None</td></tr>
             <tr><td>name</td><td>Name to give to the listing. It is mainly used in messages and for building export file name.</td><td>None</td></tr>
+            <tr><td>no_permission_required_for_actions</td><td>If True, deactivate all permissions checking on actions (toolbar export, attached form actions...).</td><td>False</td></tr>
             <tr><td>onready_snippet</td><td>Javascript code to add in the <code>$(document).ready(function () {...});</code> listing section</td><td>None</td></tr>
             <tr><td>orphans</td><td>Paginator parameter : Number of orphans accepted on last page</td><td>0</td></tr>
             <tr><td>page</td><td>Actual page number (starts at 1)</td><td>1</td></tr>
