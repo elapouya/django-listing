@@ -6,8 +6,8 @@
 {% block body %}
     <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : Attached form</h2>
     <p>You can attach a form to a listing in order to interact with it. Many actions are available and custom ones can be created.</p>
-    <p>In order to work, you need to activate Ajax requests (<code>accept_ajax = True</code>) and define <code>attached_form</code> parameter in listing definition</p>
-    <p>listing <code>attached_form</code> must contain an <code>AttachedForm</code> instance with parameters below :</p>
+    <p>In order to work, you need to activate Ajax requests and auto-fill (<code>accept_ajax = True</code> and <code>attached_form_autofill = True</code>) and define <code>attached_form</code> parameter in listing definition.</p>
+    <p>Listing <code>attached_form</code> must contain an <code>AttachedForm</code> instance with parameters below :</p>
     <h3>Basic parameters</h3>
     <table class="ref-guide">
         <thead>
@@ -43,6 +43,7 @@
     class MyListing(Listing):
         ...
         accept_ajax = True
+        selectable = True
         ...
         columns = ModelColumns(
             MyModel,  # let's say model has first_name,last_name,age,address attributes
@@ -52,6 +53,7 @@
         )
         select_columns = "first_name,last_name"  # display only some columns in listing
         ...
+        attached_form_autofill = True
         attached_form = AttachedForm(
             "attached_edit_form",  # attached form's name
             layout=(
@@ -238,7 +240,7 @@ permission_required_for_custom_action = False
         instance.delete()
     else:
         listing.model.objects.filter(pk__in=selected_rows).delete(){% endcodelisting %}</code></pre>
-        Process methods can return a dict that will be returned as JSON to the navigator for displaying both listing and attached form.
+        Process methods can return a <code>dict</code> that will be returned as JSON to the navigator for displaying both listing and attached form.
         If not returned by the process methods, django-listing will automatically build it with this form:
         <pre><code class="language-python">{% codelisting %}{
     "listing": listing_html,  # the rendered listing as HTML
@@ -247,5 +249,34 @@ permission_required_for_custom_action = False
 }{% endcodelisting %}</code></pre>
         </li>
     </ul>
+    <br><br>
+    <h3>Objects serialization and auto-fill</h3>
+    <p>When you select a listing row, with <code>listing.attached_form_autofill = True</code> the object attributes will
+    be fulfilled in the attached form. To do so, objects data are serialized and placed into each row <code>div</code> or <code>tr</code>
+    on HTML attribute <code>data-serialized-object</code>. When selecting a listing row,
+    the data are unserialized and applied to the attached form : This avoid to make too many requests to the server and improve user experience.
+    </p>
+    <p>If the form required specific serialization, you can add in your model the method <code>get_serialized_form_data()</code>
+    that returns a <code>dict</code> containing the form field names as keys and JSON serialized data as values.
+    Data will be put in the form as hidden form field with the specified name.</p>
+    <p>If you want to serialize some data whose are not relative to a form field, but useful at client side in javascript,
+    you can add in your model the method <code>get_serialized_additional_data()</code> that returns a <code>dict</code> that will
+    be accessible with javascript in attribute <code>data</code> of the serialized object in HTML attribute <code>data-serialized-object</code>.
+    </p>
+    <p>Serialized data can be de-serialized with javascript : <pre><code class="language-javascript">{% codelisting %}// here row is the jquery object corresponding to the tr or div containing serialized data
+let serialized_data = row.attr('data-serialized-object');
+let serialized_obj = decodeURIComponent(escape(atob(serialized_data)));
+let obj = JSON.parse(serialized_obj);{% endcodelisting %}</code></pre>
+    </p>
+    <p>After auto-fill, django-listing will trigger the event djlst_form_filled with the form object as data, you can hangle the event this way :
+    <pre><code class="language-javascript">{% codelisting %}$(document).on('djlst_form_filled', function(event, data) {
+let form = data.form
+let listing_div = $("#" + form.attr("related-listing"));  // get listing div
+let selected_rows = listing_div.find(".row-container.selected");  // get selected rows
+...
+});{% endcodelisting %}</code></pre>
+    </p>
+    <p>It is possible to deactivate auto-fill on specific field, to do so,
+        use parameter <code>form_no_autofill = True</code> on corresponding column definition</p>
 
 {% endblock %}
