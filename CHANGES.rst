@@ -1,3 +1,8 @@
+0.7.18 (2024-03-29)
+-------------------
+- Fix django_listing.js for autocomplete multi-select
+- Add some documentation
+
 0.7.17 (2024-03-13)
 -------------------
 - Fix to get context processors executed during POST rendering
