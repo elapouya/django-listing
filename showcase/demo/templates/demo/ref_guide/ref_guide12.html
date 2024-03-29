@@ -36,13 +36,46 @@
     </p>
     <br>
     <h3>Template tags</h3>
-    <table class="ref-guide name-desc">
+    <table class="ref-guide name-desc">{% verbatim %}
         <thead>
             <tr><th>Name</th><th>Description</th></tr>
         </thead>
         <tbody>
-            <tr><td>Todo</td><td>-</td></tr>
+            <tr><td>{% create_listing listing data **kwargs %}</td><td></td></tr>
+            <tr><td>{% create_listing_begin listing **kwargs %}</td><td></td></tr>
+            <tr><td>{% create_listing_end listing data **kwargs %}</td><td></td></tr>
+            <tr><td>{% do_listing_header token %}</td><td></td></tr>
+            <tr><td>{% filters_add_row row %}</td><td></td></tr>
+            <tr><td>{% filters_form_field name %}</td><td></td></tr>
+            <tr><td>{% filters_form_field_container_attrs name %}</td><td></td></tr>
+            <tr><td>{% footer_snippets %}</td><td></td></tr>
+            <tr><td>{% get_dict_list key %}</td><td></td></tr>
+            <tr><td>{% get_form_field name %}</td><td></td></tr>
+            <tr><td>{% get_uniq_id %}</td><td></td></tr>
+            <tr><td>{% gethiddens_filters_form %}</td><td></td></tr>
+            <tr><td>{% gethiddens_listing without %}</td><td></td></tr>
+            <tr><td>{% geturl_listing listing **kwargs %}</td><td></td></tr>
+            <tr><td>{% geturl_listing_key listing key value **kwargs %}</td><td></td></tr>
+            <tr><td>{% header_snippets %}</td><td></td></tr>
+            <tr><td>{% initialize_listing listing data **kwargs %}</td><td></td></tr>
+            <tr><td>{% listing_confirm_msg_for_action action %}</td><td></td></tr>
+            <tr><td>{% listing_confirm_msg_nb_items_for_action action %}</td><td></td></tr>
+            <tr><td>{% listing_has_permission_for_action action %}</td><td></td></tr>
+            <tr><td>{% listing_responsive_columns_css format_str %}</td><td></td></tr>
+            <tr><td>{% onready_snippets %}</td><td></td></tr>
+            <tr><td>{% render_attached_form listing **name **layout **kwargs %}</td><td></td></tr>
+            <tr><td>{% render_filters_form listing %}</td><td></td></tr>
+            <tr><td>{% render_listing listing data **kwargs %}</td><td></td></tr>
+            <tr><td>{% render_listing_footer  %}</td><td></td></tr>
+            <tr><td>{% setopt_column name **kwargs %}</td><td></td></tr>
+            <tr><td>{% setopt_column_html_attr name col_attr html_attr value %}</td><td></td></tr>
+            <tr><td>{% setopt_filter name **kwargs %}</td><td></td></tr>
+            <tr><td>{% setopt_filter_html_attr name col_attr html_attr value %}</td><td></td></tr>
+            <tr><td>{% setopt_listing **kwargs %}</td><td></td></tr>
+            <tr><td>{% setopt_listing_html_attr listing_attr html_attr value %}</td><td></td></tr>
+            <tr><td>{% setopt_toolbar_item name **kwargs %}</td><td></td></tr>
+            <tr><td>{% setopt_toolbar_item_html_attr name col_attr html_attr value %}</td><td></td></tr %}
         </tbody>
-    </table>
+        {% endverbatim %}</table>
     <br><br>
 {% endblock %}
