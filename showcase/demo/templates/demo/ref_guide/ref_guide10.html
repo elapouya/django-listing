@@ -221,7 +221,26 @@ permission_required_for_custom_action = False
         form.add_error(None, gettext("Please select at least one item in the listing"))
     return form{% endcodelisting %}</code></pre>
         </li>
-        <li>A model object instance is created. If the PK has been transmitted in POST (when row has been selected in the listing), the object is taken from database.</li>
+        <li>A model object instance is created. If the PK has been transmitted in POST (when row has been selected in the listing), the object is taken from database.<br>
+        The model object instance is stored in form instance on attribute <code>instance</code></li>
+        <li>The form is cleaned/validated. One can do specific cleaning : django-listing will look for methods below in this order :<br>
+            <u>For one form field cleaning :</u><br>
+            <b>In view : </b>
+            <ul>
+                <li>for a specific listing : <code>manage_listing_&lt;listing name&gt;_&lt;form name&gt;_clean_&lt;field name&gt;()</code>, for example : <code>manage_listing_listing_attached_form_clean_age()</code></li>
+                <li><code>manage_listing_&lt;form name&gt;_clean_&lt;field name&gt;()</code>, for example : <code>manage_listing_attached_form_clean_age()</code></li>
+            </ul>
+            <b>In listing : </b><code>&lt;form name&gt;_clean_&lt;field name&gt;()</code>, for example : <code>attached_form_clean_age()</code><br><br>
+            <u>For whole form field cleaning :</u><br>
+            <b>In view : </b>
+            <ul>
+                <li>for a specific listing : <code>manage_listing_&lt;listing name&gt;_&lt;form name&gt;_clean()</code>, for example : <code>manage_listing_listing_attached_form_clean()</code></li>
+                <li><code>manage_listing_&lt;form name&gt;_clean()</code>, for example : <code>manage_listing_attached_form_clean()</code></li>
+            </ul>
+            <b>In listing : </b><code>&lt;form name&gt;_clean()</code>, for example : <code>attached_form_clean()</code><br><br>
+            <b>Note :</b> Code these methods like if you were in a normal Django form clean method.
+            <br><br>
+        </li>
         <li>The form values are applied onto the instance.</li>
         <li>django-listing will look for a specific action processing and use it if present, otherwise use default processing.<br>
             <b>In view : </b><code>manage_attached_form_&lt;action&gt;_process(listing, form, instance)</code><br>
@@ -245,7 +264,7 @@ permission_required_for_custom_action = False
         <pre><code class="language-python">{% codelisting %}{
     "listing": listing_html,  # the rendered listing as HTML
     "attached_form": form_html,  # the rendered attached form as HTML
-    "object_pk": instance.pk,  # the newly create Model instance PK if relevant
+    "object_pk": instance.pk,  # the newly created model instance PK if relevant
 }{% endcodelisting %}</code></pre>
         </li>
     </ul>

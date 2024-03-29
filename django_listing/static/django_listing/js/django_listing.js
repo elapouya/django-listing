@@ -608,8 +608,11 @@ $(document).ready(function () {
 
     $(document).on('select2:open', function (e) {
         let aria_owns = $(e.target).parent().find('.select2-selection').attr('aria-owns');
-        document.querySelector('input[aria-controls="' + aria_owns + '"]').focus();
-        select2_opened = true;
+        let input = document.querySelector('input[aria-controls="' + aria_owns + '"]');
+        if (input) {  // may be null for multi-select widget
+            document.querySelector('input[aria-controls="' + aria_owns + '"]').focus();
+            select2_opened = true;
+        }
     });
 
     $("form").keyup(function (e) {
