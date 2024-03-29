@@ -1,0 +1,48 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load demo_extras %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : Template tags</h2>
+    <h3>Introduction</h3>
+    <p>When writing your template, be aware you have to load django listing template tags library : <p>
+    <pre><code class="language-django">{% codelisting %}{% verbatim %}{% load django_listing %}{% endverbatim %}{% endcodelisting %}</code></pre>
+    </p>
+    <br>
+    <h3>Declaration order</h3>
+    <p>You <b>MUST</b> declare or render a listing before rendering other features.
+        This is particularly the case when you use django-listing filter form.
+    <h4>Not correct :</h4>
+    <pre><code class="language-django">{% codelisting %}{% verbatim %}{% render_filters_form listing %}  {# Developer wants filter form above #}
+{% render_listing listing %}  {# Developer wants listing below #}{% endverbatim %}{% endcodelisting %}</code></pre>
+    <p>This does not work because listing has not been fully initialized yet.
+        This can be done by rendering listing and filter form into variables and then arrange them the way you want.</p>
+    <h4>Correct :</h4>
+    <pre><code class="language-django">{% codelisting %}{% verbatim %}{% render_listing listing as listing_frame %}  {# render listing in a variable first #}
+{% render_filters_form listing as filter_frame %}  {# render other features in a variable after #}
+
+<div class="row justify-content-center">
+    <div class="col col-lg-auto">
+        {{ filter_frame }}
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        {{ listing_frame }}
+    </div>
+</div>{% endverbatim %}{% endcodelisting %}</code></pre>
+
+    </p>
+    <br>
+    <h3>Template tags</h3>
+    <table class="ref-guide name-desc">
+        <thead>
+            <tr><th>Name</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Todo</td><td>-</td></tr>
+        </tbody>
+    </table>
+    <br><br>
+{% endblock %}
