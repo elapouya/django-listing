@@ -266,6 +266,7 @@ class ListingViewMixin:
             return response
 
     def manage_listing_upload(self, listing, *args, **kwargs):
+        # Work in progress !
         listing.model.objects.create(
             **{self.upload_field: listing.request.FILES["file"]}
         )
@@ -475,7 +476,9 @@ class ListingViewMixin:
         form.full_clean()
         # add error if no row selected
         if len(listing.get_selected_rows()) == 0:
-            form.add_error(None, gettext("Please select at least one item in the listing"))
+            form.add_error(
+                None, gettext("Please select at least one item in the listing")
+            )
         return form
 
     def manage_attached_form_update_process(

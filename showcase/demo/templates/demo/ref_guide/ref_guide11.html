@@ -36,6 +36,27 @@ class EditableListing1View(ListingView):
         return context
     {% endverbatim %}{% endcodelisting %}</code></pre>
     </p>
+    <h3>Parameters</h3>
+    <table class="ref-guide">
+        <thead>
+            <tr><th>Name</th><th>Description</th><th>Default value</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>listing_class</td><td>Listing to be instanciated. You can also override <code>get_listing_instance()</code> method to make your own listing.</td><td>Listing class</td></tr>
+            <tr><td>listing_data</td><td></td><td>None</td></tr>
+            <tr><td>context_classes</td><td>Tuple containing a list of classes (any classes, not only related to a listing). They will be put in template context automatically under their own names. Useful when you want to make many listings on the same page</td><td>()</td></tr>
+            <tr><td>listing_context_name</td><td></td><td>"listing"</td></tr>
+            <tr><td>listing</td><td>Currently managed listing instance</td><td>None</td></tr>
+            <tr><td>insert_success_redirect_url</td><td>On insert, redirect listing in edit mode after posting to specified url.</td><td>LISTING_REDIRECT_NONE</td></tr>
+            <tr><td>insert_success_msg</td><td></td><td>"&lt;b&gt;{object}&lt;/b&gt; has been successfully added."</td></tr>
+            <tr><td>insert_success_msg_no_save</td><td></td><td>"The form is valid but nothing has been added to database as &lt;tt&gt;save_to_database=False&lt;/tt&gt;."</td></tr>
+            <tr><td>update_success_redirect_url</td><td>On update, edirect listing in edit mode after posting to specified url. </td><td>LISTING_REDIRECT_NONE</td></tr>
+            <tr><td>update_success_msg</td><td></td><td>"&lt;b&gt;{nb_updates} {model_verbose}&lt;/b&gt; has been successfully updated."
+            <tr><td>update_success_msg_no_save</td><td></td><td>"The form is valid but nothing has been updated to database as &lt;tt&gt;save_to_database=False&lt;/tt&gt;."</td></tr>
+            <tr><td>is_ajax</td><td></td><td>False</td></tr>
+        </tbody>
+    </table>
+    <br><br>
     <h3>Methods</h3>
     <table class="ref-guide name-desc">
         <thead>
@@ -63,7 +84,7 @@ class EditableListing1View(ListingView):
             <tr><td>get_listing_from_post(request, refresh)</td><td></td></tr>
             <tr><td>get_listing_id(listing_id, refresh)</td><td></td></tr>
             <tr><td>get_listing_insert_success_redirect_url(listing)</td><td></td></tr>
-            <tr><td>get_listing_instance()</td><td>By default : create a listing instance from listing class and data and parameters defined in view</td></tr>
+            <tr><td>get_listing_instance()</td><td>By default : create a listing instance from listing class and data and parameters defined in view.</td></tr>
             <tr><td>get_listing_params()</td><td></td></tr>
             <tr><td>get_listing_update_success_redirect_url(listing)</td><td></td></tr>
             <tr><td>get_listings_instances()</td><td></td></tr>
@@ -102,59 +123,4 @@ class EditableListing1View(ListingView):
         </tbody>
     </table>
     <br><br>
-    <h3>Parameters</h3>
-    <table class="ref-guide">
-        <thead>
-            <tr><th>Name</th><th>Description</th><th>Default value</th></tr>
-        </thead>
-        <tbody>
-            <tr><td>container_attrs</td><td>HTML attributes for the DIV that contains the input widget</td><td>{"class": "form-field"}</td></tr>
-            <tr><td>default_value</td><td></td><td>None</td></tr>
-            <tr><td>field_name</td><td>Model field name to query</td><td>filter_key without __</td></tr>
-            <tr><td>filter_key</td><td>Django syntax for queryset filtering, ex: <code>name__icontains</code></td><td>filter name</td></tr>
-            <tr><td>filter_queryset_method</td><td>Listing method name or callable that will filter the queryset.
-                The given parameters are : a <code>queryset</code> and a <code>word</code> to use for filtering</td><td>None</td></tr>
-            <tr><td>form_field_class</td><td>Form field to use instead of default one</td><td>Depends on <code>Filter</code> class. Usually : forms.CharField</td></tr>
-            <tr><td>form_field_keys</td><td><b>Internal use :</b> specify specific parameters names available for a specific <code>Filter</code> form field class</td><td>None</td></tr>
-            <tr><td>format_label</td><td>Used in choices/select to customize labels. If a string is specified, this will correspond to the field to display as a label.
-                If it is a callable, it will receive the model object and need to return the label string to display</td><td>lambda obj: str(obj)</td></tr>
-            <tr><td>from_model_field_classes</td><td>Helps django-listing to choose the right <code>Filter</code> class when a model attribute name is given instead of a <code>Filter</code> object</td><td>depends on <code>Filter</code> class</td></tr>
-            <tr><td>from_model_field_name</td><td></td><td>None  # used by GroupBy<code>Filter</code>Column indirectly</td></tr>
-            <tr><td>from_model_field_order</td><td>Helps django-listing to choose the right <code>Filter</code> class when a model attribute name is given instead of a <code>Filter</code> object</td><td>100</td></tr>
-            <tr><td>help_text</td><td></td><td>None</td></tr>
-            <tr><td>input_name</td><td></td><td>None</td></tr>
-            <tr><td>input_type</td><td></td><td>None</td></tr>
-            <tr><td>key_type</td><td></td><td>None</td></tr>
-            <tr><td>label</td><td></td><td>None</td></tr>
-            <tr><td>listing</td><td><b>Read-only value :</b> The listing instance the filter is bound with</td><td>None</td></tr>
-            <tr><td>name</td><td></td><td>None</td></tr>
-            <tr><td>no_choice_msg</td><td>Select widget no choice message</td><td>"- No filtering -"</td></tr>
-            <tr><td>order_by</td><td>Customize ModelChoiceField choices order</td><td>None</td></tr>
-            <tr><td>params_keys</td><td><b>Internal use :</b> specify specific parameters names available for a specific <code>Filter</code> class</td><td>None</td></tr>
-            <tr><td>required</td><td></td><td>False</td></tr>
-            <tr><td>shrink_width</td><td>This customizes CSS flex-shrink value. You may have to specify this parameter on all Filter objects on the same line.
-                the smaller the value is, the larger the field is on the same line.
-            </td><td>None</td></tr>
-            <tr><td>url</td><td></td><td>None</td></tr>
-            <tr><td>value</td><td></td><td>None</td></tr>
-            <tr><td>widget_attrs</td><td>HTML attributes for the widget itself</td><td>{}</td></tr>
-            <tr><td>widget_class</td><td>You can override default widget class here</td><td>The widget class defined in <code>Filter</code> Class</td></tr>
-            <tr><td>widget_params</td><td>Parameters to use to intanciate the widget</td><td>{}</td></tr>
-            <tr><td>word_search</td><td>If True, each word in the phrase will be use</td><td>False</td></tr>
-        </tbody>
-    </table>
-    <br><br>
-    <br><br>
-    <h3>Icons and css classes</h3>
-    <table class="ref-guide">
-        <thead>
-            <tr><th>Attribute</th><th>Description</th><th>Default value</th></tr>
-        </thead>
-        <tbody>
-            <tr><td>theme_form_checkbox_widget_class</td><td></td><td>"form-control form-control-sm"</td></tr>
-            <tr><td>theme_form_radio_widget_class</td><td></td><td>"form-control form-control-sm"</td></tr>
-            <tr><td>theme_form_select_widget_class</td><td></td><td>"form-control form-control-sm"</td></tr>
-            <tr><td>theme_form_widget_class</td><td></td><td>"form-control form-control-sm"</td></tr>
-        </tbody>
-    </table>
 {% endblock %}
