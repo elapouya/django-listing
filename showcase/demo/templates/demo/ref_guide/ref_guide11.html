@@ -1,0 +1,160 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load demo_extras %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : ListingView &amp; ListingViewMixin</h2>
+    <p>For simple listing, you can use standard view functions or class-based views as usual.
+    But for more complex listings, you may need to use a class-based views inherited from <code>ListingView</code> or
+    at least using the mixin <code>ListingViewMixin</code>.<br>
+    <u>This is mandatory for</u> listing with <code>accept_ajax = True</code>, <code>editable = True</code> and <code>attached_form</code>.
+    </p>
+    <p>All the intelligence is in <code>ListingViewMixin</code>. <br>
+    <code>ListingView</code> is just a shortcut :
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}class ListingView(ListingViewMixin, TemplateView):
+    pass{% endverbatim %}{% endcodelisting %}</code></pre>
+    </p>
+    <p>As you saw in previous chapters, a lot of parameters can be but in the view class :
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+class EditableListing1View(ListingView):
+    template_name = "demo/editable/editable1.html"
+    listing_data = Employee
+    # You can also customize your listing directly in the view
+    # So you do not need to create a specific listing class :
+    exclude_columns = "id,company,interests"
+    editable = True
+    editable_columns = "all"
+    per_page = 5
+    gender__input_type = "radio"
+    save_to_database = True  # django-listing can save modifications for you for listing in edit mode
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context["post_data"] = pp.pformat(self.request.POST)
+        return context
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    </p>
+    <h3>Methods</h3>
+    <table class="ref-guide name-desc">
+        <thead>
+            <tr><th>Name</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>get(request)</td><td>Manage listing exports to a file</td></tr>
+            <tr><td>get_context_data(*args, **kwargs)</td>
+                <td>Automatically add in template context :
+                    <ul>
+                        <li>The listing that has triggered the rendering in <code>posted_listing</code></li>
+                        <li>The classes listined in parameter <code>context_classes</code> will be available in context as their own name</li>
+                        <li>The listing class will be available in context as its own name</li>
+                        <li>The listing instances will be available in context as its own id (default: <code>listing</code>)</li>
+                        <li>current view and request will also be available in context as <code>view</code> and <code>request</code> </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr><td>get_default_listing_instance()</td><td></td></tr>
+            <tr><td>get_form_instance(listing)</td><td>Get the attached form instance</td></tr>
+            <tr><td>get_from_listing_instances(name)</td><td></td></tr>
+            <tr><td>get_listing_class()</td><td>Default : returns <code>listing_class</code> attribute value</td></tr>
+            <tr><td>get_listing_context_name()</td><td>Default : returns <code>listing_context_name</code> attribute value</td></tr>
+            <tr><td>get_listing_data()</td><td>Default : returns <code>listing_data</code> attribute value. Could be a model, a queryset or a sequence</td></tr>
+            <tr><td>get_listing_from_post(request, refresh)</td><td></td></tr>
+            <tr><td>get_listing_id(listing_id, refresh)</td><td></td></tr>
+            <tr><td>get_listing_insert_success_redirect_url(listing)</td><td></td></tr>
+            <tr><td>get_listing_instance()</td><td>By default : create a listing instance from listing class and data and parameters defined in view</td></tr>
+            <tr><td>get_listing_params()</td><td></td></tr>
+            <tr><td>get_listing_update_success_redirect_url(listing)</td><td></td></tr>
+            <tr><td>get_listings_instances()</td><td></td></tr>
+            <tr><td>in_listing_instances(name)</td><td></td></tr>
+            <tr><td>json_response(data)</td><td></td></tr>
+            <tr><td>listing_insert_into_database(listing, form)</td><td></td></tr>
+            <tr><td>listing_instances_context()</td><td></td></tr>
+            <tr><td>listing_save_rows_to_database(listing, formset)</td><td></td></tr>
+            <tr><td>manage_attached_form_clear_action(listing)</td><td></td></tr>
+            <tr><td>manage_attached_form_delete_all_get_form(listing)</td><td></td></tr>
+            <tr><td>manage_attached_form_delete_all_process(listing, form, instance)</td><td></td></tr>
+            <tr><td>manage_attached_form_delete_get_form(listing)</td><td></td></tr>
+            <tr><td>manage_attached_form_delete_process(listing, form, instance)</td><td></td></tr>
+            <tr><td>manage_attached_form_duplicate_get_form(listing)</td><td></td></tr>
+            <tr><td>manage_attached_form_duplicate_process(listing, form, instance)</td><td></td></tr>
+            <tr><td>manage_attached_form_insert_get_form(listing)</td><td></td></tr>
+            <tr><td>manage_attached_form_insert_process(listing, form, instance)</td><td></td></tr>
+            <tr><td>manage_attached_form_update_all_get_form(listing)</td><td></td></tr>
+            <tr><td>manage_attached_form_update_all_process(listing, form, instance)</td><td></td></tr>
+            <tr><td>manage_attached_form_update_get_form(listing)</td><td></td></tr>
+            <tr><td>manage_attached_form_update_process(listing, form, instance)</td><td></td></tr>
+            <tr><td>manage_listing_action_button(listing)</td><td></td></tr>
+            <tr><td>manage_listing_ajax_request(request)</td><td></td></tr>
+            <tr><td>manage_listing_attached_form(listing)</td><td></td></tr>
+            <tr><td>manage_listing_insert(listing)</td><td></td></tr>
+            <tr><td>manage_listing_insert_valid(listing, form)</td><td></td></tr>
+            <tr><td>manage_listing_post(request)</td><td></td></tr>
+            <tr><td>manage_listing_update(listing)</td><td></td></tr>
+            <tr><td>manage_listing_update_valid(listing, formset)</td><td></td></tr>
+            <tr><td>manage_listing_upload(listing)</td><td></td></tr>
+            <tr><td>post(request)</td><td>django-listing manages ajax and posted listing in edit mode from this method</td></tr>
+            <tr><td>send_listing_insert_success_message(listing, form, object)</td><td></td></tr>
+            <tr><td>send_listing_update_success_message(listing, updated_rows_pk)</td><td></td></tr>
+            <tr><td>set_to_listing_instances(name, instance)</td><td></td></tr>
+            <tr><td>yield_listing_instances()</td><td></td></tr>
+        </tbody>
+    </table>
+    <br><br>
+    <h3>Parameters</h3>
+    <table class="ref-guide">
+        <thead>
+            <tr><th>Name</th><th>Description</th><th>Default value</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>container_attrs</td><td>HTML attributes for the DIV that contains the input widget</td><td>{"class": "form-field"}</td></tr>
+            <tr><td>default_value</td><td></td><td>None</td></tr>
+            <tr><td>field_name</td><td>Model field name to query</td><td>filter_key without __</td></tr>
+            <tr><td>filter_key</td><td>Django syntax for queryset filtering, ex: <code>name__icontains</code></td><td>filter name</td></tr>
+            <tr><td>filter_queryset_method</td><td>Listing method name or callable that will filter the queryset.
+                The given parameters are : a <code>queryset</code> and a <code>word</code> to use for filtering</td><td>None</td></tr>
+            <tr><td>form_field_class</td><td>Form field to use instead of default one</td><td>Depends on <code>Filter</code> class. Usually : forms.CharField</td></tr>
+            <tr><td>form_field_keys</td><td><b>Internal use :</b> specify specific parameters names available for a specific <code>Filter</code> form field class</td><td>None</td></tr>
+            <tr><td>format_label</td><td>Used in choices/select to customize labels. If a string is specified, this will correspond to the field to display as a label.
+                If it is a callable, it will receive the model object and need to return the label string to display</td><td>lambda obj: str(obj)</td></tr>
+            <tr><td>from_model_field_classes</td><td>Helps django-listing to choose the right <code>Filter</code> class when a model attribute name is given instead of a <code>Filter</code> object</td><td>depends on <code>Filter</code> class</td></tr>
+            <tr><td>from_model_field_name</td><td></td><td>None  # used by GroupBy<code>Filter</code>Column indirectly</td></tr>
+            <tr><td>from_model_field_order</td><td>Helps django-listing to choose the right <code>Filter</code> class when a model attribute name is given instead of a <code>Filter</code> object</td><td>100</td></tr>
+            <tr><td>help_text</td><td></td><td>None</td></tr>
+            <tr><td>input_name</td><td></td><td>None</td></tr>
+            <tr><td>input_type</td><td></td><td>None</td></tr>
+            <tr><td>key_type</td><td></td><td>None</td></tr>
+            <tr><td>label</td><td></td><td>None</td></tr>
+            <tr><td>listing</td><td><b>Read-only value :</b> The listing instance the filter is bound with</td><td>None</td></tr>
+            <tr><td>name</td><td></td><td>None</td></tr>
+            <tr><td>no_choice_msg</td><td>Select widget no choice message</td><td>"- No filtering -"</td></tr>
+            <tr><td>order_by</td><td>Customize ModelChoiceField choices order</td><td>None</td></tr>
+            <tr><td>params_keys</td><td><b>Internal use :</b> specify specific parameters names available for a specific <code>Filter</code> class</td><td>None</td></tr>
+            <tr><td>required</td><td></td><td>False</td></tr>
+            <tr><td>shrink_width</td><td>This customizes CSS flex-shrink value. You may have to specify this parameter on all Filter objects on the same line.
+                the smaller the value is, the larger the field is on the same line.
+            </td><td>None</td></tr>
+            <tr><td>url</td><td></td><td>None</td></tr>
+            <tr><td>value</td><td></td><td>None</td></tr>
+            <tr><td>widget_attrs</td><td>HTML attributes for the widget itself</td><td>{}</td></tr>
+            <tr><td>widget_class</td><td>You can override default widget class here</td><td>The widget class defined in <code>Filter</code> Class</td></tr>
+            <tr><td>widget_params</td><td>Parameters to use to intanciate the widget</td><td>{}</td></tr>
+            <tr><td>word_search</td><td>If True, each word in the phrase will be use</td><td>False</td></tr>
+        </tbody>
+    </table>
+    <br><br>
+    <br><br>
+    <h3>Icons and css classes</h3>
+    <table class="ref-guide">
+        <thead>
+            <tr><th>Attribute</th><th>Description</th><th>Default value</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>theme_form_checkbox_widget_class</td><td></td><td>"form-control form-control-sm"</td></tr>
+            <tr><td>theme_form_radio_widget_class</td><td></td><td>"form-control form-control-sm"</td></tr>
+            <tr><td>theme_form_select_widget_class</td><td></td><td>"form-control form-control-sm"</td></tr>
+            <tr><td>theme_form_widget_class</td><td></td><td>"form-control form-control-sm"</td></tr>
+        </tbody>
+    </table>
+{% endblock %}

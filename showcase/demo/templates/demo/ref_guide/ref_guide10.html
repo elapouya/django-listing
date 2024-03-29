@@ -270,7 +270,7 @@ permission_required_for_custom_action = False
     </ul>
     <br><br>
     <h3>Objects serialization and auto-fill</h3>
-    <p>When you select a listing row, with <code>listing.attached_form_autofill = True</code> the object attributes will
+    <p>When you select a listing row, with <code>attached_form_autofill = True</code> parameter in listing class definition, the object attributes will
     be fulfilled in the attached form. To do so, objects data are serialized and placed into each row <code>div</code> or <code>tr</code>
     on HTML attribute <code>data-serialized-object</code>. When selecting a listing row,
     the data are unserialized and applied to the attached form : This avoid to make too many requests to the server and improve user experience.

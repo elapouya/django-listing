@@ -21,7 +21,10 @@
             <tr><td>ajax_request</td><td><b>Read-only value :</b> tells whether a listing is being rendered through an ajax request</td><td>False</td></tr>
             <tr><td>allow_empty_first_page</td><td>Tells the paginator to generate a page even if there no object to display</td><td>True</td></tr>
             <tr><td>anchor_hash</td><td>An html anchor is set on the listing so it can be reached through a simple hashtag link</td><td>None</td></tr>
-            <tr><td>attached_form</td><td>AttachedForm object for insertable listing</td><td>None</td></tr>
+            <tr><td>attached_form</td><td>Could be : <ul>
+                <li><code>AttachedForm</code> object instance</li>
+                <li>A string representing a custom form to import and instanciate with POST and FILES request data, ex : <code>"myapp.forms.MyForm"</code></li>
+            </ul></td><td>None</td></tr>
             <tr><td>attached_form_autofill</td><td>Fill the attached form when selecting a line</td><td>False</td></tr>
             <tr><td>attached_form_base_class</td><td>Base class to use when dynamically creating the attached form</td><td>ListingBaseForm</td></tr>
             <tr><td>attached_form_css_id</td><td>HTML/CSS <code>id</code> atttribute to set on attached form</td><td>None</td></tr>
