@@ -1,0 +1,131 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load demo_extras %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : Theming</h2>
+    <h3>Introduction</h3>
+    <p>Django-listing comes with 3 themes : <code>default, bootstrap4 and bootstrap5</code>.
+        The <code>default</code> one actually points to <code>bootstrap4</code></p>
+    <p>In order to use a specific django-listing, you can specify it in <code>settings.py</code> :</p>
+
+<pre><code class="language-python">{% codelisting %}# Django-listing config:
+DJANGO_LISTING = {
+    "THEME": "bootstrap5",
+}{% endcodelisting %}</code></pre>
+    <br>
+    <h3>Create your own theme</h3>
+    <p>You need to create a class inherited from <code>ThemeConfigBase</code>.
+        This will be automatically registered with the condition you define it in a file that is read on application start-up.<br>
+        You can import this file in <code>settings.py</code> for example.
+    </p>
+    <p>The theme class looks like this</p>
+<pre><code class="language-python">{% codelisting %}{% verbatim %}from django_listing.theme_config import ThemeConfigBase
+
+
+class ThemeConfigMyTheme(ThemeConfigBase):
+    theme_name = "my_theme"
+    theme_class = "theme-my-theme"
+
+    # Here : some css classes and icons to use for the theme
+    ...{% endverbatim %}{% endcodelisting %}</code></pre>
+    <p>The actual default theme code is :</p>
+
+<pre><code class="language-python">{% codelisting %}{% verbatim %}class ThemeConfigBase(metaclass=ThemeConfigMeta):
+    theme_name = "default"  # to select the right directories for templates and django_listing.css
+    theme_fallback_name = "default"  # to compute fallback directory path to search templates if not existing in theme directory
+
+    # css classes
+    theme_class = "theme-standard"
+
+    theme_action_button_cancel_icon = ""
+    theme_action_button_class = "btn btn-primary"
+    theme_action_button_edit_icon = ""
+    theme_action_button_update_icon = ""
+    theme_action_button_upload_icon = ""
+    theme_button_active_class = "active"
+    theme_button_class = "btn btn-primary"
+    theme_button_disabled_class = "disabled"
+    theme_container_class = "django-listing-container"
+    theme_div_row_container_class = ""
+    theme_listing_class = "django-listing"  # do not modify
+    theme_row_class = "row-container"
+    theme_sort_asc_class = "asc"
+    theme_sort_asc_icon = "listing-icon-angle-up"
+    theme_sort_desc_class = "desc"
+    theme_sort_desc_icon = "listing-icon-angle-down"
+    theme_sort_none_icon = ""
+    theme_sortable_class = "sortable"
+    theme_sorted_class = "sorted"
+    theme_spinner_icon = "animate-spin listing-icon-spin2"
+    theme_localized_small_device_styles_width = "991px"
+
+    column_theme_button_class = "btn btn-primary btn-sm"
+    column_theme_button_link_class = "btn btn-primary btn-sm"
+    column_theme_link_class = ""
+    column_theme_cell_class = ""
+    column_theme_cell_with_filter_icon = "listing-icon-filter"
+    column_theme_footer_class = ""
+    column_theme_form_checkbox_widget_class = "form-control form-control-sm"
+    column_theme_form_radio_widget_class = "form-control form-control-sm"
+    column_theme_form_select_widget_class = "form-control form-control-sm"
+    column_theme_form_widget_class = "form-control form-control-sm"
+    column_theme_header_class = ""
+
+    paginator_theme_button_a_class = "page-link"
+    paginator_theme_button_li_class = "page-item"
+    paginator_theme_button_text_class = "button-text"
+    paginator_theme_fast_next_icon = "listing-icon-fast-forward"
+    paginator_theme_fast_page_has_icon = True
+    paginator_theme_fast_page_has_text = True
+    paginator_theme_fast_prev_icon = "listing-icon-fast-backward"
+    paginator_theme_first_icon = "listing-icon-to-start-1"
+    paginator_theme_first_last_has_icon = True
+    paginator_theme_first_last_has_text = True
+    paginator_theme_last_icon = "listing-icon-to-end-1"
+    paginator_theme_next_icon = "listing-icon-right-dir"
+    paginator_theme_prev_icon = "listing-icon-left-dir"
+    paginator_theme_prev_next_has_icon = True
+    paginator_theme_prev_next_has_text = True
+
+    toolbar_theme_button_class = "btn btn-secondary"{% endverbatim %}{% endcodelisting %}</code></pre>
+    <br>
+    <h4>You will have to redefine some django-listing templates to match your CSS library or relook listing pieces the way you want</h4>
+    <p>You just have to put them in the directory <code>myapp/templates/django_listing/my_theme/</code>.
+    If the template file does not exist, django-listing will use the default one.</p>
+    <p>Here is the list of templates you can override :</p>
+    <table class="ref-guide name-desc">
+        <thead>
+            <tr><th>Name</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>action_footer.html</td><td></td></tr>
+            <tr><td>action_header.html</td><td></td></tr>
+            <tr><td>actions_buttons.html</td><td></td></tr>
+            <tr><td>attached_form.html</td><td></td></tr>
+            <tr><td>div_row.html</td><td></td></tr>
+            <tr><td>empty_listing.html</td><td></td></tr>
+            <tr><td>filters_form.html</td><td></td></tr>
+            <tr><td>footer.html</td><td></td></tr>
+            <tr><td>group_by.html</td><td></td></tr>
+            <tr><td>header.html</td><td></td></tr>
+            <tr><td>listing_div.html</td><td></td></tr>
+            <tr><td>listing.html</td><td></td></tr>
+            <tr><td>paginator.html</td><td></td></tr>
+            <tr><td>selection_overlay.html</td><td></td></tr>
+            <tr><td>tbi_dropdown.html</td><td></td></tr>
+            <tr><td>tbi_export_dropdown.html</td><td></td></tr>
+            <tr><td>tbi_export.html</td><td></td></tr>
+            <tr><td>tbi_group_by.html</td><td></td></tr>
+            <tr><td>tbi_invert_selection.html</td><td></td></tr>
+            <tr><td>tbi_select_all.html</td><td></td></tr>
+            <tr><td>tbi_select.html</td><td></td></tr>
+            <tr><td>tbi_unselect_all.html</td><td></td></tr>
+            <tr><td>tbi_update.html</td><td></td></tr>
+            <tr><td>tbi_variations.html</td><td></td></tr>
+            <tr><td>toolbar.html</td><td></td></tr>
+            <tr><td>view_object_popup.html</td><td></td></tr>
+        </tbody>
+    </table>
+{% endblock %}

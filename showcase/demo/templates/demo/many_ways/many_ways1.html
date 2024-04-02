@@ -9,7 +9,9 @@
     <h3>Template side</h3>
     <p>Template side means no python code is needed, options can be set in template.
         You just have to put data (model, queryset, lists) in the context and you are ready to go.</p>
-    <p>Limitations : this is only for very simple listing. No filtering, attached forms nor ajax is possible.</p>
+    <p>Using template side is really simple and fast. But there is another benefit :
+        Add some django-listing on Django applications you do not own the code : You just have to override their template.</p>
+    <p>Nevertheless using template side has limitations : some configurations are not possible, especially those using Ajax.</p>
     <p>One-line declaration example in a template : </p>
     <pre><code class="language-django">{% codelisting %}{% verbatim %}
     {% load django_listing %}
