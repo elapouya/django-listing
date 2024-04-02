@@ -7,11 +7,11 @@ class DjangoListingConfig(AppConfig):
     verbose_name = "django-listing"
 
     THEME = "bootstrap5"
-    # AUTO_DECLARE_CSS : if False, developer must declare him self django_listing.min.css,
-    # datetimepicker.min.css, dropzone.min.css and other libs css
+    # AUTO_DECLARE_CSS : if False, developer must declare himself django_listing.min.css,
+    # datetimepicker.min.css, dropzone.min.css and other css files
     AUTO_DECLARE_CSS = True
-    # AUTO_DECLARE_JS : if False, developer must declare him self django_listing.min.css,
-    # datetimepicker.min.css, dropzone.min.css and other libs css
+    # AUTO_DECLARE_JS : if False, developer must declare himself django_listing.min.js,
+    # datetimepicker.min.js, dropzone.min.css and other js files
     AUTO_DECLARE_JS = True
     DATETIMEPICKER_CSS_URL = "/static/django_listing/css/jquery.datetimepicker.min.css"
     DATETIMEPICKER_JS_URL = (

@@ -7,7 +7,8 @@
     <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : Theming</h2>
     <h3>Introduction</h3>
     <p>Django-listing comes with 3 themes : <code>default, bootstrap4 and bootstrap5</code>.
-        The <code>default</code> one actually points to <code>bootstrap4</code></p>
+        The <code>default</code> one actually points to <code>bootstrap4</code>.
+    </p>
     <p>In order to use a specific django-listing, you can specify it in <code>settings.py</code> :</p>
 
 <pre><code class="language-python">{% codelisting %}# Django-listing config:
@@ -149,4 +150,6 @@ class MyColumn(Column):
     my_icon = ThemeAttribute("my_icon_css_class")  # "my_icon" is used somewhere else in the code ...
     ...
 {% endverbatim %}{% endcodelisting %}</code></pre>
+
+    <p><b>Note :</b> in django-listing templates, you can access django-listing theme values by using <code>theme_config.&lt;A ThemeConfigMyTheme attribute&gt;</code></p>
 {% endblock %}

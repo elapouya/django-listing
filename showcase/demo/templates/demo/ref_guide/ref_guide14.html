@@ -1,0 +1,41 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load demo_extras %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : App config</h2>
+    <h3>Introduction</h3>
+    <p>You can configure django-listing in <code>settings.py</code> by using this syntax :
+    <pre><code class="language-python">{% codelisting %}DJANGO_LISTING = {
+    "PARAMETER1": "value1",
+    "PARAMETER2": "value2",
+    ...
+}{% endcodelisting %}</code></pre>
+    <br><br>
+
+    <h3>Parameters</h3>
+    <table class="ref-guide">
+        <thead>
+            <tr><th>Name</th><th>Description</th><th>Default value</th></tr>
+        </thead>
+        <tr><td>AUTO_DECLARE_CSS</td><td>If <code>False</code>, developer must declare himself django_listing.min.css, datetimepicker.min.css, dropzone.min.css and other css files</td><td>True</td></tr>
+        <tr><td>AUTO_DECLARE_JS</td><td>if <code>False</code>, developer must declare himself django_listing.min.js, datetimepicker.min.js, dropzone.min.css and other js files</td><td>True</td></tr>
+        <tr><td>AUTOCOMPLETE_CSS_URLS</td><td></td><td>("/static/django_listing/css/select2.min.css", "/static/autocomplete_light/select2.css",)</td></tr>
+        <tr><td>AUTOCOMPLETE_JS_URLS</td><td></td><td>("/static/django_listing/js/select2.min.js", "/static/autocomplete_light/select2.min.js", "/static/autocomplete_light/autocomplete_light.min.js",)</td></tr>
+        <tr><td>DATETIMEPICKER_CSS_URL</td><td></td><td>"/static/django_listing/css/jquery.datetimepicker.min.css"</td></tr>
+        <tr><td>DATETIMEPICKER_JS_URL</td><td></td><td>"/static/django_listing/js/jquery.datetimepicker.full.min.js"</td></tr>
+        <tr><td>DROPZONE_CSS_URL</td><td>Feature not available yet</td><td>"/static/django_listing/css/dropzone.min.css"</td></tr>
+        <tr><td>DROPZONE_JS_URL</td><td>Feature not available yet</td><td>"/static/django_listing/js/dropzone.min.js"</td></tr>
+        <tr><td>DROPZONE_PARAMS</td><td>Feature not available yet</td><td>...</td></tr>
+        <tr><td>DUAL_LISTBOX_CSS_URL</td><td>Dual listbox is the widget used in "Group By" feature</td><td>"/static/django_listing/css/dual-listbox.min.css"</td></tr>
+        <tr><td>DUAL_LISTBOX_JS_URL</td><td>Dual listbox is the widget used in "Group By" feature</td><td>"/static/django_listing/js/dual-listbox.min.js"</td></tr>
+        <tr><td>THEME</td><td>The theme name to use</td><td>"bootstrap5"</td></tr>
+        </tbody>
+    </table>
+    <br>
+    <p><b>Note :</b> These parameters are available directly in django-listing templates (but not in your app templates).<br>
+        You can also access them by using <code>settings.django_listing_settings.&lt;A_PARAMETER&gt;</code></p>
+    <br><br>
+
+{% endblock %}
