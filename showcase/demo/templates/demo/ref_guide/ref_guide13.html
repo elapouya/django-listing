@@ -128,4 +128,25 @@ class ThemeConfigMyTheme(ThemeConfigBase):
             <tr><td>view_object_popup.html</td><td></td></tr>
         </tbody>
     </table>
+    <br><br>
+    <h3>How to use themes when sub-classing django-listing code</h3>
+    <p>When sub-classing original django-listing, you may have to define theme resources.
+        To do so, you will have to use <code>ThemeAttribute</code> python descriptor for css/icons
+        and <code>ThemeTemplate</code> python descriptor for template.<br>
+        By this way django-listing will dynamically search resource in the right theme class and template directory.<br>
+        In the future, above python descriptors will enable user to change on-the-fly the theme :
+        useful for switch from normal to dark mode for example.
+    </p>
+    <p>Examples :</p>
+<pre><code class="language-python">{% codelisting %}{% verbatim %}from django_listing import *
+from django_listing.theme_config import ThemeAttribute, ThemeTemplate
+
+class MyToolbarItem(ToolbarItem):
+    template_name = ThemeTemplate("tbi_my_item.html")
+    ...
+
+class MyColumn(Column):
+    my_icon = ThemeAttribute("my_icon_css_class")  # "my_icon" is used somewhere else in the code ...
+    ...
+{% endverbatim %}{% endcodelisting %}</code></pre>
 {% endblock %}
