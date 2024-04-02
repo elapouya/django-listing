@@ -1,9 +1,10 @@
 {% extends "demo/base.html" %}
 {% load django_listing %}
+{% load demo_extras %}
 {% load i18n %}
 
 {% block body %}
-    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : Listing</h2>
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : Listing &amp; DivListing</h2>
     <h3>Parameters</h3>
     <table class="ref-guide">
         <thead>
@@ -171,4 +172,47 @@
                 The given parameters are : <code>queryset</code>, <code>word</code></td></tr>
         </tbody>
     </table>
+    <br><br>
+    <h3>DivListing</h3>
+    <p>With django-listing, you can build div listing where table and its rows are replaced by divs.
+    This work by sub-classing your custom listing class from <code>DivListing</code> and specify <code>div_template_name</code>
+    with the template to use for one row. The template will be provided with a Record object as rec.
+    You will be free to use any HTML code you want to make your row.
+    </p>
+    <p>As rows are simple divs, you can play with css to put many rows on the same line, for example by using <code>display: inline-block; width=...; height=...</code></p>
+    <h4>Example</h4>
+<pre><code class="language-python">{% codelisting %}{% verbatim %}
+from django_listing import *
+...
+class EmployeeDivListing(DivListing):
+    # Only these columns will be listed in the table header
+    # Nevertheless, the full record information will be available
+    # in the div_row_template
+    columns = Columns(
+        Column("first_name"),
+        Column("last_name"),
+        Column("address"),
+        Column("age"),
+    )
+    per_page = 10
+    div_template_name = "demo/div_row.html"  # The template to use for each row instead of <tr> and <td> tags
+    attrs = {"class": "div-striped div-hover div-bordered"}
+    ...
+{% endverbatim %}{% endcodelisting %}</code></pre>
+For the template :
+<pre><code class="language-django">{% codelisting %}{% verbatim %}
+<div class="div-row">
+    <div class="col-md-2">
+        <img src="an_image.jpg">
+    </div>
+    <div class="col-md-5">
+        <b>{% trans "First name" %} :</b> {{ rec.first_name }}<br>
+        <b>{% trans "Last name" %} :</b> {{ rec.last_name }}<br>
+    </div>
+    <div class="col-md-5">
+        <b>{% trans "Age" %} :</b> {{ rec.age }}<br>
+        <b>{% trans "Address" %} :</b> {{ rec.address }}
+    </div>
+</div>
+{% endverbatim %}{% endcodelisting %}</code></pre>
 {% endblock %}

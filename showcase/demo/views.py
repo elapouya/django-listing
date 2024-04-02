@@ -104,6 +104,10 @@ class RefGuide14View(TemplateView):
     template_name = "demo/ref_guide/ref_guide14.html"
 
 
+class RefGuide15View(TemplateView):
+    template_name = "demo/ref_guide/ref_guide15.html"
+
+
 class ManyWaysView(TemplateView):
     template_name = "demo/many_ways/many_ways.html"
 

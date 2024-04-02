@@ -1,0 +1,52 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load demo_extras %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : Variations</h2>
+    <p>"Variations" are the possibility to display different listings with the same data and at the same place depending on the user choice.
+        Usually, it is for displaying different arrangements, for example : One variation to display a data grid,
+        one variation to display data and thumbnails arranged into div-rows and one variation to display only thumbnails.</p>
+    <p>This, can be only done at python side : To build variations, you must define standard listings classes to be displayed first, then
+    you create a class inherited from <code>ListingVariations</code> that lists all of them in <code>variations_classes</code> parameters.
+        Finally, the class you will use in your template will be the one inherited from <code>ListingVariations</code>.</p>
+    <p>Usually, users choose a variation from the toolbar with the <code>VariationsToolbarItem</code>. As toolbar must be present
+        on all variations, it is a good practice to put all common listing configurations in a same base classe mixin and use it in listing classes
+        to be included in <code>ListingVariations</code> class</p>
+<h3>Example</h3>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+from django_listing import *
+...
+class MyListingBaseMixin:
+    toolbar = {
+        VariationsToolbarItem(
+            labels=("standard", "Detailed", "Thumbnails""),  # correspond to 1st, 2nd and 3rd sub-listing specified in MyListing
+            icons=("listing-icon-menu-2", "listing-icon-th-list-4", "listing-icon-th-3")
+            ),
+        ),
+        ...
+    }
+    ...
+
+class MySubListing1(MyListingBaseMixin, Listing):
+    # standard listing
+
+class MySubListing1(MyListingBaseMixin, Listing):
+    # detailed listing
+
+class MySubListing1(MyListingBaseMixin, DivListing):
+    # listing with Thumbnails (use div-rows)
+
+class MyListing(ListingVariations):
+    ...
+    variations_classes = (
+        MySubListing1,
+        MySubListing2,
+        MySubListing3,
+    )
+    ...
+
+...
+{% endverbatim %}{% endcodelisting %}</code></pre>
+{% endblock %}

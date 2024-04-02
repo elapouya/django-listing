@@ -254,7 +254,7 @@ class Page(DjangoPage):
         # Special case, return zero if no items.
         if self.paginator.count == 0:
             return 0
-        # Special case for J-Gate because last page need special calculation
+        # Special case for django-listing because last page need special calculation
         if self._bottom is not None:
             return self._bottom + 1
         return (self.paginator.per_page * (self.number - 1)) + 1
@@ -264,7 +264,7 @@ class Page(DjangoPage):
         Return the 1-based index of the last object on this page,
         relative to total objects found (hits).
         """
-        # Special case for J-Gate because last page need special calculation
+        # Special case for django-listing because last page need special calculation
         if self._top is not None:
             return self._top
         # Special case for the last page because there can be orphans.
