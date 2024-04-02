@@ -28,6 +28,8 @@ class MyListingBaseMixin:
         ...
     }
     ...
+    # Could be a good idea to add filter declaration here if you have some :
+    filters = Filters(...)
 
 class MySubListing1(MyListingBaseMixin, Listing):
     # standard listing
