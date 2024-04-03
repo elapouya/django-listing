@@ -880,12 +880,13 @@ class AutocompleteForeignKeyFilter(Filter):
         widget_attrs.add("class", self.theme_form_select_widget_class)
         if "data-placeholder" not in widget_attrs:
             widget_attrs["data-placeholder"] = _("Select a value...")
-        widget_attrs["data-html"] = True
         widget = self.widget_class
         if self.url is None:
             raise InvalidFilters(
                 f"Please specify the url name to autocomplete view for {self.name}"
             )
+        if widget_attrs.get("data-html") is not False:
+            widget_attrs["data-html"] = True
         params = dict(self.widget_params, url=self.url, attrs=widget_attrs)
         return widget(**params)
 
