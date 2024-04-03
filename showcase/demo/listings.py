@@ -231,7 +231,7 @@ class LinksListing(Listing):
                 "?api=1&query={rec[address|urlencode]}"
             ),
         ),
-        params=dict(company={"link_attrs": {"target": "_blank"}}),
+        params=dict(address={"link_attrs": {"target": "_blank"}}),
     )
 
 

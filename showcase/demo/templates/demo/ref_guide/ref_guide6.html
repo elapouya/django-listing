@@ -98,5 +98,35 @@
             <tr><td>set_selected()</td><td>Used by django-listing when the row id is in listing.selection_initial</td></tr>
         </tbody>
     </table>
+    <br><br>
+    <h4>Record filters</h4>
+    <p>When getting field from a record, one can apply some filters : this is useful in some cases to avoid lambas.</p>
+    <p>filters are :  <code>urlencode, replace, sub, basename</code>.</p>
+    <p>You have to use the pipe <code>|</code> for using a filter and colon <code>:</code> for its parameters</p>
+    <p>Examples :<p>
+<pre><code class="language-python">{% codelisting %}{% verbatim %}LinkColumn(
+    "address",
+    href_tpl=(
+        "https://www.google.com/maps/search/"
+        "?api=1&query={rec[address|urlencode]}"  # urlencode address string by using urlencode record filter
+        # Note : django-listing automatically put rec object in the context when rendering the format string
+    ),
+)
+
+Column(
+    "address",
+    value_tpl='{rec[address|replace:(fr):, France]}'  # display replace "(fr)" by ", France"
+)
+
+Column(
+    "address",
+    value_tpl='{rec[address|sub:#.*?$:]}'  # remove comments in address
+)
+
+Column(
+    "logo",  # let's say "logo" is a model FileField
+    value_tpl='{rec[logo.path|basename]}'  # display the filename but not the full path
+)
+    {% endverbatim %}{% endcodelisting %}</code></pre>
 
 {% endblock %}
