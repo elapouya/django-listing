@@ -206,8 +206,8 @@ class="cell-filter {col.theme_cell_with_filter_icon}">
 class MyListing(Listing):
     ...
     columns = Columns(
-        Column("address"),
-        Column("age"),
+        Column("address"),  # will use "address" model field for data and meta data.
+        IntegerColumn("age"),  # will use "age" model field. In edit mode, will use input type="number"
         Column("company", data_key="name", header="Company's name"),
         DateColumn("joined_date", data_key="joined", header="Joined (date)"),
         DateTimeColumn(
@@ -236,89 +236,53 @@ class MyListing(Listing):
             link_attrs={"target": "_blank"},
         ),
 
+        TotalColumn(),  # sum all numeric values on the same line
+        AvgColumn(precision=1),  # average all numeric values on the same line
+        MaxColumn(),  # get max value from all numeric values on the same line
+        MinColumn(),  # get min value from all numeric values on the same line
+
+        Column("income", aggregation="sum"), # display in listing footer the sum of column's values on current page
+
+        Column("income", aggregation="global_sum"), # display in listing footer the sum on the whole queryset (all pages)
+
+        ButtonColumn(
+            "button",
+            label="Select",
+            header="Click to select",
+            widget_attrs={"data-bs-dismiss": "modal"},  # here the button is used to dismiss a listing put in a bootstrap modal
+        ),
+
+        ActionsButtonsColumn(
+            "actions",
+            buttons=(
+                # coma separated string of action buttons to display
+                "move_up,move_down,view_object,view_object_popup,edit_object,"
+                "delete_object"
+            ),
+            buttons_has_text=False,
+            move_up__field="rank",
+            move_down__field="rank",
+            view_object__title="See details (simple link to object.get_absolute_url())",
+            view_object_popup__icon="listing-icon-zoom-in",
+            view_object_popup__title="See details (Popup)",
+            view_object_popup__layout=(
+                "== Main informations ==;"
+                "first_name,last_name;"
+                "== Other informations ==;"
+                "age,have_car;"
+                "Rank:rank*2;"
+                "company*2"
+            ),
+        ),
+
         ManyColumn(
             "employees",
             data_key="employee_set",  # with django, to get the reverse of a foreign key (= one to many), you use the model in lower case + '_set'
-            cell_filter=lambda x: x.all()[
-                :10
-            ],  # only the 10 first employees (The .all() is a Django syntax to get all items from a queryset)
-            cell_map=lambda x: force_str(
-                x
-            ).title(),  # item by item : transform in text and put uppercase on first letter
-            cell_reduce=lambda x: " and ".join(x) + "...",
-        ),  # turn the items into a single string by putting ' and ' between items and finally add '...'
-    filters = Filters(
-        # Standard filter model : text field.
-        Filter(
-            "first_name",
-            filter_key="first_name__icontains", # Use Django .filter() notation
-            help_text="Case insensitive",  # Add an help_text on the field
+            cell_filter=lambda x: x.all()[:10],  # only the 10 first employees (The .all() is a Django syntax to get all items from a queryset)
+            cell_map=lambda x: force_str(x).title(),  # item by item : transform in text and put uppercase on first letter
+            cell_reduce=lambda x: " and ".join(x) + "...",  # turn the items into a single string by putting ' and ' between items and finally add '...'.
+                                                            # x is the list that comes from cell_map processing
         ),
-
-        # Filter age between 2 intergers
-        IntegerFilter("age1", filter_key="age__gte", label="Age from"),
-        IntegerFilter("age2", filter_key="age__lte", label="to"),
-
-        # Filter between 2 date ("joined" field MUST be a DateField, NOT a DateTimeField, otherwise it's impossible to filter one specific day)
-        DateFilter("joined1", filter_key="joined__gte", label="Joined between"),
-        DateFilter("joined2", filter_key="joined__lte", label="and"),
-
-        # Filter between 2 date if "joined" field is a DateTimeField, use "add_one_day" parameter on 2nd filter field :
-        DateFilter("joined1", filter_key="joined__gte", label="Joined between"),
-        DateFilter("joined2",
-            filter_key="joined__lte",
-            label="and",
-            add_one_day=True,  # needed for date filtering on datetime model field
-        ),
-
-        # Filter between 2 datetime
-        DatetimeFilter("joined1", filter_key="joined__gte", label="Joined between"),
-        DatetimeFilter("joined2", filter_key="joined__lte", label="and"),
-
-        # Filter a foreignkey model field with a select
-        ForeignKeyFilter("company", label="Company"),
-
-        # Filter a foreignkey model field with an autocomplete widget
-        AutocompleteForeignKeyFilter(
-            "company",
-            # No need to specify a filter_key here as django-listing uses filter's name by default (here filter_key="company")
-            label="Company",
-            url="company-autocomplete",  # you must define a view with the name "company-autocomplete" that returns matched items
-
-            # Optionally you can customize the widget :
-            widget_class=ModelSelect2Fixed,  # custom widget class that accepts "shortcodes_help" parameter
-            widget_params={"shortcodes_help": True},  # do not specify "attrs" key here, see next line
-            widget_attrs={"data-some-info": "my informations"},  # use "widget_attrs" to specify widget HTML attributes
-
-            # Note : for widget_attrs, "data-html" is set to True by default for AutocompleteForeignKeyFilter. Use False to remove the attribute
-        ),
-
-        # Filter with a multi-choices autocomplete widget
-        AutocompleteMultipleForeignKeyFilter(
-            "interests",
-            filter_key="interests__in",
-            help_text="You may specify many interests",
-            label="Interests",
-            url="interest-autocomplete",  # you must define a view with the name "interest-autocomplete" that returns matched items
-        ),
-
-        # Use a select widget on a model field with "choices" defined
-        ChoiceFilter("marital_status", no_choice_msg="Indifferent"),
-
-        # Use vertical radios instead of a select widget
-        ChoiceFilter("marital_status", input_type="radio", no_choice_msg="Indifferent"),
-
-        # Use horizontal radios instead of a select widget
-        ChoiceFilter("marital_status", input_type="radioinline", no_choice_msg="Indifferent"),
-
-        # Boolean filter using radio inputs
-        BooleanFilter("have_car", input_type="radio", no_choice_msg="Indifferent"),
-
-        # Have a filter form field shorter than other on same line : use "shrink=" on all Filters on the same line:
-        Filter("line1_field1", shrink=10,...)
-        Filter("line1_field2", shrink=10,...)
-        Filter("line1_field3", shrink=20,...)  # this form field will be 2 times more narrow than others
-        Filter("line1_field4", shrink=10,...)
         ...
     )
     ...

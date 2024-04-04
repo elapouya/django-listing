@@ -38,8 +38,7 @@
             <tr><td>confirm_msg_nb_items_for_delete</td><td><b>Read-only value :</b> Nb items to delete</td><td></td></tr>
             <tr><td>confirm_msg_nb_items_for_update</td><td><b>Read-only value :</b> Nb items to update</td><td></td></tr>
             <tr><td>current_page</td><td><b>Read-only value :</b> Paginator object for current page</td><td></td></tr>
-            <tr><td>data</td><td>Data to use for the listing</td><td>None</td></tr>
-            <tr><td>data</td><td>Listing data to use</td><td>None</td></tr>
+            <tr><td>data</td><td>Data to use for the listing. Could be a Django model, a Django queryset, a sequence as a list of dicts where each key is a column or a list of lists or a list of values. For a Django model, django-listing will automatically build the <code>model.objects.all()</code> queryset.</td><td>None</td></tr>
             <tr><td>datetimepicker_date_format</td><td>When activated, the date format return by datetimepicker widget</td><td>"Y-m-d"</td></tr>
             <tr><td>datetimepicker_datetime_format</td><td>When activated, the datetime format return by datetimepicker widget</td><td>"Y-m-d H:i"</td></tr>
             <tr><td>datetimepicker_time_format</td><td>When activated, the time format return by datetimepicker widget</td><td>"H:i"</td></tr>
@@ -58,7 +57,7 @@
             <tr><td>export_columns</td><td>Force the listing to export the specified columns. Otherwise only displayed columns will be exported.</td><td>None</td></tr>
             <tr><td>exported_columns</td><td><b>Read-only value :</b> Column objects to be exported</td><td>None</td></tr>
             <tr><td>filters</td><td>List of filters that has to be defined in custom listing class definition if filtering is wanted</td><td>None</td></tr>
-            <tr><td>footer_snippet</td><td>Put here the javascript code you want to be added after the listing.</td><td>None</td></tr>
+            <tr><td>footer_snippet</td><td>Put here the javascript code you want to be added at the page's end. Useful to dynamically load some javascript libraries.</td><td>None</td></tr>
             <tr><td>footer_template_name</td><td>Path to a template to use to fill the <code>tfoot</code> section of the listing</td><td>None</td></tr>
             <tr><td>force_order_by</td><td>To force specific ordering even if user select another one, specify a list of columns to order by. For example <code>["last_name", "first_name"]</code> will force ordering by last_name then by first_name</td><td>None</td></tr>
             <tr><td>form_model_fields</td><td><b>Read-only value :</b> List of model attributes name to used in a model</td><td>None</td></tr>
@@ -99,6 +98,7 @@
             <tr><td>record_label</td><td>Label used in messages for "record"</td><td>None</td></tr>
             <tr><td>record_label_plural</td><td>Label used in messages for "records"</td><td>None</td></tr>
             <tr><td>records_class</td><td>Record manager class to use</td><td>RecordManager</td></tr>
+            <tr><td>records</td><td><b>Read-only value :</b> The <code>records_class</code> instance</td><td></td></tr>
             <tr><td>request_media_for</td><td>Ask django-listing to add JS/CSS for a feature. Could be a list or a come separated string. Values can be one or more of these : <code>"datetimepicker" "dropzone" "dual_listbox" "autocomplete"</code></td><td>None</td></tr>
             <tr><td>row_attrs</td><td>HTML attributes to add on each listing row. See HTMLAttributes documentation.</td><td>{}</td></tr>
             <tr><td>row_form_base_class</td><td>The base class to use to build attached form and form used when listing is in edit mode</td><td>ListingBaseForm</td></tr>
@@ -107,7 +107,7 @@
             <tr><td>select_columns</td><td>List or comma separated string of columns to display. Useful when listing data are model or queryset</td><td>None</td></tr>
             <tr><td>selectable</td><td>Tells django-listing that the listing rows are selectable</td><td>False</td></tr>
             <tr><td>selected_columns</td><td><b>Read-only value :</b> Computed columns objects that has to be displayed. Takes in account <code>select_columns</code> and exclude_columns</td><td>None</td></tr>
-            <tr><td>selected_hidden_columns</td><td><b>Read-only value :</b> Computed columns objects that will have values put into html input hidden fields</td><td>None</td></tr>
+            <tr><td>selected_hidden_columns</td><td><b>Read-only value :</b> Computed columns objects to hide on rendering. Depends on whether a column is editable or not. Used to put corresponding values into hidden input field when listing is in edit mode</td><td>None</td></tr>
             <tr><td>selecting</td><td>Activate selection (need <code>selectable</code> to be true)</td><td>None</td></tr>
             <tr><td>selection_initial</td><td>List of objects PK to pre-select</td><td>None</td></tr>
             <tr><td>selection_key</td><td>Use this model atttribute to get selection value</td><td>"id"</td></tr>
