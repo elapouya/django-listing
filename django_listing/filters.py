@@ -63,6 +63,7 @@ FILTERS_PARAMS_KEYS = {
     "name",
     "no_choice_msg",
     "order_by",
+    "queryset",
     "shrink_width",
     "widget_attrs",
     "widget_class",
@@ -397,6 +398,7 @@ class Filter(metaclass=FilterMeta):
     filter_key = None
     field_name = None
     order_by = None
+    queryset = None
     format_label = None
     key_type = None
     input_name = None
@@ -843,6 +845,8 @@ class ForeignKeyFilter(Filter):
         return self.order_by
 
     def get_related_qs(self):
+        if self.queryset:
+            return self.queryset
         related_model = self.listing.model._meta.get_field(
             self.field_name
         ).related_model
