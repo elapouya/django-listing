@@ -99,7 +99,10 @@ class="cell-filter {col.theme_cell_with_filter_icon}">
         <tr><td>form_field_params</td><td>Parameters used to instanciate <code>form_field_class</code></td><td>None</td></tr>
         <tr><td>form_field_widget_class</td><td>Django form field widget class to use in forms</td><td>None</td></tr>
         <tr><td>form_field_widget_params</td><td>Parameters used to instanciate <code>form_field_widget_class</code></td><td>{}</td></tr>
-        <tr><td>form_field_serialize</td><td>Tells django-listing to serialize column value and store it in <code>data-serialized-object</code> row HTML attribute. This is required when auto_fill is wanted in attached form and you have added column in <code>ModelColumns</code></td><td>False</td></tr>
+        <tr><td>form_field_serialize</td><td>By default, all "standards" fields specified in the layout are serialized when listing <code>attached_form_autofill</code> is <code>True</code>.
+            Data are stored in <code>data-serialized-object</code> row HTML attribute.<br>
+            For speed reason, django-listing uses django internal serialization methods : for foreignkey object, only <code>PK</code> is serialized.<br>
+            You can tells django-listing to force extended serialization for some columns : This is required when some columns have been added and corresponding to a model field that is not directly in the initial model (doted notation used to refer a foreign object) or when the foreign object label needs to be serialized (<code>AutocompleteColumn</code>). </td><td>False</td></tr>
         <tr><td>from_model_field_classes</td><td>Used by django-listing to build <code>Columns</code> object to choose the right column class from the model field class</td><td>[]</td></tr>
         <tr><td>from_model_field_order</td><td>Helps django-listing to prioritize the class to choose when many are possible. Lower value has higher priority</td><td>100</td></tr>
         <tr><td>form_no_autofill</td><td>Tells django-listing to not auto-fill the form input corresponding to the column in attached form</td><td>False</td></tr>
