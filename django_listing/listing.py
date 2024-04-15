@@ -213,6 +213,7 @@ LISTING_ANNOTATIONS = {
 class ListingBase:
     PERMISSION_ACTIONS = dict(
         insert="add",
+        duplicate="add",
         update="change",
         update_all="change",
         delete_all="delete",

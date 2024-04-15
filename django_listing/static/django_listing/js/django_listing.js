@@ -284,7 +284,8 @@ function djlst_unique_row_select(e) {
 function djlst_select_all(e) {
     let listing_id = $(this).attr('listing-target');
     let listing = $('#' + listing_id);
-    listing.find('.row-container.row-selector').addClass('selected');
+    listing.find('.row-container').addClass('selected');
+    // not working in showcase with div rows : listing.find('.row-container.row-selector').addClass('selected');
     listing.find('input.selection-box').prop('checked', true);
     listing.find('input.row-select').each(function () {
         let hidden = $(this);
@@ -300,7 +301,8 @@ function djlst_unselect_all(e) {
 }
 
 function djlst_listing_unselect_all(listing) {
-    listing.find('.row-container.row-selector').removeClass('selected');
+    listing.find('.row-container').removeClass('selected');
+    // not working in showcase with div rows : listing.find('.row-container.row-selector').removeClass('selected');
     listing.find('input.selection-box').prop('checked', false);
     listing.find('input.row-select').each(function () {
         $(this).removeAttr('name');
@@ -311,7 +313,8 @@ function djlst_listing_unselect_all(listing) {
 function djlst_invert_selection(e) {
     let listing_id = $(this).attr('listing-target');
     let listing = $('#' + listing_id);
-    listing.find('.row-container.row-selector').toggleClass('selected');
+    listing.find('.row-container').toggleClass('selected');
+    // not working in showcase with div rows : listing.find('.row-container.row-selector').toggleClass('selected');
     listing.find('input.selection-box').prop('checked', true);
     listing.find('input.row-select').each(function () {
         let hidden = $(this);

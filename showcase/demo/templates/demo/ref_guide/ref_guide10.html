@@ -140,7 +140,7 @@
         <ul>
             <li>
                 You can specify the permission name for each action in the listing, thus you can use the same for all attached forms.
-                to do so, for pre-defined actions, you can modify these attributes :<br>
+                to do so, for pre-defined actions, you can modify these attributes in listing or view :<br>
 <pre><code class="language-python">permission_required_for_duplicate = "my_perm_for_duplicate"
 permission_required_for_insert = "my_perm_for_insert"
 permission_required_for_update = "my_perm_for_update"
@@ -160,6 +160,7 @@ permission_required_for_custom_action = "my_perm_custom_action"
                 Where <code>permission_action</code> is deduced from action name with this conversion table : <br>
 <pre><code class="language-python">PERMISSION_ACTIONS = dict(
     insert="add",
+    duplicate="add",
     update="change",
     update_all="change",
     delete_all="delete",

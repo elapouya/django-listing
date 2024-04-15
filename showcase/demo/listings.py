@@ -247,8 +247,18 @@ class ForeignKeyListing(Listing):
 
 
 class TotalListing(Listing):
-    columns = SequenceColumns(numbers_matrix)
-    columns += [TotalColumn(), AvgColumn(precision=1), MaxColumn(), MinColumn()]
+    columns = Columns(
+        Column("col1", data_key=0),
+        Column("col2", data_key=1),
+        Column("col3", data_key=2),
+        Column("col4", data_key=3),
+        Column("col5", data_key=4),
+        Column("col6", data_key=5),
+        TotalColumn(),
+        AvgColumn(precision=1),
+        MaxColumn(),
+        MinColumn(),
+    )
     paginator_hide_single_page = (
         True  # for single page listings, better remove paginator.
     )

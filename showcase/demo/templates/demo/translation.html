@@ -6,7 +6,7 @@
     <h2>Translation</h2>
     <p>Have a look at <code>demo/templates/demo/translation.html</code> and
         <code>TranslationListingView</code> in <code>demo/views.py</code> and
-        <code>demo/models.py</code> (where strings has been marked with <code>gettext_lazy as _</code>)
+        <code>demo/models.py</code> (where <code>verbose_name</code> has been set with <code>gettext_lazy as _</code>)
 
         to see how examples are coded</p>
 
@@ -23,5 +23,6 @@
 
     {% render_listing per_page=5 %}
     <br><br>
+    <b>Note :</b> Here <code>have car</code> is not translated because corresponding model field has no <code>verbose_name</code> attribute
 
 {% endblock %}
