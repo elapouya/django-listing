@@ -68,6 +68,7 @@ urlpatterns = i18n_patterns(
     path("ref_guide/13/", RefGuide13View.as_view(), name="ref_guide13"),
     path("ref_guide/14/", RefGuide14View.as_view(), name="ref_guide14"),
     path("ref_guide/15/", RefGuide15View.as_view(), name="ref_guide15"),
+    path("ref_guide/16/", RefGuide16View.as_view(), name="ref_guide16"),
     path("selectable/", SelectableListingIndexView.as_view(), name="selectable"),
     path("selectable/1/", SelectableListing1View.as_view(), name="selectable1"),
     path("selectable/2/", SelectableListing2View.as_view(), name="selectable2"),

@@ -1,0 +1,55 @@
+{% extends "demo/base.html" %}
+{% load django_listing %}
+{% load demo_extras %}
+{% load i18n %}
+
+{% block body %}
+    <h2><a href="{% url 'ref_guide' %}">Reference guide</a> : Special methods</h2>
+    <p>To avoid the developer to sub-class django-listing classes, many methods can be defined in your listing classes, in your view classes and sometime in your models</p>
+    <p>This table lists what is possible to define :</p>
+    <table class="ref-guide">
+        <thead>
+            <tr><th>Method to define</th><th>Description</th><th style="width: 90px">In</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>def get_button_&lt;button name&gt;_context(self, column, button_name, rec)</td><td>Returns a <code>dict</code> to be included in context for button rendering. template used : <code>django_listing/templates/django_listing/default/actions_buttons.html</code>. Values will be available in template as <code>button.xxx</code></td><td>listing</td></tr>
+            <tr><td>def manage_button_&lt;button name&gt;_action(self, column, *args, **kwargs)</td><td>Manages the action button. Use column.action_pk to get the selected object pk</td><td>listing</td></tr>
+            <tr><td>def get_edit_absolute_url()</td><td>Url to use to redirect user to model object edit form</td><td>model</td></tr>
+            <tr><td>def get_delete_absolute_url()</td><td>Url to use to redirect user to delete object view</td><td>model</td></tr>
+            <tr><td>def manage_listing_&lt;listing name&gt;_&lt;form name&gt;_clean_&lt;form field name&gt;(self, form)</td><td>Similar to Django form <code>clean_&lt;form field name&gt;()</code> for a specific listing and form name. For attached form, by default, <code>&lt;form name&gt; = "attached_form"</code>. Data to clean is in <code>form.cleaned_data</code> and the method must return form field value or raise some <code>ValidationError</code></td><td>view</td></tr>
+            <tr><td>def manage_listing_&lt;form name&gt;_clean_&lt;form field name&gt;(self, form)</td><td>Similar to Django form <code>clean_&lt;form field name&gt;()</code> for a specific form name. Shortcut when there is only one listing used by the view</td><td>view</td></tr>
+            <tr><td>def &lt;form name&gt;_clean_&lt;form field name&gt;(self, form)</td><td>Similar to Django form <code>clean_&lt;form field name&gt;()</code> for a specific form name</td><td>listing</td></tr>
+            <tr><td>def manage_listing_&lt;listing name&gt;_&lt;form name&gt;_clean(self, form)</td><td>Similar to Django form <code>clean()</code> for a specific listing and form name. For attached form, by default, <code>&lt;form name&gt; = "attached_form"</code>. Data to clean is in <code>form.cleaned_data</code> and the method must return the processed <code>cleaned_data dict</code> or raise some <code>ValidationError</code></td><td>view</td></tr>
+            <tr><td>def manage_listing_&lt;form name&gt;_clean(self, form)</td><td>Similar to Django form <code>clean()</code> for a specific form name. Shortcut when there is only one listing used by the view</td><td>view</td></tr>
+            <tr><td>def &lt;form name&gt;_clean(self, form)</td><td>Similar to Django form <code>clean()</code> for a specific form name</td><td>listing</td></tr>
+            <tr><td>def patch_help_text(self, text)</td><td>Method to modify on-the-fly a widget help_text. Useful for contextual help text for generic widgets.</td><td>widget</td></tr>
+            <tr><td>def manage_attached_form_get_initial(self)</td><td>Get initial data to provide to <code>attached_form</code>. From this listing method, <code>view object</code> can be retrieved with a <code>self.get_view()</code></td><td>listing</td></tr>
+            <tr><td>def manage_attached_form_&lt;action&gt;_get_initial(self)</td><td>Get initial data to provide to <code>attached_form</code> for a specific action.</td><td>listing</td></tr>
+            <tr><td>def manage_attached_form_get_initial(self, listing)</td><td>Get initial data to provide to <code>attached_form</code>. </td><td>view</td></tr>
+            <tr><td>def manage_attached_form_&lt;action&gt;_get_initial(self, listing)</td><td>Get initial data to provide to <code>attached_form</code> for a specific action.</td><td>view</td></tr>
+            <tr><td>def manage_attached_form_&lt;action&gt;_action(self)</td><td>Low-level method that usually call _get_form and _process methods. If defined, must return a Django <code>HttpResponse</code> Object</td><td>listing</td></tr>
+            <tr><td>def manage_attached_form_&lt;action&gt;_action(self, listing)</td><td>Low-level method that usually call _get_form and _process methods. If defined, must return a Django <code>HttpResponse</code> Object.</td><td>view</td></tr>
+            <tr><td>def manage_attached_form_&lt;action&gt;_get_form(self)</td><td>Returns the form instance to use for attached form. This is mainly used to customize a form for a specific action.</td><td>listing</td></tr>
+            <tr><td>def manage_attached_form_&lt;action&gt;_get_form(self, listing)</td><td>Returns the form instance to use for attached form. This is mainly used to customize a form for a specific action.</td><td>view</td></tr>
+            <tr><td>def manage_attached_form_&lt;action&gt;_process(self, form, object_instance, *args, **kwargs)</td><td>Processes the action itself. Returns a html rendering of listing and attached form or <code>None</code> to let django-listing to build that for you. otherwise, the response is the form : <br>
+            <code>    {<br>
+                    "listing": listing_html,<br>
+                    "attached_form": form_html,<br>
+                    "object_pk": instance.pk,<br>
+                }
+            </code></td><td>listing</td></tr>
+            <tr><td>def manage_attached_form_&lt;action&gt;_process(self, listing, form, object_instance, *args, **kwargs)</td><td>Processes the action itself. See above for more info.</td><td>view</td></tr>
+            <tr><td>def manage_attached_form_get_hiddens(self)</td><td>Returns a dict of key-values to transform as hidden form inputs in the attached form.</td><td>listing</td></tr>
+            <tr><td>def manage_attached_form_get_hiddens(self, listing)</td><td>Returns a dict of key-values to transform as hidden form inputs in the attached form.</td><td>view</td></tr>
+            <tr><td>def manage_attached_form_customize(self, form)</td><td>Gives the opportunity to customize form instance before usage</td><td>view,<br>listing</td></tr>
+            <tr><td>def filter_form_clean_&lt;filter_name&gt;(self, form)</td><td>Clean filter form field. Similar to Django form <code>clean_&lt;form field name&gt;()</code>. Data to clean is in <code>form.cleaned_data</code> and the method must return form field value or raise some <code>ValidationError</code></td><td>listing</td></tr>
+            <tr><td>def filter_form_clean(self, form)</td><td>Clean filter form. Similar to Django form <code>clean()</code>. Data to clean is in <code>form.cleaned_data</code> and the method must return the processed <code>cleaned_data dict</code> or raise some <code>ValidationError</code></td><td>listing</td></tr>
+            <tr><td>def filter_queryset_&lt;filter_name&gt;(self, queryset, word)</td><td>Returns a filtered queryset for a specific filter name</td><td>listing</td></tr>
+            <tr><td>def get_form_label(self)</td><td>Returns a label for an object to be serialized in attached form. This is used for autocomplete widget where labels are loaded dynamically from outside the widget</td><td>model</td></tr>
+            <tr><td>def get_serialized_additional_data(self)</td><td>Returns a key-values of additionnal data to be serialized for attached form. In order to be used at javascript level</td><td>model</td></tr>
+            <tr><td>def get_serialized_form_data(self)</td><td>Returns a key-values of form field values to be serialized for attached form auto-fill feature.</td><td>model</td></tr>
+            <tr><td>def get_listing_instance_xxx(self)</td><td>Returns a listing instance that will be accessible in templates under <code>xxx</code> variable.</td><td>view</td></tr>
+            <tr><td>def manage_listing_&lt;action&gt;(listing, *args, **kwargs)</td><td>Manage a POST action. Low-level method.</td><td>view</td></tr>
+        </tbody>
+    </table>
+{% endblock %}
