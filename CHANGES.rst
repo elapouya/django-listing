@@ -1,3 +1,8 @@
+0.7.20 (2024-04-15)
+-------------------
+- Many little fixes
+- Add a lot of documentation in the showcase
+
 0.7.18 (2024-03-29)
 -------------------
 - Fix django_listing.js for autocomplete multi-select
