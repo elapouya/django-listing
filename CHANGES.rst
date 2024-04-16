@@ -1,3 +1,8 @@
+0.7.21 (2024-04-16)
+-------------------
+- Update showcase poetry.lock
+- Update showcase installation documentation
+
 0.7.20 (2024-04-15)
 -------------------
 - Many little fixes
