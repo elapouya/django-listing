@@ -49,9 +49,13 @@ A demo is included in source code, you will need `poetry <https://python-poetry.
 
     curl -sSL https://install.python-poetry.org | python3 -
 
-To install the python envionment, go to django-listing source code root directory, then::
+Get the source code::
 
-    cd showcase
+    git clone https://github.com/elapouya/django-listing.git
+
+To install the python envionment::
+
+    cd django_listing/showcase
     poetry install
 
 Check you are in ``showcase/`` directory, then start the Django from poetry environment::
