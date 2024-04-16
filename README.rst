@@ -56,7 +56,7 @@ Get the source code::
 To install the python envionment::
 
     cd django_listing/showcase
-    poetry install
+    poetry install --no-root
 
 Check you are in ``showcase/`` directory, then start the Django from poetry environment::
 
