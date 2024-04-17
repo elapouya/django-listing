@@ -19,6 +19,7 @@
             <tr><th>Name</th><th>Description</th></tr>
         </thead>
         <tbody>
+            <tr><td>ActionsButtonsColumn(Column)</td><td>Column with many small action buttons inside</td></tr>
             <tr><td>AutoCompleteColumn(ForeignKeyColumn)</td><td>Same as <code>ForeignKeyColumn</code> except it has autocomplete widget when used in forms</td></tr>
             <tr><td>AvgColumn(ComputedColumnMixin, Column)</td><td>Compute average of all numbers on the same line</td></tr>
             <tr><td>BooleanColumn(Column)</td><td>Display boolean value. <code>True</code> and <code>False</code> representation can be customized</td></tr>
@@ -115,7 +116,7 @@ class="cell-filter {col.theme_cell_with_filter_icon}">
         </td></tr>
         <tr><td>header_tpl</td><td>Header template to use when the column is <u>NOT</u> sortable</td><td>"&lt;th{attrs}&gt;&lt;span class={col.theme_header_icon}&gt;&lt;/span&gt;&lt;/th&gt;"</td></tr>
         <tr><td>help_text</td><td>Help text to display in forms.</td><td>"&nbsp;"  # otherwise formfields may me not aligned vertically. keep align-items: flex-end; on row</td></tr>
-        <tr><td>input_type</td><td>Used by <code>ChoiceColumn</code> and <code>MultipleChoiceColumn</code> to select the right widget to use when in edit mode. Possible values are <code>checkboxinline, checkboxinline, other</code></td><td>None</td></tr>
+        <tr><td>input_type</td><td>Used by <code>ChoiceColumn</code> and <code>MultipleChoiceColumn</code> to select the right widget to use when in edit mode. Possible values are <code>checkbox, checkboxinline, other</code></td><td>None</td></tr>
         <tr><td>is_safe_value</td><td></td><td>False  # to avoid XSS attack</td></tr>
         <tr><td>listing</td><td>You can have access to listing instance from the column when fully initialized</td><td></td></tr>
         <tr><td>link_target</td><td>Used by <code>GroupByFilterColumn</code> to specify where to open the new filtered listing.</td><td>"_blank"</td></tr>
