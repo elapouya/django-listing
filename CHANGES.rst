@@ -1,3 +1,7 @@
+0.7.22 (2024-04-17)
+-------------------
+- Add icons on buttons for filter form and attached form
+
 0.7.21 (2024-04-16)
 -------------------
 - Update showcase poetry.lock

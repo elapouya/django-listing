@@ -36,6 +36,7 @@ class ThemeConfigBase(metaclass=ThemeConfigMeta):
     # css classes
     theme_class = "theme-standard"
 
+    # fmt: off
     theme_action_button_cancel_icon = ""
     theme_action_button_class = "btn btn-primary"
     theme_action_button_edit_icon = ""
@@ -87,6 +88,31 @@ class ThemeConfigBase(metaclass=ThemeConfigMeta):
     paginator_theme_prev_next_has_text = True
 
     toolbar_theme_button_class = "btn btn-secondary"
+
+    filters_theme_form_submit_icon = "listing-icon-filter"
+    filters_theme_form_reset_icon = "listing-icon-cancel"
+    filters_theme_form_submit_class = "filters-nav btn btn-primary submit-button"
+    filters_theme_form_reset_class = "filters-nav btn btn-primary reset-button"
+
+    attached_form_reset_button_class = "attached-form-nav btn btn-primary submit-button"
+    attached_form_submit_button_class = "attached-form-nav btn btn-primary submit-button"
+    attached_form_delete_all_button_class = "attached-form-nav btn btn-primary submit-button"
+    attached_form_delete_button_class = "attached-form-nav btn btn-primary submit-button disabled-if-no-selection"
+    attached_form_clear_button_class = "attached-form-nav btn btn-primary submit-button"
+    attached_form_insert_button_class = "attached-form-nav btn btn-primary submit-button"
+    attached_form_duplicate_button_class = "attached-form-nav btn btn-primary submit-button disabled-if-no-selection"
+    attached_form_update_button_class = "attached-form-nav btn btn-primary submit-button disabled-if-no-selection"
+    attached_form_update_all_button_class = "attached-form-nav btn btn-primary submit-button"
+    attached_form_reset_button_icon = "listing-icon-fast-backward"
+    attached_form_submit_button_icon = "listing-icon-right-dir"
+    attached_form_delete_all_button_icon = "listing-icon-trash-2"
+    attached_form_delete_button_icon = "listing-icon-trash-2"
+    attached_form_clear_button_icon = "listing-icon-cancel"
+    attached_form_insert_button_icon = "listing-icon-add-1"
+    attached_form_duplicate_button_icon = "listing-icon-th-large"
+    attached_form_update_button_icon = "listing-icon-pencil"
+    attached_form_update_all_button_icon = "listing-icon-pencil"
+    # fmt: on
 
 
 class ThemeAttribute:

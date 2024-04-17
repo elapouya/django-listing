@@ -31,17 +31,26 @@
         {% for button in filters.form_buttons %}
             {% if button == 'reset' %}
                 {% if filters.form_reset_label %}
-                    <a class="filters-nav btn btn-primary reset-button"
+                    <a class="{{ filters.theme_form_reset_class }}"
                        href="{{ filters.get_form_reset_url }}">
-                        {{ filters.form_reset_label }}
+                        <span class="button-icon-label">
+                            <span class="button-icon {{ filters.theme_form_reset_icon }}"></span>
+                            <span class="button-label">{{ filters.form_reset_label }}</span>
+                        </span>
                     </a>
                 {% endif %}
             {% elif button == 'submit' %}
                 {% if filters.form_submit_label %}
-                    <input type="submit"
+                    <button type="submit"
                            name="f_do_filter"
-                           class="filters-nav btn btn-primary submit-button"
-                           value="{{ filters.form_submit_label }}"/>
+                           class="{{ filters.theme_form_submit_class }}"
+                           value="{{ filters.form_submit_label }}"
+                    >
+                        <span class="button-icon-label">
+                            <span class="button-icon {{ filters.theme_form_submit_icon }}"></span>
+                            <span class="button-label">{{ filters.form_submit_label }}</span>
+                        </span>
+                    </button>
                 {% endif %}
             {% endif %}
         {% endfor %}

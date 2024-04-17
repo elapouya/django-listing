@@ -45,16 +45,18 @@
                 {% listing_confirm_msg_for_action listing action as confirm_msg %}
                 {% listing_confirm_msg_nb_items_for_action listing action as confirm_msg_nb_items %}
                 <button type="{% if action == 'reset' %}reset{% elif listing.accept_ajax %}button{% else %}submit{% endif %}"
-                        class="attached-form-nav btn btn-primary submit-button {{ action }}{% if not has_button_perm %} no-perm disabled{% endif %}{% if css_class %} {{ css_class }}{% endif %}"
+                        class="{{ action }}{% if not has_button_perm %} no-perm disabled{% endif %}{% if css_class %} {{ css_class }}{% endif %}"
                         {% if confirm_msg %}confirm-msg="{{ confirm_msg }}"{% endif %}
                         {% if confirm_msg_nb_items %}confirm-msg-nb-items="{{ confirm_msg_nb_items }}"{% endif %}
                         {% if action != 'reset' %}name="action_button" value="{{ action }}"{% endif %}>
-                    {% if label %}
-                        <span class="label">{{ label|safe }}</span>
-                    {% endif %}
+                    <span class="button-icon-label">
                     {% if icon %}
-                        <span class="icon"><span class="{{ icon }}"></span></span>
+                        <span class="button-icon"><span class="{{ icon }}"></span></span>
                     {% endif %}
+                    {% if label %}
+                        <span class="button-label">{{ label|safe }}</span>
+                    {% endif %}
+                    </span>
                 </button>
             {% endfor %}
         </div>

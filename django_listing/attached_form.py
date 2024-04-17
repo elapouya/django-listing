@@ -19,7 +19,7 @@ from .exceptions import (
     InvalidListingConfiguration,
 )
 from .html_attributes import HTMLAttributes
-from .theme_config import ThemeTemplate
+from .theme_config import ThemeTemplate, ThemeAttribute
 from .utils import init_dicts_from_class
 
 __all__ = ["ATTACHED_FORM_PARAMS_KEYS", "AttachedForm"]
@@ -29,10 +29,15 @@ ATTACHED_FORM_PARAMS_KEYS = {
     "action",
     "attached_form_name",
     "display_errors",
-    "reset_label",
-    "reset_icon",
-    "submit_label",
-    "submit_icon",
+    "reset_button_label",
+    "submit_button_label",
+    "delete_all_button_label",
+    "delete_button_label",
+    "clear_button_label",
+    "insert_button_label",
+    "duplicate_button_label",
+    "update_button_label",
+    "update_all_button_label",
     "submit_action",
     "template_name",
     "django_form_class",
@@ -40,6 +45,24 @@ ATTACHED_FORM_PARAMS_KEYS = {
     "attrs",
     "buttons",
     "ListingBaseForm",
+    "theme_reset_button_class",
+    "theme_submit_button_class",
+    "theme_delete_all_button_class",
+    "theme_delete_button_class",
+    "theme_clear_button_class",
+    "theme_insert_button_class",
+    "theme_duplicate_button_class",
+    "theme_update_button_class",
+    "theme_update_all_button_class",
+    "theme_reset_button_icon",
+    "theme_submit_button_icon",
+    "theme_delete_all_button_icon",
+    "theme_delete_button_icon",
+    "theme_clear_button_icon",
+    "theme_insert_button_icon",
+    "theme_duplicate_button_icon",
+    "theme_update_button_icon",
+    "theme_update_all_button_icon",
 }
 
 
@@ -117,17 +140,42 @@ class AttachedForm:
     display_errors = True
     form_base_class = ListingBaseForm
     django_form_class = None
-    reset_label = pgettext_lazy("Attached form", "Reset")
-    reset_icon = None
-    submit_label = pgettext_lazy("Attached form", "Add")
-    submit_icon = None
+    reset_button_label = pgettext_lazy("Attached form", "Reset")
+    submit_button_label = pgettext_lazy("Attached form", "Add")
     submit_action = "insert"
+    delete_all_button_label = pgettext_lazy("Attached form", "Delete ALL")
+    delete_button_label = pgettext_lazy("Attached form", "Delete selected")
+    clear_button_label = pgettext_lazy("Attached form", "Clear")
+    insert_button_label = pgettext_lazy("Attached form", "Insert")
+    duplicate_button_label = pgettext_lazy("Attached form", "Duplicate")
+    update_button_label = pgettext_lazy("Attached form", "Update selected")
+    update_all_button_label = pgettext_lazy("Attached form", "Update ALL")
     template_name = ThemeTemplate("attached_form.html")
     layout = None
     listing = None
     buttons = "reset,submit"
     name = "attached_form"
     attrs = {"class": "listing-form"}
+    # fmt: off
+    theme_reset_button_class = ThemeAttribute("attached_form_reset_button_class")
+    theme_submit_button_class = ThemeAttribute("attached_form_submit_button_class")
+    theme_delete_all_button_class = ThemeAttribute("attached_form_delete_all_button_class")
+    theme_delete_button_class = ThemeAttribute("attached_form_delete_button_class")
+    theme_clear_button_class = ThemeAttribute("attached_form_clear_button_class")
+    theme_insert_button_class = ThemeAttribute("attached_form_insert_button_class")
+    theme_duplicate_button_class = ThemeAttribute("attached_form_duplicate_button_class")
+    theme_update_button_class = ThemeAttribute("attached_form_update_button_class")
+    theme_update_all_button_class = ThemeAttribute("attached_form_update_all_button_class")
+    theme_reset_button_icon = ThemeAttribute("attached_form_reset_button_icon")
+    theme_submit_button_icon = ThemeAttribute("attached_form_submit_button_icon")
+    theme_delete_all_button_icon = ThemeAttribute("attached_form_delete_all_button_icon")
+    theme_delete_button_icon = ThemeAttribute("attached_form_delete_button_icon")
+    theme_clear_button_icon = ThemeAttribute("attached_form_clear_button_icon")
+    theme_insert_button_icon = ThemeAttribute("attached_form_insert_button_icon")
+    theme_duplicate_button_icon = ThemeAttribute("attached_form_duplicate_button_icon")
+    theme_update_button_icon = ThemeAttribute("attached_form_update_button_icon")
+    theme_update_all_button_icon = ThemeAttribute("attached_form_update_all_button_icon")
+    # fmt: on
 
     def __init__(self, name=None, *args, **kwargs):
         self.init_args = args
@@ -200,64 +248,28 @@ class AttachedForm:
         self.buttons = []
         for button in buttons:
             if isinstance(button, str):
+                # Will try to replace with a relevant tuple
                 # must be defined has (action, label, icon css class, button css class)
                 if button == "reset":
-                    button = ("reset", self.reset_label, self.reset_icon, None)
+                    button = (
+                        "reset",
+                        self.reset_button_label,
+                        self.theme_reset_button_icon,
+                        self.theme_reset_button_class,
+                    )
                 elif button == "submit":
                     button = (
                         self.submit_action,
-                        self.submit_label,
-                        self.submit_icon,
-                        None,
+                        self.submit_button_label,
+                        self.theme_submit_button_icon,
+                        self.theme_submit_button_class,
                     )
-                elif button == "delete_all":
+                elif hasattr(self, f"{button}_button_label"):
                     button = (
-                        "delete_all",
-                        pgettext_lazy("Attached form", "Delete ALL"),
-                        None,
-                        None,
-                    )
-                elif button == "delete":
-                    button = (
-                        "delete",
-                        pgettext_lazy("Attached form", "Delete selected"),
-                        None,
-                        "disabled-if-no-selection",
-                    )
-                elif button == "clear":
-                    button = (
-                        "clear",
-                        pgettext_lazy("Attached form", "Clear"),
-                        None,
-                        None,
-                    )
-                elif button == "insert":
-                    button = (
-                        "insert",
-                        pgettext_lazy("Attached form", "Insert"),
-                        None,
-                        None,
-                    )
-                elif button == "duplicate":
-                    button = (
-                        "duplicate",
-                        pgettext_lazy("Attached form", "Duplicate"),
-                        None,
-                        "disabled-if-no-selection",
-                    )
-                elif button == "update":
-                    button = (
-                        "update",
-                        pgettext_lazy("Attached form", "Update selected"),
-                        None,
-                        "disabled-if-no-selection",
-                    )
-                elif button == "update_all":
-                    button = (
-                        "update_all",
-                        pgettext_lazy("Attached form", "Update ALL"),
-                        None,
-                        None,
+                        button,
+                        getattr(self, f"{button}_button_label"),
+                        getattr(self, f"theme_{button}_button_icon", ""),
+                        getattr(self, f"theme_{button}_button_class", ""),
                     )
                 else:
                     button = (button, button.capitalize(), None, None)

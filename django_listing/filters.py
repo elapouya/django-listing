@@ -49,6 +49,10 @@ FILTERS_KEYS = {
     "form_reset_label",
     "form_submit_label",
     "form_template_name",
+    "theme_form_submit_icon",
+    "theme_form_reset_icon",
+    "theme_form_submit_class",
+    "theme_form_reset_class",
 }
 
 # Declare keys for "Filter" object (not "Filters" with an ending 's')
@@ -149,6 +153,10 @@ class Filters(list):
     form_reset_label = pgettext_lazy("Filters form", "Reset")
     form_submit_label = pgettext_lazy("Filters form", "Filter")
     form_template_name = ThemeTemplate("filters_form.html")
+    theme_form_submit_icon = ThemeAttribute("filters_theme_form_submit_icon")
+    theme_form_reset_icon = ThemeAttribute("filters_theme_form_reset_icon")
+    theme_form_submit_class = ThemeAttribute("filters_theme_form_submit_class")
+    theme_form_reset_class = ThemeAttribute("filters_theme_form_reset_class")
     form_layout = None
     form_buttons = "reset,submit"
 
