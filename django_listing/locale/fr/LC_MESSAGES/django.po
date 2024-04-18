@@ -116,12 +116,12 @@ msgstr "Ajouter"
 #| msgid "Delete"
 msgctxt "Attached form"
 msgid "Delete ALL"
-msgstr "Tout effacer"
+msgstr "Tout supprimer"
 
 #: attached_form.py:220
 msgctxt "Attached form"
 msgid "Delete selected"
-msgstr "Effacer la sélection"
+msgstr "Supprimer la sélection"
 
 #: attached_form.py:227
 msgctxt "Attached form"

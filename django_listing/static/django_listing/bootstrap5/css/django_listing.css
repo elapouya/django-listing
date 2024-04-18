@@ -545,6 +545,60 @@
 .listing-icon-logout:before {
   content: "\e8a6";
 } /* '' */
+.listing-icon-plus-squared-1:before {
+  content: "\e8a7";
+} /* '' */
+.listing-icon-minus-squared-alt-1:before {
+  content: "\e8a8";
+} /* '' */
+.listing-icon-plus-squared-alt-1:before {
+  content: "\e8a9";
+} /* '' */
+.listing-icon-plus-squared-2:before {
+  content: "\e8aa";
+} /* '' */
+.listing-icon-minus-squared-alt-2:before {
+  content: "\e8ab";
+} /* '' */
+.listing-icon-plus-squared-alt-2:before {
+  content: "\e8ac";
+} /* '' */
+.listing-icon-uni0014:before {
+  content: "\e8ad";
+} /* '' */
+.listing-icon-duplicate:before {
+  content: "\e900";
+} /* '' */
+.listing-icon-edit-paper:before {
+  content: "\e901";
+} /* '' */
+.listing-icon-edit-pen:before {
+  content: "\e902";
+} /* '' */
+.listing-icon-update-multiple:before {
+  content: "\e903";
+} /* '' */
+.listing-icon-remove-multiple:before {
+  content: "\e904";
+} /* '' */
+.listing-icon-insert:before {
+  content: "\e906";
+} /* '' */
+.listing-icon-reset:before {
+  content: "\e907";
+} /* '' */
+.listing-icon-erase:before {
+  content: "\e908";
+} /* '' */
+.listing-icon-clear-filled:before {
+  content: "\e90a";
+} /* '' */
+.listing-icon-clear:before {
+  content: "\e90b";
+} /* '' */
+.listing-icon-edit-pen-filled:before {
+  content: "\e90c";
+} /* '' */
 .listing-icon-menu-1:before {
   content: "\f008";
 } /* '' */

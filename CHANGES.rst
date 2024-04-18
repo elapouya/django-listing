@@ -1,4 +1,4 @@
-0.7.22 (2024-04-17)
+0.7.23 (2024-04-18)
 -------------------
 - Add icons on buttons for filter form and attached form
 

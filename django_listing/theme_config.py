@@ -103,15 +103,15 @@ class ThemeConfigBase(metaclass=ThemeConfigMeta):
     attached_form_duplicate_button_class = "attached-form-nav btn btn-primary submit-button disabled-if-no-selection"
     attached_form_update_button_class = "attached-form-nav btn btn-primary submit-button disabled-if-no-selection"
     attached_form_update_all_button_class = "attached-form-nav btn btn-primary submit-button"
-    attached_form_reset_button_icon = "listing-icon-fast-backward"
+    attached_form_reset_button_icon = "listing-icon-reset"
     attached_form_submit_button_icon = "listing-icon-right-dir"
-    attached_form_delete_all_button_icon = "listing-icon-trash-2"
-    attached_form_delete_button_icon = "listing-icon-trash-2"
-    attached_form_clear_button_icon = "listing-icon-cancel"
-    attached_form_insert_button_icon = "listing-icon-add-1"
-    attached_form_duplicate_button_icon = "listing-icon-th-large"
-    attached_form_update_button_icon = "listing-icon-pencil"
-    attached_form_update_all_button_icon = "listing-icon-pencil"
+    attached_form_delete_all_button_icon = "listing-icon-remove-multiple"
+    attached_form_delete_button_icon = " listing-icon-minus-squared"
+    attached_form_clear_button_icon = "listing-icon-erase"
+    attached_form_insert_button_icon = "listing-icon-plus-1"
+    attached_form_duplicate_button_icon = "listing-icon-duplicate"
+    attached_form_update_button_icon = "listing-icon-edit-pen-filled"
+    attached_form_update_all_button_icon = "listing-icon-update-multiple"
     # fmt: on
 
 
