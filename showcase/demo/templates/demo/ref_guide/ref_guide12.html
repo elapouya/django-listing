@@ -36,7 +36,8 @@
     </p>
     <br>
     <h3>Template tags</h3>
-    <table class="ref-guide name-desc">{% verbatim %}
+    {% verbatim %}
+    <table class="ref-guide name-desc">
         <thead>
             <tr><th>Name</th><th>Description</th></tr>
         </thead>
@@ -74,7 +75,7 @@
             <tr><td>{% setopt_listing **kwargs %}</td><td></td></tr>
             <tr><td>{% setopt_listing_html_attr listing_attr html_attr value %}</td><td></td></tr>
             <tr><td>{% setopt_toolbar_item name **kwargs %}</td><td></td></tr>
-            <tr><td>{% setopt_toolbar_item_html_attr name col_attr html_attr value %}</td><td></td></tr> %}
+            <tr><td>{% setopt_toolbar_item_html_attr name col_attr html_attr value %}</td><td></td></tr>
         </tbody>
         {% endverbatim %}</table>
     <br><br>

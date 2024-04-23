@@ -70,6 +70,21 @@
         ...
     ...
     {% endverbatim %}{% endcodelisting %}</code></pre>
+    <p>In your view template, you have to specify <code>render_filters_form</code> tag to have the filter form :</p>
+    <p><b>WARNING :</b> This template pattern does work <u>ONLY</u> if you do NOT have <a href="{% url "ref_guide10" %}">attached form</a> to display</p>
+    <pre><code class="language-python">{% codelisting %}{% verbatim %}
+...
+{% load django_listing %}
+...
+{% block body %}
+    ...
+    {% render_filters_form listing %}
+
+    {% render_listing listing %}
+    ...
+{% endblock %}
+    {% endverbatim %}{% endcodelisting %}</code></pre>
+    <br><br>
 
     <h3>Filter classes</h3>
     <table class="ref-guide name-desc">
