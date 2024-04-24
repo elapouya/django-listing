@@ -70,18 +70,30 @@
         ...
     ...
     {% endverbatim %}{% endcodelisting %}</code></pre>
-    <p>In your view template, you have to specify <code>render_filters_form</code> tag to have the filter form :</p>
-    <p><b>WARNING :</b> This template pattern does work <u>ONLY</u> if you do NOT have <a href="{% url "ref_guide10" %}">attached form</a> to display</p>
+    <p>In your view template, for <code>ListingVariations</code> listings, <u>it is important</u> to render the listing <u>BEFORE</u> the filter form.
+        To do so, render in variables in good order, then display them as you want with these variables.
+        You need this kind of code to have the filter form displayed above the listing :</p>
     <pre><code class="language-python">{% codelisting %}{% verbatim %}
 ...
 {% load django_listing %}
 ...
 {% block body %}
     ...
-    {% render_filters_form listing %}
+    {% render_listing listing as listing_frame %}  {# listing must be rendered before filters form #}
+    {% render_filters_form listing as filter_frame %}
 
-    {% render_listing listing %}
-    ...
+    <div class="row justify-content-center">
+        <div class="col col-lg-auto">
+            {{ filter_frame }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ listing_frame }}
+        </div>
+    </div>
+
+    {% render_attached_form listing %}
 {% endblock %}
     {% endverbatim %}{% endcodelisting %}</code></pre>
     <br><br>

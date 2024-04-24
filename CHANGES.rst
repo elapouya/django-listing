@@ -1,3 +1,8 @@
+0.7.24 (2024-04-18)
+-------------------
+- Fix up & down icons in SortSelectToolbarItem to be displayed on Firefox
+- Add some documentions
+
 0.7.23 (2024-04-18)
 -------------------
 - Add icons on buttons for filter form and attached form

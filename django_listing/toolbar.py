@@ -192,8 +192,8 @@ class SortSelectToolbarItem(ToolbarItem):
     template_name = ThemeTemplate("tbi_select.html")
     params_keys = "up_arrow,down_arrow,has_submit_button"
     choices = None
-    up_arrow = " &#xF106;"
-    down_arrow = " &#xF107;"
+    up_arrow = " ↑"  # DO NOT use &#xNNNN; notation : it does not work with firefox
+    down_arrow = " ↓"
     has_submit_button = False
     label = _("Sort by")
     button_label = _("OK")
