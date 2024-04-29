@@ -1,3 +1,7 @@
+0.7.25 (2024-04-29)
+-------------------
+- Add some manage_listing_attached_form_clean* methods
+
 0.7.24 (2024-04-18)
 -------------------
 - Fix up & down icons in SortSelectToolbarItem to be displayed on Firefox

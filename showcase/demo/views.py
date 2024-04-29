@@ -710,28 +710,6 @@ class InsertableListing1View(ListingView):
     listing_class = InsertableListing1
     listing_data = Employee
 
-    def manage_listing_insert_form_clean(self, form):
-        cd = form.cleaned_data
-        first_name = cd.get("first_name")
-        last_name = cd.get("last_name")
-        if first_name and last_name:
-            if Employee.objects.filter(
-                first_name=first_name, last_name=last_name
-            ).exists():
-                raise ValidationError(
-                    mark_safe(
-                        _("<b>{first_name} {last_name}</b> already exists").format(
-                            first_name=first_name, last_name=last_name
-                        )
-                    )
-                )
-
-    def manage_listing_insert_form_clean_age(self, form):
-        age = form.cleaned_data.get("age")
-        if age is None or age < 0 or age > 130:
-            raise ValidationError(gettext("Age must be between 0 and 130."))
-        return age
-
 
 class InsertableListing2View(ListingView):
     template_name = "demo/insertable/insertable2.html"
@@ -739,6 +717,7 @@ class InsertableListing2View(ListingView):
     listing_data = Employee
 
     def manage_listing_attached_edit_form_clean(self, form):
+        # manage_listing_<form name>_clean
         cd = form.cleaned_data
         first_name = cd.get("first_name")
         last_name = cd.get("last_name")
@@ -760,6 +739,7 @@ class InsertableListing2View(ListingView):
                 )
 
     def manage_listing_attached_edit_form_clean_age(self, form):
+        # manage_listing_<form name>_clean_<field name>
         age = form.cleaned_data.get("age")
         if age is None or age < 0 or age > 130:
             raise ValidationError(gettext("Age must be between 0 and 130."))
