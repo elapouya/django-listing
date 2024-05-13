@@ -11,7 +11,7 @@ from dal import autocomplete
 from django import forms
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db import models
-from django.db.models import DateTimeField
+from django.db.models import DateTimeField, QuerySet
 from django.forms import FileField
 from django.template import loader
 from django.utils.translation import gettext as _
@@ -38,6 +38,7 @@ __all__ = [
     "IntegerFilter",
     "FloatFilter",
     "MultipleChoiceFilter",
+    "MultipleForeignKeyFilter",
     "TimeFilter",
 ]
 
@@ -334,6 +335,7 @@ class Filters(list):
 
     def get_form_reset_url(self):
         query_fields = [(FILTER_QUERYSTRING_PREFIX + f.name) for f in self]
+        query_fields += [f"{FILTER_QUERYSTRING_PREFIX}do_filter"]
         return self.listing.get_url(without=query_fields)
 
     def get_form_field(self, name):
@@ -609,6 +611,10 @@ class Filter(metaclass=FilterMeta):
             for word in words:
                 qs = qs.filter(**{self.filter_key: word})
             return qs
+        if "__" not in self.filter_key and isinstance(
+            cleaned_value, (QuerySet, list, tuple)
+        ):
+            return qs.filter(**{f"{self.filter_key}__in": cleaned_value})
         return qs.filter(**{self.filter_key: cleaned_value})
 
     def filter_sequence(self, seq):
@@ -853,7 +859,7 @@ class ForeignKeyFilter(Filter):
         return self.order_by
 
     def get_related_qs(self):
-        if self.queryset:
+        if self.queryset is not None:
             return self.queryset
         related_model = self.listing.model._meta.get_field(
             self.field_name
@@ -870,6 +876,22 @@ class ForeignKeyFilter(Filter):
         choices = [("", self.no_choice_msg)]
         choices += [(obj.pk, self.format_label(obj)) for obj in self.get_related_qs()]
         params["choices"] = choices
+        return params
+
+
+class MultipleForeignKeyFilter(Filter):
+    form_field_class = forms.ModelMultipleChoiceField
+
+    def get_form_field_widget(self, field_class, **kwargs):
+        widget_attrs = HTMLAttributes(self.widget_attrs)
+        widget = forms.SelectMultiple
+        widget_attrs.add("class", self.theme_form_select_widget_class)
+        params = dict(self.widget_params, attrs=widget_attrs)
+        return widget(**params)
+
+    def get_form_field_params(self, **kwargs):
+        params = super().get_form_field_params(**kwargs)
+        params["queryset"] = self.queryset
         return params
 
 
