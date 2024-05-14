@@ -20,10 +20,10 @@ markuppy = "^1.14"
 odfpy = "^1.4.1"
 django-modals = "^0.0.1"
 django-better-image = "^0.0.4"
-django-listing = {path = "..", develop = true}
 isort = "^5.12.0"
 black = {extras = ["d"], version = "^23.3.0"}
 django-autocomplete-light = "^3.9.7"
+django-listing = {path = "../../django-listing", develop = true}
 
 
 [build-system]

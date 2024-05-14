@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-21 11:45+0000\n"
+"POT-Creation-Date: 2024-05-14 09:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,51 +18,51 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: actions_buttons_column.py:199
+#: actions_buttons_column.py:201
 msgid "Move up"
 msgstr ""
 
-#: actions_buttons_column.py:200
+#: actions_buttons_column.py:202
 msgid "Change order up"
 msgstr ""
 
-#: actions_buttons_column.py:230
+#: actions_buttons_column.py:232
 msgid "Move down"
 msgstr ""
 
-#: actions_buttons_column.py:231
+#: actions_buttons_column.py:233
 msgid "Change order down"
 msgstr ""
 
-#: actions_buttons_column.py:261 actions_buttons_column.py:317
+#: actions_buttons_column.py:263 actions_buttons_column.py:319
 msgid "Details"
 msgstr ""
 
-#: actions_buttons_column.py:262 actions_buttons_column.py:318
+#: actions_buttons_column.py:264 actions_buttons_column.py:320
 msgid "See details"
 msgstr ""
 
-#: actions_buttons_column.py:275 actions_buttons_column.py:276
+#: actions_buttons_column.py:277 actions_buttons_column.py:278
 msgid "Edit"
 msgstr ""
 
-#: actions_buttons_column.py:296 actions_buttons_column.py:297
+#: actions_buttons_column.py:298 actions_buttons_column.py:299
 msgid "Delete"
 msgstr ""
 
-#: actions_buttons_column.py:323
+#: actions_buttons_column.py:325
 msgid "Not set"
 msgstr ""
 
-#: actions_buttons_column.py:353
+#: actions_buttons_column.py:355
 msgid "You must specify a layout in view_object_popup__layout"
 msgstr ""
 
-#: actions_buttons_column.py:356
+#: actions_buttons_column.py:358
 msgid "Object id not specified !"
 msgstr ""
 
-#: actions_buttons_column.py:394
+#: actions_buttons_column.py:396
 msgid "*** Not a valid column name ***"
 msgstr ""
 
@@ -96,58 +96,58 @@ msgid ""
 "f}"
 msgstr ""
 
-#: attached_form.py:118
+#: attached_form.py:155
 msgctxt "Attached form"
 msgid "Reset"
 msgstr ""
 
-#: attached_form.py:120
+#: attached_form.py:156
 msgctxt "Attached form"
 msgid "Add"
 msgstr ""
 
-#: attached_form.py:213
+#: attached_form.py:158
 msgctxt "Attached form"
 msgid "Delete ALL"
 msgstr ""
 
-#: attached_form.py:220
+#: attached_form.py:159
 msgctxt "Attached form"
 msgid "Delete selected"
 msgstr ""
 
-#: attached_form.py:227
+#: attached_form.py:160
 msgctxt "Attached form"
-msgid "Clear"
+msgid "Clear the form"
 msgstr ""
 
-#: attached_form.py:234
+#: attached_form.py:161
 msgctxt "Attached form"
 msgid "Insert"
 msgstr ""
 
-#: attached_form.py:241
+#: attached_form.py:162
 msgctxt "Attached form"
 msgid "Duplicate"
 msgstr ""
 
-#: attached_form.py:248
+#: attached_form.py:163
 msgctxt "Attached form"
 msgid "Update selected"
 msgstr ""
 
-#: attached_form.py:255
+#: attached_form.py:164
 msgctxt "Attached form"
 msgid "Update ALL"
 msgstr ""
 
-#: attached_form.py:264
+#: attached_form.py:291
 msgid ""
 "In attached form, button tuple description must have 4 items : (action, "
 "label, icon css class, button css class)."
 msgstr ""
 
-#: attached_form.py:290
+#: attached_form.py:318
 #, python-brace-format
 msgid ""
 "In the {form_name} layout you specified the field \"{field_name}\" but there "
@@ -155,183 +155,183 @@ msgid ""
 "\"{attrname}\"nor attached_form param \"{key}\""
 msgstr ""
 
-#: attached_form.py:307
+#: attached_form.py:340
 msgid "You must specify a list of columns names in the form layout"
 msgstr ""
 
-#: columns.py:294
+#: columns.py:298
 #, python-brace-format
 msgid ""
 "column {col_id} of listing {listing} is not a Column instance (class = "
 "{colclass})"
 msgstr ""
 
-#: columns.py:585 templates/django_listing/default/footer.html:6
+#: columns.py:590 templates/django_listing/default/footer.html:6
 msgid "Please choose..."
 msgstr ""
 
-#: columns.py:586 filters.py:700
+#: columns.py:591 filters.py:733
 msgid "Yes"
 msgstr ""
 
-#: columns.py:587 filters.py:701
+#: columns.py:592 filters.py:734
 msgid "No"
 msgstr ""
 
-#: columns.py:1067
+#: columns.py:1078
 msgid "{} is not a valid django forms field class"
 msgstr ""
 
-#: columns.py:1081
+#: columns.py:1092
 msgid "{} is not a valid django forms widget class"
 msgstr ""
 
-#: columns.py:1130 filters.py:642
+#: columns.py:1145 filters.py:675
 #, python-brace-format
 msgid ""
 "Cannot find choices from model for filter \"{name}\", Please specify the "
 "choices to display"
 msgstr ""
 
-#: columns.py:1138 filters.py:650
+#: columns.py:1153 filters.py:683
 #, python-brace-format
 msgid "Please specify the choices to display for filter \"{name}\""
 msgstr ""
 
-#: columns.py:1150
+#: columns.py:1165
 msgid "True"
 msgstr ""
 
-#: columns.py:1151
+#: columns.py:1166
 msgid "False"
 msgstr ""
 
-#: columns.py:1392
+#: columns.py:1407
 msgid "Button"
 msgstr ""
 
-#: columns.py:1726
-msgid "Total"
-msgstr ""
-
-#: columns.py:1728
-#, python-brace-format
-msgid "<td{attrs}>Grand Total:<br>{value}</td>"
-msgstr ""
-
-#: columns.py:1737
-msgid "Min"
-msgstr ""
-
-#: columns.py:1739
-#, python-brace-format
-msgid "<td{attrs}>Overall Min:<br>{value}</td>"
-msgstr ""
-
 #: columns.py:1747
-msgid "Max"
+msgid "Total"
 msgstr ""
 
 #: columns.py:1749
 #, python-brace-format
-msgid "<td{attrs}>Overall Max:<br>{value}</td>"
+msgid "<td{attrs}>Grand Total:<br>{value}</td>"
 msgstr ""
 
 #: columns.py:1758
+msgid "Min"
+msgstr ""
+
+#: columns.py:1760
+#, python-brace-format
+msgid "<td{attrs}>Overall Min:<br>{value}</td>"
+msgstr ""
+
+#: columns.py:1768
+msgid "Max"
+msgstr ""
+
+#: columns.py:1770
+#, python-brace-format
+msgid "<td{attrs}>Overall Max:<br>{value}</td>"
+msgstr ""
+
+#: columns.py:1779
 msgid "Average"
 msgstr ""
 
-#: columns.py:1763
+#: columns.py:1784
 msgid "<td{attrs}>Overall avg:<br>{value:.{col.footer_precision}f}</td>"
 msgstr ""
 
-#: columns.py:1815 columns.py:1817
+#: columns.py:1836 columns.py:1838
 msgctxt "verb"
 msgid "Filter"
 msgstr ""
 
-#: filters.py:146
+#: filters.py:154
 msgctxt "Filters form"
 msgid "Reset"
 msgstr ""
 
-#: filters.py:147
+#: filters.py:155
 msgctxt "Filters form"
 msgid "Filter"
 msgstr ""
 
-#: filters.py:327 filters.py:335
+#: filters.py:345 filters.py:353
 #, python-brace-format
 msgid "Cannot find filter \"{name}\" definition"
 msgstr ""
 
-#: filters.py:400
+#: filters.py:421
 msgid "- No filtering -"
 msgstr ""
 
-#: filters.py:702
+#: filters.py:735
 msgid "Indiff."
 msgstr ""
 
-#: filters.py:804
+#: filters.py:840
 msgid "Use CTRL+click to select/deselect multiple choices"
 msgstr ""
 
-#: filters.py:861
+#: filters.py:916
 msgid "Select a value..."
 msgstr ""
 
-#: listing.py:207
+#: listing.py:206
 msgctxt "abbreviation"
 msgid "Min"
 msgstr ""
 
-#: listing.py:208
+#: listing.py:207
 msgctxt "abbreviation"
 msgid "Max"
 msgstr ""
 
-#: listing.py:209
+#: listing.py:208
 msgctxt "abbreviation"
 msgid "Sum"
 msgstr ""
 
-#: listing.py:210
+#: listing.py:209
 msgctxt "abbreviation"
 msgid "Avg"
 msgstr ""
 
-#: listing.py:439
+#: listing.py:442
 msgctxt "action button"
 msgid "Cancel"
 msgstr ""
 
-#: listing.py:440
+#: listing.py:443
 msgctxt "action button"
 msgid "Edit"
 msgstr ""
 
-#: listing.py:441
+#: listing.py:444
 msgctxt "action button"
 msgid "Update"
 msgstr ""
 
-#: listing.py:442
+#: listing.py:445
 msgctxt "action button"
 msgid "Upload"
 msgstr ""
 
-#: listing.py:455
+#: listing.py:459
 #, python-brace-format
 msgid "Do you really want to DELETE {nb_items} item(s) ?"
 msgstr ""
 
-#: listing.py:459
+#: listing.py:463
 #, python-brace-format
 msgid "Do you really want to UPDATE {nb_items} items ?"
 msgstr ""
 
-#: listing.py:463
+#: listing.py:467
 #, python-brace-format
 msgid ""
 "WARNING : Do you really want to UPDATE absolutely all {nb_all_items} "
@@ -345,7 +345,7 @@ msgid ""
 "only one or more fields with value(s) you want to apply on all items."
 msgstr ""
 
-#: listing.py:473
+#: listing.py:477
 #, python-brace-format
 msgid ""
 "WARNING : Do you really want to DELETE absolutely all {nb_all_items} "
@@ -355,31 +355,35 @@ msgid ""
 "will take in account the filter : only filtered items will be processed."
 msgstr ""
 
-#: listing.py:491
+#: listing.py:500
 msgid "Nothing to display"
 msgstr ""
 
-#: listing.py:706
+#: listing.py:709
 msgid "Please configure at least one column in your listing"
 msgstr ""
 
-#: listing.py:828
+#: listing.py:831
 msgid "[CANNOT_EDIT_IN_AJAX]"
 msgstr "Cannot edit a listing in ajax mode, please remove accept_ajax=True"
 
-#: listing.py:852
+#: listing.py:855
 msgid "record"
 msgstr ""
 
-#: listing.py:857
+#: listing.py:860
 msgid "records"
 msgstr ""
 
-#: listing.py:1239
+#: listing.py:1036
+msgid "[You do not have permission to export data]"
+msgstr ""
+
+#: listing.py:1247
 msgid "Sort by:"
 msgstr "Sort by:"
 
-#: listing.py:1240 listing.py:1253
+#: listing.py:1248 listing.py:1261
 msgid ":"
 msgstr ""
 
@@ -415,7 +419,7 @@ msgctxt "paginator"
 msgid "Last"
 msgstr ""
 
-#: paginators.py:81
+#: paginators.py:83
 #, python-brace-format
 msgctxt "paginator"
 msgid "Go to page {goto_form}"
@@ -438,7 +442,8 @@ msgstr ""
 msgid "Listing data must be a sequence or a QuerySet."
 msgstr ""
 
-#: templates/django_listing/bootstrap5/tbi_export.html:25
+#: templates/django_listing/bootstrap5/tbi_export.html:27
+#: templates/django_listing/default/tbi_export.html:29
 msgid "Please select a file format !"
 msgstr ""
 
@@ -527,22 +532,22 @@ msgid ""
 "<tt>save_to_database=False</tt>."
 msgstr ""
 
-#: views.py:361
+#: views.py:363
 msgid "You do not have the required permission"
 msgstr ""
 
-#: views.py:474
-msgid "Please fill at least one field to update"
+#: views.py:480
+msgid "Please select at least one item in the listing"
 msgstr ""
 
-#: views.py:480 views.py:525
-msgid "Please select at least one item"
-msgstr ""
-
-#: views.py:508
+#: views.py:509
 msgid "Please select one item"
 msgstr ""
 
-#: views.py:511
+#: views.py:512
 msgid "You can duplicate only one item at the same time"
+msgstr ""
+
+#: views.py:526
+msgid "Please select at least one item"
 msgstr ""

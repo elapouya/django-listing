@@ -157,7 +157,7 @@ class AttachedForm:
     submit_action = "insert"
     delete_all_button_label = pgettext_lazy("Attached form", "Delete ALL")
     delete_button_label = pgettext_lazy("Attached form", "Delete selected")
-    clear_button_label = pgettext_lazy("Attached form", "Clear")
+    clear_button_label = pgettext_lazy("Attached form", "Clear the form")
     insert_button_label = pgettext_lazy("Attached form", "Insert")
     duplicate_button_label = pgettext_lazy("Attached form", "Duplicate")
     update_button_label = pgettext_lazy("Attached form", "Update selected")
