@@ -1,3 +1,9 @@
+0.7.26 (2024-05-14)
+-------------------
+- Add MultipleForeignKeyFilter
+- Fix filter reset button
+- Update showcase poetry env
+
 0.7.25 (2024-04-29)
 -------------------
 - Add some manage_listing_attached_form_clean* methods
