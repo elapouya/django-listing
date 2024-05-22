@@ -1019,7 +1019,9 @@ class Listing(ListingBase):
                 self.add_onready_snippet(self.onready_snippet)
             if self.footer_snippet:
                 self.add_footer_snippet(self.footer_snippet)
-            if not isinstance(self.selection_initial, list):
+            if self.selection_initial is not None and not isinstance(
+                self.selection_initial, list
+            ):
                 self.selection_initial = [self.selection_initial]
             self.selection_has_overlay = self.selection_mode in ["overlay", "hover"]
             if self.attached_form:
@@ -1130,6 +1132,7 @@ class Listing(ListingBase):
             get=self.request.GET,
             overlay_selector_css_class=sel_css_class,
             hover_selection_css_class=hover_css_class,
+            view=self.get_view(),
             # Needed for action framework with javascript compatibility :
             csrf_token=get_csrf_token(self.request),
         )
