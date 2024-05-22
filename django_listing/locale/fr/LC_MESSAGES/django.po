@@ -368,7 +368,7 @@ msgstr ""
 
 #: listing.py:500
 msgid "Nothing to display"
-msgstr "Rien à affichier"
+msgstr "Rien à afficher"
 
 #: listing.py:709
 msgid "Please configure at least one column in your listing"

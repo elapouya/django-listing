@@ -186,7 +186,7 @@ class ListingViewMixin:
 
     def get_listing_instance(self):
         data = self.get_listing_data()
-        if isinstance(data, QuerySet) or data:
+        if isinstance(data, (QuerySet, list)) or data:
             listing_class = self.get_listing_class() or Listing
             return listing_class(data, **self.get_listing_params())
 
@@ -218,9 +218,9 @@ class ListingViewMixin:
         if not instance:
             instance = self.get_listing_instance()
             if instance:
-                instance.id = (
-                    context_name + "-id"
-                )  # Ensure id is set according to method name + '-id'
+                # instance.id = (
+                #     context_name + "-id"
+                # )  # Ensure id is set according to method name + '-id'
                 self.set_to_listing_instances(context_name, instance)
         return instance
 

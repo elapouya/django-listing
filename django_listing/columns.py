@@ -54,6 +54,7 @@ __all__ = [
     "DecimalColumn",
     "ForeignKeyColumn",
     "InputColumn",
+    "IntegerColumn",
     "JsonDateTimeColumn",
     "LinkColumn",
     "LinkObjectColumn",

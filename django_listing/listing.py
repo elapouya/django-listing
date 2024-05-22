@@ -497,7 +497,7 @@ class Listing(ListingBase):
     editing_hidden_columns = None
     editing_row_pk = None
     empty_listing_template_name = ThemeTemplate("empty_listing.html")
-    empty_table_msg = gettext_lazy("Nothing to display")
+    empty_table_msg = None
     exclude_columns = None
     export = None
     export_columns = None
@@ -858,6 +858,10 @@ class Listing(ListingBase):
                     self.record_label_plural = self.model._meta.verbose_name_plural
                 else:
                     self.record_label_plural = _("records")
+            if self.empty_table_msg is None:
+                self.empty_table_msg = (
+                    _("There is no %s to display.") % self.record_label
+                )
 
             self.data = data
             self.create_missing_filters()
