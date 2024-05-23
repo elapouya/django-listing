@@ -560,8 +560,13 @@ $(document).ready(function () {
     $(document.body).on("click", "div.django-listing-ajax button.listing-nav", djlst_post_action_button);
     $(document.body).on("click", "div.django-listing-ajax a.listing-nav", djlst_load_listing_href);
     $(document.body).on("change", "div.django-listing-ajax select.listing-nav", djlst_load_listing_val);
-    $(document.body).on("click", "div.django-listing-selecting.selection_multiple .row-selector", djlst_multiple_row_select);
-    $(document.body).on("click", "div.django-listing-selecting.selection_unique .row-selector", djlst_unique_row_select);
+    if ($("div.django-listing-selecting td.col-selection_checkbox").length) {
+        $(document.body).on("click", "div.django-listing-selecting.selection_multiple .row-selector td.col-selection_checkbox", djlst_multiple_row_select);
+        $(document.body).on("click", "div.django-listing-selecting.selection_unique .row-selector td.col-selection_checkbox", djlst_unique_row_select);
+    } else {
+        $(document.body).on("click", "div.django-listing-selecting.selection_multiple .row-selector", djlst_multiple_row_select);
+        $(document.body).on("click", "div.django-listing-selecting.selection_unique .row-selector", djlst_unique_row_select);
+    }
     $(document.body).on("click", "div.django-listing-selecting .selection-overlay.hover", djlst_activate_selection);
     $(document.body).on("click", "[listing-action='select-all']", djlst_select_all);
     $(document.body).on("click", "[listing-action='unselect-all']", djlst_unselect_all);
