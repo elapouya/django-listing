@@ -36,7 +36,7 @@ div.django-listing-container {
                     margin: auto;
                 }
             }
-            &.cls-checkboxcolumn,
+            &.cls-checkboxcolumn,&.col-selection_checkbox,
             &.cls-booleancolumn div.form-field {
                 text-align: center;
             }
@@ -50,6 +50,7 @@ div.django-listing-container {
     thead {
         th.col-selection_checkbox  {
             vertical-align: middle;
+            text-align: center;
         }
     }
     div.django-listing {

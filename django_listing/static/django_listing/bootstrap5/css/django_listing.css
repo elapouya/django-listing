@@ -983,7 +983,7 @@ div.django-listing-container table.django-listing td.type-bool {
 div.django-listing-container table.django-listing td.type-bool input {
   margin: auto;
 }
-div.django-listing-container table.django-listing td.cls-checkboxcolumn, div.django-listing-container table.django-listing td.cls-booleancolumn div.form-field {
+div.django-listing-container table.django-listing td.cls-checkboxcolumn, div.django-listing-container table.django-listing td.col-selection_checkbox, div.django-listing-container table.django-listing td.cls-booleancolumn div.form-field {
   text-align: center;
 }
 div.django-listing-container table.django-listing td.render-error {
@@ -993,6 +993,7 @@ div.django-listing-container table.django-listing td.render-error {
 }
 div.django-listing-container thead th.col-selection_checkbox {
   vertical-align: middle;
+  text-align: center;
 }
 div.django-listing-container div.django-listing div.div-row {
   display: -webkit-box;
