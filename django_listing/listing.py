@@ -708,10 +708,16 @@ class Listing(ListingBase):
             raise InvalidListing(
                 _("Please configure at least one column " "in your listing")
             )
-        if self.selectable:
-            if self.selection_position == "left":
+        if self.selectable and self.columns:
+            # It is important to check selection column already exists
+            # otherwise, there may be many duplicates
+            if self.selection_position == "left" and not isinstance(
+                self.columns[0], SelectionColumn
+            ):
                 self.columns.insert(0, SelectionColumn(LISTING_SELECTION_CHECKBOX_NAME))
-            elif self.selection_position == "right":
+            elif self.selection_position == "right" and not isinstance(
+                self.columns[-1], SelectionColumn
+            ):
                 self.columns.append(SelectionColumn(LISTING_SELECTION_CHECKBOX_NAME))
 
     def manage_group_by(self):
