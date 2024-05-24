@@ -204,7 +204,9 @@ class SortSelectToolbarItem(ToolbarItem):
         self.choices = normalize_choices(self.choices)
         if not self.choices:
             self.choices = []
-            for c in self.listing.columns:
+            for c in sorted(
+                self.listing.columns, key=lambda x: x.get_header_value().lower()
+            ):
                 self.choices.append((c.name, c.get_header_value() + self.up_arrow))
                 self.choices.append(
                     ("-" + c.name, c.get_header_value() + self.down_arrow)
