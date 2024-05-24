@@ -1,3 +1,10 @@
+0.7.27 (2024-05-24)
+-------------------
+- Sort SortSelectToolbarItem choices
+- Improve checkbox selection
+- Fix selection column to avoid duplicates
+- New empty msg management + some little fixes
+
 0.7.26 (2024-05-14)
 -------------------
 - Add MultipleForeignKeyFilter
