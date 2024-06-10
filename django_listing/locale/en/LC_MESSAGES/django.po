@@ -449,7 +449,7 @@ msgstr ""
 
 #: templates/django_listing/default/empty_listing.html:4
 #, python-format
-msgid "There is no %(record_label)s to display."
+msgid "There is no %s to display."
 msgstr ""
 
 #: templates/django_listing/default/group_by.html:8
