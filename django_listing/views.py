@@ -150,6 +150,8 @@ class ListingViewMixin:
 
     def manage_listing_ajax_request(self, request, *args, **kwargs):
         listing = self.get_listing_from_post(request)
+        context = RequestContext(request)
+        context.update(self.get_context_data(**kwargs))
         self.listing = listing
         response = None
         if listing:
@@ -167,7 +169,7 @@ class ListingViewMixin:
             return response
         if listing.have_to_refresh():
             listing = self.get_listing_from_post(request, refresh=True)
-        return HttpResponse(listing.render(RequestContext(request)))
+        return HttpResponse(listing.render(context))
 
     def get_listing_class(self):
         return self.listing_class
