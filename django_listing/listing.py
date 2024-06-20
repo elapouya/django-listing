@@ -1033,8 +1033,16 @@ class Listing(ListingBase):
             if self.attached_form:
                 self.attached_form.render_init(context)
             self.global_context_init()
-            self.records.compute_current_page_records()
+            self.compute_current_page_records()
             self._render_initialized = True
+
+    def compute_current_page_records(self):
+        """Compute the current page records against the actual given data
+
+        This method is to be called if the listing data has changed after initialization.
+        This is used in attached form POST request management.
+        """
+        self.records.compute_current_page_records()
 
     def render(self, context):
         response = self.render_init(context)

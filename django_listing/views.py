@@ -428,6 +428,7 @@ class ListingViewMixin:
                     listing.processed_pks = set(selected_rows)
             if not self.is_ajax:
                 return None
+            listing.compute_current_page_records()
             form_html = listing.attached_form.render(RequestContext(self.request))
             if mixed_response is None:
                 listing_html = listing.render(RequestContext(self.request))

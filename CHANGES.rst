@@ -1,3 +1,7 @@
+0.7.29 (2024-06-20)
+-------------------
+- Re-compute the current page records after processing attached form actions
+
 0.7.28 (2024-06-14)
 -------------------
 - Add view context data on ajax rendering
