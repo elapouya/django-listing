@@ -77,6 +77,7 @@ class ListingViewMixin:
         super().__init__(**kwargs)
         self._listing_instances = {}
         self._formset_errors = {}
+        self.ajax_request_context = None
 
     def post(self, request, *args, **kwargs):
         # make POST data mutable
@@ -128,8 +129,10 @@ class ListingViewMixin:
             return response
         return response
 
-    def json_response(self, data):
-        response = HttpResponse(json.dumps(data), content_type="application/json")
+    def json_response(self, data, **kwargs):
+        if hasattr(self, "listing_patch_json_response_data"):
+            self.listing_patch_json_response_data(data)
+        response = JsonResponse(data, **kwargs)
         response["Cache-Control"] = "no-cache"
         return response
 
@@ -150,8 +153,8 @@ class ListingViewMixin:
 
     def manage_listing_ajax_request(self, request, *args, **kwargs):
         listing = self.get_listing_from_post(request)
-        context = RequestContext(request)
-        context.update(self.get_context_data(**kwargs))
+        self.ajax_request_context = RequestContext(request)
+        self.ajax_request_context.update(self.get_context_data(**kwargs))
         self.listing = listing
         response = None
         if listing:
@@ -160,8 +163,7 @@ class ListingViewMixin:
             listing.ajax_request = True
             listing.ajax_part = listing_part
             if isinstance(listing.action, str) and listing.action:
-                # listing.render_init(RequestContext(request))
-                listing.render_init_context(RequestContext(request))
+                listing.render_init_context(self.ajax_request_context)
                 method = getattr(self, "manage_listing_%s" % listing.action, None)
                 if callable(method):
                     response = method(listing, *args, **kwargs)
@@ -169,7 +171,7 @@ class ListingViewMixin:
             return response
         if listing.have_to_refresh():
             listing = self.get_listing_from_post(request, refresh=True)
-        return HttpResponse(listing.render(context))
+        return HttpResponse(listing.render(self.ajax_request_context))
 
     def get_listing_class(self):
         return self.listing_class
@@ -429,9 +431,9 @@ class ListingViewMixin:
             if not self.is_ajax:
                 return None
             listing.compute_current_page_records()
-            form_html = listing.attached_form.render(RequestContext(self.request))
+            form_html = listing.attached_form.render(self.ajax_request_context)
             if mixed_response is None:
-                listing_html = listing.render(RequestContext(self.request))
+                listing_html = listing.render(self.ajax_request_context)
                 mixed_response = {
                     "listing": listing_html,
                     "attached_form": form_html,
@@ -439,7 +441,7 @@ class ListingViewMixin:
                 }
             else:
                 if "listing" in mixed_response and mixed_response["listing"] is None:
-                    listing_html = listing.render(RequestContext(self.request))
+                    listing_html = listing.render(self.ajax_request_context)
                     mixed_response["listing"] = listing_html
                 if (
                     "attached_form" in mixed_response
@@ -448,12 +450,12 @@ class ListingViewMixin:
                     mixed_response["attached_form"] = form_html
             if instance.pk:
                 mixed_response["object_pk"] = instance.pk
-            return JsonResponse(mixed_response)
+            return self.json_response(mixed_response)
         else:
             if not self.is_ajax:
                 return None
-            form_html = listing.attached_form.render(RequestContext(self.request))
-            return JsonResponse({"attached_form": form_html})
+            form_html = listing.attached_form.render(self.ajax_request_context)
+            return self.json_response({"attached_form": form_html})
 
     def manage_attached_form_insert_get_form(self, listing, *args, **kwargs):
         form = listing.attached_form.get_form()
@@ -552,8 +554,8 @@ class ListingViewMixin:
         self.request.POST = dict(
             csrfmiddlewaretoken=self.request.POST.get("csrfmiddlewaretoken")
         )
-        form_html = attached_form.render(RequestContext(self.request))
-        return JsonResponse({"attached_form": form_html})
+        form_html = attached_form.render(self.ajax_request_context)
+        return self.json_response({"attached_form": form_html})
 
     def listing_save_rows_to_database(self, listing, formset):
         updated_rows_pk = []

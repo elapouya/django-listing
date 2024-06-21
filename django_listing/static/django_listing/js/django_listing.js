@@ -48,7 +48,7 @@ function djlst_load_listing_url(nav_obj, url) {
         success: function (response) {
             $(listing_target).replaceWith(response);
             djlst_listing_on_load();
-            $(document).trigger("djlst_ajax_loaded", {listing_target: listing_target});
+            $(document).trigger("djlst_ajax_loaded", {listing_target: listing_target, response: response});
         },
         error: function (response) {
             text = "An error occured.\n\nIndications :\n\n" + response.responseText;
@@ -97,7 +97,7 @@ function djlst_post_action_button(event) {
         success: function (response) {
             $(listing_target).replaceWith(response);
             djlst_listing_on_load();
-            $(document).trigger("djlst_ajax_loaded", {listing_target: listing_target});
+            $(document).trigger("djlst_ajax_loaded", {listing_target: listing_target, response: response});
         },
         error: function (response) {
             text = "An error occured.\n\nIndications :\n\n" + response.responseText;
@@ -169,7 +169,7 @@ function djlst_post_attached_form(event) {
             }
             $(document).trigger(
                 "djlst_ajax_attached_form_loaded",
-                {listing: listing_target, form: new_attached_form}
+                {listing: listing_target, form: new_attached_form, response:mixed_response}
             );
         },
         error: function (response) {

@@ -1,3 +1,9 @@
+0.7.30 (2024-06-21)
+-------------------
+- Give the possibility to patch json response data via
+  listing_patch_json_response_data(data) method to be put in view
+- Better ajax request context management
+
 0.7.29 (2024-06-20)
 -------------------
 - Re-compute the current page records after processing attached form actions
