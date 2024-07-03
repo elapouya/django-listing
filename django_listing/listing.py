@@ -619,6 +619,8 @@ class Listing(ListingBase):
         self._view = None
         self.form_params = {}
         self._have_to_refresh = False
+        self.columns_sort_ascending = {}
+        self.columns_sort_list = []
 
         # listing initialisation must be in 2 steps because when a class is
         # passed to a template, it is automatically instanciated by Django

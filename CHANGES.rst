@@ -1,3 +1,7 @@
+0.7.31 (2024-07-02)
+-------------------
+- Initialize some dicts/lists in __init__
+
 0.7.30 (2024-06-21)
 -------------------
 - Give the possibility to patch json response data via
