@@ -40,22 +40,26 @@
         {% endfor %}
 
         <div class="form-buttons">
-            {% for action,label,icon,css_class in attached_form.buttons %}
-                {% listing_has_permission_for_action listing action as has_button_perm %}
-                {% listing_confirm_msg_for_action listing action as confirm_msg %}
-                {% listing_confirm_msg_nb_items_for_action listing action as confirm_msg_nb_items %}
-                <button type="{% if action == 'reset' %}reset{% elif listing.accept_ajax %}button{% else %}submit{% endif %}"
-                        class="attached-form-nav btn btn-primary submit-button {{ action }}{% if not has_button_perm %} no-perm disabled{% endif %}{% if css_class %} {{ css_class }}{% endif %}"
-                        {% if confirm_msg %}confirm-msg="{{ confirm_msg }}"{% endif %}
-                        {% if confirm_msg_nb_items %}confirm-msg-nb-items="{{ confirm_msg_nb_items }}"{% endif %}
-                        {% if action != 'reset' %}name="action_button" value="{{ action }}"{% endif %}>
-                    {% if label %}
-                        <span class="label">{{ label|safe }}</span>
-                    {% endif %}
-                    {% if icon %}
-                        <span class="icon"><span class="{{ icon }}"></span></span>
-                    {% endif %}
-                </button>
+            {% for buttons_line in attached_form.buttons %}
+            <div class="form-buttons-line">
+                {% for action,label,icon,css_class in buttons_line %}
+                    {% listing_has_permission_for_action listing action as has_button_perm %}
+                    {% listing_confirm_msg_for_action listing action as confirm_msg %}
+                    {% listing_confirm_msg_nb_items_for_action listing action as confirm_msg_nb_items %}
+                    <button type="{% if action == 'reset' %}reset{% elif listing.accept_ajax %}button{% else %}submit{% endif %}"
+                            class="attached-form-nav btn btn-primary submit-button {{ action }}{% if not has_button_perm %} no-perm disabled{% endif %}{% if css_class %} {{ css_class }}{% endif %}"
+                            {% if confirm_msg %}confirm-msg="{{ confirm_msg }}"{% endif %}
+                            {% if confirm_msg_nb_items %}confirm-msg-nb-items="{{ confirm_msg_nb_items }}"{% endif %}
+                            {% if action != 'reset' %}name="action_button" value="{{ action }}"{% endif %}>
+                        {% if label %}
+                            <span class="label">{{ label|safe }}</span>
+                        {% endif %}
+                        {% if icon %}
+                            <span class="icon"><span class="{{ icon }}"></span></span>
+                        {% endif %}
+                    </button>
+                {% endfor %}
+            </div>
             {% endfor %}
         </div>
     {% endwith %}

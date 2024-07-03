@@ -1,3 +1,7 @@
+0.7.32 (2024-07-03)
+-------------------
+- Attached form buttons can now be on several lines
+
 0.7.31 (2024-07-02)
 -------------------
 - Initialize some dicts/lists in __init__

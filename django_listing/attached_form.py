@@ -254,45 +254,47 @@ class AttachedForm:
         self.init_buttons()
 
     def init_buttons(self):
-        buttons = self.buttons
-        if isinstance(buttons, str):
-            buttons = list(map(str.strip, buttons.split(",")))
-        self.buttons = []
-        for button in buttons:
-            if isinstance(button, str):
-                # Will try to replace with a relevant tuple
-                # must be defined has (action, label, icon css class, button css class)
-                if button == "reset":
-                    button = (
-                        "reset",
-                        self.reset_button_label,
-                        self.theme_reset_button_icon,
-                        self.theme_reset_button_class,
+        if isinstance(self.buttons, str):
+            self.buttons = list(map(lambda s: s.split(","), self.buttons.split(";")))
+        else:
+            self.buttons = copy.deepcopy(self.buttons)
+        for buttons_line in self.buttons:
+            for i, button in enumerate(buttons_line):
+                if isinstance(button, str):
+                    # Will try to replace with a relevant tuple
+                    # must be defined has (action, label, icon css class, button css class)
+                    if button == "reset":
+                        button = (
+                            "reset",
+                            self.reset_button_label,
+                            self.theme_reset_button_icon,
+                            self.theme_reset_button_class,
+                        )
+                    elif button == "submit":
+                        button = (
+                            self.submit_action,
+                            self.submit_button_label,
+                            self.theme_submit_button_icon,
+                            self.theme_submit_button_class,
+                        )
+                    elif hasattr(self, f"{button}_button_label"):
+                        button = (
+                            button,
+                            getattr(self, f"{button}_button_label"),
+                            getattr(self, f"theme_{button}_button_icon", ""),
+                            getattr(self, f"theme_{button}_button_class", ""),
+                        )
+                    else:
+                        button = (button, button.capitalize(), None, None)
+                    buttons_line[i] = button
+                if len(button) != 4:
+                    raise InvalidListingConfiguration(
+                        _(
+                            "In attached form, button tuple description must have 4 items : "
+                            "(action, label, icon css class, button css class)."
+                        )
                     )
-                elif button == "submit":
-                    button = (
-                        self.submit_action,
-                        self.submit_button_label,
-                        self.theme_submit_button_icon,
-                        self.theme_submit_button_class,
-                    )
-                elif hasattr(self, f"{button}_button_label"):
-                    button = (
-                        button,
-                        getattr(self, f"{button}_button_label"),
-                        getattr(self, f"theme_{button}_button_icon", ""),
-                        getattr(self, f"theme_{button}_button_class", ""),
-                    )
-                else:
-                    button = (button, button.capitalize(), None, None)
-            if len(button) != 4:
-                raise InvalidListingConfiguration(
-                    _(
-                        "In attached form, button tuple description must have 4 items : "
-                        "(action, label, icon css class, button css class)."
-                    )
-                )
-            self.buttons.append(button)
+        return
 
     def datetimepicker_init(self):
         if self.listing.use_datetimepicker:
