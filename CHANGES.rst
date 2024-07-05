@@ -1,3 +1,7 @@
+0.7.33 (2024-07-05)
+-------------------
+- Better autocomplete filters management
+
 0.7.32 (2024-07-03)
 -------------------
 - Attached form buttons can now be on several lines

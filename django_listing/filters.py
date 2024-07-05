@@ -86,6 +86,8 @@ FILTERS_FORM_FIELD_KEYS = {
     "choices",
     "disabled",
     "empty_value",
+    "empty_label",
+    "queryset",
     "error_messages",
     "help_text",
     "initial",
@@ -861,9 +863,9 @@ class ForeignKeyFilter(Filter):
     def get_related_qs(self):
         if self.queryset is not None:
             return self.queryset
-        related_model = self.listing.model._meta.get_field(
-            self.field_name
-        ).related_model
+        related_model = self.listing.model
+        for f_name in self.filter_key.split("__"):
+            related_model = related_model._meta.get_field(f_name).related_model
         qs = related_model.objects.all()
         order_by = self.get_choices_order()
         if order_by:
@@ -900,12 +902,15 @@ class AutocompleteForeignKeyFilter(Filter):
     widget_class = autocomplete.ModelSelect2
 
     def get_form_field_params(self, **kwargs):
-        related_model = self.listing.model._meta.get_field(
-            self.field_name
-        ).related_model
         params = super().get_form_field_params(**kwargs)
         params["required"] = False
-        params["queryset"] = related_model.objects.all()
+        if self.queryset is not None:
+            params["queryset"] = self.queryset
+        else:
+            related_model = self.listing.model
+            for f_name in self.filter_key.split("__"):
+                related_model = related_model._meta.get_field(f_name).related_model
+            params["queryset"] = related_model.objects.all()
         return params
 
     def get_form_field_widget(self, field_class, **kwargs):
