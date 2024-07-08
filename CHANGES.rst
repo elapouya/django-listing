@@ -1,3 +1,7 @@
+0.7.34 (2024-07-08)
+-------------------
+- Add title in attached form buttons
+
 0.7.33 (2024-07-05)
 -------------------
 - Better autocomplete filters management

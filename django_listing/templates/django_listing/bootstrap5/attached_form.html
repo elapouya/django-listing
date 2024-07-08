@@ -50,7 +50,9 @@
                             class="{{ action }}{% if not has_button_perm %} no-perm disabled{% endif %}{% if css_class %} {{ css_class }}{% endif %}"
                             {% if confirm_msg %}confirm-msg="{{ confirm_msg }}"{% endif %}
                             {% if confirm_msg_nb_items %}confirm-msg-nb-items="{{ confirm_msg_nb_items }}"{% endif %}
-                            {% if action != 'reset' %}name="action_button" value="{{ action }}"{% endif %}>
+                            {% if action != 'reset' %}name="action_button" value="{{ action }}"{% endif %}
+                            {% if label %}title="{{ label|safe }}"{% endif %}
+                    >
                         <span class="button-icon-label">
                         {% if icon %}
                             <span class="button-icon"><span class="{{ icon }}"></span></span>
