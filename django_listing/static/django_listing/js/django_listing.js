@@ -120,7 +120,7 @@ function djlst_post_attached_form(event) {
         confirm_msg_nb_items = parseInt(confirm_msg_nb_items);
         if (isNaN(confirm_msg_nb_items)) confirm_msg_nb_items = 0;
         confirm_msg = confirm_msg.replace("{nb_items}", selected_rows.length);
-        nb_all_items = listing_div.attr("nb-rows");
+        let nb_all_items = listing_div.attr("nb-rows");
         if (!nb_all_items) nb_all_items = "";
         confirm_msg = confirm_msg.replace("{nb_all_items}", nb_all_items);
         if (selected_rows.length >= confirm_msg_nb_items) {
@@ -400,7 +400,11 @@ function djlst_selection_changed_hook(e) {
             selected_items.text(selected_items.attr('many').replace('{nb}', count));
         }
     }
-    $(document).trigger("djlst_selection_changed", {listing: listing, count: count});
+    $(document).trigger("djlst_selection_changed", {
+        listing: listing,
+        selected_count: count,
+        all_count:listing.attr("nb-rows")
+    });
 }
 
 function djlst_fill_form(form, obj, pk) {

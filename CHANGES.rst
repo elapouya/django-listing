@@ -1,3 +1,7 @@
+0.7.35 (2024-07-09)
+-------------------
+- Add extra spans in attached form buttons for better customization
+
 0.7.34 (2024-07-08)
 -------------------
 - Add title in attached form buttons
