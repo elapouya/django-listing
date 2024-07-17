@@ -772,6 +772,11 @@ class Column(metaclass=ColumnMeta):
             }
             | self.theme_cell_class,
         )
+        if (
+            self.listing.link_object_columns
+            and self.name in self.listing.link_object_columns
+        ):
+            attrs.add("class", "object-link")
         return attrs
 
     def get_cell_filter_link(self, rec, ctx, value):

@@ -1,3 +1,7 @@
+0.7.36 (2024-07-17)
+-------------------
+- Add object-link css class on cells in link_object_columns
+
 0.7.35 (2024-07-09)
 -------------------
 - Add extra spans in attached form buttons for better customization
