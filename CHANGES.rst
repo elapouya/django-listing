@@ -1,3 +1,7 @@
+0.7.37 (2024-07-23)
+-------------------
+- Add form_layout_advanced, and advanced button for filters form
+
 0.7.36 (2024-07-17)
 -------------------
 - Add object-link css class on cells in link_object_columns

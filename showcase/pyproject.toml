@@ -25,6 +25,7 @@ black = {extras = ["d"], version = "^23.3.0"}
 django-autocomplete-light = "^3.9.7"
 django-listing = {path = "../../django-listing", develop = true}
 wheel = "^0.43.0"
+twine = "^5.1.1"
 
 
 [build-system]

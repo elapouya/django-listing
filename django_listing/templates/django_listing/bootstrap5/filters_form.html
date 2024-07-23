@@ -5,27 +5,8 @@
 
     {{ filters.form.non_field_errors }}
 
-    {% for row in filters.form_layout %}
-        <div class="form-row d-lg-flex">
-            {% for field_name,_,ending,_ in row %}
-                {% filters_form_field listing field_name as field %}
-                {% if field %}
-                    <div {% filters_form_field_container_attrs listing field_name %}>
-                        {% if field.errors %}<span class="listing-icon-attention"></span> {{ field.errors }}{% endif %}
-                        <div class="label_input">
-                            {{ field.label_tag }} {{ field }}
-                        </div>
-                        {% if ending %}<span class="ending">{{ ending }}</span>{% endif %}
-                        {% if field.help_text %}
-                            <p class="help">{{ field.help_text|safe }}</p>
-                        {% endif %}
-                    </div>
-                {% else %}
-                    *** no filter named '{{ field_name }}' ***
-                {% endif %}
-            {% endfor %}
-        </div>
-    {% endfor %}
+    {% include "django_listing/bootstrap5/filters_form_fields.html" with layout=filters.form_layout %}
+    {% include "django_listing/bootstrap5/filters_form_layout_advanced.html" %}
 
     <div class="form-buttons">
         {% for button in filters.form_buttons %}
@@ -51,6 +32,16 @@
                             <span class="button-label">{{ filters.form_submit_label }}</span>
                         </span>
                     </button>
+                {% endif %}
+            {% elif button == 'advanced' %}
+                {% if filters.form_advanced_label %}
+                    <a class="{{ filters.theme_form_advanced_class }}">
+                        <span class="button-icon-label">
+                            <span class="button-icon down {{ filters.theme_form_advanced_down_icon }}"></span>
+                            <span class="button-icon up {{ filters.theme_form_advanced_up_icon }}" style="display: none"></span>
+                            <span class="button-label">{{ filters.form_advanced_label }}</span>
+                        </span>
+                    </a>
                 {% endif %}
             {% endif %}
         {% endfor %}

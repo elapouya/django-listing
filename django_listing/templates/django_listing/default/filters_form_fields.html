@@ -1,0 +1,22 @@
+{% load django_listing %}
+{% for row in layout %}
+    <div class="form-row">
+        {% for field_name,_,ending,_ in row %}
+            {% filters_form_field listing field_name as field %}
+            {% if field %}
+                <div {% filters_form_field_container_attrs listing field_name %}>
+                    {% if field.errors %}<span class="listing-icon-attention"></span> {{ field.errors }}{% endif %}
+                    <div class="label_input">
+                        {{ field.label_tag }} {{ field }}
+                    </div>
+                    {% if ending %}<span class="ending">{{ ending }}</span>{% endif %}
+                    {% if field.help_text %}
+                        <p class="help">{{ field.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+            {% else %}
+                *** no filter named '{{ field_name }}' ***
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endfor %}

@@ -5,43 +5,43 @@
 
     {{ filters.form.non_field_errors }}
 
-    {% for row in filters.form_layout %}
-        <div class="form-row">
-            {% for field_name,_,ending,_ in row %}
-                {% filters_form_field listing field_name as field %}
-                {% if field %}
-                    <div class="form-field {{ filters.theme_field_class }}{% if field.errors %} errors{% endif %}">
-                        {% if field.errors %}<span class="listing-icon-attention"></span> {{ field.errors }}{% endif %}
-                        <div class="label_input">
-                            {{ field.label_tag }} {{ field }}
-                        </div>
-                        {% if ending %}<span class="ending">{{ ending }}</span>{% endif %}
-                        {% if field.help_text %}
-                            <p class="help">{{ field.help_text|safe }}</p>
-                        {% endif %}
-                    </div>
-                {% else %}
-                    *** no filter named '{{ field_name }}' ***
-                {% endif %}
-            {% endfor %}
-        </div>
-    {% endfor %}
+    {% include "django_listing/default/filters_form_fields.html" with layout=filters.form_layout %}
+    {% include "django_listing/default/filters_form_layout_advanced.html" %}
 
     <div class="form-buttons">
         {% for button in filters.form_buttons %}
             {% if button == 'reset' %}
                 {% if filters.form_reset_label %}
-                    <a class="filters-nav btn btn-primary reset-button"
+                    <a class="{{ filters.theme_form_reset_class }}"
                        href="{{ filters.get_form_reset_url }}">
-                        {{ filters.form_reset_label }}
+                        <span class="button-icon-label">
+                            <span class="button-icon {{ filters.theme_form_reset_icon }}"></span>
+                            <span class="button-label">{{ filters.form_reset_label }}</span>
+                        </span>
                     </a>
                 {% endif %}
             {% elif button == 'submit' %}
                 {% if filters.form_submit_label %}
-                    <input type="submit"
+                    <button type="submit"
                            name="f_do_filter"
-                           class="filters-nav btn btn-primary submit-button"
-                           value="{{ filters.form_submit_label }}"/>
+                           class="{{ filters.theme_form_submit_class }}"
+                           value="{{ filters.form_submit_label }}"
+                    >
+                        <span class="button-icon-label">
+                            <span class="button-icon {{ filters.theme_form_submit_icon }}"></span>
+                            <span class="button-label">{{ filters.form_submit_label }}</span>
+                        </span>
+                    </button>
+                {% endif %}
+            {% elif button == 'advanced' %}
+                {% if filters.form_advanced_label %}
+                    <a class="{{ filters.theme_form_advanced_class }}">
+                        <span class="button-icon-label">
+                            <span class="button-icon down {{ filters.theme_form_advanced_down_icon }}"></span>
+                            <span class="button-icon up {{ filters.theme_form_advanced_up_icon }}" style="display: none"></span>
+                            <span class="button-label">{{ filters.form_advanced_label }}</span>
+                        </span>
+                    </a>
                 {% endif %}
             {% endif %}
         {% endfor %}

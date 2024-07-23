@@ -553,6 +553,13 @@ function djlst_follow_file_generation() {
 
 $(document).ready(function () {
 
+    $('.filters-form .advanced-button').click(function (){
+        const form = $(this).closest(".filters-form");
+        form.find(".filters-layout-advanced").slideToggle();
+        $(this).find(".button-icon.up").toggle();
+        $(this).find(".button-icon.down").toggle();
+    });
+
     var select2_opened = false;
 
     $('form.listing-form').submit(function () {

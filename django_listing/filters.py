@@ -6,6 +6,7 @@
 import copy
 import re
 from datetime import timedelta
+from itertools import chain
 
 from dal import autocomplete
 from django import forms
@@ -47,8 +48,10 @@ FILTERS_KEYS = {
     "form_attrs",
     "form_buttons",
     "form_layout",
+    "form_layout_advanced",
     "form_reset_label",
     "form_submit_label",
+    "form_advanced_label",
     "form_template_name",
     "theme_form_submit_icon",
     "theme_form_reset_icon",
@@ -155,12 +158,19 @@ class Filters(list):
     listing = None
     form_reset_label = pgettext_lazy("Filters form", "Reset")
     form_submit_label = pgettext_lazy("Filters form", "Filter")
+    form_advanced_label = pgettext_lazy("Filters form", "Advanced")
     form_template_name = ThemeTemplate("filters_form.html")
-    theme_form_submit_icon = ThemeAttribute("filters_theme_form_submit_icon")
     theme_form_reset_icon = ThemeAttribute("filters_theme_form_reset_icon")
-    theme_form_submit_class = ThemeAttribute("filters_theme_form_submit_class")
     theme_form_reset_class = ThemeAttribute("filters_theme_form_reset_class")
+    theme_form_submit_icon = ThemeAttribute("filters_theme_form_submit_icon")
+    theme_form_submit_class = ThemeAttribute("filters_theme_form_submit_class")
+    theme_form_advanced_down_icon = ThemeAttribute(
+        "filters_theme_form_advanced_down_icon"
+    )
+    theme_form_advanced_up_icon = ThemeAttribute("filters_theme_form_advanced_up_icon")
+    theme_form_advanced_class = ThemeAttribute("filters_theme_form_advanced_class")
     form_layout = None
+    form_layout_advanced = None
     form_buttons = "reset,submit"
 
     def __init__(self, *filters, params=None, **kwargs):
@@ -197,6 +207,25 @@ class Filters(list):
             if c not in exclude_filters_name
         ]
 
+    def normalize_layout(self, layout):
+        if isinstance(layout, str):
+            # transform layout string into list of lists of lists
+            layout = re.sub(r"\s", "", layout)
+            layout = list(
+                map(
+                    lambda s: list(
+                        map(
+                            lambda t: (t.split("|") + [None, None, None])[:4],
+                            filter(None, s.split(",")),
+                        )
+                    ),
+                    filter(None, layout.split(";")),
+                )
+            )
+        if layout is None:
+            layout = []
+        return layout
+
     def bind_to_listing(self, listing):
         filters = Filters(params=self._params, **self.init_kwargs)
         for k in FILTERS_KEYS:
@@ -207,20 +236,16 @@ class Filters(list):
             listing_key = "filters_" + k
             if hasattr(listing, listing_key):
                 setattr(filters, k, getattr(listing, listing_key))
-        if isinstance(filters.form_layout, str):
-            # transform layout string into list of lists of lists
-            filters.form_layout = re.sub(r"\s", "", filters.form_layout)
-            filters.form_layout = list(
-                map(
-                    lambda s: list(
-                        map(
-                            lambda t: (t.split("|") + [None, None, None])[:4],
-                            filter(None, s.split(",")),
-                        )
-                    ),
-                    filter(None, filters.form_layout.split(";")),
-                )
-            )
+        if filters.form_layout is None:
+            filters.form_layout = [
+                [[filtr.name, None, None, None]]
+                for filtr in filters
+                if isinstance(filtr, Filter)
+            ]
+        filters.form_layout = self.normalize_layout(filters.form_layout)
+        filters.form_layout_advanced = self.normalize_layout(
+            filters.form_layout_advanced
+        )
         for filtr in self:
             if not isinstance(filtr, Filter):
                 # understand, filtr is a string
@@ -237,23 +262,16 @@ class Filters(list):
         }
         filters.listing = listing
         # extract labels and endings from given layout
-        if filters.form_layout:
-            for row in filters.form_layout:
-                for name, label, ending, input_type in row:
-                    filtr = filters.name2filter.get(name)
-                    if filtr:
-                        if label:
-                            filtr.label = label
-                        if ending:
-                            filtr.ending = ending
-                        if input_type:
-                            filtr.input_type = input_type
-        if filters.form_layout is None:
-            filters.form_layout = [
-                [[filtr.name, None, None, None]]
-                for filtr in filters
-                if isinstance(filtr, Filter)
-            ]
+        for row in chain(filters.form_layout, filters.form_layout_advanced):
+            for name, label, ending, input_type in row:
+                filtr = filters.name2filter.get(name)
+                if filtr:
+                    if label:
+                        filtr.label = label
+                    if ending:
+                        filtr.ending = ending
+                    if input_type:
+                        filtr.input_type = input_type
         fbuttons = filters.form_buttons
         if isinstance(fbuttons, str):
             filters.form_buttons = list(map(str.strip, fbuttons.split(",")))
@@ -909,6 +927,8 @@ class AutocompleteForeignKeyFilter(Filter):
         else:
             related_model = self.listing.model
             for f_name in self.filter_key.split("__"):
+                if f_name == "in":
+                    break
                 related_model = related_model._meta.get_field(f_name).related_model
             params["queryset"] = related_model.objects.all()
         return params

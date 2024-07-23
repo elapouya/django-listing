@@ -593,12 +593,11 @@ class FilterListing(FilterListingMixin, Listing):
         # Note : By default filter_key = filter name if not specified
         MultipleChoiceFilter("gender", input_type="checkbox", label="Gender"),
         # For MultipleChoiceFilter '__in' will be added to filter_key if missing
-        form_layout=(
-            "age1,age2,salary1,salary2,joined1,joined2;"
-            "first_name,last_name,company,marital_status,have_car,gender;"
-            "interests"
+        form_layout="age1,age2,salary1,salary2,joined1,joined2",
+        form_layout_advanced=(
+            "first_name,last_name,company,marital_status,have_car,gender;interests"
         ),
-        form_buttons="submit,reset",
+        form_buttons="advanced,submit,reset",
     )
     # remove default behaviour when there no row to display (remove the listing
     # and display the template 'empty_listing_template_name' )
