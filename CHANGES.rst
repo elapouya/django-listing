@@ -1,3 +1,8 @@
+0.7.38 (2024-08-08)
+-------------------
+- Auto show advanced filters if one or more are used
+- Update translation
+
 0.7.37 (2024-07-23)
 -------------------
 - Add form_layout_advanced, and advanced button for filters form
