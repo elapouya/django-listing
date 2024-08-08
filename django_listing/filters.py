@@ -172,6 +172,7 @@ class Filters(list):
     form_layout = None
     form_layout_advanced = None
     form_buttons = "reset,submit"
+    show_advanced = False
 
     def __init__(self, *filters, params=None, **kwargs):
         self.init_kwargs = kwargs
@@ -336,6 +337,12 @@ class Filters(list):
 
     def render_init(self, context):
         self.listing.manage_page_context(context)
+        advanced_filters_names = {b[0] for a in self.form_layout_advanced for b in a}
+        requested_filter = {
+            k[len(FILTER_QUERYSTRING_PREFIX) :]
+            for k, v in self.listing.request.GET.items()
+            if k.startswith(FILTER_QUERYSTRING_PREFIX) and v
+        }
         if not isinstance(self.form_attrs, HTMLAttributes):
             self.form_attrs = HTMLAttributes(self.form_attrs)
         self.form_attrs.add("class", {"listing-form", "filters-form"})

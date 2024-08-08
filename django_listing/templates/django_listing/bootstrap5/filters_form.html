@@ -37,8 +37,13 @@
                 {% if filters.form_advanced_label %}
                     <a class="{{ filters.theme_form_advanced_class }}">
                         <span class="button-icon-label">
-                            <span class="button-icon down {{ filters.theme_form_advanced_down_icon }}"></span>
-                            <span class="button-icon up {{ filters.theme_form_advanced_up_icon }}" style="display: none"></span>
+                            {% if filters.show_advanced %}
+                                <span class="button-icon down {{ filters.theme_form_advanced_down_icon }}" style="display: none"></span>
+                                <span class="button-icon up {{ filters.theme_form_advanced_up_icon }}"></span>
+                            {% else %}
+                                <span class="button-icon down {{ filters.theme_form_advanced_down_icon }}"></span>
+                                <span class="button-icon up {{ filters.theme_form_advanced_up_icon }}" style="display: none"></span>
+                            {% endif %}
                             <span class="button-label">{{ filters.form_advanced_label }}</span>
                         </span>
                     </a>

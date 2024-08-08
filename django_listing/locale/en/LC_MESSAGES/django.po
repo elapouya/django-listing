@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-14 09:06+0000\n"
+"POT-Creation-Date: 2024-08-08 09:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -141,13 +141,13 @@ msgctxt "Attached form"
 msgid "Update ALL"
 msgstr ""
 
-#: attached_form.py:291
+#: attached_form.py:293
 msgid ""
 "In attached form, button tuple description must have 4 items : (action, "
 "label, icon css class, button css class)."
 msgstr ""
 
-#: attached_form.py:318
+#: attached_form.py:320
 #, python-brace-format
 msgid ""
 "In the {form_name} layout you specified the field \"{field_name}\" but there "
@@ -155,129 +155,134 @@ msgid ""
 "\"{attrname}\"nor attached_form param \"{key}\""
 msgstr ""
 
-#: attached_form.py:340
+#: attached_form.py:342
 msgid "You must specify a list of columns names in the form layout"
 msgstr ""
 
-#: columns.py:298
+#: columns.py:299
 #, python-brace-format
 msgid ""
 "column {col_id} of listing {listing} is not a Column instance (class = "
 "{colclass})"
 msgstr ""
 
-#: columns.py:590 templates/django_listing/default/footer.html:6
+#: columns.py:591 templates/django_listing/default/footer.html:6
 msgid "Please choose..."
 msgstr ""
 
-#: columns.py:591 filters.py:733
+#: columns.py:592 filters.py:753
 msgid "Yes"
 msgstr ""
 
-#: columns.py:592 filters.py:734
+#: columns.py:593 filters.py:754
 msgid "No"
 msgstr ""
 
-#: columns.py:1078
+#: columns.py:1084
 msgid "{} is not a valid django forms field class"
 msgstr ""
 
-#: columns.py:1092
+#: columns.py:1098
 msgid "{} is not a valid django forms widget class"
 msgstr ""
 
-#: columns.py:1145 filters.py:675
+#: columns.py:1151 filters.py:695
 #, python-brace-format
 msgid ""
 "Cannot find choices from model for filter \"{name}\", Please specify the "
 "choices to display"
 msgstr ""
 
-#: columns.py:1153 filters.py:683
+#: columns.py:1159 filters.py:703
 #, python-brace-format
 msgid "Please specify the choices to display for filter \"{name}\""
 msgstr ""
 
-#: columns.py:1165
+#: columns.py:1171
 msgid "True"
 msgstr ""
 
-#: columns.py:1166
+#: columns.py:1172
 msgid "False"
 msgstr ""
 
-#: columns.py:1407
+#: columns.py:1413
 msgid "Button"
 msgstr ""
 
-#: columns.py:1747
+#: columns.py:1753
 msgid "Total"
 msgstr ""
 
-#: columns.py:1749
+#: columns.py:1755
 #, python-brace-format
 msgid "<td{attrs}>Grand Total:<br>{value}</td>"
 msgstr ""
 
-#: columns.py:1758
+#: columns.py:1764
 msgid "Min"
 msgstr ""
 
-#: columns.py:1760
+#: columns.py:1766
 #, python-brace-format
 msgid "<td{attrs}>Overall Min:<br>{value}</td>"
 msgstr ""
 
-#: columns.py:1768
+#: columns.py:1774
 msgid "Max"
 msgstr ""
 
-#: columns.py:1770
+#: columns.py:1776
 #, python-brace-format
 msgid "<td{attrs}>Overall Max:<br>{value}</td>"
 msgstr ""
 
-#: columns.py:1779
+#: columns.py:1785
 msgid "Average"
 msgstr ""
 
-#: columns.py:1784
+#: columns.py:1790
 msgid "<td{attrs}>Overall avg:<br>{value:.{col.footer_precision}f}</td>"
 msgstr ""
 
-#: columns.py:1836 columns.py:1838
+#: columns.py:1842 columns.py:1844
 msgctxt "verb"
 msgid "Filter"
 msgstr ""
 
-#: filters.py:154
+#: filters.py:159
 msgctxt "Filters form"
 msgid "Reset"
 msgstr ""
 
-#: filters.py:155
+#: filters.py:160
 msgctxt "Filters form"
 msgid "Filter"
 msgstr ""
 
-#: filters.py:345 filters.py:353
+#: filters.py:161
+msgctxt "Filters form"
+msgid "Advanced"
+msgstr ""
+
+#: filters.py:365 filters.py:373
 #, python-brace-format
 msgid "Cannot find filter \"{name}\" definition"
 msgstr ""
 
-#: filters.py:421
+#: filters.py:441
 msgid "- No filtering -"
 msgstr ""
 
-#: filters.py:735
+#: filters.py:755
 msgid "Indiff."
 msgstr ""
 
-#: filters.py:840
+#: filters.py:860
 msgid "Use CTRL+click to select/deselect multiple choices"
 msgstr ""
 
-#: filters.py:916
+#: filters.py:941
 msgid "Select a value..."
 msgstr ""
 
@@ -355,35 +360,36 @@ msgid ""
 "will take in account the filter : only filtered items will be processed."
 msgstr ""
 
-#: listing.py:500
-msgid "Nothing to display"
-msgstr ""
-
-#: listing.py:709
+#: listing.py:711
 msgid "Please configure at least one column in your listing"
 msgstr ""
 
-#: listing.py:831
+#: listing.py:839
 msgid "[CANNOT_EDIT_IN_AJAX]"
 msgstr "Cannot edit a listing in ajax mode, please remove accept_ajax=True"
 
-#: listing.py:855
+#: listing.py:863
 msgid "record"
 msgstr ""
 
-#: listing.py:860
+#: listing.py:868
 msgid "records"
 msgstr ""
 
-#: listing.py:1036
+#: listing.py:871
+#, python-format
+msgid "There is no %s to display."
+msgstr ""
+
+#: listing.py:1058
 msgid "[You do not have permission to export data]"
 msgstr ""
 
-#: listing.py:1247
+#: listing.py:1270
 msgid "Sort by:"
 msgstr "Sort by:"
 
-#: listing.py:1248 listing.py:1261
+#: listing.py:1271 listing.py:1284
 msgid ":"
 msgstr ""
 
@@ -447,11 +453,6 @@ msgstr ""
 msgid "Please select a file format !"
 msgstr ""
 
-#: templates/django_listing/default/empty_listing.html:4
-#, python-format
-msgid "There is no %s to display."
-msgstr ""
-
 #: templates/django_listing/default/group_by.html:8
 #: templates/django_listing/default/group_by.html:25
 msgid "[Available columns]"
@@ -466,47 +467,47 @@ msgstr ""
 msgid "Sort by"
 msgstr ""
 
-#: toolbar.py:199 toolbar.py:269 toolbar.py:306
+#: toolbar.py:199 toolbar.py:271 toolbar.py:308
 msgid "OK"
 msgstr ""
 
-#: toolbar.py:225
+#: toolbar.py:227
 msgid "Sort by..."
 msgstr ""
 
-#: toolbar.py:268
+#: toolbar.py:270
 msgid "Per page"
 msgstr ""
 
-#: toolbar.py:298
+#: toolbar.py:300
 msgid "Per page..."
 msgstr ""
 
-#: toolbar.py:303
+#: toolbar.py:305
 msgid "Choose..."
 msgstr ""
 
-#: toolbar.py:305 toolbar.py:317
+#: toolbar.py:307 toolbar.py:319
 msgid "Export to..."
 msgstr ""
 
-#: toolbar.py:323
+#: toolbar.py:325
 msgid "Update"
 msgstr ""
 
-#: toolbar.py:328
+#: toolbar.py:330
 msgid "Select all"
 msgstr ""
 
-#: toolbar.py:333
+#: toolbar.py:335
 msgid "Unselect all"
 msgstr ""
 
-#: toolbar.py:338
+#: toolbar.py:340
 msgid "Invert selection"
 msgstr ""
 
-#: toolbar.py:343
+#: toolbar.py:345
 msgid "Group by..."
 msgstr ""
 
@@ -532,22 +533,22 @@ msgid ""
 "<tt>save_to_database=False</tt>."
 msgstr ""
 
-#: views.py:363
+#: views.py:367
 msgid "You do not have the required permission"
 msgstr ""
 
-#: views.py:480
+#: views.py:485
 msgid "Please select at least one item in the listing"
 msgstr ""
 
-#: views.py:509
+#: views.py:514
 msgid "Please select one item"
 msgstr ""
 
-#: views.py:512
+#: views.py:517
 msgid "You can duplicate only one item at the same time"
 msgstr ""
 
-#: views.py:526
+#: views.py:531
 msgid "Please select at least one item"
 msgstr ""

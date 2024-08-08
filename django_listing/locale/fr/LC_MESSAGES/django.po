@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-14 09:06+0000\n"
+"POT-Creation-Date: 2024-08-08 09:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -143,13 +143,13 @@ msgctxt "Attached form"
 msgid "Update ALL"
 msgstr "Tout modifier"
 
-#: attached_form.py:291
+#: attached_form.py:293
 msgid ""
 "In attached form, button tuple description must have 4 items : (action, "
 "label, icon css class, button css class)."
 msgstr ""
 
-#: attached_form.py:318
+#: attached_form.py:320
 #, python-brace-format
 msgid ""
 "In the {form_name} layout you specified the field \"{field_name}\" but there "
@@ -160,13 +160,13 @@ msgstr ""
 "mais il n'y a aucune colonne avec ce nom ni de méthode \"{attrname}\" ni de "
 "paramètre de formulaire attaché \"{key}\" dans le listing"
 
-#: attached_form.py:340
+#: attached_form.py:342
 msgid "You must specify a list of columns names in the form layout"
 msgstr ""
 "Vous devez spécifier une liste de noms de colonnne dans le layout de "
 "formulaire"
 
-#: columns.py:298
+#: columns.py:299
 #, python-brace-format
 msgid ""
 "column {col_id} of listing {listing} is not a Column instance (class = "
@@ -175,27 +175,27 @@ msgstr ""
 "colonne {col_id} du listing {listing} n'est pas une instance de Column "
 "(class = {colclass})"
 
-#: columns.py:590 templates/django_listing/default/footer.html:6
+#: columns.py:591 templates/django_listing/default/footer.html:6
 msgid "Please choose..."
 msgstr "Choisir..."
 
-#: columns.py:591 filters.py:733
+#: columns.py:592 filters.py:753
 msgid "Yes"
 msgstr "Oui"
 
-#: columns.py:592 filters.py:734
+#: columns.py:593 filters.py:754
 msgid "No"
 msgstr "Non"
 
-#: columns.py:1078
+#: columns.py:1084
 msgid "{} is not a valid django forms field class"
 msgstr "{} n'est pas une classs de champs de formulaire django valide"
 
-#: columns.py:1092
+#: columns.py:1098
 msgid "{} is not a valid django forms widget class"
 msgstr "{} n'est pas une classe de widget de formulaire django valide"
 
-#: columns.py:1145 filters.py:675
+#: columns.py:1151 filters.py:695
 #, python-brace-format
 msgid ""
 "Cannot find choices from model for filter \"{name}\", Please specify the "
@@ -204,91 +204,96 @@ msgstr ""
 "Ne trouve pas 'choices' du modèle de filtrage \"{name}\", merci de spécifier "
 "les choix à afficher"
 
-#: columns.py:1153 filters.py:683
+#: columns.py:1159 filters.py:703
 #, python-brace-format
 msgid "Please specify the choices to display for filter \"{name}\""
 msgstr "Merci de spécifier les choix à afficher pour le filtre \"{name}\""
 
-#: columns.py:1165
+#: columns.py:1171
 msgid "True"
 msgstr "Vrai"
 
-#: columns.py:1166
+#: columns.py:1172
 msgid "False"
 msgstr "Faux"
 
-#: columns.py:1407
+#: columns.py:1413
 msgid "Button"
 msgstr ""
 
-#: columns.py:1747
+#: columns.py:1753
 msgid "Total"
 msgstr ""
 
-#: columns.py:1749
+#: columns.py:1755
 #, python-brace-format
 msgid "<td{attrs}>Grand Total:<br>{value}</td>"
 msgstr ""
 
-#: columns.py:1758
+#: columns.py:1764
 msgid "Min"
 msgstr ""
 
-#: columns.py:1760
+#: columns.py:1766
 #, python-brace-format
 msgid "<td{attrs}>Overall Min:<br>{value}</td>"
 msgstr "<td{attrs}>Minimum:<br>{value}</td>"
 
-#: columns.py:1768
+#: columns.py:1774
 msgid "Max"
 msgstr ""
 
-#: columns.py:1770
+#: columns.py:1776
 #, python-brace-format
 msgid "<td{attrs}>Overall Max:<br>{value}</td>"
 msgstr "<td{attrs}>Maximum:<br>{value}</td>"
 
-#: columns.py:1779
+#: columns.py:1785
 msgid "Average"
 msgstr "Moyenne"
 
-#: columns.py:1784
+#: columns.py:1790
 msgid "<td{attrs}>Overall avg:<br>{value:.{col.footer_precision}f}</td>"
 msgstr "<td{attrs}>Moyenne:<br>{value:.{col.footer_precision}f}</td>"
 
-#: columns.py:1836 columns.py:1838
+#: columns.py:1842 columns.py:1844
 msgctxt "verb"
 msgid "Filter"
 msgstr "Filtrer"
 
-#: filters.py:154
+#: filters.py:159
 msgctxt "Filters form"
 msgid "Reset"
 msgstr "Effacer"
 
-#: filters.py:155
+#: filters.py:160
 msgctxt "Filters form"
 msgid "Filter"
 msgstr "Filtrer"
 
-#: filters.py:345 filters.py:353
+#: filters.py:161
+msgctxt "Filters form"
+msgid "Advanced"
+msgstr "Avancé"
+
+#: filters.py:365 filters.py:373
 #, python-brace-format
 msgid "Cannot find filter \"{name}\" definition"
 msgstr "Ne trouve pas la définition du filtre\"{name}\""
 
-#: filters.py:421
+#: filters.py:441
 msgid "- No filtering -"
 msgstr "- Pas de filtrage -"
 
-#: filters.py:735
+#: filters.py:755
 msgid "Indiff."
 msgstr "Indiff."
 
-#: filters.py:840
+#: filters.py:860
 msgid "Use CTRL+click to select/deselect multiple choices"
 msgstr "Utiliser CTRL+click pour (dé-)sélectionner plusieurs choix"
 
-#: filters.py:916
+#: filters.py:941
 msgid "Select a value..."
 msgstr "Selectionnez une valeur..."
 
@@ -366,37 +371,38 @@ msgid ""
 "will take in account the filter : only filtered items will be processed."
 msgstr ""
 
-#: listing.py:500
-msgid "Nothing to display"
-msgstr "Rien à afficher"
-
-#: listing.py:709
+#: listing.py:711
 msgid "Please configure at least one column in your listing"
 msgstr "Merci de configurer au moins une colonne dans votre listing"
 
-#: listing.py:831
+#: listing.py:839
 msgid "[CANNOT_EDIT_IN_AJAX]"
 msgstr ""
 "On ne peut pas éditer un listing en mode ajax, merci de retirer "
 "accept_ajax=True"
 
-#: listing.py:855
+#: listing.py:863
 msgid "record"
 msgstr "enregistrement"
 
-#: listing.py:860
+#: listing.py:868
 msgid "records"
 msgstr "enregistrements"
 
-#: listing.py:1036
+#: listing.py:871
+#, python-format
+msgid "There is no %s to display."
+msgstr "Il n'y a aucun %s à afficher."
+
+#: listing.py:1058
 msgid "[You do not have permission to export data]"
 msgstr ""
 
-#: listing.py:1247
+#: listing.py:1270
 msgid "Sort by:"
 msgstr "Trier par :"
 
-#: listing.py:1248 listing.py:1261
+#: listing.py:1271 listing.py:1284
 msgid ":"
 msgstr " :"
 
@@ -464,11 +470,6 @@ msgstr "Les données pour un listing doit une séquence ou un QuerySet."
 msgid "Please select a file format !"
 msgstr "Merci de sélectionner un format de fichier !"
 
-#: templates/django_listing/default/empty_listing.html:4
-#, python-format
-msgid "There is no %s to display."
-msgstr "Il n'y a aucun %s à afficher."
-
 #: templates/django_listing/default/group_by.html:8
 #: templates/django_listing/default/group_by.html:25
 msgid "[Available columns]"
@@ -483,47 +484,47 @@ msgstr ""
 msgid "Sort by"
 msgstr "Trier par"
 
-#: toolbar.py:199 toolbar.py:269 toolbar.py:306
+#: toolbar.py:199 toolbar.py:271 toolbar.py:308
 msgid "OK"
 msgstr ""
 
-#: toolbar.py:225
+#: toolbar.py:227
 msgid "Sort by..."
 msgstr "Trier par..."
 
-#: toolbar.py:268
+#: toolbar.py:270
 msgid "Per page"
 msgstr "Par page"
 
-#: toolbar.py:298
+#: toolbar.py:300
 msgid "Per page..."
 msgstr "Par page..."
 
-#: toolbar.py:303
+#: toolbar.py:305
 msgid "Choose..."
 msgstr "Choisir..."
 
-#: toolbar.py:305 toolbar.py:317
+#: toolbar.py:307 toolbar.py:319
 msgid "Export to..."
 msgstr "Exporter vers..."
 
-#: toolbar.py:323
+#: toolbar.py:325
 msgid "Update"
 msgstr "Actualiser"
 
-#: toolbar.py:328
+#: toolbar.py:330
 msgid "Select all"
 msgstr "Tout selectionner"
 
-#: toolbar.py:333
+#: toolbar.py:335
 msgid "Unselect all"
 msgstr ""
 
-#: toolbar.py:338
+#: toolbar.py:340
 msgid "Invert selection"
 msgstr ""
 
-#: toolbar.py:343
+#: toolbar.py:345
 msgid "Group by..."
 msgstr "Grouper par..."
 
@@ -553,43 +554,24 @@ msgstr ""
 "Le formulaire est valide mais rien n'a été mis à jour en base de données car "
 "<tt>save_to_database=False</tt>."
 
-#: views.py:363
+#: views.py:367
 msgid "You do not have the required permission"
 msgstr ""
 
-#: views.py:480
+#: views.py:485
 #, fuzzy
 #| msgid "Please select at least one item"
 msgid "Please select at least one item in the listing"
 msgstr "Merci de selectionner au moins un élement"
 
-#: views.py:509
+#: views.py:514
 msgid "Please select one item"
 msgstr "Merci de sélection un élément"
 
-#: views.py:512
+#: views.py:517
 msgid "You can duplicate only one item at the same time"
 msgstr "Vous ne pouvez dupliquer qu'un élément à la fois"
 
-#: views.py:526
+#: views.py:531
 msgid "Please select at least one item"
 msgstr "Merci de selectionner au moins un élement"
-
-#~ msgctxt "Attached form"
-#~ msgid "Clear"
-#~ msgstr "Effacer"
-
-#~| msgid "Please configure at least one column in your listing"
-#~ msgid "Please fill at least one field to update"
-#~ msgstr "Merci de remplir au moins un champ à mettre à jour"
-
-#~ msgctxt "Listing form"
-#~ msgid "Reset"
-#~ msgstr "Effacer"
-
-#~ msgid ""
-#~ "At least a form layout and name are mandatory in POST data to build a "
-#~ "relevant form instance"
-#~ msgstr ""
-#~ "Au moins un layout et un nom de formulaire sont obligatoires dans les "
-#~ "POST pour instancier correctement un formulaire"

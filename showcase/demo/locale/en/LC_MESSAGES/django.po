@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-14 13:48+0000\n"
+"POT-Creation-Date: 2024-08-08 09:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,106 +18,110 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: demo/models.py:13 demo/models.py:30
+#: demo/listings.py:302 demo/listings.py:732 demo/listings.py:752
+msgid "Please choose..."
+msgstr ""
+
+#: demo/models.py:19 demo/models.py:41
 msgid "Name"
 msgstr ""
 
-#: demo/models.py:14 demo/models.py:48 demo/templates/demo/div_row.html:14
+#: demo/models.py:20 demo/models.py:59 demo/templates/demo/div_row.html:14
 msgid "Address"
 msgstr ""
 
-#: demo/models.py:15
+#: demo/models.py:21
 msgid "City"
 msgstr ""
 
-#: demo/models.py:16
+#: demo/models.py:22
 msgid "Country"
 msgstr ""
 
-#: demo/models.py:17
+#: demo/models.py:23
 msgid "Phone"
 msgstr ""
 
-#: demo/models.py:18
+#: demo/models.py:24
 msgid "e-mail"
 msgstr ""
 
-#: demo/models.py:19
+#: demo/models.py:25
 msgid "Web site"
 msgstr ""
 
-#: demo/models.py:31
+#: demo/models.py:42
 msgid "Description"
 msgstr ""
 
-#: demo/models.py:39
+#: demo/models.py:50
 msgid "Male"
 msgstr ""
 
-#: demo/models.py:40
+#: demo/models.py:51
 msgid "Female"
 msgstr ""
 
-#: demo/models.py:43
+#: demo/models.py:54
 msgid "Married"
 msgstr ""
 
-#: demo/models.py:44
+#: demo/models.py:55
 msgid "Unmarried"
 msgstr ""
 
-#: demo/models.py:46 demo/templates/demo/big_thumbnails.html:7
+#: demo/models.py:57 demo/templates/demo/big_thumbnails.html:7
 #: demo/templates/demo/div_row.html:11 demo/templates/demo/thumbnails.html:8
 msgid "First name"
 msgstr ""
 
-#: demo/models.py:47 demo/templates/demo/big_thumbnails.html:8
+#: demo/models.py:58 demo/templates/demo/big_thumbnails.html:8
 #: demo/templates/demo/div_row.html:12 demo/templates/demo/thumbnails.html:9
 msgid "Last name"
 msgstr ""
 
-#: demo/models.py:49 demo/templates/demo/big_thumbnails.html:9
+#: demo/models.py:60 demo/templates/demo/big_thumbnails.html:9
 #: demo/templates/demo/div_row.html:13 demo/templates/demo/thumbnails.html:10
 msgid "Age"
 msgstr ""
 
-#: demo/models.py:50 demo/templates/demo/div_row.html:17
+#: demo/models.py:61 demo/templates/demo/div_row.html:17
 msgid "Designation"
 msgstr ""
 
-#: demo/models.py:51 demo/templates/demo/div_row.html:18
+#: demo/models.py:62 demo/templates/demo/div_row.html:18
 msgid "Salary"
 msgstr ""
 
-#: demo/models.py:53
+#: demo/models.py:64
 msgid "Joined on"
 msgstr ""
 
-#: demo/models.py:54 demo/templates/demo/div_row.html:20
+#: demo/models.py:66 demo/templates/demo/div_row.html:20
 msgid "Gender"
 msgstr ""
 
-#: demo/models.py:57 demo/templates/demo/div_row.html:19
+#: demo/models.py:69 demo/templates/demo/div_row.html:19
 msgid "Marital status"
 msgstr ""
 
-#: demo/models.py:60 demo/templates/demo/div_row.html:29
+#: demo/models.py:72 demo/templates/demo/div_row.html:29
 msgid "Interests"
 msgstr ""
 
-#: demo/models.py:62 demo/templates/demo/div_row.html:23
+#: demo/models.py:74 demo/templates/demo/div_row.html:23
 msgid "Company"
 msgstr ""
 
-#: demo/models.py:63
+#: demo/models.py:76
 msgid "Rank"
 msgstr ""
 
-#: demo/settings.py:131
+#: demo/settings.py:126
 msgid "English"
 msgstr ""
 
-#: demo/settings.py:132
+#: demo/settings.py:127
 msgid "French"
 msgstr ""
 
@@ -129,42 +133,46 @@ msgstr ""
 msgid "Company City"
 msgstr ""
 
-#: demo/views.py:205 demo/views.py:361 demo/views.py:411
+#: demo/views.py:321 demo/views.py:529 demo/views.py:590
 msgid " and "
 msgstr ""
 
-#: demo/views.py:277
+#: demo/views.py:464
 msgid ""
-"You asked to modify {} rows in the database... But it will not be the case "
-"because it is an online demo ;)"
+"Just to test the method "
+"<tt>manage_listing_companies_listing_row_form_clean()</tt> : do not use "
+"\"Twiyo\" in column \"Name\""
 msgstr ""
 
-#: demo/views.py:313
-msgid ""
-"You asked to modify {} rows of listing \"{}\" in the database... But it will "
-"not be the case because it is an online demo ;)"
-msgstr ""
-
-#: demo/views.py:365
+#: demo/views.py:535
 msgid "You didn't select any row, action : {}"
 msgstr ""
 
-#: demo/views.py:369
+#: demo/views.py:542
 msgid "You selected row {}, action : {}"
 msgstr ""
 
-#: demo/views.py:415
+#: demo/views.py:597
 msgid "Listing {} : You didn't select any row, action : {}"
 msgstr ""
 
-#: demo/views.py:419
+#: demo/views.py:607
 msgid "Listing {} : You selected row {}, action : {}"
 msgstr ""
 
-#: demo/views.py:475
+#: demo/views.py:678
 msgid "Listing : \"{}\", action : {}, You didn't select any row"
 msgstr ""
 
-#: demo/views.py:480
+#: demo/views.py:689
 msgid "<b>Listing :</b> \"{}\", <b>action :</b> {}, <b>rows :</b> {}"
+msgstr ""
+
+#: demo/views.py:735
+#, python-brace-format
+msgid "<b>{first_name} {last_name}</b> already exists !"
+msgstr ""
+
+#: demo/views.py:745
+msgid "Age must be between 0 and 130."
 msgstr ""
