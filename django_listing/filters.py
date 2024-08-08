@@ -343,6 +343,8 @@ class Filters(list):
             for k, v in self.listing.request.GET.items()
             if k.startswith(FILTER_QUERYSTRING_PREFIX) and v
         }
+        if advanced_filters_names & requested_filter:
+            self.show_advanced = True
         if not isinstance(self.form_attrs, HTMLAttributes):
             self.form_attrs = HTMLAttributes(self.form_attrs)
         self.form_attrs.add("class", {"listing-form", "filters-form"})
