@@ -720,18 +720,19 @@ class Column(metaclass=ColumnMeta):
         )
 
     def set_kwargs(self, **kwargs):
+        keys = COLUMNS_PARAMS_KEYS | COLUMNS_FORM_FIELD_KEYS
         # if parameters given in columns : apply them
         for k, v in self.listing.columns.get_params().get(self.name, {}).items():
-            if k in COLUMNS_PARAMS_KEYS:
+            if k in keys:
                 setattr(self, k, v)
-        for k in COLUMNS_PARAMS_KEYS | COLUMNS_FORM_FIELD_KEYS:
+        for k in keys:
             listing_key = "columns_{}".format(k)
             if hasattr(self.listing, listing_key):
                 setattr(self, k, getattr(self.listing, listing_key))
         # col__param has higher priority than columns_param,
         # so getting col__params AFTER columns_params
         for k, v in kwargs.items():
-            if k in COLUMNS_PARAMS_KEYS:
+            if k in keys:
                 setattr(self, k, v)
         # DO NOT swap with above for-loop, otherwise <col>__choices won't work
         # See showcase BoolChoicesImgColumnsListing "gender" column
@@ -1061,7 +1062,7 @@ class Column(metaclass=ColumnMeta):
         else:
             params = {}
         for p in COLUMNS_FORM_FIELD_KEYS:
-            if p != "widget":
+            if p != "widget" and p not in params:
                 if getattr(self, p, None) is not None:
                     params[p] = getattr(self, p)
                 elif (
@@ -1071,7 +1072,12 @@ class Column(metaclass=ColumnMeta):
                     params[p] = getattr(self.model_form_field, p)
         if force_not_required:
             params["required"] = False
-        elif force_select and self.model_field and not self.model_field.blank:
+        elif (
+            "required" not in params
+            and force_select
+            and self.model_field
+            and not self.model_field.blank
+        ):
             params["required"] = True
         return params
 

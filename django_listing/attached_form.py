@@ -87,8 +87,6 @@ class ListingBaseForm(forms.BaseForm):
                     value = field.clean(value)
                 self.cleaned_data[name] = value
 
-                if value is None and not field.required:
-                    continue
                 method = None
                 view = self.listing.get_view()
                 if view:
