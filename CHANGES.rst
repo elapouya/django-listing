@@ -1,3 +1,7 @@
+0.7.39 (2024-08-26)
+-------------------
+- Fix column form field parameters retrieval
+
 0.7.38 (2024-08-08)
 -------------------
 - Auto show advanced filters if one or more are used
