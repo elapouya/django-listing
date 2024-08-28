@@ -1,3 +1,7 @@
+0.7.40 (2024-08-26)
+-------------------
+- Improve BooleanColumn to manage not nullable booleans in attached forms
+
 0.7.39 (2024-08-26)
 -------------------
 - Fix column form field parameters retrieval

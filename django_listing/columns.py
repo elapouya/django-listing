@@ -1196,11 +1196,17 @@ class BooleanColumn(Column):
     def get_form_field_params(self, force_select=False, **kwargs):
         params = super().get_form_field_params(force_select=force_select, **kwargs)
         if force_select:
-            params["choices"] = [
-                ("", self.no_choice_msg),
-                ("True", self.true_msg),
-                ("False", self.false_msg),
-            ]
+            if self.model_field and not self.model_field.null:
+                params["choices"] = [
+                    ("True", self.true_msg),
+                    ("False", self.false_msg),
+                ]
+            else:
+                params["choices"] = [
+                    ("", self.no_choice_msg),
+                    ("True", self.true_msg),
+                    ("False", self.false_msg),
+                ]
         return params
 
 
