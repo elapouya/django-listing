@@ -1257,7 +1257,7 @@ form.listing-form div.form-field.inline div.label_input label {
 }
 form.listing-form div.form-field.errors {
   background-color: rgba(255, 0, 0, 0.25);
-  padding: 10px;
+  padding: 5px;
   border: 1px solid red;
   border-radius: 6px;
   color: red;
@@ -1271,9 +1271,10 @@ form.listing-form div.form-field.errors input:focus {
 }
 
 div.django-listing-container div.form-field.errors,
-div.django-listing-container ul.listing-row-form-errors {
+div.django-listing-container ul.listing-row-form-errors, form.listing-form div.form-field.errors,
+form.listing-form ul.listing-row-form-errors {
   background-color: rgba(255, 0, 0, 0.25);
-  padding: 10px;
+  padding: 5px;
   border: 1px solid red;
   border-radius: 6px;
   color: red;
@@ -1281,23 +1282,28 @@ div.django-listing-container ul.listing-row-form-errors {
   text-align: left;
 }
 div.django-listing-container div.form-field.errors input,
-div.django-listing-container ul.listing-row-form-errors input {
+div.django-listing-container ul.listing-row-form-errors input, form.listing-form div.form-field.errors input,
+form.listing-form ul.listing-row-form-errors input {
   border-color: red;
 }
 div.django-listing-container div.form-field.errors input:focus,
-div.django-listing-container ul.listing-row-form-errors input:focus {
+div.django-listing-container ul.listing-row-form-errors input:focus, form.listing-form div.form-field.errors input:focus,
+form.listing-form ul.listing-row-form-errors input:focus {
   box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
 }
 div.django-listing-container div.form-field.errors ul.errorlist,
-div.django-listing-container ul.listing-row-form-errors ul.errorlist {
+div.django-listing-container ul.listing-row-form-errors ul.errorlist, form.listing-form div.form-field.errors ul.errorlist,
+form.listing-form ul.listing-row-form-errors ul.errorlist {
   list-style: none;
   padding: 0;
   display: inline;
 }
 div.django-listing-container div.form-field.errors ul.errorlist li,
-div.django-listing-container ul.listing-row-form-errors ul.errorlist li {
+div.django-listing-container ul.listing-row-form-errors ul.errorlist li, form.listing-form div.form-field.errors ul.errorlist li,
+form.listing-form ul.listing-row-form-errors ul.errorlist li {
   display: inline;
   list-style: none;
+  font-size: 12px;
 }
 
 form span.asteriskField {

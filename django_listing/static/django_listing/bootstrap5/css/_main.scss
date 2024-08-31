@@ -346,7 +346,7 @@ form.listing-form {
         }
         &.errors {
             background-color: rgba(255,0,0,.25);
-            padding:10px;
+            padding:5px;
             border: 1px solid red;
             border-radius: 6px;
             color: red;
@@ -361,11 +361,11 @@ form.listing-form {
     }
 }
 
-div.django-listing-container {
+div.django-listing-container, form.listing-form {
     div.form-field.errors,
     ul.listing-row-form-errors {
         background-color: rgba(255,0,0,.25);
-        padding:10px;
+        padding: 5px;
         border: 1px solid red;
         border-radius: 6px;
         color: red;
@@ -384,6 +384,7 @@ div.django-listing-container {
             li {
                 display: inline;
                 list-style: none;
+                font-size: 12px;
             }
         }
     }

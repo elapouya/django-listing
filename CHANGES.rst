@@ -1,3 +1,8 @@
+0.8.0 (2024-08-31)
+------------------
+- Attached form can be sticky : add class "stick" to .attached-form-container
+- Better css for attached form
+
 0.7.40 (2024-08-26)
 -------------------
 - Improve BooleanColumn to manage not nullable booleans in attached forms
