@@ -669,18 +669,20 @@ $(document).ready(function () {
     });
 
     // make attached form always visible on big listings
-    if (document.querySelector('.attached-form-container.sticky .attached-form')) {
-        window.addEventListener('scroll', updateAttachedFormsPosition);
-        window.addEventListener('resize', updateAttachedFormsPosition);
+    if ($('.attached-form-container.sticky .attached-form').length) {
+        $(window).on('scroll resize', () => updateAttachedFormsPosition(false));
+        $(document).on("djlst_selection_changed djlst_form_filled", () => updateAttachedFormsPosition(true));
     }
-    function updateAttachedFormsPosition() {
+    function updateAttachedFormsPosition(force_update) {
         const attached_form = document.querySelector('.attached-form-container.sticky .attached-form');
         if (attached_form) {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const windowHeight = document.documentElement.clientHeight;
             const rect = attached_form.getBoundingClientRect();
             const parentTop = attached_form.parentElement.offsetTop;
-            if (rect.height >= windowHeight && scrollTop > 0) return;
+            // If attached form is too big to be sticky, use another strategy :
+            // Stick it only on listing item selection (force_update = true)
+            if (rect.height >= windowHeight && scrollTop > 0 && !force_update) return;
             let newMarginTop = Math.max(0, scrollTop - parentTop);
             attached_form.style.marginTop = newMarginTop + 'px';
             const attached_form_toggle = document.querySelector('.toggle-attached-form');
@@ -689,24 +691,6 @@ $(document).ready(function () {
             }
         }
     }
-    // If attached form is too big to be sticky, use another strategy :
-    // Stick it only on listing item selection
-    $(document).on("djlst_selection_changed djlst_form_filled", function (event) {
-        const attached_form = document.querySelector('.attached-form-container.sticky .attached-form');
-        if (attached_form) {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const windowHeight = document.documentElement.clientHeight;
-            const rect = attached_form.getBoundingClientRect();
-            const parentTop = attached_form.parentElement.offsetTop;
-            if (!(rect.height >= windowHeight && scrollTop > 0)) return;
-            let newMarginTop = Math.max(0,scrollTop - parentTop);
-            attached_form.style.marginTop = newMarginTop + 'px';
-            const attached_form_toggle = document.querySelector('.toggle-attached-form');
-            if (attached_form_toggle) {
-                attached_form_toggle.style.marginTop = newMarginTop + 'px';
-            }
-        }
-    });
 
     djlst_listing_on_load();
 });
