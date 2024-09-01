@@ -253,9 +253,12 @@ function djlst_multiple_row_do_select(row) {
     let listing_div = row.closest('.django-listing-container');
     let form = $("#" + listing_div.attr('attached-form-id'));
     if (form.length) {
+        // Remove form validation errors if any
         form.find(".form-field.errors > span").remove();
         form.find(".form-field.errors > ul.errorlist").remove();
+        form.find("ul.errorlist.nonfield").remove();
         form.find(".form-field.errors").removeClass("errors");
+
         if (listing_div.hasClass("attached_form_autofill")) {
             let nb_slected = row.siblings(".selected").length;
             if (nb_slected > 0) {

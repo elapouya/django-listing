@@ -1,7 +1,7 @@
-0.8.1 (2024-08-31)
+0.8.2 (2024-09-01)
 ------------------
 - Attached form can be sticky : add class "stick" to .attached-form-container
-- Remove attached form fields errors on row selection
+- Remove attached form validation errors on row selection
 - Better css for attached form
 
 0.7.40 (2024-08-26)
