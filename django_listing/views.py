@@ -421,6 +421,12 @@ class ListingViewMixin:
                 mixed_response = process_method(
                     listing, form, instance, *args, **kwargs
                 )
+            if getattr(form, "errors", False):
+                raise ListingException(
+                    f"You cannot add errors in form object inside "
+                    f"{process_method.__qualname__}().\n"
+                    f"This is has to be done inside a xxx_clean() method."
+                )
             self.listing.request.POST[instance._meta.pk.attname] = instance.pk
             if listing.processed_flash:
                 if len(selected_rows) < 2:

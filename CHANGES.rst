@@ -1,3 +1,7 @@
+0.8.4 (2024-09-05)
+------------------
+- Raise exception when trying to add form errors in attached form proccessing
+
 0.8.3 (2024-09-01)
 ------------------
 - Attached form can be sticky : add class "stick" to .attached-form-container
