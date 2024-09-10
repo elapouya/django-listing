@@ -1,3 +1,7 @@
+0.8.5 (2024-09-10)
+------------------
+- If using django-modeltranslation, do not consider localized fields
+
 0.8.4 (2024-09-05)
 ------------------
 - Raise exception when trying to add form errors in attached form proccessing

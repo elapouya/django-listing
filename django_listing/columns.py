@@ -381,6 +381,9 @@ class ModelColumns(Columns):
             if f.name in select_columns or not isinstance(
                 f, (models.ManyToManyRel, models.ManyToOneRel)
             ):
+                # If using django-modeltranslation, do not consider localized fields
+                if hasattr(f, "translated_field"):
+                    continue
                 if not hasattr(self.listing, f"{f.name}__header"):
                     if getattr(f, "related_model", None):
                         header = getattr(f, "verbose_name", None)
