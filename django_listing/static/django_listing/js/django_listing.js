@@ -106,12 +106,17 @@ function djlst_post_action_button(event) {
     });
 }
 
+var djlst_mass_op_cbs_displayed = false;
+
 function djlst_show_mass_op_cbs(form) {
-    form.find(".mass-op-cb").show();
+    djlst_mass_op_cbs_displayed = false;
+    form.find(".mass-op-cb").prop('checked', false).show();
+    setTimeout(function () {djlst_mass_op_cbs_displayed = true;}, 100);
 }
 
 function djlst_hide_mass_op_cbs(form) {
     form.find(".mass-op-cb").hide();
+    djlst_mass_op_cbs_displayed = false;
 }
 
 function djlst_post_attached_form(event) {
@@ -119,7 +124,10 @@ function djlst_post_attached_form(event) {
     let nav_obj = $(this);
     let action_button = nav_obj.val();
     let attached_form = nav_obj.closest("form.listing-form");
-    if (action_button == "update_all" || action_button == "update") {
+    let attached_form_id = attached_form.attr("id");
+    let listing_div = $("#" + attached_form.attr("related-listing"));
+    let selected_rows = listing_div.find(".row-container.selected");
+    if (action_button == "update_all" || (action_button == "update" && selected_rows.length > 1)) {
         const visibleCheckboxCount = attached_form.find('input:checkbox:visible').length;
         if (visibleCheckboxCount == 0) {
                 djlst_show_mass_op_cbs(attached_form);
@@ -127,15 +135,13 @@ function djlst_post_attached_form(event) {
         }
         const checkedCheckboxCount = attached_form.find('input:checkbox:checked').length;
         if (checkedCheckboxCount == 0 || visibleCheckboxCount == 0) {
-            setTimeout(function() {
-                alert(use_mass_cb_msg);
-            }, 50);
+            setTimeout(function() { alert(use_mass_cb_msg);}, 50);
             return;
         }
     }
-    let attached_form_id = attached_form.attr("id");
-    let listing_div = $("#" + attached_form.attr("related-listing"));
-    let selected_rows = listing_div.find(".row-container.selected");
+    if (action_button == "clear") {
+        djlst_listing_unselect_all(listing_div);
+    }
     let confirm_msg = nav_obj.attr("confirm-msg");
     if (confirm_msg) {
         let confirm_msg_nb_items = nav_obj.attr("confirm-msg-nb-items");
@@ -176,6 +182,12 @@ function djlst_post_attached_form(event) {
         url: ajax_url,
         data: request_data,
         success: function (mixed_response) {
+            if (action_button == "update" && selected_rows.length > 1) {
+                setTimeout(function () {
+                    const new_listing_div = $("#" + attached_form.attr("related-listing"));
+                    djlst_listing_unselect_all(new_listing_div);
+                }, 500);
+            }
             let new_attached_form;
             if (mixed_response.listing) {
                 listing_div.replaceWith(mixed_response.listing);
@@ -587,6 +599,12 @@ function djlst_follow_file_generation() {
     }
 }
 
+function djlst_attached_form_input_changed(event) {
+    if (djlst_mass_op_cbs_displayed) {
+        $(this).closest(".form-field").find(".mass-op-cb:visible").prop('checked', true);
+    }
+}
+
 $(document).ready(function () {
 
     $('.filters-form .advanced-button').click(function (){
@@ -627,6 +645,8 @@ $(document).ready(function () {
     $(document.body).on("click", ".btn.gb-filter", function () {
         $(this).addClass("visited")
     });
+    $(document.body).on("change", ".attached-form-container input:not(.mass-op-cb)", djlst_attached_form_input_changed);
+    $(document.body).on("change", ".attached-form-container select,.attached-form-container textarea", djlst_attached_form_input_changed);
 
     $(".django-listing-container").each(function () {
         djlst_selection_changed_hook($(this));

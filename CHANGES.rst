@@ -1,4 +1,4 @@
-0.9.0 (2024-09-13)
+0.9.1 (2024-09-13)
 ------------------
 - Better mass update management : now dynamic checkboxes are displayed
   to choose fields to update
