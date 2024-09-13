@@ -27,6 +27,7 @@
                         <div class="form-field {{ field_name }} cls-{{ col_type }}{% if attached_form.display_errors and field.errors %} errors{% endif %}">
                             {% if attached_form.display_errors and field.errors %}<span class="listing-icon-attention"></span> {{ field.errors }}{% endif %}
                             <div class="label_input">
+                                <input type="checkbox" name="{{ field_name }}_mass_op" value="checked" class="mass-op-cb" style="display: none">
                                 {{ field.label_tag }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
                                 {{ field }}
                             </div>

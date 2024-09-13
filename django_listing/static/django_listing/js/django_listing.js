@@ -106,11 +106,33 @@ function djlst_post_action_button(event) {
     });
 }
 
+function djlst_show_mass_op_cbs(form) {
+    form.find(".mass-op-cb").show();
+}
+
+function djlst_hide_mass_op_cbs(form) {
+    form.find(".mass-op-cb").hide();
+}
+
 function djlst_post_attached_form(event) {
     event.preventDefault();
     let nav_obj = $(this);
     let action_button = nav_obj.val();
     let attached_form = nav_obj.closest("form.listing-form");
+    if (action_button == "update_all" || action_button == "update") {
+        const visibleCheckboxCount = attached_form.find('input:checkbox:visible').length;
+        if (visibleCheckboxCount == 0) {
+                djlst_show_mass_op_cbs(attached_form);
+                djlst_clean_form(attached_form);
+        }
+        const checkedCheckboxCount = attached_form.find('input:checkbox:checked').length;
+        if (checkedCheckboxCount == 0 || visibleCheckboxCount == 0) {
+            setTimeout(function() {
+                alert(use_mass_cb_msg);
+            }, 50);
+            return;
+        }
+    }
     let attached_form_id = attached_form.attr("id");
     let listing_div = $("#" + attached_form.attr("related-listing"));
     let selected_rows = listing_div.find(".row-container.selected");
@@ -222,6 +244,11 @@ function djlst_map_children_range(container, index1, index2, func) {
 }
 
 function djlst_multiple_row_do_unselect(row) {
+    let listing_div = row.closest('.django-listing-container');
+    let form = $("#" + listing_div.attr('attached-form-id'));
+    if (form.length) {
+        djlst_hide_mass_op_cbs(form);
+    }
     let hidden = row.find('input.row-select').first();
     row.removeClass('selected');
     hidden.removeAttr('name');
@@ -263,7 +290,9 @@ function djlst_multiple_row_do_select(row) {
             let nb_slected = row.siblings(".selected").length;
             if (nb_slected > 0) {
                 djlst_clean_form(form);
+                djlst_show_mass_op_cbs(form);
             } else {
+                djlst_hide_mass_op_cbs(form);
                 let serialized_data = row.attr('data-serialized-object');
                 if (serialized_data) {
                     let serialized_obj = decodeURIComponent(escape(atob(serialized_data)));
@@ -476,12 +505,13 @@ function djlst_clean_form(form) {
     form.find("input[type='text'],input[type='number'],textarea").val("");
     form.find("input[type='date'],input[type='time']").val("");
     form.find("input[type='datetime-local']").val("");
+    form.find("input:checkbox").prop('checked', false);
     form.find("select").each(function (index) {
         let option = $(this).find("option[value='']");
         if (option.length === 0) {
             $(this).append($("<option>", {value: "", text: no_choice_msg}));
         }
-        $(this).val("");
+        $(this).val(null).trigger('change');
     });
 }
 

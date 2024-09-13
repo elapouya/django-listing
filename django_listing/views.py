@@ -500,7 +500,9 @@ class ListingViewMixin:
             instance.save()
         else:
             update_fields = {
-                k: v for k, v in form.cleaned_data.items() if v and k != "id"
+                k: v
+                for k, v in form.cleaned_data.items()
+                if self.request.POST.get(f"{k}_mass_op") == "checked" and k != "id"
             }
             listing.model.objects.filter(pk__in=selected_rows).update(**update_fields)
 
@@ -510,7 +512,11 @@ class ListingViewMixin:
     def manage_attached_form_update_all_process(
         self, listing, form, instance, *args, **kwargs
     ):
-        update_fields = {k: v for k, v in form.cleaned_data.items() if v and k != "id"}
+        update_fields = {
+            k: v
+            for k, v in form.cleaned_data.items()
+            if self.request.POST.get(f"{k}_mass_op") == "checked" and k != "id"
+        }
         listing.records.get_filtered_queryset().update(**update_fields)
 
     def manage_attached_form_duplicate_get_form(self, listing, *args, **kwargs):

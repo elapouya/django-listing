@@ -1,3 +1,8 @@
+0.9.0 (2024-09-13)
+------------------
+- Better mass update management : now dynamic checkboxes are displayed
+  to choose fields to update
+
 0.8.5 (2024-09-10)
 ------------------
 - If using django-modeltranslation, do not consider localized fields

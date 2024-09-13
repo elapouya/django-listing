@@ -2,8 +2,9 @@
 {% load django_listing %}
 <div id="listing-popup-container"></div>
 <script type="text/javascript">
-    var csrf_token = "{{ csrf_token }}";
-    var no_choice_msg = "{% trans "Please choose..." %}";
+    const csrf_token = "{{ csrf_token }}";
+    const no_choice_msg = "{% trans "Please choose..." %}";
+    const use_mass_cb_msg = "{% trans "Please use checkboxes to select one or more fields to mass update" %}";
     $(document).ready(function () {
         $.ajaxSetup({
             data: {'csrfmiddlewaretoken': csrf_token}

@@ -73,6 +73,7 @@ FILTERS_PARAMS_KEYS = {
     "order_by",
     "queryset",
     "shrink_width",
+    "flex_width",
     "widget_attrs",
     "widget_class",
     "widget_params",
@@ -428,6 +429,7 @@ class Filter(metaclass=FilterMeta):
     form_field_class = forms.CharField
     container_attrs = {"class": "form-field"}
     shrink_width = None
+    flex_width = None
     form_field_keys = None
     params_keys = None
     name = None
@@ -538,6 +540,8 @@ class Filter(metaclass=FilterMeta):
         )
         if self.shrink_width:
             attrs.add("style", f"flex-shrink: {self.shrink_width}")
+        if self.flex_width:
+            attrs.add("style", f"flex: {self.flex_width}")
         if form_field.errors:
             attrs.add("class", {"errors"})
         return attrs
