@@ -538,7 +538,7 @@ class ListingViewMixin:
             instance.save()
 
     def manage_attached_form_delete_get_form(self, listing, *args, **kwargs):
-        form = listing.attached_form.get_form(force_not_required=True)
+        form = listing.attached_form.get_form(do_not_clean=True)
         if len(listing.get_selected_rows()) == 0:
             form.add_error(None, gettext("Please select at least one item"))
         return form
@@ -553,7 +553,7 @@ class ListingViewMixin:
             listing.model.objects.filter(pk__in=selected_rows).delete()
 
     def manage_attached_form_delete_all_get_form(self, listing, *args, **kwargs):
-        return listing.attached_form.get_form(force_not_required=True)
+        return listing.attached_form.get_form(do_not_clean=True)
 
     def manage_attached_form_delete_all_process(
         self, listing, form, instance, *args, **kwargs
