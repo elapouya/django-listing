@@ -1,3 +1,7 @@
+0.9.2 (2024-09-18)
+------------------
+- No form clean on mass delete in attached form
+
 0.9.1 (2024-09-13)
 ------------------
 - Better mass update management : now dynamic checkboxes are displayed
