@@ -111,11 +111,16 @@ var djlst_mass_op_cbs_displayed = false;
 function djlst_show_mass_op_cbs(form) {
     djlst_mass_op_cbs_displayed = false;
     form.find(".mass-op-cb").prop('checked', false).show();
+    form.addClass("mass-op-cbs-displayed");
     setTimeout(function () {djlst_mass_op_cbs_displayed = true;}, 100);
 }
 
 function djlst_hide_mass_op_cbs(form) {
     form.find(".mass-op-cb").hide();
+    form.removeClass("mass-op-cbs-displayed");
+    if (djlst_mass_op_cbs_displayed) {
+        form.find(".form-buttons button.clear")[0].click();
+    }
     djlst_mass_op_cbs_displayed = false;
 }
 
@@ -131,7 +136,7 @@ function djlst_post_attached_form(event) {
         const visibleCheckboxCount = attached_form.find('input:checkbox:visible').length;
         if (visibleCheckboxCount == 0) {
                 djlst_show_mass_op_cbs(attached_form);
-                djlst_clean_form(attached_form);
+                djlst_clear_form(attached_form);
         }
         const checkedCheckboxCount = attached_form.find('input:checkbox:checked').length;
         if (checkedCheckboxCount == 0 || visibleCheckboxCount == 0) {
@@ -182,12 +187,6 @@ function djlst_post_attached_form(event) {
         url: ajax_url,
         data: request_data,
         success: function (mixed_response) {
-            if (action_button == "update" && selected_rows.length > 1) {
-                setTimeout(function () {
-                    const new_listing_div = $("#" + attached_form.attr("related-listing"));
-                    djlst_listing_unselect_all(new_listing_div);
-                }, 500);
-            }
             let new_attached_form;
             if (mixed_response.listing) {
                 listing_div.replaceWith(mixed_response.listing);
@@ -258,15 +257,12 @@ function djlst_map_children_range(container, index1, index2, func) {
 function djlst_multiple_row_do_unselect(row) {
     let listing_div = row.closest('.django-listing-container');
     let form = $("#" + listing_div.attr('attached-form-id'));
-    if (form.length) {
-        djlst_hide_mass_op_cbs(form);
-    }
     let hidden = row.find('input.row-select').first();
     row.removeClass('selected');
     hidden.removeAttr('name');
     row.find('input.selection-box').first().prop('checked', false);
-    let nb_slected = row.siblings(".selected").length;
-    if (nb_slected == 1) {
+    let nb_selected = row.siblings(".selected").length;
+    if (nb_selected == 1) {
         row = row.siblings(".selected").first();
         let listing_div = row.closest('.django-listing-container');
         let form = $("#" + listing_div.attr('attached-form-id'));
@@ -299,12 +295,8 @@ function djlst_multiple_row_do_select(row) {
         form.find(".form-field.errors").removeClass("errors");
 
         if (listing_div.hasClass("attached_form_autofill")) {
-            let nb_slected = row.siblings(".selected").length;
-            if (nb_slected > 0) {
-                djlst_clean_form(form);
-                djlst_show_mass_op_cbs(form);
-            } else {
-                djlst_hide_mass_op_cbs(form);
+            let nb_selected = row.siblings(".selected").length;
+            if (nb_selected == 0) {
                 let serialized_data = row.attr('data-serialized-object');
                 if (serialized_data) {
                     let serialized_obj = decodeURIComponent(escape(atob(serialized_data)));
@@ -429,11 +421,18 @@ function djlst_deactivate_selection(e) {
 
 function djlst_selection_changed_hook(e) {
     let listing = e.closest("div.django-listing-selecting");
+    let form = $("#" + listing.attr('attached-form-id'));
     let count = listing.find('.row-container.selected').length;
     if (count === 0) {
         $(".disabled-if-no-selection").addClass("disabled");
     } else {
         $(".disabled-if-no-selection:not(.no-perm)").removeClass("disabled");
+    }
+    if (count > 1) {
+        djlst_clear_form(form);
+        djlst_show_mass_op_cbs(form);
+    } else {
+        djlst_hide_mass_op_cbs(form);
     }
     let selection_menu_id = listing.attr('selection-menu-id');
     if (selection_menu_id) {
@@ -513,17 +512,17 @@ function djlst_fill_form(form, obj, pk) {
     $(document).trigger("djlst_form_filled", {form: form});
 }
 
-function djlst_clean_form(form) {
-    form.find("input[type='text'],input[type='number'],textarea").val("");
-    form.find("input[type='date'],input[type='time']").val("");
-    form.find("input[type='datetime-local']").val("");
-    form.find("input:checkbox").prop('checked', false);
-    form.find("select").each(function (index) {
+function djlst_clear_form(form) {
+    form.find("input[type='text']:not(.mass-op-no-clear),input[type='number']:not(.mass-op-no-clear),textarea:not(.mass-op-no-clear)").attr("disabled", false).val("");
+    form.find("input[type='date']:not(.mass-op-no-clear),input[type='time']:not(.mass-op-no-clear)").attr("disabled", false).val("");
+    form.find("input[type='datetime-local']:not(.mass-op-no-clear)").attr("disabled", false).val("");
+    form.find("input:checkbox").attr("disabled", false).prop('checked', false);
+    form.find("select:not(.mass-op-no-clear)").each(function (index) {
         let option = $(this).find("option[value='']");
         if (option.length === 0) {
             $(this).append($("<option>", {value: "", text: no_choice_msg}));
         }
-        $(this).val(null).trigger('change');
+        $(this).attr("disabled", false).val("").trigger('change');
     });
 }
 

@@ -597,7 +597,10 @@ class Filter(metaclass=FilterMeta):
 
     def get_form_field_widget(self, field_class, **kwargs):
         widget_class = self.widget_class or field_class.widget
-        widget_attrs = HTMLAttributes(self.widget_attrs)
+
+        widget_attrs = self.widget_attrs or {}
+        attrs = self.widget_params.get("attrs", {})
+        widget_attrs = HTMLAttributes({**widget_attrs, **attrs})
         widget_attrs.add("class", self.theme_form_widget_class)
         widget_id = f"id-filter-{self.name}{self.listing.suffix}".replace("_", "-")
         widget_attrs.add("id", widget_id)
@@ -608,8 +611,19 @@ class Filter(metaclass=FilterMeta):
         cls = self.get_form_field_class()
         params = self.get_form_field_params()
         widget = self.get_form_field_widget(cls)
+        if self.listing.model and self.from_model_field_name:
+            try:
+                model_field = self.listing.model._meta.get_field(
+                    self.from_model_field_name
+                )
+                widget.attrs["data-model-field"] = model_field.name
+                if related_model := getattr(model_field, "related_model", None):
+                    widget.attrs[
+                        "data-related-model"
+                    ] = f"{related_model._meta.app_label}.{related_model._meta.model_name}"
+            except FieldDoesNotExist:
+                pass
         field = cls(widget=widget, **params)
-
         patch_help_text_method = getattr(widget, "patch_help_text", None)
         if callable(patch_help_text_method):
             field.help_text = patch_help_text_method(field.help_text)
@@ -768,7 +782,9 @@ class BooleanFilter(Filter):
     indifferent_msg = gettext_lazy("Indiff.")
 
     def get_form_field_widget(self, field_class, force_select=False, **kwargs):
-        widget_attrs = HTMLAttributes(self.widget_attrs)
+        widget_attrs = self.widget_attrs or {}
+        attrs = self.widget_params.get("attrs", {})
+        widget_attrs = HTMLAttributes({**widget_attrs, **attrs})
         if self.input_type == "radio" and not force_select:
             widget = forms.RadioSelect
             widget_attrs.add("class", self.theme_form_radio_widget_class)
@@ -806,7 +822,9 @@ class ChoiceFilter(Filter):
             )
 
     def get_form_field_widget(self, field_class, force_select=False, **kwargs):
-        widget_attrs = HTMLAttributes(self.widget_attrs)
+        widget_attrs = self.widget_attrs or {}
+        attrs = self.widget_params.get("attrs", {})
+        widget_attrs = HTMLAttributes({**widget_attrs, **attrs})
         if self.input_type == "radio" and not force_select:
             widget = forms.RadioSelect
             widget_attrs.add("class", self.theme_form_radio_widget_class)
@@ -847,7 +865,9 @@ class MultipleChoiceFilter(Filter):
             return cls(name, model_field=field, label=field.verbose_name)
 
     def get_form_field_widget(self, field_class, **kwargs):
-        widget_attrs = HTMLAttributes(self.widget_attrs)
+        widget_attrs = self.widget_attrs or {}
+        attrs = self.widget_params.get("attrs", {})
+        widget_attrs = HTMLAttributes({**widget_attrs, **attrs})
         if self.input_type == "checkbox":
             widget = forms.CheckboxSelectMultiple
             widget_attrs.add("class", self.theme_form_radio_widget_class)
@@ -882,7 +902,9 @@ class ForeignKeyFilter(Filter):
     form_field_class = forms.ChoiceField
 
     def get_form_field_widget(self, field_class, **kwargs):
-        widget_attrs = HTMLAttributes(self.widget_attrs)
+        widget_attrs = self.widget_attrs or {}
+        attrs = self.widget_params.get("attrs", {})
+        widget_attrs = HTMLAttributes({**widget_attrs, **attrs})
         widget = forms.Select
         widget_attrs.add("class", self.theme_form_select_widget_class)
         params = dict(self.widget_params, attrs=widget_attrs)
@@ -916,7 +938,9 @@ class MultipleForeignKeyFilter(Filter):
     form_field_class = forms.ModelMultipleChoiceField
 
     def get_form_field_widget(self, field_class, **kwargs):
-        widget_attrs = HTMLAttributes(self.widget_attrs)
+        widget_attrs = self.widget_attrs or {}
+        attrs = self.widget_params.get("attrs", {})
+        widget_attrs = HTMLAttributes({**widget_attrs, **attrs})
         widget = forms.SelectMultiple
         widget_attrs.add("class", self.theme_form_select_widget_class)
         params = dict(self.widget_params, attrs=widget_attrs)
@@ -948,7 +972,9 @@ class AutocompleteForeignKeyFilter(Filter):
 
     def get_form_field_widget(self, field_class, **kwargs):
         self.listing.need_media_for("autocomplete")
-        widget_attrs = HTMLAttributes(self.widget_attrs)
+        widget_attrs = self.widget_attrs or {}
+        attrs = self.widget_params.get("attrs", {})
+        widget_attrs = HTMLAttributes({**widget_attrs, **attrs})
         widget_attrs.add("class", self.theme_form_select_widget_class)
         if "data-placeholder" not in widget_attrs:
             widget_attrs["data-placeholder"] = _("Select a value...")
