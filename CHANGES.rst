@@ -1,4 +1,4 @@
-0.9.3 (2024-09-18)
+0.9.4 (2024-09-23)
 ------------------
 - No form clean on mass delete in attached form
 - Add data-related-model in form fields html attributes if relevant
