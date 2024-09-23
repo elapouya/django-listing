@@ -22,12 +22,14 @@
             <div class="form-row d-lg-flex">
                 {% for field_name in row %}
                     {% get_form_field form field_name as field %}
-                    {% get_attachedform_col_type attached_form field_name as col_type %}
+                    {% get_attachedform_col attached_form field_name as col %}
                     {% if field %}
-                        <div class="form-field {{ field_name }} cls-{{ col_type }}{% if attached_form.display_errors and field.errors %} errors{% endif %}">
+                        <div class="form-field {{ field_name }} cls-{{ col.get_type }}{% if attached_form.display_errors and field.errors %} errors{% endif %}">
                             {% if attached_form.display_errors and field.errors %}<span class="listing-icon-attention"></span> {{ field.errors }}{% endif %}
                             <div class="label_input">
-                                <input type="checkbox" name="{{ field_name }}_mass_op" value="checked" class="mass-op-cb" style="display: none">
+                                {% if not col.no_mass_op %}
+                                    <input type="checkbox" name="{{ field_name }}_mass_op" value="checked" class="mass-op-cb" style="display: none">
+                                {% endif %}
                                 {{ field.label_tag }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
                                 {{ field }}
                             </div>

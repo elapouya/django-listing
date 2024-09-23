@@ -283,6 +283,14 @@ def get_attachedform_col_type(attachedform, name):
         return "none"
 
 
+@register.simple_tag()
+def get_attachedform_col(attachedform, name):
+    try:
+        return attachedform.listing.columns.get(name)
+    except (AttributeError, IndexError):
+        return None
+
+
 @register.simple_tag(takes_context=True)
 def render_attached_form(context, listing, *args, name=None, layout=None, **kwargs):
     if not listing:

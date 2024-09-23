@@ -116,6 +116,7 @@ COLUMNS_PARAMS_KEYS = {
     "model_field",
     "name",
     "no_choice_msg",
+    "no_mass_op",
     "true_msg",
     "false_msg",
     "no_foreignkey_link",
@@ -545,6 +546,8 @@ class ColumnMeta(type):
 
 
 class Column(metaclass=ColumnMeta):
+    NO_MASS_OP_WIDGET_CSS = "mass-op-no-clear"
+
     aggregation = None
     ascending_by_default = True
     can_edit = False
@@ -592,6 +595,7 @@ class Column(metaclass=ColumnMeta):
     model_form_field = None
     name = None
     no_choice_msg = _("Please choose...")
+    no_mass_op = False
     true_msg = _("Yes")
     false_msg = _("No")
     params_keys = ""
@@ -890,6 +894,9 @@ class Column(metaclass=ColumnMeta):
         tpl = cell_tpl or "<td{attrs}>%s</td>"
         return tpl % value_tpl
 
+    def get_type(self):
+        return self.__class__.__name__.lower()
+
     def render_cell(self, rec):
         value = self.get_cell_value(rec)
         ctx = self.get_cell_context(rec, value)
@@ -1116,6 +1123,9 @@ class Column(metaclass=ColumnMeta):
             widget_attrs.add("class", self.theme_form_select_widget_class)
         else:
             widget_attrs.add("class", self.theme_form_widget_class)
+        if self.no_mass_op:
+            widget_attrs.add("class", self.NO_MASS_OP_WIDGET_CSS)
+
         widget_id = f"id-attachedForm-{self.name}{self.listing.suffix}".replace(
             "_", "-"
         )
