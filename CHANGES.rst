@@ -1,3 +1,7 @@
+0.9.5 (2024-09-25)
+------------------
+- Better mass-update management
+
 0.9.4 (2024-09-23)
 ------------------
 - No form clean on mass delete in attached form

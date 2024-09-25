@@ -132,6 +132,9 @@ function djlst_post_attached_form(event) {
     let attached_form_id = attached_form.attr("id");
     let listing_div = $("#" + attached_form.attr("related-listing"));
     let selected_rows = listing_div.find(".row-container.selected");
+    if (action_button == "update_all") {
+        listing_div.find('.row-container').addClass('selected');
+    }
     if (action_button == "update_all" || (action_button == "update" && selected_rows.length > 1)) {
         const visibleCheckboxCount = attached_form.find('input:checkbox:visible').length;
         if (visibleCheckboxCount == 0) {
