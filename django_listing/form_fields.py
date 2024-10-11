@@ -12,6 +12,8 @@ class ListOfValuesField(forms.CharField):
     def to_python(self, value):
         if not value:
             return []
+        if isinstance(value, (list, tuple)):
+            return value
         return [line.strip() for line in value.split("\n") if line.strip()]
 
     def prepare_value(self, value):

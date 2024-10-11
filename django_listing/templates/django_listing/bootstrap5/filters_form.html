@@ -2,7 +2,7 @@
 
 <form{{ filters.form_attrs }}>
     {% gethiddens_filters_form listing %}
-
+    {% if filters.use_post %}{% csrf_token %}{% endif %}
     {{ filters.form.non_field_errors }}
 
     {% include "django_listing/bootstrap5/filters_form_fields.html" with layout=filters.form_layout %}
