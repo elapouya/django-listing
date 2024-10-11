@@ -675,7 +675,7 @@ $(document).ready(function () {
         $(this).removeClass('drag-over');
     });
 
-    $('.submit-action-form').on('click', function () {
+    $(document.body).on("click", ".submit-action-form", function () {
         var action = $(this).val();
         var form = $(this).closest('.django-listing-container').find('.action-form');
         var hidden = form.find('.action-hidden-value');

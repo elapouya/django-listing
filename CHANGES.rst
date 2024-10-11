@@ -1,3 +1,7 @@
+0.9.6 (2024-10-11)
+------------------
+- Bottom action buttons now works with accept_ajax=True
+
 0.9.5 (2024-09-25)
 ------------------
 - Better mass-update management
