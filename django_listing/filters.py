@@ -20,6 +20,7 @@ from django.utils.translation import gettext_lazy, pgettext_lazy
 
 from .context import RenderContext
 from .exceptions import InvalidFilters
+from .form_fields import ListOfValuesField
 from .html_attributes import HTMLAttributes
 from .theme_config import ThemeTemplate, ThemeAttribute
 from .utils import init_dicts_from_class
@@ -495,7 +496,6 @@ class Filter(metaclass=FilterMeta):
 
     def init(self, listing, name=None, **kwargs):
         self.set_listing(listing)
-        lsg = self.listing
         if name:
             self.name = re.sub(r"\W", "", name)
         self.set_kwargs(**kwargs)
@@ -740,6 +740,15 @@ class IntegerFilter(Filter):
 class FloatFilter(Filter):
     from_model_field_classes = (models.FloatField,)
     form_field_class = forms.FloatField
+
+
+class ListOfValuesFilter(Filter):
+    form_field_class = ListOfValuesField
+
+    def init(self, listing, name=None, **kwargs):
+        super().init(listing, name, **kwargs)
+        if not self.filter_key.endswith("__in"):
+            self.filter_key += "__in"
 
 
 class DateFilter(Filter):
