@@ -603,6 +603,7 @@ class Listing(ListingBase):
     def __init__(self, data=None, **kwargs):
         super().__init__(data, **kwargs)
         self.request = None
+        self.request_data = None
         self.parsed_url = None
         self.page_context = None
         self.records = self.records_class(self)
@@ -824,6 +825,8 @@ class Listing(ListingBase):
             if not self.page_context:
                 self.page_context = context
                 self.request = context.request
+                self.request_data = self.request.GET.copy()
+                self.request_data.update(self.request.POST)
                 self.parsed_url = urlsplit(self.request.get_full_path())
                 self.suffix = self.get_suffix(self.request, self)
                 self.extract_params()
@@ -1146,6 +1149,7 @@ class Listing(ListingBase):
             has_top_toolbar=has_top_toolbar,
             has_bottom_toolbar=has_bottom_toolbar,
             get=self.request.GET,
+            post=self.request.POST,
             overlay_selector_css_class=sel_css_class,
             hover_selection_css_class=hover_css_class,
             view=self.get_view(),

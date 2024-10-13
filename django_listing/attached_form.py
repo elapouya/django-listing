@@ -441,6 +441,7 @@ class AttachedForm:
             listing=self.listing,
             attached_form=self,
             get=self.listing.request.GET,
+            post=self.listing.request.POST,
         )
         # needed when using ajax :
         csrf_token = request_context.request.POST.get("csrfmiddlewaretoken")

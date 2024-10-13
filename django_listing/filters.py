@@ -306,12 +306,12 @@ class Filters(list):
         return None
 
     def extract_params(self):
-        request_get_data = self.listing.request.GET
+        request_data = self.listing.request_data
         for f in self:
-            if not request_get_data and f.default_value is not None:
+            if not request_data and f.default_value is not None:
                 f.value = f.default_value
             else:
-                f.extract_params(request_get_data)
+                f.extract_params(request_data)
 
     def form(self):
         if not self._form:
@@ -328,7 +328,7 @@ class Filters(list):
                 (FiltersBaseForm,),
                 {"base_fields": fields},
             )
-            self._form = form_class(self.listing.request.GET or None, initial=initial)
+            self._form = form_class(self.listing.request_data or None, initial=initial)
             self._form.listing = self.listing
         return self._form
 
