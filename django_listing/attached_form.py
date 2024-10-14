@@ -423,7 +423,7 @@ class AttachedForm:
             if "id" not in self.attrs:
                 css_id = f"{form_css_class}{self.listing.suffix}".replace("_", "-")
                 self.attrs.add("id", css_id)
-            self.listing.attached_form_css_id = self.id = css_id
+            self.listing.attached_form_css_id = self.id = self.attrs.get("id")
             self.attrs.add("related-listing", self.listing.css_id)
             self._render_initialized = True
 

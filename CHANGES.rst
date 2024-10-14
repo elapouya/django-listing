@@ -1,3 +1,7 @@
+0.9.7 (2024-10-14)
+------------------
+- Accept listings with filters.form_attrs = {"method": "POST"}
+
 0.9.6 (2024-10-11)
 ------------------
 - Bottom action buttons now works with accept_ajax=True

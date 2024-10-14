@@ -24,27 +24,50 @@ function update_csrf_token() {
     });
 }
 
+function djlst_merge_form_data(formData, obj) {
+  let formDataObj = Object.fromEntries(formData.entries());
+  let mergedObj = { ...formDataObj, ...obj };
+  let mergedFormData = new FormData();
+  for (let [key, value] of Object.entries(mergedObj)) {
+    mergedFormData.append(key, value);
+  }
+  return mergedFormData;
+}
+
 function djlst_load_listing_url(nav_obj, url) {
     if (!$("div.django-listing-ajax").length) {
         window.location.href = url;
     }
-    var listing_div = nav_obj.closest("div.django-listing-ajax");
+    const listing_div = nav_obj.closest("div.django-listing-ajax");
     listing_div.addClass("spinning");
-    var listing_id = $(listing_div).attr("id");
-    var listing_suffix = $(listing_div).attr("listing-suffix");
-    var listing_target = nav_obj.attr("listing-target");
+    const listing_id = $(listing_div).attr("id");
+    const listing_suffix = $(listing_div).attr("listing-suffix");
+    let listing_target = nav_obj.attr("listing-target");
     if (!listing_target) listing_target = "#" + listing_id;
-    var listing_part = nav_obj.attr("listing-part");
+    let listing_part = nav_obj.attr("listing-part");
     if (!listing_part) listing_part = "all";
+    let data = {
+        "listing_id": listing_id,
+        "listing_suffix": listing_suffix,
+        "listing_part": listing_part
+    }
+
+    // if filter form available and post method is used :
+    // merge form data inside ajax payload
+    const filter_form = $(`form[listing-id=${listing_id}]`);
+    if (filter_form.length) {
+        const method = filter_form.attr("method");
+        if (method !== undefined && method.toLowerCase() == "post") {
+            let form_data = Object.fromEntries(new FormData(filter_form[0]));
+            data = { ...data, ...form_data };
+        }
+    }
+
     update_csrf_token();
     $.ajax({
         type: "POST",
         url: url,
-        data: {
-            "listing_id": listing_id,
-            "listing_suffix": listing_suffix,
-            "listing_part": listing_part
-        },
+        data: data,
         success: function (response) {
             $(listing_target).replaceWith(response);
             djlst_listing_on_load();
