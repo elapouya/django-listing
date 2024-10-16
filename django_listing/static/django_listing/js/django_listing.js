@@ -34,6 +34,20 @@ function djlst_merge_form_data(formData, obj) {
   return mergedFormData;
 }
 
+function djlst_add_filter_request_data(listing_id, data) {
+    // if filter form available and post method is used :
+    // merge form data inside ajax payload
+    const filter_form = $(`form[listing-id=${listing_id}]`);
+    if (filter_form.length) {
+        const method = filter_form.attr("method");
+        if (method !== undefined && method.toLowerCase() == "post") {
+            let form_data = Object.fromEntries(new FormData(filter_form[0]));
+            data = { ...data, ...form_data };
+        }
+    }
+    return data
+}
+
 function djlst_load_listing_url(nav_obj, url) {
     if (!$("div.django-listing-ajax").length) {
         window.location.href = url;
@@ -46,28 +60,17 @@ function djlst_load_listing_url(nav_obj, url) {
     if (!listing_target) listing_target = "#" + listing_id;
     let listing_part = nav_obj.attr("listing-part");
     if (!listing_part) listing_part = "all";
-    let data = {
+    let request_data = {
         "listing_id": listing_id,
         "listing_suffix": listing_suffix,
         "listing_part": listing_part
     }
-
-    // if filter form available and post method is used :
-    // merge form data inside ajax payload
-    const filter_form = $(`form[listing-id=${listing_id}]`);
-    if (filter_form.length) {
-        const method = filter_form.attr("method");
-        if (method !== undefined && method.toLowerCase() == "post") {
-            let form_data = Object.fromEntries(new FormData(filter_form[0]));
-            data = { ...data, ...form_data };
-        }
-    }
-
+    request_data = djlst_add_filter_request_data(listing_id, request_data);
     update_csrf_token();
     $.ajax({
         type: "POST",
         url: url,
-        data: data,
+        data: request_data,
         success: function (response) {
             $(listing_target).replaceWith(response);
             djlst_listing_on_load();
@@ -112,6 +115,7 @@ function djlst_post_action_button(event) {
         serialized_data: nav_obj.closest('form').serialize()
     };
     request_data[$(this).attr('name')] = $(this).val();
+    request_data = djlst_add_filter_request_data(listing_id, request_data);
     update_csrf_token();
     $.ajax({
         type: "POST",
@@ -207,6 +211,7 @@ function djlst_post_attached_form(event) {
         selected_pks: selected_pks,
         serialized_data: nav_obj.closest('form').serialize()
     };
+    request_data = djlst_add_filter_request_data(listing_id, request_data);
     update_csrf_token();
     $.ajax({
         type: "POST",
@@ -566,6 +571,7 @@ function djlst_view_object_popup(event) {
         action_button: 'view_object_popup',
         serialized_data: nav_obj.closest('form').serialize()
     };
+    request_data = djlst_add_filter_request_data(listing_id, request_data);
     update_csrf_token();
     $.ajax({
         type: "POST",

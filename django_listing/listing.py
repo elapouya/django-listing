@@ -137,6 +137,7 @@ LISTING_PARAMS_KEYS = {
     "has_footer",
     "has_footer_action_buttons",
     "has_header",
+    "has_nb_unfiltered_rows",
     "has_paginator",
     "has_upload",
     "id",
@@ -517,6 +518,7 @@ class Listing(ListingBase):
     has_group_by = False
     has_header = True
     has_hidden_selection = False
+    has_nb_unfiltered_rows = False
     has_paginator = True
     has_toolbar = False
     has_upload = False

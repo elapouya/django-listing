@@ -1,3 +1,8 @@
+0.9.8 (2024-10-16)
+------------------
+- Better filters form POST request data handling
+- Add has_nb_unfiltered_rows listing attribute
+
 0.9.7 (2024-10-14)
 ------------------
 - Accept listings with filters.form_attrs = {"method": "POST"}

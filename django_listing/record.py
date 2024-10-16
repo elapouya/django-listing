@@ -129,6 +129,13 @@ class RecordManager:
                 return None
             return self.get_objs_from_sequence()[pk].obj
 
+    def get_unfiltered_count(self):
+        data = self.listing.data
+        if isinstance(data, QuerySet):
+            return data.count()
+        else:
+            return len(data)
+
     def get_rec(self, **kwargs):
         obj = self.get_obj(**kwargs)
         if obj is None:
