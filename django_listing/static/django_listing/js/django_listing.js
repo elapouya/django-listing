@@ -24,16 +24,6 @@ function update_csrf_token() {
     });
 }
 
-function djlst_merge_form_data(formData, obj) {
-  let formDataObj = Object.fromEntries(formData.entries());
-  let mergedObj = { ...formDataObj, ...obj };
-  let mergedFormData = new FormData();
-  for (let [key, value] of Object.entries(mergedObj)) {
-    mergedFormData.append(key, value);
-  }
-  return mergedFormData;
-}
-
 function djlst_add_filter_request_data(listing_id, data) {
     // if filter form available and post method is used :
     // merge form data inside ajax payload
