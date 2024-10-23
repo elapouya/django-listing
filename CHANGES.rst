@@ -1,3 +1,7 @@
+0.9.9 (2024-10-16)
+------------------
+- Do not override widget attribute data-related-model in forms
+
 0.9.8 (2024-10-16)
 ------------------
 - Better filters form POST request data handling

@@ -621,9 +621,11 @@ class Filter(metaclass=FilterMeta):
                 )
                 widget.attrs["data-model-field"] = model_field.name
                 if related_model := getattr(model_field, "related_model", None):
-                    widget.attrs[
-                        "data-related-model"
-                    ] = f"{related_model._meta.app_label}.{related_model._meta.model_name}"
+                    if not widget.attrs.get("data-related-model"):
+                        widget.attrs["data-related-model"] = (
+                            f"{related_model._meta.app_label}"
+                            f".{related_model._meta.model_name}"
+                        )
             except FieldDoesNotExist:
                 pass
         field = cls(widget=widget, **params)

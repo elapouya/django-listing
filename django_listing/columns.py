@@ -1142,9 +1142,11 @@ class Column(metaclass=ColumnMeta):
         if self.listing.model and self.model_field:
             widget.attrs["data-model-field"] = self.model_field.name
             if related_model := getattr(self.model_field, "related_model", None):
-                widget.attrs[
-                    "data-related-model"
-                ] = f"{related_model._meta.app_label}.{related_model._meta.model_name}"
+                if not widget.attrs.get("data-related-model"):
+                    widget.attrs["data-related-model"] = (
+                        f"{related_model._meta.app_label}"
+                        f".{related_model._meta.model_name}"
+                    )
             if isinstance(self.model_field, ForeignKey) and "queryset" not in params:
                 params["queryset"] = self.model_field.related_model.objects.all()
         field = cls(widget=widget, **params)
