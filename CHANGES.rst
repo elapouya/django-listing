@@ -1,3 +1,7 @@
+0.9.10 (2024-10-31)
+-------------------
+- Fix export toolbar item
+
 0.9.9 (2024-10-16)
 ------------------
 - Do not override widget attribute data-related-model in forms

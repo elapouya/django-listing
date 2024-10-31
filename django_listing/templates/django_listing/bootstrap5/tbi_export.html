@@ -3,7 +3,8 @@
 {% listing_has_permission_for_action listing "export" as has_export_perm %}
 {% if has_export_perm %}
     <div class="btn-group me-2 toolbar_item {{ item.css_class }}" role="group">
-        <form id="toolbar-item-{{ uniq_id }}-form-id" class="form-inline">
+        <form method="POST" id="toolbar-item-{{ uniq_id }}-form-id" class="form-inline">
+            {% csrf_token %}
             {% gethiddens_listing listing without=item.select_name %}
             {% if item.label %}
                 <label class="visually-hidden" for="toolbar-item-{{ uniq_id }}-select-id">{{ item.label }}</label>

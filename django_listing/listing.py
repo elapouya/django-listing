@@ -1333,7 +1333,7 @@ class Listing(ListingBase):
 
     def get_hiddens(self, without=None):
         hiddens = QueryDict(self.parsed_url.query, mutable=True)
-        if self.filters:
+        if self.filters and "f_do_filter" not in hiddens:
             initial = self.filters.form().initial
             if initial:
                 hiddens.update(initial)
@@ -1351,9 +1351,10 @@ class Listing(ListingBase):
         hiddens = self.get_hiddens(without)
         out = [
             '<input type="hidden" name="{name}" value="{value}">'.format(
-                name=name, value=value
+                name=keylist[0], value=value
             )
-            for name, value in hiddens.items()
+            for keylist in hiddens.lists()
+            for value in keylist[1]
         ]
         return "".join(out)
 
