@@ -57,6 +57,7 @@ __all__ = ["ListingVariations", "Listing", "DivListing", "logger"]
 
 logger = logging.getLogger("django_listing")
 
+LISTING_OFFSET_MAX = 100_000
 LISTING_ROWS_PER_PAGE = 20
 LISTING_ROWS_PER_PAGE_MAX = 500
 LISTING_SUFFIX_REQUEST_DATA_FIELD = "_listing_suffix_data"
@@ -145,6 +146,7 @@ LISTING_PARAMS_KEYS = {
     "listing_template_name",
     "name",
     "no_permission_required_for_actions",
+    "offset_max",
     "onready_snippet",
     "orphans",
     "page",
@@ -528,6 +530,7 @@ class Listing(ListingBase):
     model = None
     name = None
     no_permission_required_for_actions = False
+    offset_max = LISTING_OFFSET_MAX
     onready_snippet = None
     orphans = 0
     page = 1

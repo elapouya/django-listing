@@ -5,7 +5,7 @@
 #
 
 from django.core.paginator import Paginator as DjangoPaginator, Page as DjangoPage
-from django.utils.translation import pgettext_lazy
+from django.utils.translation import pgettext_lazy, gettext
 
 from .context import RenderContext
 from .theme_config import ThemeAttribute, ThemeTemplate
@@ -127,6 +127,15 @@ class Paginator(DjangoPaginator):
         if bottom > self.count - self.per_page:
             bottom = max(0, self.count - self.per_page)
             top = self.count
+        if bottom > self.listing.offset_max:
+            self.listing.empty_table_msg = (
+                gettext(
+                    "The listing can only display the first %s rows. "
+                    "Please use filtering to narrow your listing."
+                )
+                % self.listing.offset_max
+            )
+            return Page([], number, self, bottom, top)
         page = Page(self.object_list[bottom:top], number, self, bottom, top)
         return page
 

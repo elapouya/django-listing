@@ -1,3 +1,7 @@
+0.9.11 (2024-11-26)
+-------------------
+- Add offset_max param to avoid display lines with too high offset
+
 0.9.10 (2024-10-31)
 -------------------
 - Fix export toolbar item
