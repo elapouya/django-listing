@@ -134,7 +134,6 @@ class ActionsButtonsColumn(Column):
         buttons_context = []
         for b in buttons:
             meth_name = f"get_button_{b}_context"
-            context = {}
             context_method = getattr(self.listing, meth_name, None)
             if context_method is not None:
                 context = context_method(
@@ -144,6 +143,8 @@ class ActionsButtonsColumn(Column):
                 context_method = getattr(self, meth_name, None)
                 if context_method is not None:
                     context = context_method(b, rec)
+                else:
+                    context = self.get_button_default_context(b, rec)
             context.update(
                 self.buttons_description[b],
                 name=b,
@@ -195,6 +196,27 @@ class ActionsButtonsColumn(Column):
             rm.args,
             rm.kwargs,
         ]
+
+    # ---------------- DEFAULT ----------------------------------------------------
+    def get_button_default_context(self, name, rec):
+        icon = getattr(self, f"{name}__icon", f"{name}-action-icon")
+        text = getattr(self, f"{name}__text", name)
+        title = getattr(self, f"{name}__title", name)
+        url_func = getattr(self, f"{name}__url_func", None)
+        method_name = getattr(self, f"{name}__method", f"get_{name}_absolute_url")
+
+        if url_func:
+            return dict(
+                type="extlink",
+                url=url_func(*self.build_url_func_params(rec)),
+            )
+        method = getattr(rec.get_object(), method_name, None)
+        if method is None:
+            raise InvalidColumn(
+                f"Please define the method {method_name}() "
+                f"in class {rec.get_object().__class__.__name__}"
+            )
+        return dict(type="extlink", url=method())
 
     # ---------------- MOVE UP --------------------------------------------------
     move_up__icon = "listing-icon-up-open"
