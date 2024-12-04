@@ -199,9 +199,6 @@ class ActionsButtonsColumn(Column):
 
     # ---------------- DEFAULT ----------------------------------------------------
     def get_button_default_context(self, name, rec):
-        icon = getattr(self, f"{name}__icon", f"{name}-action-icon")
-        text = getattr(self, f"{name}__text", name)
-        title = getattr(self, f"{name}__title", name)
         url_func = getattr(self, f"{name}__url_func", None)
         method_name = getattr(self, f"{name}__method", f"get_{name}_absolute_url")
 
