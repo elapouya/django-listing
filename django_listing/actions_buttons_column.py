@@ -134,22 +134,22 @@ class ActionsButtonsColumn(Column):
         buttons_context = []
         for b in buttons:
             meth_name = f"get_button_{b}_context"
-            context_method = getattr(self.listing, meth_name, None)
-            if context_method is not None:
-                context = context_method(
-                    self, b, rec
-                )  # give col objet to listing method
-            else:
-                context_method = getattr(self, meth_name, None)
-                if context_method is not None:
-                    context = context_method(b, rec)
-                else:
-                    context = self.get_button_default_context(b, rec)
-            context.update(
+            context = dict(
                 self.buttons_description[b],
                 name=b,
                 name_css_class=b.replace("_", "-"),
             )
+            context_method = getattr(self.listing, meth_name, None)
+            if context_method is not None:
+                context.update(
+                    context_method(self, b, rec)  # give col objet to listing method
+                )
+            else:
+                context_method = getattr(self, meth_name, None)
+                if context_method is not None:
+                    context.update(context_method(b, rec))
+                else:
+                    context.update(self.get_button_default_context(b, rec))
             buttons_context.append(context)
         return dict(
             listing=self.listing,
