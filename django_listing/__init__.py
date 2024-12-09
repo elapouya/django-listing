@@ -3,7 +3,7 @@
    isort:skip_file
 """
 
-__version__ = "0.9.12"
+__version__ = "0.9.14"
 __author__ = "Eric Lapouyade"
 __copyright__ = "Copyright 2018, The Django listing Project"
 __credits__ = ["Eric Lapouyade"]
@@ -17,6 +17,7 @@ EXPORT_FORMATS = ["CSV", "DBF", "HTML", "JSON", "ODS", "TSV", "XLS", "XLSX", "YA
 EXPORT_FORMATS_KEEP_ORIGINAL_TYPE = ["XLSX", "JSON", "XLS", "DBF"]
 EXPORT_FORMATS_USE_COL_NAME = ["JSON"]
 EXPORT_EXCEL_SANITIZE_RE = re.compile(r"[\000-\010]|[\013-\014]|[\016-\037]")
+FILTER_QUERYSTRING_PREFIX = "f_"
 
 from .listing import *
 from .columns import *

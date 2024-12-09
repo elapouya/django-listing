@@ -531,6 +531,7 @@ class Listing(ListingBase):
     name = None
     no_permission_required_for_actions = False
     offset_max = LISTING_OFFSET_MAX
+    only_one_with_prefix = None
     onready_snippet = None
     orphans = 0
     page = 1
@@ -1309,11 +1310,24 @@ class Listing(ListingBase):
         else:
             return []
 
-    def get_url(self, context=None, without=None, anchor_hash=None, **kwargs):
+    def get_url(
+        self,
+        context=None,
+        without=None,
+        anchor_hash=None,
+        only_one_with_prefix=None,
+        **kwargs,
+    ):
         """Get listing url with some updated parameters if needed
         Note : Do not remove 'context=None' because needed by listing variations
         """
         querystring = QueryDict(self.parsed_url.query, mutable=True)
+        if only_one_with_prefix:
+            del_keys = [
+                k for k in querystring.keys() if k.startswith(only_one_with_prefix)
+            ]
+            for k in del_keys:
+                del querystring[k]
         for k, v in kwargs.items():
             if not isinstance(v, str):
                 v = str(v)

@@ -1,3 +1,7 @@
+0.9.14 (2024-12-09)
+-------------------
+- Add has_cell_filter_single column attribute
+
 0.9.12 (2024-12-06)
 -------------------
 - Improve ActionsButtonsColumn

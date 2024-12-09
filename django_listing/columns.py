@@ -26,6 +26,7 @@ from django.utils.safestring import mark_safe, SafeData
 from django.utils.translation import gettext, pgettext_lazy
 from django.utils.translation import gettext_lazy as _
 
+from django_listing import FILTER_QUERYSTRING_PREFIX
 from .aggregations import Aggregation, AggregationMeta
 from .context import RenderContext
 from .exceptions import *
@@ -105,6 +106,7 @@ COLUMNS_PARAMS_KEYS = {
     "form_field_serialize",
     "form_no_autofill",
     "has_cell_filter",
+    "has_cell_filter_single",
     "header",
     "header_attrs",
     "header_sortable_tpl",
@@ -583,6 +585,7 @@ class Column(metaclass=ColumnMeta):
     from_model_field_order = 100
     form_no_autofill = False
     has_cell_filter = False
+    has_cell_filter_single = False
     header = None
     header_sortable_tpl = None
     header_tpl = None
@@ -798,7 +801,13 @@ class Column(metaclass=ColumnMeta):
             if filter_obj:
                 rec_val = rec.get(filter_name)
                 rec_val = getattr(rec_val, "pk", rec_val)  # case it is a model object
-                return listing.get_url(**{filter_obj.input_name: rec_val})
+                only_one_with_prefix = (
+                    FILTER_QUERYSTRING_PREFIX if self.has_cell_filter_single else None
+                )
+                return listing.get_url(
+                    only_one_with_prefix=only_one_with_prefix,
+                    **{filter_obj.input_name: rec_val},
+                )
         return None
 
     def get_default_value(self, rec):

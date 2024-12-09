@@ -18,6 +18,7 @@ from django.template import loader
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy, pgettext_lazy
 
+from . import FILTER_QUERYSTRING_PREFIX
 from .context import RenderContext
 from .exceptions import InvalidFilters
 from .form_fields import ListOfValuesField
@@ -109,7 +110,6 @@ FILTERS_FORM_FIELD_KEYS = {
 
 FILTERS_PARAMS_KEYS.update(FILTERS_KEYS)
 FILTERS_PARAMS_KEYS.update(FILTERS_FORM_FIELD_KEYS)
-FILTER_QUERYSTRING_PREFIX = "f_"
 
 
 class FiltersBaseForm(forms.BaseForm):
