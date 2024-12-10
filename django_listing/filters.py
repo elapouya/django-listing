@@ -85,6 +85,7 @@ FILTERS_PARAMS_KEYS = {
     "filter_queryset_method",
     "add_one_day",
     "default_value",
+    "default_value_func",
 }
 
 # Declare keys for django form fields
@@ -320,9 +321,11 @@ class Filters(list):
                 f.input_name + self.listing.suffix: f.create_form_field() for f in self
             }
             initial = {
-                f.input_name + self.listing.suffix: f.default_value
+                f.input_name + self.listing.suffix: f.default_value_func(f)
+                if callable(f.default_value_func)
+                else f.default_value
                 for f in self
-                if f.default_value is not None
+                if f.default_value is not None or callable(f.default_value_func)
             }
             form_class = type(
                 "FilterForm{}".format(self.listing.suffix),
@@ -427,37 +430,38 @@ class FilterMeta(type):
 
 
 class Filter(metaclass=FilterMeta):
-    from_model_field_order = 100
+    container_attrs = {"class": "form-field"}
+    default_value = None
+    default_value_func = None
+    field_name = None
+    filter_key = None
+    filter_queryset_method = None
+    flex_width = None
+    form_field_class = forms.CharField
+    form_field_keys = None
+    format_label = None
     from_model_field_classes = ()
     from_model_field_name = None  # used by GroupByFilterColumn indirectly
-    form_field_class = forms.CharField
-    container_attrs = {"class": "form-field"}
-    shrink_width = None
-    flex_width = None
-    form_field_keys = None
-    params_keys = None
-    name = None
-    label = None
-    value = None
-    url = None
-    filter_key = None
-    field_name = None
-    order_by = None
-    queryset = None
-    format_label = None
-    key_type = None
+    from_model_field_order = 100
+    help_text = None
     input_name = None
     input_type = None
-    required = False
+    key_type = None
+    label = None
     listing = None
+    name = None
+    no_choice_msg = gettext_lazy("- No filtering -")
+    order_by = None
+    params_keys = None
+    queryset = None
+    required = False
+    shrink_width = None
+    url = None
+    value = None
     widget_attrs = None
     widget_class = None
     widget_params = None
-    no_choice_msg = gettext_lazy("- No filtering -")
-    help_text = None
     word_search = False
-    filter_queryset_method = None
-    default_value = None
 
     theme_form_widget_class = ThemeAttribute("column_theme_form_widget_class")
     theme_form_select_widget_class = ThemeAttribute(
@@ -972,7 +976,8 @@ class AutocompleteForeignKeyFilter(Filter):
 
     def get_form_field_params(self, **kwargs):
         params = super().get_form_field_params(**kwargs)
-        params["required"] = False
+        if "required" not in params:
+            params["required"] = False
         if self.queryset is not None:
             params["queryset"] = self.queryset
         else:

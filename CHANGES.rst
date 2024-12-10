@@ -1,3 +1,8 @@
+0.9.15 (2024-12-10)
+-------------------
+- Add default_value_func attribute to Filter object
+- Better Filter.required value handling
+
 0.9.14 (2024-12-09)
 -------------------
 - Add has_cell_filter_single column attribute
