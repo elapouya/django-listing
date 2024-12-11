@@ -383,6 +383,13 @@ class Filters(list):
             )
         return self.form()[filter.input_name + self.listing.suffix]
 
+    def get_filter_value(self, name):
+        key = f"{FILTER_QUERYSTRING_PREFIX}{name}"
+        form = self.form()
+        if "cleaned_data" in form:
+            return form.cleaned_data.get(key)
+        return form.initial.get(key)
+
     def get_form_field_container_attrs(self, name):
         filter = self.get(name)
         if filter is None:
@@ -645,9 +652,14 @@ class Filter(metaclass=FilterMeta):
                 return qs
             cleaned_value = cleaned_data.get(self.input_name + self.listing.suffix)
         else:
-            if self.default_value is None:
+            default_value = (
+                self.default_value_func(self)
+                if callable(self.default_value_func)
+                else self.default_value
+            )
+            if default_value is None:
                 return qs
-            cleaned_value = self.default_value
+            cleaned_value = default_value
         method_name = f"filter_queryset_{self.name}"
         method = getattr(self.listing, method_name, None)
         if not method and self.filter_queryset_method:

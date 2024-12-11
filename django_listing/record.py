@@ -210,6 +210,7 @@ class RecordManager:
                 for i, obj in enumerate(lsg.current_page)
             ]
             self.group_by_foreignkey_object_map(self._records)
+            lsg.update_page_records(self._records)
         return self._records
 
     def bind_formset(self):

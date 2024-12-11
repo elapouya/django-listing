@@ -1186,6 +1186,11 @@ class Listing(ListingBase):
                 if form:
                     self.add_edit_form_hidden_field(form[col.name])
 
+    def update_page_records(self, records):
+        method = getattr(self._view, "update_page_records", None)
+        if callable(method):
+            method(self, records)
+
     def div_rows(self):
         for rec in self.records.current_page():
             self.rows_context_list.append(rec)

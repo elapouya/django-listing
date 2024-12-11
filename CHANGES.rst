@@ -1,3 +1,7 @@
+0.9.16 (2024-12-11)
+-------------------
+- Add update_page_records() method in Listing
+
 0.9.15 (2024-12-10)
 -------------------
 - Add default_value_func attribute to Filter object
