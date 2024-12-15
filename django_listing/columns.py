@@ -823,6 +823,9 @@ class Column(metaclass=ColumnMeta):
             value = self.cell_value(self.listing, self, rec)
         elif callable(self.cell_value):
             value = self.cell_value(self, rec)
+            # Warning : a static callable like lambda will receive 3 arguments :
+            # listing, column, record. This is because self.cell_value has been
+            # bound to listing object at initialization time.
         else:
             value = rec.get(self.data_key)
             if value is None:
