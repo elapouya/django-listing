@@ -432,6 +432,9 @@ form.listing-form div.form-field ul.multiple-radios {
         li {
             margin-right: 10px;
         }
+        label {
+            white-space: nowrap;
+        }
     }
     @include media-breakpoint-down(lg) {
         display: flex;
@@ -618,6 +621,9 @@ form.dropzone {
         input {
             display: inline-block;
             margin-left: 10px;
+        }
+        label {
+            white-space: nowrap;
         }
     }
     @include media-breakpoint-down(lg) {

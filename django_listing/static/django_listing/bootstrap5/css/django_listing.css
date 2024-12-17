@@ -1361,6 +1361,10 @@ div.django-listing-container div.form-field ul.multiple-radios.inline li,
 form.listing-form div.form-field ul.multiple-radios.inline li {
   margin-right: 10px;
 }
+div.django-listing-container div.form-field ul.multiple-radios.inline label,
+form.listing-form div.form-field ul.multiple-radios.inline label {
+  white-space: nowrap;
+}
 @media (max-width: 991.98px) {
   div.django-listing-container div.form-field ul.multiple-radios,
   form.listing-form div.form-field ul.multiple-radios {
@@ -1549,6 +1553,10 @@ form.dropzone .dz-error-mark svg g g {
 .listing-form .label_input > .multiple-radios.inline input, .listing-form .label_input > .multiple-checkboxes.inline input {
   display: inline-block;
   margin-left: 10px;
+}
+.filters-form .label_input > .multiple-radios.inline label, .filters-form .label_input > .multiple-checkboxes.inline label,
+.listing-form .label_input > .multiple-radios.inline label, .listing-form .label_input > .multiple-checkboxes.inline label {
+  white-space: nowrap;
 }
 @media (max-width: 991.98px) {
   .filters-form .label_input > .multiple-radios, .filters-form .label_input > .multiple-checkboxes,
