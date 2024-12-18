@@ -961,6 +961,8 @@ class ForeignKeyFilter(Filter):
         choices = [("", self.no_choice_msg)]
         choices += [(obj.pk, self.format_label(obj)) for obj in self.get_related_qs()]
         params["choices"] = choices
+        if "queryset" in params:
+            del params["queryset"]
         return params
 
 
