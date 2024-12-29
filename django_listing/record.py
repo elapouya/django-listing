@@ -199,7 +199,7 @@ class RecordManager:
                 objs = model.objects.filter(pk__in=pks)
                 pk2obj = {obj.pk: obj for obj in objs}
                 for rec in records:
-                    rec.set(col_name, pk2obj[rec[col_name]])
+                    rec.set(col_name, pk2obj.get(rec[col_name]))
 
     def current_page(self):
         if not self._records:
@@ -271,7 +271,11 @@ class RecordManager:
                                 order_by.append(order_prefix + col.sort_key)
                 # add a default sorting to avoid a Django 'UnorderedObjectListWarning'
                 if not order_by:
-                    order_by = ["pk"]
+                    if lsg.gb_cols:
+                        # if "group by" feature activated
+                        order_by = lsg.gb_cols_names
+                    else:
+                        order_by = ["pk"]
             self._queryset_objs = qs.order_by(*order_by)
         return self._queryset_objs
 

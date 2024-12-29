@@ -730,22 +730,23 @@ class Listing(ListingBase):
                 self.columns.append(SelectionColumn(LISTING_SELECTION_CHECKBOX_NAME))
 
     def manage_group_by(self):
-        self.gb_cols_names = []
-        self.gb_annotate_cols_names = []
-        self.original_columns_headers = {}
-        ach = self.annotation_columns_headers = {}
-        for c in self.columns:
-            if not c.init_args:
-                continue
-            name = c.init_args[0]
-            header = c.init_kwargs.get("header")
-            if not header:
-                header = name.replace("_", " ").capitalize()
-            if name and header:
-                self.original_columns_headers[name] = header
-            if isinstance(c, (IntegerColumn, FloatColumn)):
-                for a, (alabel, afunc) in LISTING_ANNOTATIONS.items():
-                    ach[f"{name}_annotate_{a}"] = f"{header} ({alabel})"
+        if self.has_group_by:
+            self.gb_cols_names = []
+            self.gb_annotate_cols_names = []
+            self.original_columns_headers = {}
+            ach = self.annotation_columns_headers = {}
+            for c in self.columns:
+                if not c.init_args:
+                    continue
+                name = c.init_args[0]
+                header = c.init_kwargs.get("header")
+                if not header:
+                    header = name.replace("_", " ").capitalize()
+                if name and header:
+                    self.original_columns_headers[name] = header
+                if isinstance(c, (IntegerColumn, FloatColumn)):
+                    for a, (alabel, afunc) in LISTING_ANNOTATIONS.items():
+                        ach[f"{name}_annotate_{a}"] = f"{header} ({alabel})"
         if self.gb_cols:
             gb_cols_names = self.gb_cols
             if isinstance(gb_cols_names, str):
@@ -886,18 +887,6 @@ class Listing(ListingBase):
                 self.filters = self.filters.bind_to_listing(self)
             self.manage_page_context(context)
             self.create_missing_columns()
-            self.manage_group_by()
-            self.create_missing_toolbar_items()
-            self.has_toolbar = bool(self.toolbar)
-            self.columns = self.columns.bind_to_listing(self)
-            if self.attached_form:
-                self.attached_form = self.attached_form.bind_to_listing(self)
-            if self.toolbar:
-                self.toolbar = self.toolbar.bind_to_listing(self)
-            self.col_cell_renderers = {
-                col: getattr(self, "render_{}".format(col.name), col.render_cell)
-                for col in self.columns
-            }
             self._initialized = True
 
     def datetimepicker_init(self):
@@ -926,10 +915,22 @@ class Listing(ListingBase):
             self.global_context["csrf_token"] = get_csrf_token(self.request)
 
     def render_init_context(self, context):
-        for col in self.columns:
-            col.render_init_context(context)
         self.manage_page_context(context)
         self.normalize_params()
+        self.manage_group_by()
+        self.create_missing_toolbar_items()
+        self.has_toolbar = bool(self.toolbar)
+        self.columns = self.columns.bind_to_listing(self)
+        for col in self.columns:
+            col.render_init_context(context)
+        if self.attached_form:
+            self.attached_form = self.attached_form.bind_to_listing(self)
+        if self.toolbar:
+            self.toolbar = self.toolbar.bind_to_listing(self)
+        self.col_cell_renderers = {
+            col: getattr(self, "render_{}".format(col.name), col.render_cell)
+            for col in self.columns
+        }
         if not isinstance(self.attrs, HTMLAttributes):
             self.attrs = HTMLAttributes(self.attrs)
         html_class = "listing-" + self.__class__.__name__.lower()
