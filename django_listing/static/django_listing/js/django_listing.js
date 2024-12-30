@@ -602,11 +602,11 @@ function djlst_listing_on_load() {
             url = djlst_replaceUrlParam(url, "gb_annotate_cols", gb_annotate_cols);
             djlst_load_listing_url($(this), url);
         });
-        $(this).find(".remove-group-by").on("click", function () {
-            let url = djlst_removeUrlParam(window.location.href, "gb_cols");
-            url = djlst_removeUrlParam(url, "gb_annotate_cols");
-            djlst_load_listing_url($(this), url);
-        });
+    });
+    $(".remove-group-by").on("click", function () {
+        let url = djlst_removeUrlParam(window.location.href, "gb_cols");
+        url = djlst_removeUrlParam(url, "gb_annotate_cols");
+        djlst_load_listing_url($(this), url);
     });
 }
 

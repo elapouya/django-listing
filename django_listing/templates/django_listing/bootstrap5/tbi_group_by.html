@@ -1,10 +1,17 @@
+{% load i18n %}
 {% load django_listing %}
 {% if listing.has_group_by == True %}
     {% get_uniq_id as uniq_id %}
     <div class="btn-group-sm me-2 toolbar_item {{ item.css_class }}" role="group">
-        <a id="toolbar-item-{{ uniq_id }}-update-id"
+        <a id="toolbar-item-{{ uniq_id }}-group-by-id"
            class="button-action-group-by {{ item.theme_button_class }}">
             {{ item.label }}
         </a>
+        {% if gb_cols %}
+            <a id="toolbar-item-{{ uniq_id }}-ungroup-by-id"
+               class="remove-group-by {{ item.theme_button_class }}">
+                <span class="listing-icon-cancel"></span> {% trans "[Ungroup]" %}
+            </a>
+        {% endif %}
     </div>
 {% endif %}
