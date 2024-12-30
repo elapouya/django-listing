@@ -578,23 +578,38 @@ function djlst_view_object_popup(event) {
 function djlst_listing_on_load() {
     $(".group-by-container").each(function () {
         let group_by_select = $(this).find(".group-by-select")
-        new DualListbox(group_by_select[0], {
-            addButtonText: '>',
-            removeButtonText: '<',
-            addAllButtonText: '>>',
-            removeAllButtonText: '<<',
-            availableTitle: group_by_select.attr("available-title") || 'Available columns',
-            selectedTitle: group_by_select.attr("selected-title") || 'Selected columns'
+        group_by_select.bootstrapDualListbox({
+            preserveSelectionOnMove: 'moved',
+            moveOnSelect: false,
+            nonSelectedListLabel: group_by_select.attr("available-title") || 'Available columns',
+            selectedListLabel: group_by_select.attr("selected-title") || 'Selected columns'
         });
+        // new DualListbox(group_by_select[0], {
+        //     addButtonText: '>',
+        //     removeButtonText: '<',
+        //     addAllButtonText: '>>',
+        //     removeAllButtonText: '<<',
+        //     availableTitle: group_by_select.attr("available-title") || 'Available columns',
+        //     selectedTitle: group_by_select.attr("selected-title") || 'Selected columns'
+        // });
         let annotation_select = $(this).find(".annotation-select")
-        new DualListbox(annotation_select[0], {
-            addButtonText: '>',
-            removeButtonText: '<',
-            addAllButtonText: '>>',
-            removeAllButtonText: '<<',
-            availableTitle: annotation_select.attr("available-title") || 'Available columns',
-            selectedTitle: annotation_select.attr("selected-title") || 'Selected columns'
+        annotation_select.bootstrapDualListbox({
+            preserveSelectionOnMove: 'moved',
+            moveOnSelect: false,
+            nonSelectedListLabel: annotation_select.attr("available-title") || 'Available columns',
+            selectedListLabel: annotation_select.attr("selected-title") || 'Selected columns'
         });
+        $(this).find('.moveall > i, .move > i').removeClass('glyphicon glyphicon-arrow-right').addClass('listing-icon-right-open');
+        $(this).find('.removeall > i, .remove > i').removeClass('glyphicon glyphicon-arrow-left').addClass('listing-icon-left-open');
+
+        // new DualListbox(annotation_select[0], {
+        //     addButtonText: '>',
+        //     removeButtonText: '<',
+        //     addAllButtonText: '>>',
+        //     removeAllButtonText: '<<',
+        //     availableTitle: annotation_select.attr("available-title") || 'Available columns',
+        //     selectedTitle: annotation_select.attr("selected-title") || 'Selected columns'
+        // });
         $(this).find(".apply-group-by").on("click", function () {
             let gb_cols = group_by_select.val().join(",");
             let url = djlst_replaceUrlParam(window.location.href, "gb_cols", gb_cols);

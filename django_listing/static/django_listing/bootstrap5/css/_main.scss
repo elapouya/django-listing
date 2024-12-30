@@ -678,62 +678,29 @@ a.cell-filter {
     margin-bottom: 10px;
     display: none;
 
-    .dual-listbox {
-        border: 1px solid rgba(0,0,0,0.2);
-        border-radius: 8px;
-        margin: 5px;
-        padding: 5px;
-        .dual-listbox__search {
-            padding: 3px;
-            border-radius: 4px;
-            background-color: white;
-        }
-
-        .dual-listbox__button {
-            padding: 3px;
-            border-radius: 4px;
-            background-color: #a0a0a0;
-        }
-
-        .dual-listbox__title {
-            padding: 3px;
-            margin-top: 3px;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
-        }
-
-        .dual-listbox__item {
-            padding: 3px;
-        }
-
-        .dual-listbox__available, .dual-listbox__selected {
-            width: 100%;
-            height: 200px;
-            border-radius: 4px;
-            background-color: white;
-            margin: 0;
-        }
-        .dual-listbox__container > div {
-            flex-grow: 1;
-        }
-        .dual-listbox__container > div.dual-listbox__buttons {
-            flex-grow: unset;
-        }
+    .btn-group.buttons {
+        height: 26px;
     }
+
+    .btn-group>.btn-group:not(:first-child),
+    .btn-group>:not(.btn-check:first-child)+.btn {
+        margin-left: 2px;
+    }
+
+    .btn.moveall,.btn.move,.btn.removeall,.btn.remove {
+        padding: 0;
+        height: fit-content;
+        background-color: $primary;
+    }
+
+    .btn.moveall {
+        border-right-color: white;
+    }
+
     @include media-breakpoint-down(md) {
         padding: 8px;
-        .dual-listbox {
-            border: none;
-            margin: 0 0 10px 0;
-            padding: 0;
-        }
-        .dual-listbox__container > div {
-            width: 140px;
-        }
-        .dual-listbox__container > div.dual-listbox__buttons {
-            width: 24px;
-        }
     }
+
     @include media-breakpoint-up(xl) {
         min-width: 1100px;
     }
