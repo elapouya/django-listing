@@ -1,3 +1,12 @@
+$.fn.djlst_format_digits = function() {
+    return this.each(function() {
+        const $element = $(this);
+        const text = $element.text().trim();
+        const formattedText = text.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        $element.text(formattedText);
+    });
+};
+
 function djlst_replaceUrlParam(url, param_name, param_value) {
     if (param_value == null) {
         param_value = '';
@@ -608,6 +617,7 @@ function djlst_listing_on_load() {
         url = djlst_removeUrlParam(url, "gb_annotate_cols");
         djlst_load_listing_url($(this), url);
     });
+    $(".django-listing-container.format-numbers td.type-Decimal,.django-listing-container.format-numbers td.type-int,.django-listing-container.format-numbers td.type-float").djlst_format_digits();
 }
 
 function djlst_follow_file_generation() {
@@ -765,12 +775,3 @@ $(document).ready(function () {
 
     djlst_listing_on_load();
 });
-
-$.fn.djlst_format_digits = function() {
-    return this.each(function() {
-        const $element = $(this);
-        const text = $element.text().trim();
-        const formattedText = text.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-        $element.text(formattedText);
-    });
-};

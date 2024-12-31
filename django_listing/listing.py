@@ -130,6 +130,7 @@ LISTING_PARAMS_KEYS = {
     "footer_snippet",
     "footer_template_name",
     "form",  # usually insert/edit form (NOT filter form)
+    "format_numbers",
     "attached_form_autofill",  # insert/edit form is automatically filled when a listing row is selected
     "gb_annotate_cols",  # group_by annotation columns
     "gb_cols",  # group_by columns
@@ -512,6 +513,7 @@ class Listing(ListingBase):
     footer_snippet = None
     footer_template_name = None
     force_order_by = None
+    format_numbers = False
     form_model_fields = None
     form_serialize_cols = None
     form_serialize_cols_func = None
@@ -1153,6 +1155,8 @@ class Listing(ListingBase):
             listing_container_class += " has_upload"
         if self.attached_form_autofill:
             listing_container_class += " attached_form_autofill"
+        if self.format_numbers:
+            listing_container_class += " format-numbers"
         sel_css_class = LISTING_SELECTOR_CSS_CLASS if self.selection_has_overlay else ""
         hover_css_class = (
             LISTING_SELECTION_HOVER_CSS_CLASS if self.selection_mode == "hover" else ""
