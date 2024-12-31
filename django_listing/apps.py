@@ -47,10 +47,8 @@ class DjangoListingConfig(AppConfig):
         "/static/autocomplete_light/select2.min.js",
         "/static/autocomplete_light/autocomplete_light.min.js",
     )
-    DUAL_LISTBOX_CSS_URL = "/static/django_listing/css/bootstrap-duallistbox.min.css"
-    DUAL_LISTBOX_JS_URL = (
-        "/static/django_listing/js/jquery.bootstrap-duallistbox.min.js"
-    )
+    DUAL_LISTBOX_CSS_URL = "/static/django_listing/css/dual-listbox.min.css"
+    DUAL_LISTBOX_JS_URL = "/static/django_listing/js/dual-listbox.min.js"
 
     def ready(self):
         import time

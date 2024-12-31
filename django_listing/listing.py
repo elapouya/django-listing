@@ -133,10 +133,12 @@ LISTING_PARAMS_KEYS = {
     "attached_form_autofill",  # insert/edit form is automatically filled when a listing row is selected
     "gb_annotate_cols",  # group_by annotation columns
     "gb_cols",  # group_by columns
+    "gb_count_layout",  # can be "begin", "end" or None
     "global_context",
     "gb_template_name",
     "has_footer",
     "has_footer_action_buttons",
+    "has_gb_filter_button",
     "has_header",
     "has_nb_unfiltered_rows",
     "has_paginator",
@@ -515,9 +517,11 @@ class Listing(ListingBase):
     form_serialize_cols_func = None
     gb_annotate_cols = None
     gb_cols = None
+    gb_count_layout = "begin"  # can be "begin", "end" or None
     gb_template_name = ThemeTemplate("group_by.html")
     has_footer = False
     has_footer_action_buttons = True
+    has_gb_filter_button = True
     has_group_by = False
     has_header = True
     has_hidden_selection = False
@@ -758,7 +762,8 @@ class Listing(ListingBase):
             )
             self.gb_cols_names = gb_cols_names
             gb_cols = [self.columns.get(cname) for cname in gb_cols_names]
-            gb_cols.append(IntegerColumn("count"))
+            if self.gb_count_layout == "begin":
+                gb_cols.append(IntegerColumn("count"))
             mfn2f = self.filters.modelfieldname2filter
             self.gb_model_filters_mapping = {
                 mfn2f[c].input_name: c for c in gb_cols_names if c in mfn2f
@@ -781,7 +786,10 @@ class Listing(ListingBase):
                     gb_annotate_cols[aname] = LISTING_ANNOTATIONS[annotation][1](
                         col_name
                     )
-            gb_cols.append(GroupByFilterColumn())
+            if self.gb_count_layout == "end":
+                gb_cols.append(IntegerColumn("count"))
+            if self.has_gb_filter_button:
+                gb_cols.append(GroupByFilterColumn())
             self.columns = Columns(*gb_cols)
             self.select_columns = None
             self.exclude_columns = None
