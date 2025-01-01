@@ -23,6 +23,10 @@ class DualListbox {
         this.setDefaults();
         this.dragged = null;
         this.options = [];
+        this.selectedItems = new Set();
+        this.lastSelected = null;
+        this.searchTermLeft = '';  // Store left search term
+        this.searchTermRight = ''; // Store right search term
 
         if (DualListbox.isDomElement(selector)) {
             this.select = selector;
@@ -70,48 +74,53 @@ class DualListbox {
         this.searchPlaceholder = "Search";
 
         this.showSortButtons = false;
-        this.sortFunction = (a, b) => {
-            // if (a.selected) {
-            //     return -1;
-            // }
-            // if (b.selected) {
-            //     return 1;
-            // }
-            // if (a.order < b.order) {
-            //     return -1;
-            // }
-            // if (a.order > b.order) {
-            //     return 1;
-            // }
-            return 0;
-        };
+        this.sortFunction = (a, b) => 0;
+
         this.upButtonText = "up";
         this.downButtonText = "down";
 
         this.enableDoubleClick = true;
         this.draggable = true;
+        this.multiSelect = true;
     }
 
-    changeOrder(liItem, newPosition) {
-        // console.log(liItem);
-        const index = this.options.findIndex((option) => {
-            // console.log(option, liItem.dataset.id);
-            return option.value === liItem.dataset.id;
-        });
-        // console.log(index);
-        const cutOptions = this.options.splice(index, 1);
-        // console.log(cutOptions);
-        this.options.splice(newPosition, 0, cutOptions[0]);
+    /**
+     * Change the order of options in the list
+     */
+    changeOrder(items, newPosition) {
+        if (!Array.isArray(items)) {
+            items = [items];
+        }
+
+        // Sort items by their current index to maintain relative order
+        const itemsWithIndices = items.map(item => ({
+            item,
+            index: this.options.findIndex(opt => opt.value === item.dataset.id)
+        })).sort((a, b) => a.index - b.index);
+
+        // Remove items from their current positions
+        const removedItems = itemsWithIndices.map(({item, index}) =>
+            this.options.splice(index, 1)[0]
+        );
+
+        // Insert items at the new position
+        this.options.splice(newPosition, 0, ...removedItems);
     }
 
+    /**
+     * Add options to the dual listbox
+     */
     addOptions(options) {
         options.forEach((option) => {
             this.addOption(option);
         });
     }
 
+    /**
+     * Add option to the dual listbox
+     */
     addOption(option, index = null) {
-        if (index) {
+        if (index !== null) {
             this.options.splice(index, 0, option);
         } else {
             this.options.push(option);
@@ -119,85 +128,203 @@ class DualListbox {
     }
 
     /**
-     * Add eventListener to the dualListbox element.
-     *
-     * @param {String} eventName
-     * @param {function} callback
+     * Add event listener to the dual listbox
      */
     addEventListener(eventName, callback) {
         this.dualListbox.addEventListener(eventName, callback);
     }
 
     /**
-     * Add the listItem to the selected list.
-     *
-     * @param {NodeElement} listItem
+     * Toggle selection state of items
      */
-    changeSelected(listItem) {
-        const changeOption = this.options.find(
-            (option) => option.value === listItem.dataset.id
-        );
-        changeOption.selected = !changeOption.selected;
+    toggleSelection(listItem, event) {
+        if (this.multiSelect && (event.ctrlKey || event.metaKey)) {
+            // Toggle individual item
+            if (this.selectedItems.has(listItem)) {
+                this.selectedItems.delete(listItem);
+                listItem.classList.remove(SELECTED_MODIFIER);
+            } else {
+                this.selectedItems.add(listItem);
+                listItem.classList.add(SELECTED_MODIFIER);
+            }
+        } else if (this.multiSelect && event.shiftKey && this.lastSelected) {
+            // Range selection
+            const items = Array.from(listItem.parentElement.children);
+            const currentIndex = items.indexOf(listItem);
+            const lastIndex = items.indexOf(this.lastSelected);
+            const [start, end] = [Math.min(currentIndex, lastIndex), Math.max(currentIndex, lastIndex)];
+
+            // Clear previous selections
+            this.selectedItems.clear();
+            items.forEach(item => item.classList.remove(SELECTED_MODIFIER));
+
+            // Select range
+            for (let i = start; i <= end; i++) {
+                this.selectedItems.add(items[i]);
+                items[i].classList.add(SELECTED_MODIFIER);
+            }
+        } else {
+            // Single selection
+            this.selectedItems.clear();
+            listItem.parentElement.querySelectorAll(`.${ITEM_ELEMENT}`).forEach(item => {
+                item.classList.remove(SELECTED_MODIFIER);
+            });
+            this.selectedItems.add(listItem);
+            listItem.classList.add(SELECTED_MODIFIER);
+        }
+
+        this.lastSelected = listItem;
+    }
+
+    /**
+     * Change selected state of items
+     */
+    changeSelected(items) {
+        if (!Array.isArray(items)) {
+            items = [items];
+        }
+
+        // Filter out any null or undefined items
+        items = items.filter(item => item != null);
+
+        if (items.length === 0) {
+            return; // Exit if no valid items to process
+        }
+
+        // Track whether we're selecting or deselecting before making changes
+        const isSelecting = items[0].parentElement?.classList.contains(AVAILABLE_ELEMENT) ?? false;
+
+        items.forEach(listItem => {
+            const changeOption = this.options.find(
+                (option) => option.value === listItem.dataset.id
+            );
+            if (changeOption) {
+                changeOption.selected = !changeOption.selected;
+            }
+        });
+
         this.redraw();
 
         setTimeout(() => {
             let event = document.createEvent("HTMLEvents");
-            if (changeOption.selected) {
-                event.initEvent("added", false, true);
-                event.addedElement = listItem;
-            } else {
-                event.initEvent("removed", false, true);
-                event.removedElement = listItem;
-            }
-
+            // Use the tracked state to determine the event type
+            event.initEvent(isSelecting ? "added" : "removed", false, true);
+            event.affectedElements = items;
             this.dualListbox.dispatchEvent(event);
         }, 0);
     }
 
+    /**
+     * Get visible items from a list
+     */
+    _getVisibleItems(list) {
+        return Array.from(list.querySelectorAll(`.${ITEM_ELEMENT}`))
+            .filter(item => item.style.display !== 'none')
+            .map(item => item.dataset.id);
+    }
+
+    /**
+     * Select all visible items
+     */
     actionAllSelected(event) {
         if (event) {
             event.preventDefault();
         }
-        this.options.forEach((option) => (option.selected = true));
+
+        // Get only visible items from available list
+        const visibleIds = this._getVisibleItems(this.availableList);
+
+        // Update only visible items
+        this.options.forEach((option) => {
+            if (visibleIds.includes(option.value)) {
+                option.selected = true;
+            }
+        });
+
         this.redraw();
     }
 
+    /**
+     * Deselect all visible items
+     */
     actionAllDeselected(event) {
         if (event) {
             event.preventDefault();
         }
-        this.options.forEach((option) => (option.selected = false));
+
+        // Get only visible items from selected list
+        const visibleIds = this._getVisibleItems(this.selectedList);
+
+        // Update only visible items
+        this.options.forEach((option) => {
+            if (visibleIds.includes(option.value)) {
+                option.selected = false;
+            }
+        });
+
         this.redraw();
+    }
+
+    /**
+     * Move selected items to selected list
+     */
+    actionItemSelected(event) {
+        event.preventDefault();
+        const selected = Array.from(this.selectedItems).filter(item =>
+            item.parentElement.classList.contains(AVAILABLE_ELEMENT)
+        );
+        if (selected.length > 0) {
+            this.changeSelected(selected);
+        }
+    }
+
+    /**
+     * Move selected items to available list
+     */
+    actionItemDeselected(event) {
+        event.preventDefault();
+        const selected = Array.from(this.selectedItems).filter(item =>
+            item.parentElement.classList.contains(SELECTED_ELEMENT)
+        );
+        if (selected.length > 0) {
+            this.changeSelected(selected);
+        }
     }
 
     /**
      * Redraws the Dual listbox content
      */
     redraw() {
-        this.options.sort(this.sortFunction);
-
         this.updateAvailableListbox();
         this.updateSelectedListbox();
+        this._reapplySearchFilters(); // Reapply search filters after redraw
         this.syncSelect();
     }
 
     /**
-     * Filters the listboxes with the given searchString.
-     *
-     * @param {Object} searchString
-     * @param dualListbox
+     * Search through the items in the dual listbox
      */
     searchLists(searchString, dualListbox) {
         let items = dualListbox.querySelectorAll(`.${ITEM_ELEMENT}`);
         let lowerCaseSearchString = searchString.toLowerCase();
 
+        // Store search terms
+        if (dualListbox === this.availableList) {
+            this.searchTermLeft = searchString;
+        } else if (dualListbox === this.selectedList) {
+            this.searchTermRight = searchString;
+        }
+
+        this._applySearchFilter(items, lowerCaseSearchString);
+    }
+
+    /**
+     * Apply search filter to items
+     */
+    _applySearchFilter(items, searchString) {
         for (let i = 0; i < items.length; i++) {
             let item = items[i];
-            if (
-                item.textContent
-                    .toLowerCase()
-                    .indexOf(lowerCaseSearchString) === -1
-            ) {
+            if (searchString && item.textContent.toLowerCase().indexOf(searchString) === -1) {
                 item.style.display = "none";
             } else {
                 item.style.display = "list-item";
@@ -206,7 +333,25 @@ class DualListbox {
     }
 
     /**
-     * Update the elements in the available listbox;
+     * Reapply current search filters after redraw
+     */
+    _reapplySearchFilters() {
+        if (this.searchTermLeft) {
+            this._applySearchFilter(
+                this.availableList.querySelectorAll(`.${ITEM_ELEMENT}`),
+                this.searchTermLeft.toLowerCase()
+            );
+        }
+        if (this.searchTermRight) {
+            this._applySearchFilter(
+                this.selectedList.querySelectorAll(`.${ITEM_ELEMENT}`),
+                this.searchTermRight.toLowerCase()
+            );
+        }
+    }
+
+    /**
+     * Update available listbox
      */
     updateAvailableListbox() {
         this._updateListbox(
@@ -216,7 +361,7 @@ class DualListbox {
     }
 
     /**
-     * Update the elements in the selected listbox;
+     * Update selected listbox
      */
     updateSelectedListbox() {
         this._updateListbox(
@@ -225,6 +370,9 @@ class DualListbox {
         );
     }
 
+    /**
+     * Sync with original select element
+     */
     syncSelect() {
         while (this.select.firstChild) {
             this.select.removeChild(this.select.lastChild);
@@ -241,14 +389,8 @@ class DualListbox {
         });
     }
 
-    //
-    //
-    // PRIVATE FUNCTIONS
-    //
-    //
-
     /**
-     * Update the elements in the listbox;
+     * Update listbox content
      */
     _updateListbox(list, options) {
         while (list.firstChild) {
@@ -261,69 +403,7 @@ class DualListbox {
     }
 
     /**
-     * Action to set one listItem to selected.
-     */
-    actionItemSelected(event) {
-        event.preventDefault();
-
-        let selected = this.availableList.querySelector(
-            `.${SELECTED_MODIFIER}`
-        );
-        if (selected) {
-            this.changeSelected(selected);
-        }
-    }
-
-    /**
-     * Action to set one listItem to available.
-     */
-    actionItemDeselected(event) {
-        event.preventDefault();
-
-        let selected = this.selectedList.querySelector(`.${SELECTED_MODIFIER}`);
-        if (selected) {
-            this.changeSelected(selected);
-        }
-    }
-
-    /**
-     * Action when double clicked on a listItem.
-     */
-    _actionItemDoubleClick(listItem, event = null) {
-        if (event) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-        if (this.enableDoubleClick) this.changeSelected(listItem);
-    }
-
-    /**
-     * Action when single clicked on a listItem.
-     */
-    _actionItemClick(listItem, dualListbox, event = null) {
-        if (event) {
-            event.preventDefault();
-        }
-
-        let items = dualListbox.querySelectorAll(`.${ITEM_ELEMENT}`);
-
-        for (let i = 0; i < items.length; i++) {
-            let value = items[i];
-            if (value !== listItem) {
-                value.classList.remove(SELECTED_MODIFIER);
-            }
-        }
-
-        if (listItem.classList.contains(SELECTED_MODIFIER)) {
-            listItem.classList.remove(SELECTED_MODIFIER);
-        } else {
-            listItem.classList.add(SELECTED_MODIFIER);
-        }
-    }
-
-    /**
-     * @Private
-     * Adds the needed actions to the elements.
+     * Add actions to the elements
      */
     _addActions() {
         this._addButtonActions();
@@ -331,7 +411,7 @@ class DualListbox {
     }
 
     /**
-     * Adds the actions to the buttons that are created.
+     * Add button actions
      */
     _addButtonActions() {
         this.add_all_button.addEventListener("click", (event) =>
@@ -349,69 +429,60 @@ class DualListbox {
     }
 
     /**
-     * Adds the click items to the listItem.
-     *
-     * @param {Object} listItem
+     * Add search actions
+     */
+    _addSearchActions() {
+        this.search_left.addEventListener("input", (event) =>
+            this.searchLists(event.target.value, this.availableList)
+        );
+        this.search_right.addEventListener("input", (event) =>
+            this.searchLists(event.target.value, this.selectedList)
+        );
+    }
+
+    /**
+     * Add click actions to list items
      */
     _addClickActions(listItem) {
-        listItem.addEventListener("dblclick", (event) =>
-            this._actionItemDoubleClick(listItem, event)
-        );
-        listItem.addEventListener("click", (event) =>
-            this._actionItemClick(listItem, this.dualListbox, event)
-        );
+        listItem.addEventListener("dblclick", (event) => {
+            if (this.enableDoubleClick) {
+                event.preventDefault();
+                event.stopPropagation();
+                this.changeSelected([listItem]);
+            }
+        });
+
+        listItem.addEventListener("click", (event) => {
+            event.preventDefault();
+            this.toggleSelection(listItem, event);
+        });
+
         return listItem;
     }
 
     /**
-     * @Private
-     * Adds the actions to the search input.
-     */
-    _addSearchActions() {
-        this.search_left.addEventListener("change", (event) =>
-            this.searchLists(event.target.value, this.availableList)
-        );
-        this.search_left.addEventListener("keyup", (event) =>
-            this.searchLists(event.target.value, this.availableList)
-        );
-        this.search_right.addEventListener("change", (event) =>
-            this.searchLists(event.target.value, this.selectedList)
-        );
-        this.search_right.addEventListener("keyup", (event) =>
-            this.searchLists(event.target.value, this.selectedList)
-        );
-    }
-
-    /**
-     * @Private
-     * Builds the Dual listbox and makes it visible to the user.
+     * Build the dual listbox structure
      */
     _buildDualListbox(container) {
         this.select.style.display = "none";
 
+        const leftSearch = this._createSearchLeft();
+        const rightSearch = this._createSearchRight();
+
         this.dualListBoxContainer.appendChild(
-            this._createList(
-                this.search_left,
-                this.availableListTitle,
-                this.availableList
-            )
+            this._createList(leftSearch, this.availableListTitle, this.availableList)
         );
         this.dualListBoxContainer.appendChild(this.buttons);
         this.dualListBoxContainer.appendChild(
-            this._createList(
-                this.search_right,
-                this.selectedListTitle,
-                this.selectedList
-            )
+            this._createList(rightSearch, this.selectedListTitle, this.selectedList)
         );
 
         this.dualListbox.appendChild(this.dualListBoxContainer);
-
         container.insertBefore(this.dualListbox, this.select);
     }
 
     /**
-     * Creates list with the header.
+     * Create a list container with search and title
      */
     _createList(search, header, list) {
         let result = document.createElement("div");
@@ -422,7 +493,7 @@ class DualListbox {
     }
 
     /**
-     * Creates the buttons to add/remove the selected item.
+     * Create the buttons for moving items
      */
     _createButtons() {
         this.buttons = document.createElement("div");
@@ -463,12 +534,10 @@ class DualListbox {
     }
 
     /**
-     * @Private
-     * Creates the listItem out of the option.
+     * Create a list item
      */
     _createListItem(option) {
         let listItem = document.createElement("li");
-
         listItem.classList.add(ITEM_ELEMENT);
         listItem.innerHTML = option.text;
         listItem.dataset.id = option.value;
@@ -483,26 +552,28 @@ class DualListbox {
         return listItem;
     }
 
+    /**
+     * Add drag and drop listeners to list items
+     */
     _liListeners(li) {
         li.addEventListener("dragstart", (event) => {
-            // store a ref. on the dragged elem
-            // console.log("drag start", event);
             this.dragged = event.currentTarget;
             event.currentTarget.classList.add("dragging");
+
+            // If dragged item is not in selection, clear selection and select only dragged item
+            if (!this.selectedItems.has(this.dragged)) {
+                this.selectedItems.clear();
+                this.toggleSelection(this.dragged, { ctrlKey: false });
+            }
         });
+
         li.addEventListener("dragend", (event) => {
             event.currentTarget.classList.remove("dragging");
         });
 
-        // For changing the order
-        li.addEventListener(
-            "dragover",
-            (event) => {
-                // Allow the drop event to be emitted for the dropzone.
-                event.preventDefault();
-            },
-            false
-        );
+        li.addEventListener("dragover", (event) => {
+            event.preventDefault();
+        });
 
         li.addEventListener("dragenter", (event) => {
             event.target.classList.add("drop-above");
@@ -516,54 +587,31 @@ class DualListbox {
             event.preventDefault();
             event.stopPropagation();
             event.target.classList.remove("drop-above");
-            let newIndex = this.options.findIndex(
+
+            const newIndex = this.options.findIndex(
                 (option) => option.value === event.target.dataset.id
             );
+
+            const selectedItems = Array.from(this.selectedItems);
             if (event.target.parentElement === this.dragged.parentElement) {
-                this.changeOrder(this.dragged, newIndex);
-                this.redraw();
+                this.changeOrder(selectedItems, newIndex);
             } else {
-                this.changeSelected(this.dragged);
-                this.changeOrder(this.dragged, newIndex);
-                this.redraw();
+                this.changeSelected(selectedItems);
+                this.changeOrder(selectedItems, newIndex);
             }
+
+            this.redraw();
         });
     }
 
     /**
-     * @Private
-     * Creates the search input.
-     */
-    _createSearchLeft() {
-        this.search_left = document.createElement("input");
-        this.search_left.classList.add(SEARCH_ELEMENT);
-        this.search_left.placeholder = this.searchPlaceholder;
-    }
-
-    /**
-     * @Private
-     * Creates the search input.
-     */
-    _createSearchRight() {
-        this.search_right = document.createElement("input");
-        this.search_right.classList.add(SEARCH_ELEMENT);
-        this.search_right.placeholder = this.searchPlaceholder;
-    }
-
-    /**
-     * @Private
-     * Create drag and drop listeners
+     * Create drag and drop listeners for the listboxes
      */
     _createDragListeners() {
         [this.availableList, this.selectedList].forEach((dropzone) => {
-            dropzone.addEventListener(
-                "dragover",
-                (event) => {
-                    // Allow the drop event to be emitted for the dropzone.
-                    event.preventDefault();
-                },
-                false
-            );
+            dropzone.addEventListener("dragover", (event) => {
+                event.preventDefault();
+            }, false);
 
             dropzone.addEventListener("dragenter", (event) => {
                 event.target.classList.add("drop-in");
@@ -575,21 +623,84 @@ class DualListbox {
 
             dropzone.addEventListener("drop", (event) => {
                 event.preventDefault();
-
                 event.target.classList.remove("drop-in");
-                if (
-                    dropzone.classList.contains("dual-listbox__selected") ||
-                    dropzone.classList.contains("dual-listbox__available")
-                ) {
-                    this.changeSelected(this.dragged);
+
+                if (dropzone.classList.contains(SELECTED_ELEMENT) ||
+                    dropzone.classList.contains(AVAILABLE_ELEMENT)) {
+                    const selectedItems = Array.from(this.selectedItems);
+                    this.changeSelected(selectedItems);
                 }
             });
         });
     }
 
     /**
-     * @Private
-     * Set the option variables to this.
+     * Create the search input for the left side
+     */
+    _createSearchWithReset(side) {
+        const searchContainer = document.createElement("div");
+        searchContainer.classList.add("dual-listbox__search-container");
+        searchContainer.style.display = "flex";
+        searchContainer.style.alignItems = "center";
+        searchContainer.style.gap = "4px";
+
+        const searchInput = document.createElement("input");
+        searchInput.classList.add(SEARCH_ELEMENT);
+        searchInput.placeholder = this.searchPlaceholder;
+        searchInput.style.flex = "1";
+
+        const resetButton = document.createElement("button");
+        resetButton.type = "button";
+        resetButton.classList.add("dual-listbox__search-reset");
+        resetButton.innerHTML = "×"; // Using × symbol for clear
+        resetButton.style.padding = "2px 6px";
+        resetButton.style.border = "1px solid #ccc";
+        resetButton.style.borderRadius = "3px";
+        resetButton.style.cursor = "pointer";
+        resetButton.style.backgroundColor = "#fff";
+        resetButton.title = "Clear search";
+
+        resetButton.addEventListener("click", () => {
+            searchInput.value = "";
+            if (side === "left") {
+                this.searchTermLeft = "";
+                this.searchLists("", this.availableList);
+            } else {
+                this.searchTermRight = "";
+                this.searchLists("", this.selectedList);
+            }
+            searchInput.focus();
+        });
+
+        searchContainer.appendChild(searchInput);
+        searchContainer.appendChild(resetButton);
+
+        return {
+            container: searchContainer,
+            input: searchInput
+        };
+    }
+
+    /**
+     * Create the search input for the left side
+     */
+    _createSearchLeft() {
+        const { container, input } = this._createSearchWithReset("left");
+        this.search_left = input;
+        return container;
+    }
+
+    /**
+     * Create the search input for the right side
+     */
+    _createSearchRight() {
+        const { container, input } = this._createSearchWithReset("right");
+        this.search_right = input;
+        return container;
+    }
+
+    /**
+     * Initialize options from constructor
      */
     _initOptions(options) {
         for (let key in options) {
@@ -600,8 +711,7 @@ class DualListbox {
     }
 
     /**
-     * @Private
-     * Creates all the static elements for the Dual listbox.
+     * Initialize reusable elements
      */
     _initReusableElements() {
         this.dualListbox = document.createElement("div");
@@ -630,6 +740,7 @@ class DualListbox {
         this._createButtons();
         this._createSearchLeft();
         this._createSearchRight();
+
         if (this.draggable) {
             setTimeout(() => {
                 this._createDragListeners();
@@ -638,41 +749,25 @@ class DualListbox {
     }
 
     /**
-     * @Private
-     * Splits the options and places them in the correct list.
-     */
-    _splitOptions(options) {
-        [...options].forEach((option, index) => {
-            this.addOption({
-                text: option.innerHTML,
-                value: option.value,
-                selected: option.attributes.selected || false,
-                order: index,
-            });
-        });
-    }
-
-    /**
-     * @private
-     * @return {void}
+     * Initialize sort buttons
      */
     _initializeSortButtons() {
         const sortUpButton = document.createElement("button");
-        sortUpButton.classList.add("dual-listbox__button");
+        sortUpButton.classList.add(BUTTON_ELEMENT);
         sortUpButton.innerText = this.upButtonText;
         sortUpButton.addEventListener("click", (event) =>
             this._onSortButtonClick(event, DIRECTION_UP)
         );
 
         const sortDownButton = document.createElement("button");
-        sortDownButton.classList.add("dual-listbox__button");
+        sortDownButton.classList.add(BUTTON_ELEMENT);
         sortDownButton.innerText = this.downButtonText;
         sortDownButton.addEventListener("click", (event) =>
             this._onSortButtonClick(event, DIRECTION_DOWN)
         );
 
         const buttonContainer = document.createElement("div");
-        buttonContainer.classList.add("dual-listbox__buttons");
+        buttonContainer.classList.add(BUTTONS_ELEMENT);
         buttonContainer.appendChild(sortUpButton);
         buttonContainer.appendChild(sortDownButton);
 
@@ -680,67 +775,50 @@ class DualListbox {
     }
 
     /**
-     * @private
-     * @param {MouseEvent} event
-     * @param {string} direction
-     * @return {void}
+     * Handle sort button clicks
      */
     _onSortButtonClick(event, direction) {
         event.preventDefault();
+        const selectedItems = Array.from(this.selectedItems);
 
-        const selected = this.dualListbox.querySelector(
-            ".dual-listbox__item--selected"
-        );
-        const option = this.options.find(
-            (option) => option.value === selected.dataset.id
-        );
-        if (selected) {
-            const newIndex = this._getNewIndex(selected, direction);
-            if (newIndex >= 0) {
-                this.changeOrder(selected, newIndex);
-                this.redraw();
-            }
+        if (selectedItems.length > 0) {
+            const indices = selectedItems.map(item =>
+                this.options.findIndex(option => option.value === item.dataset.id)
+            );
+
+            const minIndex = Math.min(...indices);
+            const maxIndex = Math.max(...indices);
+
+            let newIndex = direction === DIRECTION_UP ?
+                Math.max(0, minIndex - 1) :
+                Math.min(this.options.length - selectedItems.length, maxIndex + 1);
+
+            this.changeOrder(selectedItems, newIndex);
+            this.redraw();
         }
     }
 
     /**
-     * Returns an array where the first element is the old index of the currently
-     * selected item in the right box and the second element is the new index.
-     *
-     * @private
-     * @param {string} direction
-     * @return {int[]}
+     * Split options from select element
      */
-    _getNewIndex(selected, direction) {
-        const oldIndex = this.options.findIndex(
-            (option) => option.value === selected.dataset.id
-        );
-
-        let newIndex = oldIndex;
-        if (DIRECTION_UP === direction) {
-            newIndex -= 1;
-        } else if (
-            DIRECTION_DOWN === direction &&
-            oldIndex < selected.length - 1
-        ) {
-            newIndex += 1;
-        }
-
-        return newIndex;
+    _splitOptions(options) {
+        [...options].forEach((option, index) => {
+            this.addOption({
+                text: option.innerHTML,
+                value: option.value,
+                selected: option.hasAttribute("selected"),
+                order: index,
+            });
+        });
     }
 
     /**
-     * @Private
-     * Returns true if argument is a DOM element
+     * Check if an object is a DOM element
      */
     static isDomElement(o) {
-        return typeof HTMLElement === "object"
-            ? o instanceof HTMLElement //DOM2
-            : o &&
-                  typeof o === "object" &&
-                  o !== null &&
-                  o.nodeType === 1 &&
-                  typeof o.nodeName === "string";
+        return typeof HTMLElement === "object" ?
+            o instanceof HTMLElement :
+            o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string";
     }
 }
 

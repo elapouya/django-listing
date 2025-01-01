@@ -1,3 +1,9 @@
+0.9.18 (2025-01-01)
+-------------------
+- Improve group-by feature
+- Add djlst_format_digits() jquery function to have numbers with space every 3 digits
+- Add format_numbers options in Listing
+
 0.9.16 (2024-12-11)
 -------------------
 - Add update_page_records() method in Listing

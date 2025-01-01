@@ -47,6 +47,7 @@ class DjangoListingConfig(AppConfig):
         "/static/autocomplete_light/select2.min.js",
         "/static/autocomplete_light/autocomplete_light.min.js",
     )
+    # Taken from https://github.com/elapouya/dual-listbox
     DUAL_LISTBOX_CSS_URL = "/static/django_listing/css/dual-listbox.min.css"
     DUAL_LISTBOX_JS_URL = "/static/django_listing/js/dual-listbox.min.js"
 
