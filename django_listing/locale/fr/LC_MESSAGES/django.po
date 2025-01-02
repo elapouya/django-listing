@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-30 10:41+0000\n"
+"POT-Creation-Date: 2025-01-02 21:14+0000\n"
 "PO-Revision-Date: 2024-12-30 11:58+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -166,7 +166,7 @@ msgstr ""
 "Vous devez spécifier une liste de noms de colonnne dans le layout de "
 "formulaire"
 
-#: columns.py:302
+#: columns.py:303
 #, python-brace-format
 msgid ""
 "column {col_id} of listing {listing} is not a Column instance (class = "
@@ -175,27 +175,27 @@ msgstr ""
 "colonne {col_id} du listing {listing} n'est pas une instance de Column "
 "(class = {colclass})"
 
-#: columns.py:600 templates/django_listing/default/footer.html:6
+#: columns.py:601 templates/django_listing/default/footer.html:6
 msgid "Please choose..."
 msgstr "Choisir..."
 
-#: columns.py:602 filters.py:810
+#: columns.py:603 filters.py:812
 msgid "Yes"
 msgstr "Oui"
 
-#: columns.py:603 filters.py:811
+#: columns.py:604 filters.py:813
 msgid "No"
 msgstr "Non"
 
-#: columns.py:1112
+#: columns.py:1122
 msgid "{} is not a valid django forms field class"
 msgstr "{} n'est pas une classs de champs de formulaire django valide"
 
-#: columns.py:1126
+#: columns.py:1136
 msgid "{} is not a valid django forms widget class"
 msgstr "{} n'est pas une classe de widget de formulaire django valide"
 
-#: columns.py:1188 filters.py:743
+#: columns.py:1198 filters.py:745
 #, python-brace-format
 msgid ""
 "Cannot find choices from model for filter \"{name}\", Please specify the "
@@ -204,59 +204,59 @@ msgstr ""
 "Ne trouve pas 'choices' du modèle de filtrage \"{name}\", merci de spécifier "
 "les choix à afficher"
 
-#: columns.py:1196 filters.py:751
+#: columns.py:1206 filters.py:753
 #, python-brace-format
 msgid "Please specify the choices to display for filter \"{name}\""
 msgstr "Merci de spécifier les choix à afficher pour le filtre \"{name}\""
 
-#: columns.py:1208
+#: columns.py:1218
 msgid "True"
 msgstr "Vrai"
 
-#: columns.py:1209
+#: columns.py:1219
 msgid "False"
 msgstr "Faux"
 
-#: columns.py:1456
+#: columns.py:1466
 msgid "Button"
 msgstr "Bouton"
 
-#: columns.py:1796
+#: columns.py:1806
 msgid "Total"
 msgstr ""
 
-#: columns.py:1798
+#: columns.py:1808
 #, python-brace-format
 msgid "<td{attrs}>Grand Total:<br>{value}</td>"
 msgstr "<td{attrs}>Grand Total :<br>{value}</td>"
 
-#: columns.py:1807
-msgid "Min"
-msgstr ""
-
-#: columns.py:1809
-#, python-brace-format
-msgid "<td{attrs}>Overall Min:<br>{value}</td>"
-msgstr "<td{attrs}>Minimum:<br>{value}</td>"
-
 #: columns.py:1817
-msgid "Max"
+msgid "Min"
 msgstr ""
 
 #: columns.py:1819
 #, python-brace-format
+msgid "<td{attrs}>Overall Min:<br>{value}</td>"
+msgstr "<td{attrs}>Minimum:<br>{value}</td>"
+
+#: columns.py:1827
+msgid "Max"
+msgstr ""
+
+#: columns.py:1829
+#, python-brace-format
 msgid "<td{attrs}>Overall Max:<br>{value}</td>"
 msgstr "<td{attrs}>Maximum:<br>{value}</td>"
 
-#: columns.py:1828
+#: columns.py:1838
 msgid "Average"
 msgstr "Moyenne"
 
-#: columns.py:1833
+#: columns.py:1843
 msgid "<td{attrs}>Overall avg:<br>{value:.{col.footer_precision}f}</td>"
 msgstr "<td{attrs}>Moyenne:<br>{value:.{col.footer_precision}f}</td>"
 
-#: columns.py:1885 columns.py:1887
+#: columns.py:1895 columns.py:1897
 msgctxt "verb"
 msgid "Filter"
 msgstr "Filtrer"
@@ -276,78 +276,78 @@ msgctxt "Filters form"
 msgid "Advanced"
 msgstr "Avancé"
 
-#: filters.py:382 filters.py:397
+#: filters.py:384 filters.py:399
 #, python-brace-format
 msgid "Cannot find filter \"{name}\" definition"
 msgstr "Ne trouve pas la définition du filtre\"{name}\""
 
-#: filters.py:460
+#: filters.py:462
 msgid "- No filtering -"
 msgstr "- Pas de filtrage -"
 
-#: filters.py:812
+#: filters.py:814
 msgid "Indiff."
 msgstr "Indiff."
 
-#: filters.py:923
+#: filters.py:925
 msgid "Use CTRL+click to select/deselect multiple choices"
 msgstr "Utiliser CTRL+click pour (dé-)sélectionner plusieurs choix"
 
-#: filters.py:1013
+#: filters.py:1015
 msgid "Select a value..."
 msgstr "Selectionnez une valeur..."
 
-#: listing.py:210
+#: listing.py:213
 msgctxt "abbreviation"
 msgid "Min"
 msgstr ""
 
-#: listing.py:211
+#: listing.py:214
 msgctxt "abbreviation"
 msgid "Max"
 msgstr ""
 
-#: listing.py:212
+#: listing.py:215
 msgctxt "abbreviation"
 msgid "Sum"
 msgstr ""
 
-#: listing.py:213
+#: listing.py:216
 msgctxt "abbreviation"
 msgid "Avg"
 msgstr "Moyenne"
 
-#: listing.py:446
+#: listing.py:449
 msgctxt "action button"
 msgid "Cancel"
 msgstr "Annuler"
 
-#: listing.py:447
+#: listing.py:450
 msgctxt "action button"
 msgid "Edit"
 msgstr "Editer"
 
-#: listing.py:448
+#: listing.py:451
 msgctxt "action button"
 msgid "Update"
 msgstr "Mettre à jour"
 
-#: listing.py:449
+#: listing.py:452
 msgctxt "action button"
 msgid "Upload"
 msgstr "Téléverser"
 
-#: listing.py:463
+#: listing.py:466
 #, python-brace-format
 msgid "Do you really want to DELETE {nb_items} item(s) ?"
 msgstr "Voulez-vous vraiment EFFACER {nb_items} élément(s) ?"
 
-#: listing.py:467
+#: listing.py:470
 #, python-brace-format
 msgid "Do you really want to UPDATE {nb_items} items ?"
 msgstr "Voulez-vous vraiment MODIFIER {nb_items} élément(s) ?"
 
-#: listing.py:471
+#: listing.py:474
 #, python-brace-format
 msgid ""
 "WARNING : Do you really want to UPDATE absolutely all {nb_all_items} "
@@ -367,7 +367,7 @@ msgstr ""
 "Notez que cela prend en compte le filtrage : seuls les éléments filtrés "
 "seront pris en compte."
 
-#: listing.py:481
+#: listing.py:484
 #, python-brace-format
 msgid ""
 "WARNING : Do you really want to DELETE absolutely all {nb_all_items} "
@@ -383,38 +383,42 @@ msgstr ""
 "Notez que cela prend en compte le filtrage : seuls les éléments filtrés "
 "seront pris en compte."
 
-#: listing.py:720
+#: listing.py:726
 msgid "Please configure at least one column in your listing"
 msgstr "Merci de configurer au moins une colonne dans votre listing"
 
-#: listing.py:851
+#: listing.py:861
 msgid "[CANNOT_EDIT_IN_AJAX]"
 msgstr ""
 "On ne peut pas éditer un listing en mode ajax, merci de retirer "
 "accept_ajax=True"
 
-#: listing.py:875
+#: listing.py:885
 msgid "record"
 msgstr "enregistrement"
 
-#: listing.py:880
+#: listing.py:890
 msgid "records"
 msgstr "enregistrements"
 
-#: listing.py:883
+#: listing.py:893
 #, python-format
 msgid "There is no %s to display."
 msgstr "Il n'y a aucun %s à afficher."
 
-#: listing.py:1070
+#: listing.py:1080
 msgid "[You do not have permission to export data]"
 msgstr "Vous n'avez pas la permission d'exporter les données"
 
-#: listing.py:1288
+#: listing.py:1087
+msgid "[Listing export]"
+msgstr "Export du listing"
+
+#: listing.py:1305
 msgid "Sort by:"
 msgstr "Trier par :"
 
-#: listing.py:1289 listing.py:1302
+#: listing.py:1306 listing.py:1319
 msgid ":"
 msgstr " :"
 

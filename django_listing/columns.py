@@ -9,6 +9,7 @@ import datetime
 import os
 import re
 from collections import OrderedDict
+from decimal import Decimal
 from types import GeneratorType
 
 from django import forms
@@ -845,7 +846,16 @@ class Column(metaclass=ColumnMeta):
             if self.listing.export == "XLSX":
                 val = EXPORT_XLSX_ILLEGAL_CHARACTERS_RE.sub("?", val)
         if not isinstance(
-            val, (int, float, datetime.datetime, datetime.date, datetime.time, bool)
+            val,
+            (
+                int,
+                float,
+                Decimal,
+                datetime.datetime,
+                datetime.date,
+                datetime.time,
+                bool,
+            ),
         ):
             return force_str(val)
         return val

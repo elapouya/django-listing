@@ -1084,7 +1084,7 @@ class Listing(ListingBase):
                 headers = self.exported_headers(use_col_name)
                 if export_format == "DBF":
                     headers = list(map(lambda h: h[:10], headers))
-                data = tablib.Dataset()
+                data = tablib.Dataset(title=_("[Listing export]"))
                 data.headers = headers
                 keep_original_type = export_format in EXPORT_FORMATS_KEEP_ORIGINAL_TYPE
                 for row in self.exported_rows(keep_original_type):
