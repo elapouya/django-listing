@@ -1089,7 +1089,12 @@ class Listing(ListingBase):
                 keep_original_type = export_format in EXPORT_FORMATS_KEEP_ORIGINAL_TYPE
                 for row in self.exported_rows(keep_original_type):
                     data.append(row)
-                self.request.export_data = data.export(export_format.lower())
+                export_params = {}
+                if export_format == "CSV":
+                    export_params["delimiter"] = ";"
+                self.request.export_data = data.export(
+                    export_format.lower(), **export_params
+                )
                 current_date = timezone.now().strftime("%Y-%m-%d.%Hh%M")
                 self.request.export_filename = "{}.{}.{}".format(
                     self.name, current_date, self.export.lower()

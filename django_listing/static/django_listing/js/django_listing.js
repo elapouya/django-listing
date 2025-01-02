@@ -33,9 +33,10 @@ function update_csrf_token() {
     });
 }
 
-function djlst_add_filter_request_data(listing_id, data) {
+function djlst_add_filter_request_data($listing_div, data) {
     // if filter form available and post method is used :
     // merge form data inside ajax payload
+    let listing_id = $listing_div.attr('id');
     const filter_form = $(`form[listing-id=${listing_id}]`);
     if (filter_form.length) {
         const method = filter_form.attr("method");
@@ -44,6 +45,11 @@ function djlst_add_filter_request_data(listing_id, data) {
             data = { ...data, ...form_data };
         }
     }
+    const gb_cols = $listing_div.find(".group-by-select");
+    if (gb_cols.length) data.gb_cols = gb_cols.val().join(",");
+    const gb_annotate_cols = $listing_div.find(".annotation-select");
+    if (gb_annotate_cols.length) data.gb_annotate_cols = gb_annotate_cols.val().join(",");
+
     return data
 }
 
@@ -64,14 +70,8 @@ function djlst_load_listing_url(nav_obj, url) {
         "listing_suffix": listing_suffix,
         "listing_part": listing_part
     }
-    request_data = djlst_add_filter_request_data(listing_id, request_data);
+    request_data = djlst_add_filter_request_data(listing_div, request_data);
 
-    let gb_cols = listing_div.find(".group-by-select");
-    if (gb_cols.length) request_data.gb_cols = gb_cols.val().join(",");
-    let gb_annotate_cols = listing_div.find(".annotation-select");
-    if (gb_annotate_cols.length) request_data.gb_annotate_cols = gb_annotate_cols.val().join(",");
-
-    console.log(request_data);
     update_csrf_token();
     $.ajax({
         type: "POST",
@@ -121,7 +121,7 @@ function djlst_post_action_button(event) {
         serialized_data: nav_obj.closest('form').serialize()
     };
     request_data[$(this).attr('name')] = $(this).val();
-    request_data = djlst_add_filter_request_data(listing_id, request_data);
+    request_data = djlst_add_filter_request_data(listing_div, request_data);
     update_csrf_token();
     $.ajax({
         type: "POST",
@@ -217,7 +217,7 @@ function djlst_post_attached_form(event) {
         selected_pks: selected_pks,
         serialized_data: nav_obj.closest('form').serialize()
     };
-    request_data = djlst_add_filter_request_data(listing_id, request_data);
+    request_data = djlst_add_filter_request_data(listing_div, request_data);
     update_csrf_token();
     $.ajax({
         type: "POST",
@@ -584,7 +584,7 @@ function djlst_view_object_popup(event) {
         action_button: 'view_object_popup',
         serialized_data: nav_obj.closest('form').serialize()
     };
-    request_data = djlst_add_filter_request_data(listing_id, request_data);
+    request_data = djlst_add_filter_request_data(listing_div, request_data);
     update_csrf_token();
     $.ajax({
         type: "POST",
@@ -664,6 +664,29 @@ function djlst_empty_form_fields($form) {
 
     // Empty file inputs
     $form.find('input[type="file"]').val('');
+}
+
+function djlst_patch_form_data($form, extraData) {
+    $form.on('submit', function(event) {
+        // Add extra data to the existing form
+        for (const [name, value] of Object.entries(extraData)) {
+            // Check if field already exists
+            const existingField = $form.find(`input[name="${name}"]`);
+
+            if (existingField.length) {
+                // Update existing field value
+                existingField.val(value);
+            } else {
+                // Create new field only if it doesn't exist
+                const $input = $('<input>', {
+                    type: 'hidden',
+                    name: name,
+                    value: value
+                });
+                $form.append($input);
+            }
+        }
+    });
 }
 
 $(document).ready(function () {
@@ -776,7 +799,7 @@ $(document).ready(function () {
         }
     });
 
-    $(".file-generation-button").on('click', function() {
+    $(document.body).on("click", ".file-generation-button", function() {
         let select = $(this).siblings("select");
         if (select.length && !select.val()) {
             let msg = $(this).data("empty-select-msg");
@@ -784,6 +807,10 @@ $(document).ready(function () {
             alert(msg);
             return false;
         }
+        const $form = $(this).closest("form");
+        const $listing_div = $form.closest(".django-listing-container");
+        const filter_data = djlst_add_filter_request_data($listing_div, {})
+        djlst_patch_form_data($form, filter_data);
         Cookies.set('file_generation', 'working', {expires: 1});
         let listing_div = $(this).closest("div.django-listing-ajax");
         listing_div.addClass("spinning").removeClass('done');
