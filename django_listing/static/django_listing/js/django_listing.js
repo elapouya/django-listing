@@ -638,6 +638,15 @@ function djlst_attached_form_input_changed(event) {
     }
 }
 
+function djlst_reset_form_fields($form) {
+    $form[0].reset();
+    $form.find('select').each(function () {
+        if ($(this).hasClass('select2-hidden-accessible')) {
+            $(this).val(null).trigger('change');
+        }
+    });
+}
+
 function djlst_empty_form_fields($form) {
     // Empty regular text inputs, textareas, and password fields
     $form.find('input[type="text"], input[type="pasword"], input[type="date"], input[type="number"], textarea').val('');
@@ -733,7 +742,7 @@ $(document).ready(function () {
     $(document.body).on("change", ".attached-form-container select,.attached-form-container textarea", djlst_attached_form_input_changed);
     $(document.body).on("click", ".listing-form.filters-form-ajax .submit-button", function () {djlst_reload_listing_from_form(this); return false;});
     $(document.body).on("click", ".listing-form.filters-form-ajax button.reset-button", function () {
-        djlst_empty_form_fields($(this).closest("form"));
+        djlst_reset_form_fields($(this).closest("form"));
         djlst_reload_listing_from_form(this); return false;
     });
 
