@@ -65,6 +65,13 @@ function djlst_load_listing_url(nav_obj, url) {
         "listing_part": listing_part
     }
     request_data = djlst_add_filter_request_data(listing_id, request_data);
+
+    let gb_cols = listing_div.find(".group-by-select");
+    if (gb_cols.length) request_data.gb_cols = gb_cols.val().join(",");
+    let gb_annotate_cols = listing_div.find(".annotation-select");
+    if (gb_annotate_cols.length) request_data.gb_annotate_cols = gb_annotate_cols.val().join(",");
+
+    console.log(request_data);
     update_csrf_token();
     $.ajax({
         type: "POST",
@@ -449,6 +456,13 @@ function djlst_deactivate_selection(e) {
     }
 }
 
+function djlst_reload_listing_from_form(elt) {
+    var form = $(elt).closest('.listing-form');
+    var listing_id = form.attr('listing-id');
+    var listing = $('#' + listing_id);
+    djlst_load_listing_url(listing, window.location.href);
+}
+
 function djlst_selection_changed_hook(e) {
     let listing = e.closest("div.django-listing-selecting");
     let form = $("#" + listing.attr('attached-form-id'));
@@ -604,18 +618,6 @@ function djlst_listing_on_load() {
             availableTitle: annotation_select.attr("available-title") || 'Available columns',
             selectedTitle: annotation_select.attr("selected-title") || 'Selected columns'
         });
-        $(this).find(".apply-group-by").on("click", function () {
-            let gb_cols = group_by_select.val().join(",");
-            let url = djlst_replaceUrlParam(window.location.href, "gb_cols", gb_cols);
-            let gb_annotate_cols = annotation_select.val().join(",");
-            url = djlst_replaceUrlParam(url, "gb_annotate_cols", gb_annotate_cols);
-            djlst_load_listing_url($(this), url);
-        });
-    });
-    $(".remove-group-by").on("click", function () {
-        let url = djlst_removeUrlParam(window.location.href, "gb_cols");
-        url = djlst_removeUrlParam(url, "gb_annotate_cols");
-        djlst_load_listing_url($(this), url);
     });
     $(".django-listing-container.format-numbers td.type-Decimal,.django-listing-container.format-numbers td.type-int,.django-listing-container.format-numbers td.type-float").djlst_format_digits();
 }
@@ -634,6 +636,34 @@ function djlst_attached_form_input_changed(event) {
     if (djlst_mass_op_cbs_displayed) {
         $(this).closest(".form-field").find(".mass-op-cb:visible").prop('checked', true);
     }
+}
+
+function djlst_empty_form_fields($form) {
+    // Empty regular text inputs, textareas, and password fields
+    $form.find('input[type="text"], input[type="pasword"], input[type="date"], input[type="number"], textarea').val('');
+
+    // Empty regular select elements
+    $form.find('select').not('.select2-hidden-accessible').val('');
+
+    // Empty Select2 elements
+    $form.find('select.select2-hidden-accessible').each(function() {
+        $(this).val(null).trigger('change');
+    });
+
+    // Handle radio buttons - uncheck all except those with no value
+    $form.find('input[type="radio"]').each(function() {
+        if ($(this).val()) {
+            $(this).prop('checked', false);
+        } else {
+            $(this).prop('checked', true);
+        }
+    });
+
+    // Empty checkboxes
+    $form.find('input[type="checkbox"]').prop('checked', false);
+
+    // Empty file inputs
+    $form.find('input[type="file"]').val('');
 }
 
 $(document).ready(function () {
@@ -678,10 +708,21 @@ $(document).ready(function () {
     });
     $(document.body).on("change", ".attached-form-container input:not(.mass-op-cb)", djlst_attached_form_input_changed);
     $(document.body).on("change", ".attached-form-container select,.attached-form-container textarea", djlst_attached_form_input_changed);
+    $(document.body).on("click", ".listing-form.filters-form-ajax .submit-button", function () {djlst_reload_listing_from_form(this); return false;});
+    $(document.body).on("click", ".listing-form.filters-form-ajax button.reset-button", function () {
+        djlst_empty_form_fields($(this).closest("form"));
+        djlst_reload_listing_from_form(this); return false;
+    });
 
     $(".django-listing-container").each(function () {
         djlst_selection_changed_hook($(this));
     });
+    $(document.body).on("click", ".apply-group-by", function () {djlst_load_listing_url($(this), window.location.href);});
+    $(document.body).on("click", ".remove-group-by", function () {
+        $(this).closest("div.django-listing-ajax").find(".group-by-container select").val("");
+        djlst_load_listing_url($(this), window.location.href);
+    });
+
 
     $('[data-toggle="popover"]').popover();
 

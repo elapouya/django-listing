@@ -353,9 +353,11 @@ class Filters(list):
             self.show_advanced = True
         if not isinstance(self.form_attrs, HTMLAttributes):
             self.form_attrs = HTMLAttributes(self.form_attrs)
+        if "method" not in self.form_attrs:
+            self.form_attrs.add("method", "POST")
         self.form_attrs.add("class", {"listing-form", "filters-form"})
         if self.listing.accept_ajax:
-            self.form_attrs.add("class", "django-filters-ajax")
+            self.form_attrs.add("class", "filters-form-ajax")
         if "id" not in self.form_attrs:
             self.form_attrs.add("id", "filters-form-id{}".format(self.listing.suffix))
         self.css_id = self.form_attrs.get("id")
