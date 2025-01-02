@@ -12,13 +12,22 @@
         {% for button in filters.form_buttons %}
             {% if button == 'reset' %}
                 {% if filters.form_reset_label %}
-                    <a class="{{ filters.theme_form_reset_class }}"
-                       href="{{ filters.get_form_reset_url }}">
-                        <span class="button-icon-label">
-                            <span class="button-icon {{ filters.theme_form_reset_icon }}"></span>
-                            <span class="button-label">{{ filters.form_reset_label }}</span>
-                        </span>
-                    </a>
+                    {% if filters.listing.accept_ajax %}
+                        <button type="reset" class="{{ filters.theme_form_reset_class }}">
+                            <span class="button-icon-label">
+                                <span class="button-icon {{ filters.theme_form_reset_icon }}"></span>
+                                <span class="button-label">{{ filters.form_reset_label }}</span>
+                            </span>
+                        </button>
+                    {% else %}
+                        <a class="{{ filters.theme_form_reset_class }}"
+                           href="{{ filters.get_form_reset_url }}">
+                            <span class="button-icon-label">
+                                <span class="button-icon {{ filters.theme_form_reset_icon }}"></span>
+                                <span class="button-label">{{ filters.form_reset_label }}</span>
+                            </span>
+                        </a>
+                    {% endif %}
                 {% endif %}
             {% elif button == 'submit' %}
                 {% if filters.form_submit_label %}
