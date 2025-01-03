@@ -250,9 +250,7 @@ class VariationsToolbarItem(ToolbarItem):
         labels = normalize_list(self.labels, force_length=nb_variations)
         icons = normalize_list(self.icons, force_length=nb_variations)
         urls = [
-            self.listing.get_url(variation=i)
-            if cls.keep_grouping
-            else self.listing.get_url(variation=i, without="gb_cols,gb_annotate_cols")
+            self.listing.get_url(variation=i, without="gb_cols,gb_annotate_cols")
             for i, cls in enumerate(self.listing.variations_classes)
         ]
         self.buttons = list(

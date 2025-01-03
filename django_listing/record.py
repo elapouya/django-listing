@@ -225,14 +225,14 @@ class RecordManager:
 
     def export(self):
         lsg = self.listing
-        qs = lsg.data
+        qs = self.filter_queryset(lsg.data)
+        qs = self.order_queryset(qs)
         if lsg.gb_cols:
             records = [Record(lsg, obj, i) for i, obj in enumerate(qs)]
             self.group_by_foreignkey_object_map(records)
             for rec in records:
                 yield rec
         else:
-            qs = self.filter_queryset(qs)
             for i, obj in enumerate(qs):
                 yield Record(lsg, obj, i)
 
@@ -249,34 +249,36 @@ class RecordManager:
         qs = self.filter_queryset(qs)
         return qs
 
+    def order_queryset(self, qs):
+        lsg = self.listing
+        if lsg.force_order_by:
+            order_by = lsg.force_order_by
+        else:
+            order_by = []
+            if lsg.sort:
+                for col_name in lsg.columns_sort_list:
+                    order_prefix = "" if lsg.columns_sort_ascending[col_name] else "-"
+                    col = lsg.columns.get(col_name)
+                    if col:
+                        if isinstance(col.sort_key, (tuple, list)):
+                            for sort_key in col.sort_key:
+                                order_by.append(order_prefix + sort_key)
+                        else:
+                            order_by.append(order_prefix + col.sort_key)
+            # add a default sorting to avoid a Django 'UnorderedObjectListWarning'
+            if not order_by:
+                if lsg.gb_cols:
+                    # if "group by" feature activated
+                    order_by = lsg.gb_cols_names
+                else:
+                    order_by = ["pk"]
+        return qs.order_by(*order_by)
+
     def get_objs_from_queryset(self):
         if not hasattr(self, "_queryset_objs"):
             qs = self.get_filtered_queryset()
-            lsg = self.listing
-            if lsg.force_order_by:
-                order_by = lsg.force_order_by
-            else:
-                order_by = []
-                if lsg.sort:
-                    for col_name in lsg.columns_sort_list:
-                        order_prefix = (
-                            "" if lsg.columns_sort_ascending[col_name] else "-"
-                        )
-                        col = lsg.columns.get(col_name)
-                        if col:
-                            if isinstance(col.sort_key, (tuple, list)):
-                                for sort_key in col.sort_key:
-                                    order_by.append(order_prefix + sort_key)
-                            else:
-                                order_by.append(order_prefix + col.sort_key)
-                # add a default sorting to avoid a Django 'UnorderedObjectListWarning'
-                if not order_by:
-                    if lsg.gb_cols:
-                        # if "group by" feature activated
-                        order_by = lsg.gb_cols_names
-                    else:
-                        order_by = ["pk"]
-            self._queryset_objs = qs.order_by(*order_by)
+            qs = self.order_queryset(qs)
+            self._queryset_objs = qs
         return self._queryset_objs
 
     def filter_sequence(self, seq):

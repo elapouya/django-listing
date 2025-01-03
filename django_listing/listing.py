@@ -145,7 +145,6 @@ LISTING_PARAMS_KEYS = {
     "has_paginator",
     "has_upload",
     "id",
-    "keep_grouping",
     "link_object_columns",
     "listing_template_name",
     "name",
@@ -513,6 +512,7 @@ class Listing(ListingBase):
     footer_snippet = None
     footer_template_name = None
     force_order_by = None
+    force_request_data = None
     format_numbers = False
     form_model_fields = None
     form_serialize_cols = None
@@ -532,7 +532,6 @@ class Listing(ListingBase):
     has_toolbar = False
     has_upload = False
     id = None
-    keep_grouping = False
     link_object_columns = None
     listing_template_name = ThemeTemplate("listing.html")
     model = None
@@ -846,6 +845,8 @@ class Listing(ListingBase):
                 self.request = context.request
                 self.request_data = self.request.GET.copy()
                 self.request_data.update(self.request.POST)
+                if self.force_request_data:
+                    self.request_data.update(self.force_request_data)
                 self.parsed_url = urlsplit(self.request.get_full_path())
                 self.suffix = self.get_suffix(self.request, self)
                 self.extract_params()
@@ -929,6 +930,7 @@ class Listing(ListingBase):
     def render_init_context(self, context):
         self.manage_page_context(context)
         self.normalize_params()
+        self.add_form_input_hiddens(requested_url=self.request.get_full_path())
         self.manage_group_by()
         self.create_missing_toolbar_items()
         self.has_toolbar = bool(self.toolbar)
@@ -1441,15 +1443,11 @@ class Listing(ListingBase):
         listing.suffix = suffix
 
     def extract_params(self):
-        get_dict = self.request.GET
-        post_dict = self.request.POST
         for k in LISTING_QUERY_STRING_KEYS:
             qs_key = k + self.suffix
             v = None
-            if qs_key in post_dict:
-                v = post_dict.get(qs_key)
-            elif qs_key in get_dict:
-                v = get_dict.get(qs_key)
+            if qs_key in self.request_data:
+                v = self.request_data.get(qs_key)
             if v is not None and k in LISTING_QUERY_STRING_INT_KEYS:
                 try:
                     v = int(v)
