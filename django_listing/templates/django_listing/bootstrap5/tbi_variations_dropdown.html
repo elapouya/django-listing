@@ -1,0 +1,26 @@
+{% load django_listing %}
+{% get_uniq_id as uniq_id %}
+<div class="btn-group-sm me-2 toolbar_item {{ item.css_class }} variationstoolbaritem" role="group">
+    <button id="toolbar-item-{{ uniq_id }}-dropdown-id"
+            type="button"
+            class="btn btn-secondary dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+    >
+        {% if item.icon and item.show_icons %}<span class="{{ item.icon }}"></span>{% endif %}
+        {% if item.label and item.show_labels %}{{ item.label }}{% endif %}
+    </button>
+    <div class="dropdown-menu {{ item.menu_css_class }}" aria-labelledby="toolbar-item-{{ uniq_id }}-dropdown-id">
+        {% for url, label, icon in item.buttons %}
+            {% with v=forloop.counter0 %}
+                    <a href="{{ url }}"
+                       class="dropdown-item listing-nav {% if listing.variation == v %} {{ listing.theme_button_active_class }}{% endif %}"
+                    >
+                        {% if icon and item.show_icons %}<span class="{{ icon }}"></span>{% endif %}
+                        {% if label and item.show_labels %}{{ label }}{% endif %}
+                    </a>
+            {% endwith %}
+        {% endfor %}
+    </div>
+</div>

@@ -30,6 +30,7 @@ __all__ = [
     "ToolbarItem",
     "UpdateToolbarItem",
     "VariationsToolbarItem",
+    "VariationsDropdownToolbarItem",
     "GroupByToolbarItem",
 ]
 
@@ -229,11 +230,19 @@ class SortDropdownToolbarItem(SortSelectToolbarItem):
 
 class VariationsToolbarItem(ToolbarItem):
     template_name = ThemeTemplate("tbi_variations.html")
-    params_keys = ["show_labels", "show_icons", "labels", "icons"]
+    params_keys = [
+        "show_labels",
+        "show_icons",
+        "labels",
+        "icons",
+        "show_tooltip",
+        "menu_css_class",
+    ]
     labels = ""
     icons = ""
     show_labels = False
     show_icons = True
+    show_tooltip = True
     buttons = None
 
     def __init__(self, *args, **kwargs):
@@ -260,6 +269,18 @@ class VariationsToolbarItem(ToolbarItem):
                 icons,
             )
         )
+        variation = max(0, min(self.listing.variation, nb_variations - 1))
+        self.icon = self.icons[variation]
+        self.label = self.labels[variation]
+
+
+class VariationsDropdownToolbarItem(VariationsToolbarItem):
+    template_name = ThemeTemplate("tbi_variations_dropdown.html")
+    params_keys = ["show_labels", "show_icons", "labels", "icons"]
+    labels = ""
+    icons = ""
+    show_labels = True
+    show_icons = True
 
 
 class PerPageSelectToolbarItem(ToolbarItem):

@@ -4,6 +4,7 @@
             {% with v=forloop.counter0 %}
                     <a href="{{ url }}"
                        title="{{ label }}"
+                       {% if item.show_tooltip %}data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ label }}"{% endif %}
                        class="listing-nav btn btn-outline-secondary {% if listing.variation == v %} active{% endif %}"
                     >
                         {% if icon and item.show_icons %}<span class="{{ icon }}"></span>{% endif %}
