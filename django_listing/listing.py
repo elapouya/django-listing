@@ -776,7 +776,7 @@ class Listing(ListingBase):
                     str.strip, gb_annotate_cols_names.split(",")
                 )
             gb_annotate_cols_names = list(
-                filter(lambda cname: cname in ach, gb_annotate_cols_names)
+                filter(lambda cname: cname in ach, gb_annotate_cols_names or [])
             )
             self.gb_annotate_cols_names = gb_annotate_cols_names
             for aname in self.gb_annotate_cols_names:
@@ -1059,8 +1059,13 @@ class Listing(ListingBase):
             if self.attached_form:
                 self.attached_form.render_init(context)
             self.global_context_init()
+            self.do_filter_data()
             self.compute_current_page_records()
             self._render_initialized = True
+
+    def do_filter_data(self):
+        # Last change to filter data before listing page computation
+        pass
 
     def compute_current_page_records(self):
         """Compute the current page records against the actual given data

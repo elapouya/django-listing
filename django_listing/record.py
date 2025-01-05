@@ -16,7 +16,7 @@ from django.db.models import F, Model, Count
 from django.db.models.query import QuerySet
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
-from django.core.serializers import serialize
+from .utils import to_js_timestamp
 
 from .exceptions import *
 
@@ -434,7 +434,7 @@ class Record:
     def get_index(self):
         return self._index
 
-    def get_filter(self, obj, filter_name, params):
+    def do_filter_object(self, obj, filter_name, params):
         if filter_name == "urlencode" and isinstance(obj, str):
             obj = quote_plus(obj)
         elif filter_name == "replace":
@@ -443,6 +443,8 @@ class Record:
             obj = re.sub(*params, obj)
         elif filter_name == "basename":
             obj = os.path.basename(obj)
+        elif filter_name == "js_timestamp":
+            obj = to_js_timestamp(obj)
         else:
             func = getattr(obj, filter_name, None)
             if func is not None:
@@ -469,11 +471,10 @@ class Record:
             if isinstance(key, int):
                 obj = obj[key]
             else:
-                key, *filter = key.split("|", 1)
+                key, *filter_names = key.split("|", 1)
                 for subkey in re.split(r"\.|__", key):
-                    op = None
                     if "|" in subkey:
-                        subkey, op = subkey.split("|")
+                        subkey, *filter_names = subkey.split("|", 1)
                     if subkey.isdigit():
                         obj = obj[int(subkey)]
                     else:
@@ -483,11 +484,11 @@ class Record:
                             obj = getattr(obj, subkey)
                     if isinstance(obj, types.MethodType):
                         obj = obj()
-                if obj is not None and filter:
-                    filter = filter[0]
-                    filter_name, *params = re.split(r"(?<!\\):", filter)
+                if obj is not None and filter_names:
+                    filter_names = filter_names[0]
+                    filter_name, *params = re.split(r"(?<!\\):", filter_names)
                     params = tuple(map(lambda s: re.sub(r"\\:", ":", s), params))
-                    obj = self.get_filter(obj, filter_name, params)
+                    obj = self.do_filter_object(obj, filter_name, params)
         except (
             IndexError,
             AttributeError,

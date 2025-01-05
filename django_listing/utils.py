@@ -5,6 +5,7 @@
 #
 import copy
 import pprint
+from datetime import datetime, date
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -14,12 +15,14 @@ def normalize_list(
 ):
     if isinstance(value, str):
         value = list(map(transform, value.split(separator)))
+    elif isinstance(value, tuple):
+        value = list(value)
     if force_length:
         length = len(value)
         if force_length < length:
             value = value[:force_length]
         elif force_length > length:
-            value = value + [default] * (force_length - length)
+            value += [default] * (force_length - length)
     return value
 
 
@@ -72,6 +75,23 @@ def pretty_format_querydict(qd):
 
 def is_ajax(request):
     return request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest"
+
+
+def to_js_timestamp(dt_obj):
+    """
+    Convert Python date or datetime object to JavaScript timestamp (milliseconds)
+
+    Args:
+        dt_obj: date or datetime object
+
+    Returns:
+        int: JavaScript timestamp in milliseconds
+    """
+    if isinstance(dt_obj, date) and not isinstance(dt_obj, datetime):
+        # Convert date to datetime at midnight
+        dt_obj = datetime.combine(dt_obj, datetime.min.time())
+
+    return int(dt_obj.timestamp() * 1000)
 
 
 class JsonDirect(str):

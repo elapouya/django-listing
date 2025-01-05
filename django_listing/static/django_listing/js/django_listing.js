@@ -634,7 +634,7 @@ function djlst_listing_on_load() {
             selectedTitle: annotation_select.attr("selected-title") || 'Selected columns'
         });
     });
-    $(".django-listing-container.format-numbers td.type-Decimal,.django-listing-container.format-numbers td.type-int,.django-listing-container.format-numbers td.type-float").djlst_format_digits();
+    $(".django-listing-container.format-numbers .type-Decimal,.django-listing-container.format-numbers .type-int,.django-listing-container.format-numbers .type-float,.django-listing-container.format-numbers .format-number").djlst_format_digits();
 }
 
 function djlst_follow_file_generation() {

@@ -31,3 +31,4 @@ from .filters import *
 from .aggregations import *
 from .attached_form import *
 from .actions_buttons_column import *
+from .charts import *

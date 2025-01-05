@@ -53,6 +53,25 @@ class DjangoListingConfig(AppConfig):
 
     APEXCHARTS_JS_URL = "/static/django_listing/js/apexcharts.min.js"
 
+    # Charts
+    CHARTS_DEFAULT_GRADIENT = [
+        "#B200E5",
+        "#DF00B1",
+        "#DA004F",
+        "#D40D00",
+        "#CF6600",
+        "#C9BA00",
+        "#7FC400",
+        "#2ABF00",
+        "#18EE00",
+        "#009960",
+        "#008888",
+        "#0044BB",
+        "#0000FF",
+    ]
+    CHARTS_DEFAULT_GRADIENT_OVERFLOW = "#CCCCCC"
+    CHARTS_DEFAULT_TREND_BAR_COLOR = "#888888"
+
     def ready(self):
         import time
 
