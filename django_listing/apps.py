@@ -51,6 +51,8 @@ class DjangoListingConfig(AppConfig):
     DUAL_LISTBOX_CSS_URL = "/static/django_listing/css/dual-listbox.min.css"
     DUAL_LISTBOX_JS_URL = "/static/django_listing/js/dual-listbox.min.js"
 
+    APEXCHARTS_JS_URL = "/static/django_listing/js/apexcharts.min.js"
+
     def ready(self):
         import time
 

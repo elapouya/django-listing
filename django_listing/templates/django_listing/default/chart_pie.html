@@ -1,0 +1,45 @@
+{% extends "./listing.html" %}
+{% block listing %}
+    <div{{ listing.attrs }}>
+        {% with listing.chart_data as data %}
+        {% if data.values %}
+            {{ data|json_script:data.json_id }}
+            <div id="chart"></div>
+            <script>
+                (() => {
+                    const data = JSON.parse(document.getElementById("{{ data.json_id }}").textContent);
+                    console.log("data =", data);
+                    new ApexCharts(document.querySelector("#chart"), {
+                        series: data.series,
+                        chart: {
+                            width: 900,
+                            type: 'pie',
+                        },
+                        colors: data.colors,
+                        labels: data.labels,
+                        dataLabels: {
+                            style: {
+                                fontSize: '16px'
+                            }
+                        },
+                        legend: {
+                            formatter: function (seriesName, opts) {
+                                return [seriesName, " : " + opts.w.globals.series[opts.seriesIndex]]
+                            }
+                        }
+                    }).render();
+                })();
+            </script>
+            <br style="clear: both;"/>
+        {% else %}
+            {% if listing.empty_table_msg %}
+                {% block listing_empty %}
+                    <div class="empty-message">
+                        {{ listing.empty_table_msg }}
+                    </div>
+                {% endblock listing_empty %}
+            {% endif %}
+        {% endif %}
+        {% endwith %}
+    </div>
+{% endblock listing %}

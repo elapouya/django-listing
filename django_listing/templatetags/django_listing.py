@@ -4,10 +4,13 @@ Création : 12 janv. 2010
 @author: Eric Lapouyade
 """
 import json
+import re
 from itertools import count
 
 from django import template
 from django.conf import settings
+from django.template import Node
+from django.utils.functional import keep_lazy_text
 from django.utils.safestring import SafeString, mark_safe
 
 from ..listing import Listing, ListingVariations
@@ -393,3 +396,29 @@ def listing_responsive_columns_css(listing, format_str=None):
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
+
+
+@keep_lazy_text
+def strip_duplicated_new_lines_between_tags(value):
+    """Return the given HTML with duplicated new lines between tags removed."""
+    return re.sub(r"(\s*\n){2,}", "\n", str(value))
+
+
+class NoDuplicatedNlNode(Node):
+    def __init__(self, nodelist):
+        self.nodelist = nodelist
+
+    def render(self, context):
+        return strip_duplicated_new_lines_between_tags(
+            self.nodelist.render(context).strip()
+        )
+
+
+@register.tag
+def noduplicatednl(parser, token):
+    """
+    Remove duplicated newline between HTML tags.
+    """
+    nodelist = parser.parse(("endnoduplicatednl",))
+    parser.delete_first_token()
+    return NoDuplicatedNlNode(nodelist)
