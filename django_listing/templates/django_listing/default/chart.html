@@ -1,0 +1,31 @@
+{% extends "./listing.html" %}
+{% block listing %}
+    <div{{ listing.attrs }}>
+        {% with listing.chart_data as data %}
+        {% if data.apexcharts_options %}
+            {{ data|json_script:data.json_id }}
+            <div id="chart"></div>
+            <script>
+                (() => {
+                    {% block apexcharts_additional_options %}
+                    const additional_options = {}
+                    {% endblock %}
+                    const data = JSON.parse(document.getElementById("{{ data.json_id }}").textContent);
+                    console.log(data);
+                    const apex_options = {...data.apexcharts_options,...additional_options};
+                    new ApexCharts(document.querySelector("#chart"), apex_options).render();
+                })();
+            </script>
+            <br style="clear: both;"/>
+        {% else %}
+            {% if listing.empty_table_msg %}
+                {% block listing_empty %}
+                    <div class="empty-message">
+                        {{ listing.empty_table_msg }}
+                    </div>
+                {% endblock listing_empty %}
+            {% endif %}
+        {% endif %}
+        {% endwith %}
+    </div>
+{% endblock listing %}
