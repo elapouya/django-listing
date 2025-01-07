@@ -1,12 +1,14 @@
-from django_listing import Listing
 from django_listing.theme_config import ThemeTemplate
 from decimal import Decimal
 from django.conf import settings
+from .utils import to_js_timestamp
 
 __all__ = [
     "BaseChartMixin",
     "PieChartMixin",
-    "TrendBarChartMixin",
+    "BarChartMixin",
+    "TimestampedBarChartMixin",
+    "TimestampedLineChartMixin",
 ]
 
 
@@ -44,13 +46,20 @@ class BaseChartMixin:
     def get_chart_json_id(self):
         return f"{self.css_id}-chart-json-id"
 
+    def get_chart_div_id(self):
+        return f"{self.css_id}-chart-id"
+
     def chart_data(self):
+        chart_div_id = self.get_chart_div_id()
         return dict(
+            chart_div_id=self.get_chart_div_id(),
             json_id=self.get_chart_json_id(),
-            apexcharts_options=self.get_apex_options(),
+            apexcharts_options=self.get_apex_options(
+                chart_div_id, *self.get_chart_args()
+            ),
         )
 
-    def get_chart_series(self):
+    def get_chart_args(self):
         colors = []
         values = []
         labels = []
@@ -64,12 +73,11 @@ class BaseChartMixin:
 class PieChartMixin(BaseChartMixin):
     listing_template_name = ThemeTemplate("chart_pie.html")
 
-    def get_apex_options(self):
-        values, labels, colors = self.get_chart_series()
-
+    def get_apex_options(self, chart_div_id, values, labels, colors):
         options = {
             "series": values,
             "chart": {
+                "id": chart_div_id,
                 "width": 900,
                 "type": "pie",
             },
@@ -80,7 +88,102 @@ class PieChartMixin(BaseChartMixin):
         return options
 
 
-class TrendBarChartMixin(BaseChartMixin):
+class BarChartMixin(BaseChartMixin):
+    listing_template_name = ThemeTemplate("chart_bar.html")
+
+    def get_apex_options(self, chart_div_id, values, labels, colors):
+        options = {
+            "series": [{"data": values, "name": ""}],
+            "chart": {
+                "id": chart_div_id,
+                "height": 350,
+                "width": 440,
+                "type": "bar",
+            },
+            "colors": colors,
+            "plotOptions": {
+                "bar": {
+                    "columnWidth": "45%",
+                    "distributed": True,
+                    "dataLabels": {
+                        "position": "top",
+                    },
+                }
+            },
+            "dataLabels": {
+                "enabled": True,
+                "offsetY": -20,
+                "style": {"fontSize": "12px", "colors": ["#222222"]},
+            },
+            "legend": {"show": False},
+            "xaxis": {
+                "categories": labels,
+                "labels": {"style": {"colors": colors, "fontSize": "12px"}},
+            },
+        }
+        return options
+
+
+class TimedChartMixin(BaseChartMixin):
+    chart_labels_rec_key = None
+
+    def get_chart_rec_color(self, rec):
+        return settings.django_listing_settings.CHARTS_DEFAULT_TREND_BAR_COLOR
+
+    def get_chart_rec_values(self, rec):
+        val = rec.get(self.chart_values_rec_key)
+        timestamp = to_js_timestamp(rec.get(self.chart_timestamps_rec_key))
+        if isinstance(val, Decimal):
+            val = float(val)
+        return [timestamp, val]
+
+
+class TimestampedBarChartMixin(TimedChartMixin):
+    listing_template_name = ThemeTemplate("chart_trend_bar.html")
+
+    def get_apex_options(self, chart_div_id, values, labels, colors):
+        options = {
+            "colors": colors,
+            "series": [
+                {
+                    "name": "Active values (Sum)",
+                    "data": values,
+                }
+            ],
+            "chart": {
+                "id": chart_div_id,
+                "type": "bar",
+                "height": 350,
+                "zoom": {
+                    "autoScaleYaxis": True,
+                },
+            },
+            "plotOptions": {
+                "bar": {
+                    "columnWidth": "85%",
+                }
+            },
+            "dataLabels": {
+                "enabled": False,
+            },
+            "markers": {
+                "size": 0,
+                "style": "hollow",
+            },
+            "xaxis": {
+                "type": "datetime",
+                "tickAmount": 6,
+            },
+            "tooltip": {
+                "x": {
+                    "format": "dd MMM yyyy",
+                }
+            },
+        }
+        return options
+
+
+class TimestampedLineChartMixin(BaseChartMixin):
     listing_template_name = ThemeTemplate("chart_trend_bar.html")
     chart_labels_rec_key = None
 
@@ -94,9 +197,7 @@ class TrendBarChartMixin(BaseChartMixin):
             val = float(val)
         return [timestamp, val]
 
-    def get_apex_options(self):
-        values, labels, colors = self.get_chart_series()
-
+    def get_apex_options(self, chart_div_id, values, labels, colors):
         options = {
             "colors": colors,
             "series": [
@@ -107,16 +208,11 @@ class TrendBarChartMixin(BaseChartMixin):
             ],
             "chart": {
                 "id": "chart",
-                "type": "bar",
+                "type": "line",
                 "height": 350,
                 "zoom": {
                     "autoScaleYaxis": True,
                 },
-            },
-            "plotOptions": {
-                "bar": {
-                    "columnWidth": "85%",
-                }
             },
             "dataLabels": {
                 "enabled": False,

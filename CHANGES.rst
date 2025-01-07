@@ -1,62 +1,27 @@
+0.10.0 (2025-01-07)
+-------------------
+- Django-listing can now generate charts with given data (no documentation yet)
+
 0.9.18 (2025-01-01)
 -------------------
 - Improve group-by feature
 - Add djlst_format_digits() jquery function to have numbers with space every 3 digits
 - Add format_numbers options in Listing
-
-0.9.16 (2024-12-11)
--------------------
 - Add update_page_records() method in Listing
-
-0.9.15 (2024-12-10)
--------------------
 - Add default_value_func attribute to Filter object
 - Better Filter.required value handling
-
-0.9.14 (2024-12-09)
--------------------
 - Add has_cell_filter_single column attribute
-
-0.9.12 (2024-12-06)
--------------------
 - Improve ActionsButtonsColumn
-
-0.9.11 (2024-11-26)
--------------------
 - Add offset_max param to avoid display lines with too high offset
-
-0.9.10 (2024-10-31)
--------------------
 - Fix export toolbar item
-
-0.9.9 (2024-10-16)
-------------------
 - Do not override widget attribute data-related-model in forms
-
-0.9.8 (2024-10-16)
-------------------
 - Better filters form POST request data handling
 - Add has_nb_unfiltered_rows listing attribute
-
-0.9.7 (2024-10-14)
-------------------
 - Accept listings with filters.form_attrs = {"method": "POST"}
-
-0.9.6 (2024-10-11)
-------------------
 - Bottom action buttons now works with accept_ajax=True
-
-0.9.5 (2024-09-25)
-------------------
 - Better mass-update management
-
-0.9.4 (2024-09-23)
-------------------
 - No form clean on mass delete in attached form
 - Add data-related-model in form fields html attributes if relevant
-
-0.9.1 (2024-09-13)
-------------------
 - Better mass update management : now dynamic checkboxes are displayed
   to choose fields to update
 

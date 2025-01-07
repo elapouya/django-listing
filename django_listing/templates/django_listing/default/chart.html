@@ -4,7 +4,7 @@
         {% with listing.chart_data as data %}
         {% if data.apexcharts_options %}
             {{ data|json_script:data.json_id }}
-            <div id="chart"></div>
+            <div id="{{ data.chart_div_id }}"></div>
             <script>
                 (() => {
                     {% block apexcharts_additional_options %}
@@ -13,7 +13,7 @@
                     const data = JSON.parse(document.getElementById("{{ data.json_id }}").textContent);
                     console.log(data);
                     const apex_options = {...data.apexcharts_options,...additional_options};
-                    new ApexCharts(document.querySelector("#chart"), apex_options).render();
+                    new ApexCharts(document.querySelector("#{{data.chart_div_id}}"), apex_options).render();
                 })();
             </script>
             <br style="clear: both;"/>
