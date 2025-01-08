@@ -1,3 +1,9 @@
+function djlst_format_number(val) {
+    const text = String(val);
+    const formattedText = text.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return formattedText;
+}
+
 $.fn.djlst_format_digits = function() {
     return this.each(function() {
         const $element = $(this);

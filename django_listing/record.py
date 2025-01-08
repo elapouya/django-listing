@@ -252,7 +252,10 @@ class RecordManager:
     def order_queryset(self, qs):
         lsg = self.listing
         if lsg.force_order_by:
-            order_by = lsg.force_order_by
+            if isinstance(lsg.force_order_by, str):
+                order_by = (lsg.force_order_by,)
+            else:
+                order_by = lsg.force_order_by
         else:
             order_by = []
             if lsg.sort:

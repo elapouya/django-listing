@@ -14,6 +14,8 @@ __all__ = [
 
 class BaseChartMixin:
     listing_template_name = ThemeTemplate("chart.html")
+    chart_height = 600
+    chart_width = 800
 
     def get_chart_records(self):
         # If you derive this method, you need to cache results as this method
@@ -39,6 +41,12 @@ class BaseChartMixin:
         if self.chart_labels_rec_key is None:
             return None
         return rec.get(self.chart_labels_rec_key, "-")
+
+    def get_chart_height(self):
+        return self.chart_height
+
+    def get_chart_width(self):
+        return self.chart_width
 
     def get_apex_options(self):
         raise NotImplemented
@@ -67,18 +75,21 @@ class BaseChartMixin:
             colors.append(self.get_chart_rec_color(rec))
             values.append(self.get_chart_rec_values(rec))
             labels.append(self.get_chart_rec_label(rec))
-        return values, labels, colors
+        width = self.get_chart_width()
+        height = self.get_chart_height()
+        return values, labels, colors, width, height
 
 
 class PieChartMixin(BaseChartMixin):
     listing_template_name = ThemeTemplate("chart_pie.html")
 
-    def get_apex_options(self, chart_div_id, values, labels, colors):
+    def get_apex_options(self, chart_div_id, values, labels, colors, width, height):
         options = {
             "series": values,
             "chart": {
                 "id": chart_div_id,
-                "width": 900,
+                "width": width,
+                "height": height,
                 "type": "pie",
             },
             "colors": colors,
@@ -91,13 +102,13 @@ class PieChartMixin(BaseChartMixin):
 class BarChartMixin(BaseChartMixin):
     listing_template_name = ThemeTemplate("chart_bar.html")
 
-    def get_apex_options(self, chart_div_id, values, labels, colors):
+    def get_apex_options(self, chart_div_id, values, labels, colors, width, height):
         options = {
             "series": [{"data": values, "name": ""}],
             "chart": {
                 "id": chart_div_id,
-                "height": 350,
-                "width": 440,
+                "width": width,
+                "height": height,
                 "type": "bar",
             },
             "colors": colors,
@@ -124,7 +135,7 @@ class BarChartMixin(BaseChartMixin):
         return options
 
 
-class TimedChartMixin(BaseChartMixin):
+class TimestampedChartMixin(BaseChartMixin):
     chart_labels_rec_key = None
 
     def get_chart_rec_color(self, rec):
@@ -138,10 +149,10 @@ class TimedChartMixin(BaseChartMixin):
         return [timestamp, val]
 
 
-class TimestampedBarChartMixin(TimedChartMixin):
+class TimestampedBarChartMixin(TimestampedChartMixin):
     listing_template_name = ThemeTemplate("chart_trend_bar.html")
 
-    def get_apex_options(self, chart_div_id, values, labels, colors):
+    def get_apex_options(self, chart_div_id, values, labels, colors, width, height):
         options = {
             "colors": colors,
             "series": [
@@ -153,7 +164,8 @@ class TimestampedBarChartMixin(TimedChartMixin):
             "chart": {
                 "id": chart_div_id,
                 "type": "bar",
-                "height": 350,
+                "width": width,
+                "height": height,
                 "zoom": {
                     "autoScaleYaxis": True,
                 },
@@ -186,6 +198,7 @@ class TimestampedBarChartMixin(TimedChartMixin):
 class TimestampedLineChartMixin(BaseChartMixin):
     listing_template_name = ThemeTemplate("chart_trend_bar.html")
     chart_labels_rec_key = None
+    per_page = 1000
 
     def get_chart_rec_color(self, rec):
         return settings.django_listing_settings.CHARTS_DEFAULT_TREND_BAR_COLOR
@@ -197,7 +210,7 @@ class TimestampedLineChartMixin(BaseChartMixin):
             val = float(val)
         return [timestamp, val]
 
-    def get_apex_options(self, chart_div_id, values, labels, colors):
+    def get_apex_options(self, chart_div_id, values, labels, colors, width, height):
         options = {
             "colors": colors,
             "series": [
@@ -209,7 +222,8 @@ class TimestampedLineChartMixin(BaseChartMixin):
             "chart": {
                 "id": "chart",
                 "type": "line",
-                "height": 350,
+                "width": width,
+                "height": height,
                 "zoom": {
                     "autoScaleYaxis": True,
                 },
