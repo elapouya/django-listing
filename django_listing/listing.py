@@ -1064,7 +1064,7 @@ class Listing(ListingBase):
             self._render_initialized = True
 
     def do_filter_data(self):
-        # Last change to filter data before listing page computation
+        # Last chance to filter data before listing page computation
         pass
 
     def compute_current_page_records(self):
