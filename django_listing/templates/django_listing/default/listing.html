@@ -97,8 +97,8 @@
             {% endblock listing %}
 
             {% block hiddens %}
-                {% for hidden in listing.form_input_hiddens %}
-                    <input type="hidden" name="{{ hidden.0 }}" value="{{ hidden.1 }}">{% endfor %}
+                {% for name, value in listing.form_input_hiddens.items %}
+                    <input type="hidden" name="{{ name }}" value="{{ value }}">{% endfor %}
                 {% if listing.editable and listing.editing %}
                     {% for hidden_field in listing.editing_hidden_form_fields %}
                         {{ hidden_field }}{% endfor %}

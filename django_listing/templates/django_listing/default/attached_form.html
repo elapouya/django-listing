@@ -4,8 +4,8 @@
     {% csrf_token %}
     {% gethiddens_listing listing without="page,sort" %}
     {% block hiddens %}
-        {% for hidden in listing.form_input_hiddens %}
-            <input type="hidden" name="{{ hidden.0 }}" value="{{ hidden.1 }}">{% endfor %}
+        {% for name, value in listing.form_input_hiddens.items %}
+            <input type="hidden" name="{{ name }}" value="{{ value }}">{% endfor %}
     {% endblock %}
 
     {% with attached_form.get_form as form %}

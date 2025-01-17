@@ -621,7 +621,7 @@ class Listing(ListingBase):
         self.page_context = None
         self.records = self.records_class(self)
         self.rows_context_list = []
-        self.form_input_hiddens = []
+        self.form_input_hiddens = {}
         self.editing_hidden_form_fields = []
         self.editing_really_hidden_columns = set()
         self.can_edit_columns = []
@@ -1196,8 +1196,7 @@ class Listing(ListingBase):
         return ctx
 
     def add_form_input_hiddens(self, **kwargs):
-        for name, value in kwargs.items():
-            self.form_input_hiddens.append((name, value))
+        self.form_input_hiddens.update(kwargs)
 
     def add_edit_form_hidden_field(self, field_instance):
         self.editing_hidden_form_fields.append(field_instance)

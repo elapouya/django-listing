@@ -1,3 +1,7 @@
+0.10.1 (2025-01-17)
+-------------------
+- Improve form hidden fields management
+
 0.10.0 (2025-01-07)
 -------------------
 - Django-listing can now generate charts with given data (no documentation yet)
