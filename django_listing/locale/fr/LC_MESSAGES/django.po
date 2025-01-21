@@ -44,7 +44,7 @@ msgstr "Voir les détails"
 
 #: actions_buttons_column.py:296 actions_buttons_column.py:297
 msgid "Edit"
-msgstr "Editer"
+msgstr "Éditer"
 
 #: actions_buttons_column.py:317 actions_buttons_column.py:318
 msgid "Delete"
@@ -325,7 +325,7 @@ msgstr "Annuler"
 #: listing.py:450
 msgctxt "action button"
 msgid "Edit"
-msgstr "Editer"
+msgstr "Éditer"
 
 #: listing.py:451
 msgctxt "action button"
