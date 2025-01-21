@@ -70,6 +70,7 @@ function djlst_load_listing_url(nav_obj, url) {
     const listing_div = nav_obj.closest("div.django-listing-ajax");
     listing_div.addClass("spinning");
     const listing_id = $(listing_div).attr("id");
+    const filter_form = $(`form[listing-id=${listing_id}]`);
     const listing_suffix = $(listing_div).attr("listing-suffix");
     let listing_target = nav_obj.attr("listing-target");
     if (!listing_target) listing_target = "#" + listing_id;
@@ -78,7 +79,7 @@ function djlst_load_listing_url(nav_obj, url) {
     let request_data = {
         "listing_id": listing_id,
         "listing_suffix": listing_suffix,
-        "listing_part": listing_part
+        "listing_part": listing_part,
     }
     request_data = djlst_add_filter_request_data(listing_div, nav_obj, request_data);
 
@@ -87,10 +88,17 @@ function djlst_load_listing_url(nav_obj, url) {
         type: "POST",
         url: url,
         data: request_data,
-        success: function (response) {
-            $(listing_target).replaceWith(response);
-            djlst_listing_on_load();
-            $(document).trigger("djlst_ajax_loaded", {listing_target: listing_target, response: response});
+        success: function (mixed_response) {
+            console.log(mixed_response);
+            if (mixed_response.filters_form) {
+                filter_form.replaceWith(mixed_response.filters_form);
+                listing_div.removeClass("spinning");
+            }
+            if (mixed_response.listing) {
+                listing_div.replaceWith(mixed_response.listing);
+                djlst_listing_on_load();
+                $(document).trigger("djlst_ajax_loaded", {listing_target: listing_target, response: mixed_response.listing});
+            }
         },
         error: function (response) {
             text = "An error occured.\n\nIndications :\n\n" + response.responseText;
@@ -114,15 +122,16 @@ function djlst_load_listing_val() {
 
 function djlst_post_action_button(event) {
     event.preventDefault();
-    var nav_obj = $(this);
-    var listing_div = nav_obj.closest("div.django-listing-ajax");
-    var ajax_url = listing_div.attr("ajax_url");
+    const nav_obj = $(this);
+    const listing_div = nav_obj.closest("div.django-listing-ajax");
+    const ajax_url = listing_div.attr("ajax_url");
     listing_div.addClass("spinning");
-    var listing_id = listing_div.attr("id");
-    var listing_suffix = listing_div.attr("listing-suffix");
-    var listing_target = nav_obj.attr("listing-target");
+    const listing_id = listing_div.attr("id");
+    const filter_form = $(`form[listing-id=${listing_id}]`);
+    const listing_suffix = listing_div.attr("listing-suffix");
+    let listing_target = nav_obj.attr("listing-target");
     if (!listing_target) listing_target = "#" + listing_id;
-    var listing_part = nav_obj.attr("listing-part");
+    let listing_part = nav_obj.attr("listing-part");
     if (!listing_part) listing_part = "all";
     let request_data = {
         listing_id: listing_id,
@@ -137,10 +146,16 @@ function djlst_post_action_button(event) {
         type: "POST",
         url: ajax_url,
         data: request_data,
-        success: function (response) {
-            $(listing_target).replaceWith(response);
-            djlst_listing_on_load();
-            $(document).trigger("djlst_ajax_loaded", {listing_target: listing_target, response: response});
+        success: function (mixed_response) {
+            if (mixed_response.filters_form) {
+                filter_form.replaceWith(mixed_response.filters_form);
+                listing_div.removeClass("spinning");
+            }
+            if (mixed_response.listing) {
+                listing_div.replaceWith(mixed_response.listing);
+                djlst_listing_on_load();
+                $(document).trigger("djlst_ajax_loaded", {listing_target: listing_target, response: mixed_response.listing});
+            }
         },
         error: function (response) {
             text = "An error occured.\n\nIndications :\n\n" + response.responseText;

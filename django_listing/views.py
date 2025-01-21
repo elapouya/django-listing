@@ -171,7 +171,22 @@ class ListingViewMixin:
             return response
         if listing.have_to_refresh():
             listing = self.get_listing_from_post(request, refresh=True)
-        return HttpResponse(listing.render(self.ajax_request_context))
+        response_data = {}
+        if filters := getattr(listing, "filters", None):
+            cleaned_data = filters.get_cleaned_data()
+            # If filters form is invalid or was the previous time : redraw it
+            if (
+                True
+                or cleaned_data is None
+                or listing.request_data.get("filters_is_valid") != "True"
+            ):
+                filters_form_html = filters.render_form(self.ajax_request_context)
+                response_data["filters_form"] = filters_form_html
+            if cleaned_data is None:  # filter form is invalid
+                # return only filters form
+                return JsonResponse(response_data)
+        response_data["listing"] = listing.render(self.ajax_request_context)
+        return JsonResponse(response_data)
 
     def get_listing_class(self):
         return self.listing_class
@@ -437,12 +452,12 @@ class ListingViewMixin:
             if not self.is_ajax:
                 return None
             listing.compute_current_page_records()
-            form_html = listing.attached_form.render(self.ajax_request_context)
+            attached_form_html = listing.attached_form.render(self.ajax_request_context)
             if mixed_response is None:
                 listing_html = listing.render(self.ajax_request_context)
                 mixed_response = {
                     "listing": listing_html,
-                    "attached_form": form_html,
+                    "attached_form": attached_form_html,
                     "object_pk": instance.pk,
                 }
             else:
@@ -453,15 +468,15 @@ class ListingViewMixin:
                     "attached_form" in mixed_response
                     and mixed_response["attached_form"] is None
                 ):
-                    mixed_response["attached_form"] = form_html
+                    mixed_response["attached_form"] = attached_form_html
             if instance.pk:
                 mixed_response["object_pk"] = instance.pk
             return self.json_response(mixed_response)
         else:
             if not self.is_ajax:
                 return None
-            form_html = listing.attached_form.render(self.ajax_request_context)
-            return self.json_response({"attached_form": form_html})
+            attached_form_html = listing.attached_form.render(self.ajax_request_context)
+            return self.json_response({"attached_form": attached_form_html})
 
     def manage_attached_form_insert_get_form(self, listing, *args, **kwargs):
         form = listing.attached_form.get_form()

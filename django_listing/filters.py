@@ -122,6 +122,8 @@ class FiltersBaseForm(forms.BaseForm):
                 value = field.widget.value_from_datadict(
                     self.data, self.files, self.add_prefix(name)
                 )
+                if not value and field.required:
+                    value = self.get_initial_for_field(field, name)
             try:
                 if isinstance(field, FileField):
                     initial = self.get_initial_for_field(field, name)
@@ -186,6 +188,7 @@ class Filters(list):
             params = {}
         self._params = params
         self._form = None
+        self._cleaned_data = None
         self.name2filter = {}
         init_dicts_from_class(self, ["form_attrs"])
         super().__init__(filters)
@@ -315,7 +318,19 @@ class Filters(list):
             else:
                 f.extract_params(request_data)
 
+    def get_cleaned_data(self):
+        # Cache result to self._cleaned_data,
+        # This is possible because self is a copy of the Filters object
+        # defined in the listing class. Copy is done on every request
+        if not self._cleaned_data:
+            form = self.form()
+            self._cleaned_data = form.cleaned_data if form.is_valid() else None
+        return self._cleaned_data
+
     def form(self):
+        # Cache result to self._form,
+        # This is possible because self is a copy of the Filters object
+        # defined in the listing class. Copy is done on every request
         if not self._form:
             fields = {
                 f.input_name + self.listing.suffix: f.create_form_field() for f in self
@@ -339,7 +354,10 @@ class Filters(list):
     def get_hiddens_html(self):
         query_fields = [(FILTER_QUERYSTRING_PREFIX + f.name) for f in self]
         query_fields.append(FILTER_QUERYSTRING_PREFIX + "do_filter")
-        return self.listing.get_hiddens_html(without=query_fields)
+        is_valid = bool(self.get_cleaned_data())
+        return self.listing.get_hiddens_html(
+            without=query_fields, filters_is_valid=is_valid
+        )
 
     def render_init(self, context):
         self.listing.manage_page_context(context)
@@ -650,9 +668,9 @@ class Filter(metaclass=FilterMeta):
 
     def filter_queryset(self, qs, cleaned_data=None):
         if cleaned_data is not None:
-            if not self.value:
-                return qs
             cleaned_value = cleaned_data.get(self.input_name + self.listing.suffix)
+            if not cleaned_value:
+                return qs
         else:
             default_value = (
                 self.default_value_func(self)

@@ -1395,7 +1395,7 @@ class Listing(ListingBase):
                         del hiddens[k]
         return hiddens
 
-    def get_hiddens_html(self, without=None):
+    def get_hiddens_html(self, without=None, **additional_hiddens):
         hiddens = self.get_hiddens(without)
         out = [
             '<input type="hidden" name="{name}" value="{value}">'.format(
@@ -1404,6 +1404,8 @@ class Listing(ListingBase):
             for keylist in hiddens.lists()
             for value in keylist[1]
         ]
+        for k, v in additional_hiddens.items():
+            out.append(f'<input type="hidden" name="{k}" value="{v}">')
         return "".join(out)
 
     @classmethod

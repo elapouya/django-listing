@@ -238,8 +238,7 @@ class RecordManager:
 
     def filter_queryset(self, qs):
         if self.listing.filters:
-            form = self.listing.filters.form()
-            cleaned_data = form.cleaned_data if form.is_valid() else None
+            cleaned_data = self.listing.filters.get_cleaned_data()
             for filtr in self.listing.filters:
                 qs = filtr.filter_queryset(qs, cleaned_data)
         return qs

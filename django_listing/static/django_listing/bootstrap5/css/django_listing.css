@@ -1359,7 +1359,6 @@ form.listing-form div.form-row {
 }
 form.listing-form div.form-field {
   flex-shrink: 10;
-  min-width: fit-content;
   margin: 5px;
   width: 100%;
 }
