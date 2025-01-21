@@ -60,7 +60,7 @@ function djlst_add_filter_request_data($listing_div, $nav_obj, data) {
     return data
 }
 
-function djlst_load_listing_url(nav_obj, url) {
+function djlst_load_listing_url(nav_obj, url, additional_data) {
     if (url === null) {
         url = djlst_get_requested_url(nav_obj);
     }
@@ -82,14 +82,15 @@ function djlst_load_listing_url(nav_obj, url) {
         "listing_part": listing_part,
     }
     request_data = djlst_add_filter_request_data(listing_div, nav_obj, request_data);
-
+    if (additional_data) {
+        request_data = { ...request_data, ...additional_data };
+    }
     update_csrf_token();
     $.ajax({
         type: "POST",
         url: url,
         data: request_data,
         success: function (mixed_response) {
-            console.log(mixed_response);
             if (mixed_response.filters_form) {
                 filter_form.replaceWith(mixed_response.filters_form);
                 listing_div.removeClass("spinning");
@@ -491,12 +492,12 @@ function djlst_get_requested_url($nav_obj) {
     }
 }
 
-function djlst_reload_listing_from_form(elt) {
+function djlst_reload_listing_from_form(elt, additional_data) {
     var form = $(elt).closest('.listing-form');
     var listing_id = form.attr('listing-id');
     var listing = $('#' + listing_id);
     const url = djlst_get_requested_url(listing);
-    djlst_load_listing_url(listing, url);
+    djlst_load_listing_url(listing, url, additional_data);
 }
 
 function djlst_selection_changed_hook(e) {
@@ -675,7 +676,26 @@ function djlst_attached_form_input_changed(event) {
 }
 
 function djlst_reset_form_fields($form) {
-    $form[0].reset();
+    $form.find('input[type="text"], \
+               input[type="password"], \
+               input[type="email"], \
+               input[type="number"], \
+               input[type="tel"], \
+               input[type="url"], \
+               input[type="search"], \
+               textarea').val('');
+
+    // Clear checkboxes and radio buttons
+    $form.find('input[type="checkbox"], \
+               input[type="radio"]').prop('checked', false);
+
+    // Clear select fields
+    $form.find('select').prop('selectedIndex', -1);
+
+    // Clear file inputs
+    $form.find('input[type="file"]').val('');
+
+    // Clear select2 fields
     $form.find('select').each(function () {
         if ($(this).hasClass('select2-hidden-accessible')) {
             $(this).val(null).trigger('change');
@@ -736,7 +756,7 @@ function djlst_patch_form_data($form, extraData) {
 
 $(document).ready(function () {
 
-    $('.filters-form .advanced-button').click(function (){
+    $(document.body).on("click", ".filters-form .advanced-button", function () {
         const form = $(this).closest(".filters-form");
         form.find(".filters-layout-advanced").slideToggle();
         $(this).find(".button-icon.up").toggle();
@@ -779,7 +799,7 @@ $(document).ready(function () {
     $(document.body).on("click", ".listing-form.filters-form-ajax .submit-button", function () {djlst_reload_listing_from_form(this); return false;});
     $(document.body).on("click", ".listing-form.filters-form-ajax button.reset-button", function () {
         djlst_reset_form_fields($(this).closest("form"));
-        djlst_reload_listing_from_form(this); return false;
+        djlst_reload_listing_from_form(this, {"filters_action":"reset"}); return false;
     });
 
     $(".django-listing-container").each(function () {

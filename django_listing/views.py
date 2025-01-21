@@ -172,13 +172,14 @@ class ListingViewMixin:
         if listing.have_to_refresh():
             listing = self.get_listing_from_post(request, refresh=True)
         response_data = {}
+        listing.render_init(self.ajax_request_context)
         if filters := getattr(listing, "filters", None):
             cleaned_data = filters.get_cleaned_data()
             # If filters form is invalid or was the previous time : redraw it
             if (
                 True
                 or cleaned_data is None
-                or listing.request_data.get("filters_is_valid") != "True"
+                or listing.request_data.get("filters_action") == "reset"
             ):
                 filters_form_html = filters.render_form(self.ajax_request_context)
                 response_data["filters_form"] = filters_form_html

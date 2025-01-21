@@ -1,3 +1,7 @@
+0.10.2 (2025-01-21)
+-------------------
+- Fix filters form
+
 0.10.1 (2025-01-17)
 -------------------
 - Improve form hidden fields management

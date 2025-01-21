@@ -124,6 +124,8 @@ class FiltersBaseForm(forms.BaseForm):
                 )
                 if not value and field.required:
                     value = self.get_initial_for_field(field, name)
+                    self.data[name] = value
+
             try:
                 if isinstance(field, FileField):
                     initial = self.get_initial_for_field(field, name)
@@ -354,10 +356,7 @@ class Filters(list):
     def get_hiddens_html(self):
         query_fields = [(FILTER_QUERYSTRING_PREFIX + f.name) for f in self]
         query_fields.append(FILTER_QUERYSTRING_PREFIX + "do_filter")
-        is_valid = bool(self.get_cleaned_data())
-        return self.listing.get_hiddens_html(
-            without=query_fields, filters_is_valid=is_valid
-        )
+        return self.listing.get_hiddens_html(without=query_fields)
 
     def render_init(self, context):
         self.listing.manage_page_context(context)
