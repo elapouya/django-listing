@@ -60,7 +60,32 @@ function djlst_add_filter_request_data($listing_div, $nav_obj, data) {
     return data
 }
 
+function djlst_extract_params_from_url(url, keysToRemove) {
+  const queryString = url.split('?')[1] || '';
+  const params = new URLSearchParams(queryString);
+  const extracted_params = {};
+  const keys = Array.isArray(keysToRemove) ? keysToRemove : [keysToRemove];
+
+  keys.forEach(key => {
+    if (params.has(key)) {
+      extracted_params[key] = params.get(key);
+      params.delete(key);
+    }
+  });
+
+  return extracted_params;
+}
+
 function djlst_load_listing_url(nav_obj, url, additional_data) {
+    // fixes variation selection
+    const extracted_params = djlst_extract_params_from_url(url, ["variation"]);
+    if (Object.keys(extracted_params).length > 0) {
+        if (additional_data) {
+            additional_data = {...additional_data, ...extracted_params};
+        } else {
+            additional_data = extracted_params;
+        }
+    }
     if (url === null) {
         url = djlst_get_requested_url(nav_obj);
     }

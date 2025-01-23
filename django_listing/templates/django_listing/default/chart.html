@@ -11,7 +11,6 @@
                     const additional_options = {}
                     {% endblock %}
                     const data = JSON.parse(document.getElementById("{{ data.json_id }}").textContent);
-                    console.log(data);
                     const apex_options = {...data.apexcharts_options,...additional_options};
                     new ApexCharts(document.querySelector("#{{data.chart_div_id}}"), apex_options).render();
                 })();
