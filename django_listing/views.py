@@ -175,10 +175,12 @@ class ListingViewMixin:
         listing.render_init(self.ajax_request_context)
         if filters := getattr(listing, "filters", None):
             cleaned_data = filters.get_cleaned_data()
+            if cleaned_data is None:
+                listing.filters.form().initial.update(redraw_filters_form=True)
             # If filters form is invalid or was the previous time : redraw it
             if (
-                True
-                or cleaned_data is None
+                cleaned_data is None
+                or "redraw_filters_form" in listing.request_data
                 or listing.request_data.get("filters_action") == "reset"
             ):
                 filters_form_html = filters.render_form(self.ajax_request_context)
