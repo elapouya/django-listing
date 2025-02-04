@@ -61,22 +61,25 @@ function djlst_add_filter_request_data($listing_div, $nav_obj, data) {
 }
 
 function djlst_extract_params_from_url(url, keysToRemove) {
-  const queryString = url.split('?')[1] || '';
-  const params = new URLSearchParams(queryString);
-  const extracted_params = {};
-  const keys = Array.isArray(keysToRemove) ? keysToRemove : [keysToRemove];
+    const queryString = url.split('?')[1] || '';
+    const params = new URLSearchParams(queryString);
+    const extracted_params = {};
+    const keys = Array.isArray(keysToRemove) ? keysToRemove : [keysToRemove];
 
-  keys.forEach(key => {
-    if (params.has(key)) {
-      extracted_params[key] = params.get(key);
-      params.delete(key);
-    }
-  });
+    keys.forEach(key => {
+        if (params.has(key)) {
+            extracted_params[key] = params.get(key);
+            params.delete(key);
+        }
+    });
 
-  return extracted_params;
+    return extracted_params;
 }
 
 function djlst_load_listing_url(nav_obj, url, additional_data) {
+    if (url === null) {
+        url = djlst_get_requested_url(nav_obj);
+    }
     // fixes variation selection
     const extracted_params = djlst_extract_params_from_url(url, ["variation"]);
     if (Object.keys(extracted_params).length > 0) {
@@ -85,9 +88,6 @@ function djlst_load_listing_url(nav_obj, url, additional_data) {
         } else {
             additional_data = extracted_params;
         }
-    }
-    if (url === null) {
-        url = djlst_get_requested_url(nav_obj);
     }
     if (!$("div.django-listing-ajax").length) {
         window.location.href = url;
