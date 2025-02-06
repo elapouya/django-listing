@@ -518,6 +518,18 @@ function djlst_get_requested_url($nav_obj) {
 }
 
 function djlst_reload_listing_from_form(elt, additional_data) {
+    if (elt) {
+        const source_elt_data = {
+            src_elt_name: elt.name,
+            src_elt_value: elt.value,
+            src_elt_class: elt.className
+        }
+        if (additional_data) {
+            additional_data = {...additional_data, ...source_elt_data};
+        } else {
+            additional_data = source_elt_data;
+        }
+    }
     var form = $(elt).closest('.listing-form');
     var listing_id = form.attr('listing-id');
     var listing = $('#' + listing_id);
@@ -703,6 +715,7 @@ function djlst_attached_form_input_changed(event) {
 function djlst_reset_form_fields($form) {
     $form.find('input[type="text"], \
                input[type="password"], \
+               input[type="date"], \
                input[type="email"], \
                input[type="number"], \
                input[type="tel"], \

@@ -1,3 +1,7 @@
+0.10.6 (2025-02-06)
+-------------------
+- Send source DOM element info in post when user submit filter form
+
 0.10.5 (2025-02-04)
 -------------------
 - Fix "Apply grouping" button
