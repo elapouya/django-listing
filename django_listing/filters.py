@@ -756,6 +756,8 @@ class Filter(metaclass=FilterMeta):
                 try:
                     model = self.listing.model
                     params["choices"] = model._meta.get_field(self.field_name).choices
+                    if params["choices"] is None:
+                        raise AttributeError
                 except AttributeError:
                     raise InvalidFilters(
                         _(
