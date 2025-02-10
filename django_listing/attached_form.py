@@ -41,6 +41,8 @@ ATTACHED_FORM_PARAMS_KEYS = {
     "submit_action",
     "template_name",
     "django_form_class",
+    "have_empty_choice",
+    "force_select",
     "layout",
     "attrs",
     "buttons",
@@ -150,6 +152,8 @@ class AttachedForm:
     display_errors = True
     form_base_class = ListingBaseForm
     django_form_class = None
+    have_empty_choice = True
+    force_select = True
     reset_button_label = pgettext_lazy("Attached form", "Reset")
     submit_button_label = pgettext_lazy("Attached form", "Add")
     submit_action = "insert"
@@ -394,8 +398,8 @@ class AttachedForm:
 
     def get_form(self, do_not_clean=False, **kwargs):
         if not self._form:
-            kwargs.setdefault("have_empty_choice", True)
-            kwargs.setdefault("force_select", True)
+            kwargs.setdefault("have_empty_choice", self.have_empty_choice)
+            kwargs.setdefault("force_select", self.force_select)
             form_class = self.create_form_from_layout(**kwargs)
             data = None
             if self.listing.request.POST.get("attached_form_name") == self.name:
