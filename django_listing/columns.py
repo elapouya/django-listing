@@ -101,6 +101,7 @@ COLUMNS_PARAMS_KEYS = {
     "footer_value_tpl",
     "form_field",
     "form_field_class",
+    "form_field_input_container_css",
     "form_field_params",
     "form_field_widget_class",
     "form_field_widget_params",
@@ -123,6 +124,7 @@ COLUMNS_PARAMS_KEYS = {
     "true_msg",
     "false_msg",
     "no_foreignkey_link",
+    "reverse_form_label_tag",
     "sort_key",
     "sortable",
     "start",
@@ -578,6 +580,7 @@ class Column(metaclass=ColumnMeta):
     footer_value_tpl = None
     form_field = None
     form_field_params = None
+    form_field_input_container_css = ""
     form_field_class = forms.CharField
     form_field_widget_class = None
     form_field_keys = None
@@ -603,6 +606,7 @@ class Column(metaclass=ColumnMeta):
     true_msg = _("Yes")
     false_msg = _("No")
     params_keys = ""
+    reverse_form_label_tag = False
     sort_key = None
     sortable = True
     use_raw_value = False
@@ -736,8 +740,14 @@ class Column(metaclass=ColumnMeta):
         for k, v in self.listing.columns.get_params().get(self.name, {}).items():
             if k in keys:
                 setattr(self, k, v)
+        col_class_slug = self.__class__.__name__.lower()
         for k in keys:
             listing_key = "columns_{}".format(k)
+            if hasattr(self.listing, listing_key):
+                setattr(self, k, getattr(self.listing, listing_key))
+            # It is possible to prefix with the column class in lower + "s"
+            # example : booleancolumns_reverse_form_label_tag = True
+            listing_key = "{}s_{}".format(col_class_slug, k)
             if hasattr(self.listing, listing_key):
                 setattr(self, k, getattr(self.listing, listing_key))
         # col__param has higher priority than columns_param,
@@ -1103,7 +1113,9 @@ class Column(metaclass=ColumnMeta):
                 ):
                     params[p] = getattr(self.model_form_field, p)
         if force_not_required:
-            params["required"] = False
+            # force not required except fields that are to mass update
+            if not self.listing.request.POST.get(f"{self.name}_mass_op"):
+                params["required"] = False
         elif (
             "required" not in params
             and force_select

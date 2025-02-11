@@ -26,12 +26,19 @@
                     {% if field %}
                         <div class="form-field {{ field_name }} cls-{{ col.get_type }}{% if attached_form.display_errors and field.errors %} errors{% endif %}">
                             {% if attached_form.display_errors and field.errors %}<span class="listing-icon-attention"></span> {{ field.errors }}{% endif %}
-                            <div class="label_input">
-                                {% if not col.no_mass_op %}
-                                    <input type="checkbox" name="{{ field_name }}_mass_op" value="checked" class="mass-op-cb" style="display: none">
+                            <div class="label_input {{ col.form_field_input_container_css }}">
+                                {% if col.reverse_form_label_tag %}
+                                    {{ field }}{{ field.label_tag }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
+                                    {% if not col.no_mass_op %}
+                                        <input type="checkbox" name="{{ field_name }}_mass_op" value="checked" class="mass-op-cb" style="display: none">
+                                    {% endif %}
+                                {% else %}
+                                    {% if not col.no_mass_op %}
+                                        <input type="checkbox" name="{{ field_name }}_mass_op" value="checked" class="mass-op-cb" style="display: none">
+                                    {% endif %}
+                                    {{ field.label_tag }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
+                                    {{ field }}
                                 {% endif %}
-                                {{ field.label_tag }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
-                                {{ field }}
                             </div>
                             {% if ending %}<span class="ending">{{ ending }}</span>{% endif %}
                             {% if field.help_text %}

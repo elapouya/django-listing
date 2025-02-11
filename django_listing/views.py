@@ -99,6 +99,15 @@ class ListingViewMixin:
                                     request.POST[k] = v[0]
                                 else:
                                     request.POST[k] = v
+                        # Manage checkbox cases on mass-op :
+                        # When checkbox is off : JS serialize do not transmit checkbox
+                        # input name, so create it...
+                        for k in data.keys():
+                            if k.endswith("_mass_op"):
+                                input_name = k[: -len("_mass_op")]
+                                if input_name not in request.POST:
+                                    request.POST[input_name] = ""
+
                     return self.manage_listing_ajax_request(request, *args, **kwargs)
                 except KeyboardInterrupt:
                     raise
