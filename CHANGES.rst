@@ -1,3 +1,7 @@
+0.10.7 (2025-02-11)
+-------------------
+- Add support for checkbox in attached form
+
 0.10.6 (2025-02-06)
 -------------------
 - Send source DOM element info in post when user submit filter form
