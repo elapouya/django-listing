@@ -258,6 +258,11 @@ def filters_form_field(listing, name):
 
 
 @register.simple_tag()
+def get_filter(listing, name):
+    return listing.filters.get(name)
+
+
+@register.simple_tag()
 def filters_form_field_container_attrs(listing, name):
     return mark_safe(listing.filters.get_form_field_container_attrs(name))
 

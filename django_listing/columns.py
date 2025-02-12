@@ -742,14 +742,14 @@ class Column(metaclass=ColumnMeta):
                 setattr(self, k, v)
         col_class_slug = self.__class__.__name__.lower()
         for k in keys:
-            listing_key = "columns_{}".format(k)
-            if hasattr(self.listing, listing_key):
-                setattr(self, k, getattr(self.listing, listing_key))
+            column_key = "columns_{}".format(k)
+            if hasattr(self.listing, column_key):
+                setattr(self, k, getattr(self.listing, column_key))
             # It is possible to prefix with the column class in lower + "s"
             # example : booleancolumns_reverse_form_label_tag = True
-            listing_key = "{}s_{}".format(col_class_slug, k)
-            if hasattr(self.listing, listing_key):
-                setattr(self, k, getattr(self.listing, listing_key))
+            column_key = "{}s_{}".format(col_class_slug, k)
+            if hasattr(self.listing, column_key):
+                setattr(self, k, getattr(self.listing, column_key))
         # col__param has higher priority than columns_param,
         # so getting col__params AFTER columns_params
         for k, v in kwargs.items():

@@ -86,6 +86,8 @@ FILTERS_PARAMS_KEYS = {
     "add_one_day",
     "default_value",
     "default_value_func",
+    "form_field_input_container_css",
+    "reverse_form_label_tag",
 }
 
 # Declare keys for django form fields
@@ -488,6 +490,8 @@ class Filter(metaclass=FilterMeta):
     widget_class = None
     widget_params = None
     word_search = False
+    form_field_input_container_css = ""
+    reverse_form_label_tag = False
 
     theme_form_widget_class = ThemeAttribute("column_theme_form_widget_class")
     theme_form_select_widget_class = ThemeAttribute(
@@ -582,10 +586,14 @@ class Filter(metaclass=FilterMeta):
     def set_kwargs(self, **kwargs):
         # If filters_<filterclass>_<params> exists in listing attributes :
         # take is as a default value
+        filter_class_slug = self.__class__.__name__.lower()
         for k in FILTERS_PARAMS_KEYS:
-            listing_key = "filters_{}".format(k)
-            if hasattr(self.listing, listing_key):
-                setattr(self, k, getattr(self.listing, listing_key))
+            filter_key = "filters_{}".format(k)
+            if hasattr(self.listing, filter_key):
+                setattr(self, k, getattr(self.listing, filter_key))
+            filter_key = "{}s_{}".format(filter_class_slug, k)
+            if hasattr(self.listing, filter_key):
+                setattr(self, k, getattr(self.listing, filter_key))
         for k, v in kwargs.items():
             if k in FILTERS_PARAMS_KEYS:
                 setattr(self, k, v)
@@ -842,6 +850,10 @@ class BooleanFilter(Filter):
             widget = forms.RadioSelect
             widget_attrs.add("class", self.theme_form_radio_widget_class)
             widget_attrs.add("class", "multiple-radios inline")
+        elif self.input_type == "switch" and not force_select:
+            widget = forms.CheckboxInput
+            widget_attrs.add("class", self.theme_form_radio_widget_class)
+            widget_attrs.add("role", "switch")
         else:
             widget = forms.Select
             widget_attrs.add("class", self.theme_form_select_widget_class)
