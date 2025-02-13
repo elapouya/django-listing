@@ -1,3 +1,7 @@
+0.10.8 (2025-02-13)
+-------------------
+- Improve filters
+
 0.10.7 (2025-02-11)
 -------------------
 - Add support for checkbox in attached form
