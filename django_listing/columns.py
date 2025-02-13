@@ -18,6 +18,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.db.models import ForeignKey
 from django.forms import widgets
+from django.template import loader
 from django.template.defaultfilters import filesizeformat
 from django.utils import formats
 from django.utils.dateparse import parse_datetime
@@ -1220,6 +1221,16 @@ class Column(metaclass=ColumnMeta):
                 )
 
 
+class TemplateColumn(Column):
+    def render_init(self):
+        if isinstance(self.cell_tpl, str):
+            self.cell_tpl = loader.get_template(self.cell_tpl)
+
+    def render_cell(self, rec):
+        context = self.get_cell_context(rec, None)
+        return self.cell_tpl.render(context, self.listing.request)
+
+
 class TextColumn(Column):
     from_model_field_classes = (models.TextField,)
     form_field_widget_class = widgets.Textarea
@@ -1753,7 +1764,7 @@ class ForeignKeyColumn(LinkColumn):
         if self.href_tpl:
             return super().get_href(rec, ctx, value)
         try:
-            return rec[self.name].get_absolute_url()
+            return rec[self.data_key].get_absolute_url()
         except (IndexError, AttributeError):
             return super().get_href(rec, ctx, value)
 
