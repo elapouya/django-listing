@@ -8,14 +8,8 @@
                     available-title="{% trans "[Available columns]" %}"
                     selected-title="{% trans "[Selected columns]" %}"
             >
-                {% for name in listing.gb_cols_names %}
-                    <option value="{{ name }}"
-                            selected>{{ listing.original_columns_headers|get_item:name }}</option>
-                {% endfor %}
-                {% for name, header in listing.original_columns_headers.items %}
-                    {% if name not in listing.gb_cols_names %}
-                        <option value="{{ name }}">{{ header }}</option>
-                    {% endif %}
+                {% for name, label, selected in listing.gb_cols_dlb %}
+                    <option value="{{ name }}"{% if selected %} selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
         </div>

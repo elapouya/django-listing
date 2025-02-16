@@ -736,6 +736,17 @@ class Listing(ListingBase):
             ):
                 self.columns.append(SelectionColumn(LISTING_SELECTION_CHECKBOX_NAME))
 
+    def gb_cols_dlb(self):
+        select_info = []
+        if self.gb_cols_names:
+            for name in self.gb_cols_names:
+                label = self.original_columns_headers.get(name, "-")
+                select_info.append((name, label, True))
+        if self.original_columns_headers:
+            for name, label in self.original_columns_headers.items():
+                select_info.append((name, label, False))
+        return list(sorted(select_info, key=lambda x: x[1]))
+
     def manage_group_by(self):
         if self.has_group_by:
             self.gb_cols_names = []
@@ -755,6 +766,10 @@ class Listing(ListingBase):
                     for a, (alabel, afunc) in LISTING_ANNOTATIONS.items():
                         ach[f"{name}_annotate_{a}"] = f"{header} ({alabel})"
         if self.gb_cols:
+            self.listing_template_name = ThemeTemplate("listing.html")
+            self.attrs = {
+                "class": "table table-hover table-bordered table-striped table-sm"
+            }
             gb_cols_names = self.gb_cols
             if isinstance(gb_cols_names, str):
                 gb_cols_names = map(str.strip, gb_cols_names.split(","))

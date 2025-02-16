@@ -1925,7 +1925,7 @@ class GroupByFilterColumn(Column):
     def action_filter(self, rec):
         url = rec.get_url(
             filters=self.listing.gb_model_filters_mapping,
-            without="gb_cols,gb_annotate_cols",
+            without="gb_cols,gb_annotate_cols,sort,page,per_page",
         )
         out = f'<a class="{self.theme_button_link_class} gb-filter" href="{url}"'
         if self.link_target:
