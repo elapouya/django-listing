@@ -744,7 +744,20 @@ class Listing(ListingBase):
                 select_info.append((name, label, True))
         if self.original_columns_headers:
             for name, label in self.original_columns_headers.items():
-                select_info.append((name, label, False))
+                if name not in self.gb_cols_names:
+                    select_info.append((name, label, False))
+        return list(sorted(select_info, key=lambda x: x[1]))
+
+    def gb_annotate_cols_dlb(self):
+        select_info = []
+        if self.gb_annotate_cols_names:
+            for name in self.gb_annotate_cols_names:
+                label = self.annotation_columns_headers.get(name, "-")
+                select_info.append((name, label, True))
+        if self.annotation_columns_headers:
+            for name, label in self.annotation_columns_headers.items():
+                if name not in self.gb_annotate_cols_names:
+                    select_info.append((name, label, False))
         return list(sorted(select_info, key=lambda x: x[1]))
 
     def manage_group_by(self):
@@ -1485,7 +1498,7 @@ class Listing(ListingBase):
         attrs = HTMLAttributes(self.row_attrs)  # create a copy
         if rec.pk:
             attrs.add("data-pk", str(rec.pk))
-        if self.form_model_fields and self.attached_form_autofill:
+        if self.form_model_fields and self.attached_form_autofill and not self.gb_cols:
             attrs.add(
                 "data-serialized-object",
                 rec.get_serialized_object(fields=self.form_model_fields),
