@@ -238,9 +238,7 @@ class RecordManager:
 
     def filter_queryset(self, qs):
         if self.listing.filters:
-            cleaned_data = self.listing.filters.get_cleaned_data()
-            for filtr in self.listing.filters:
-                qs = filtr.filter_queryset(qs, cleaned_data)
+            qs = self.listing.filters.filter_queryset(qs)
         return qs
 
     def get_filtered_queryset(self):

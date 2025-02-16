@@ -239,7 +239,7 @@ class Filters(list):
         return layout
 
     def bind_to_listing(self, listing):
-        filters = Filters(params=self._params, **self.init_kwargs)
+        filters = self.__class__(params=self._params, **self.init_kwargs)
         for k in FILTERS_KEYS:
             if k in self.init_kwargs:
                 setattr(filters, k, self.init_kwargs[k])
@@ -330,6 +330,18 @@ class Filters(list):
             form = self.form()
             self._cleaned_data = form.cleaned_data if form.is_valid() else None
         return self._cleaned_data
+
+    def filter_queryset(self, qs):
+        cleaned_data = self.get_cleaned_data()
+        for filtr in self:
+            qs = filtr.filter_queryset(qs, cleaned_data)
+        return qs
+
+    def get_default_cleaned_data(self):
+        return {
+            (filtr.input_name + filtr.listing.suffix): filtr.get_default_value()
+            for filtr in self
+        }
 
     def form(self):
         # Cache result to self._form,
@@ -673,20 +685,26 @@ class Filter(metaclass=FilterMeta):
 
         return field
 
+    def get_default_value(self):
+        default_value = (
+            self.default_value_func(self)
+            if callable(self.default_value_func)
+            else self.default_value
+        )
+        return default_value
+
     def filter_queryset(self, qs, cleaned_data=None):
         if cleaned_data is not None:
             cleaned_value = cleaned_data.get(self.input_name + self.listing.suffix)
             if not cleaned_value:
                 return qs
         else:
-            default_value = (
-                self.default_value_func(self)
-                if callable(self.default_value_func)
-                else self.default_value
-            )
+            default_value = self.get_default_value()
             if default_value is None:
                 return qs
             cleaned_value = default_value
+            # store default value, that may be useful for those subclassing Filters
+            # cleaned_data[self.input_name + self.listing.suffix] = cleaned_value
         method_name = f"filter_queryset_{self.name}"
         method = getattr(self.listing, method_name, None)
         if not method and self.filter_queryset_method:
