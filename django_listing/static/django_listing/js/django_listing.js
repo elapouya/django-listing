@@ -27,10 +27,18 @@ function djlst_replaceUrlParam(url, param_name, param_value) {
     return url_obj.toString();
 }
 
-function djlst_removeUrlParam(url, param_name) {
-    let url_obj = new URL(url);
-    url_obj.searchParams.delete(param_name);
-    return url_obj.toString();
+function djlst_removeUrlParam(url, params) {
+    if (!url.startsWith('/') || !params || !params.length) {
+        return url;
+    }
+    const [basePath, queryString] = url.split('?');
+    if (!queryString) {
+        return url;
+    }
+    const searchParams = new URLSearchParams(queryString);
+    params.forEach(param => searchParams.delete(param));
+    const newQueryString = searchParams.toString();
+    return newQueryString ? `${basePath}?${newQueryString}` : basePath;
 }
 
 function update_csrf_token() {
@@ -843,7 +851,9 @@ $(document).ready(function () {
     $(document.body).on("click", ".apply-group-by", function () {djlst_load_listing_url($(this), null);});
     $(document.body).on("click", ".remove-group-by", function () {
         $(this).closest("div.django-listing-ajax").find(".group-by-container select").val("");
-        djlst_load_listing_url($(this), null);
+        let url = djlst_get_requested_url($(this));
+        url = djlst_removeUrlParam(url, ["sort", "page", "per_page"]);
+        djlst_load_listing_url($(this), url);
     });
 
 

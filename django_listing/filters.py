@@ -12,7 +12,7 @@ from dal import autocomplete
 from django import forms
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db import models
-from django.db.models import DateTimeField, QuerySet
+from django.db.models import QuerySet
 from django.forms import FileField
 from django.template import loader
 from django.utils.translation import gettext as _
@@ -329,6 +329,8 @@ class Filters(list):
         if not self._cleaned_data:
             form = self.form()
             self._cleaned_data = form.cleaned_data if form.is_valid() else None
+            if self._cleaned_data is None:
+                self._cleaned_data = self.get_default_cleaned_data()
         return self._cleaned_data
 
     def filter_queryset(self, qs):
@@ -694,17 +696,9 @@ class Filter(metaclass=FilterMeta):
         return default_value
 
     def filter_queryset(self, qs, cleaned_data=None):
-        if cleaned_data is not None:
-            cleaned_value = cleaned_data.get(self.input_name + self.listing.suffix)
-            if not cleaned_value:
-                return qs
-        else:
-            default_value = self.get_default_value()
-            if default_value is None:
-                return qs
-            cleaned_value = default_value
-            # store default value, that may be useful for those subclassing Filters
-            # cleaned_data[self.input_name + self.listing.suffix] = cleaned_value
+        cleaned_value = cleaned_data.get(self.input_name + self.listing.suffix)
+        if not cleaned_value:
+            return qs
         method_name = f"filter_queryset_{self.name}"
         method = getattr(self.listing, method_name, None)
         if not method and self.filter_queryset_method:

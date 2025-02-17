@@ -269,7 +269,7 @@ class RecordManager:
             if not order_by:
                 if lsg.gb_cols:
                     # if "group by" feature activated
-                    order_by = lsg.gb_cols_names
+                    order_by = lsg.gb_queryset_fields
                 else:
                     order_by = ["pk"]
         return qs.order_by(*order_by)

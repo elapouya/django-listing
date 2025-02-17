@@ -6,7 +6,6 @@
 
 import collections
 import logging
-import pprint
 import re
 from urllib.parse import urlsplit, urlunsplit, quote
 
@@ -50,8 +49,6 @@ from .record import RecordManager
 from .theme_config import ThemeAttribute, ThemeTemplate
 from .toolbar import TOOLBAR_PARAMS_KEYS, Toolbar
 from .utils import init_dicts_from_class
-
-pp = pprint.PrettyPrinter(indent=4)
 
 __all__ = ["ListingVariations", "Listing", "DivListing", "logger"]
 
@@ -797,7 +794,14 @@ class Listing(ListingBase):
             self.gb_model_filters_mapping = {
                 mfn2f[c].input_name: c for c in gb_cols_names if c in mfn2f
             }
-            gb_annotate_cols = {"count": Count(gb_cols_names[0])}
+            self.gb_queryset_fields = [
+                # As col as not been initialized yet (and cannot do it here),
+                # have to manually extract col.data_key and col.name
+                (col.init_kwargs.get("data_key") or col.init_args[0]).replace(".", "__")
+                for name in gb_cols_names
+                if (col := self.columns.get(name))
+            ]
+            gb_annotate_cols = {"count": Count(self.gb_queryset_fields[0])}
             gb_annotate_cols_names = self.gb_annotate_cols
             if isinstance(gb_annotate_cols_names, str):
                 gb_annotate_cols_names = map(
@@ -822,7 +826,9 @@ class Listing(ListingBase):
             self.columns = Columns(*gb_cols)
             self.select_columns = None
             self.exclude_columns = None
-            self.data = self.data.values(*gb_cols_names).annotate(**gb_annotate_cols)
+            self.data = self.data.values(*self.gb_queryset_fields).annotate(
+                **gb_annotate_cols
+            )
             if not self.sort:
                 self.sort = [gb_cols_names[0]]
 
