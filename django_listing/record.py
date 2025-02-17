@@ -8,17 +8,17 @@ import collections
 import os
 import re
 import types
-from urllib.parse import quote_plus, quote
+from urllib.parse import quote_plus
 
 from django.core.serializers.json import Serializer
 from django.db import models
-from django.db.models import F, Model, Count
+from django.db.models import F, Model
 from django.db.models.query import QuerySet
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
-from .utils import to_js_timestamp
 
 from .exceptions import *
+from .utils import to_js_timestamp
 
 __all__ = [
     "RecordManager",
@@ -200,6 +200,15 @@ class RecordManager:
                 pk2obj = {obj.pk: obj for obj in objs}
                 for rec in records:
                     rec.set(col_name, pk2obj.get(rec[col_name]))
+            # Remap col where data_key is not part of the main model
+            for col in lsg.columns:
+                if "." in col.data_key or "__" in col.data_key:
+                    for rec in records:
+                        key = col.data_key.replace(".", "__")
+                        val = rec.get_in_obj(key)
+                        rec.set(col.data_key, val)
+                        if key != col.data_key:
+                            del rec[key]
 
     def current_page(self):
         if not self._records:
@@ -345,6 +354,9 @@ class Record:
     def get_object(self):
         return self._obj
 
+    def get_in_obj(self, key, default=None):
+        return self._obj.get(key, default)
+
     def get_form_serialized_cols(self, obj, cols):
         data = {}
         for col in cols:
@@ -470,6 +482,9 @@ class Record:
 
     def get(self, key, default=None):
         obj = self._obj
+        # If group by is activated, read directly, do not recurse
+        if self._listing.gb_cols:
+            return obj.get(key, default)
         try:
             if isinstance(key, int):
                 obj = obj[key]
@@ -516,6 +531,9 @@ class Record:
 
     def __getitem__(self, item):
         return self.get(item)
+
+    def __delitem__(self, key):
+        del self._obj[key]
 
     def set(self, item, value):
         if isinstance(self._obj, dict):
