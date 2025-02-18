@@ -10,6 +10,7 @@ import re
 import types
 from urllib.parse import quote_plus
 
+from django.core.exceptions import FieldDoesNotExist
 from django.core.serializers.json import Serializer
 from django.db import models
 from django.db.models import F, Model
@@ -17,6 +18,7 @@ from django.db.models.query import QuerySet
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
+from . import FILTER_QUERYSTRING_PREFIX
 from .exceptions import *
 from .utils import to_js_timestamp
 
@@ -185,30 +187,38 @@ class RecordManager:
         if lsg.editable and lsg.editing:
             self.bind_formset()
 
+    def group_by_model_field_map(self, records, col, model, field):
+        try:
+            if "__" in field:
+                # if field is "aa__bb__cc"
+                # then left = aa and right == bb__cc
+                left, right = re.match(r"^(.*?)(?:__)(.*?)$", field).groups()
+                model_field = model._meta.get_field(left)
+                if model_field.__class__.__name__ == "ForeignKey":
+                    # recurse to the right part of the field
+                    self.group_by_model_field_map(
+                        records, col, model_field.related_model, right
+                    )
+            else:
+                model_field = model._meta.get_field(field)
+                if model_field.__class__.__name__ == "ForeignKey":
+                    # As it is a group by queryset, ForeignKey's does not give object
+                    # But only their PK's, so translating that into objects...
+                    rec_key = col.data_key
+                    pks = [rec.get(rec_key) for rec in records]
+                    objs = model_field.related_model.objects.filter(pk__in=pks)
+                    pk2obj = {obj.pk: obj for obj in objs}
+                    for rec in records:
+                        rec.set(col.data_key, pk2obj.get(rec.get(rec_key)))
+        except FieldDoesNotExist:
+            pass
+
     def group_by_foreignkey_object_map(self, records):
         lsg = self.listing
         if lsg.gb_cols:
-            from . import ForeignKeyColumn  # local import to avoid circular import
-
-            # Remap model instances if any:
-            fk_cols = [c for c in lsg.columns if isinstance(c, ForeignKeyColumn)]
-            for col in fk_cols:
-                col_name = col.name
-                model = col.model_field.related_model
-                pks = [rec.get(col_name) for rec in records]
-                objs = model.objects.filter(pk__in=pks)
-                pk2obj = {obj.pk: obj for obj in objs}
-                for rec in records:
-                    rec.set(col_name, pk2obj.get(rec[col_name]))
             # Remap col where data_key is not part of the main model
             for col in lsg.columns:
-                if "." in col.data_key or "__" in col.data_key:
-                    for rec in records:
-                        key = col.data_key.replace(".", "__")
-                        val = rec.get_in_obj(key)
-                        rec.set(col.data_key, val)
-                        if key != col.data_key:
-                            del rec[key]
+                self.group_by_model_field_map(records, col, lsg.model, col.data_key)
 
     def current_page(self):
         if not self._records:
@@ -362,8 +372,8 @@ class Record:
         for col in cols:
             data_key = col.data_key
             final_object = None
-            if "." in data_key:
-                attr, foreign_attr = data_key.split(".", maxsplit=1)
+            if "__" in data_key:
+                attr, foreign_attr = data_key.split("__", maxsplit=1)
                 foreign_object = getattr(obj, attr, None)
                 final_object = getattr(foreign_object, foreign_attr, None)
             else:
@@ -477,7 +487,7 @@ class Record:
                 val = self.get(rec_key)
                 if isinstance(val, Model):
                     val = val.pk
-                kwargs[fname] = val
+                kwargs[f"{FILTER_QUERYSTRING_PREFIX}{fname}"] = val
         return self._listing.get_url(**kwargs)
 
     def get(self, key, default=None):
@@ -490,7 +500,7 @@ class Record:
                 obj = obj[key]
             else:
                 key, *filter_names = key.split("|", 1)
-                for subkey in re.split(r"\.|__", key):
+                for subkey in key.split("__"):
                     if "|" in subkey:
                         subkey, *filter_names = subkey.split("|", 1)
                     if subkey.isdigit():

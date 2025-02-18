@@ -78,6 +78,8 @@ __all__ = [
 COLUMNS_PARAMS_KEYS = {
     "aggregation",
     "ascending_by_default",
+    "attached_filter",
+    "attached_filter_initial",
     "cell_attrs",
     "cell_edit_tpl",
     "cell_tpl",
@@ -328,7 +330,7 @@ class Columns(list):
                 col_name = re.sub(":.*$", "", col_name)
             if "." in col_name:
                 col_name = col_name.replace(".", "__")
-                data_key = col_name.replace("__", ".")
+                data_key = col_name
                 col = Column(col_name, data_key=data_key)
                 col.bind_to_listing(listing)
                 cols.append(col)
@@ -556,6 +558,7 @@ class Column(metaclass=ColumnMeta):
 
     aggregation = None
     ascending_by_default = True
+    attached_filter = None
     can_edit = False
     cell_tpl = None
     cell_edit_tpl = None
@@ -642,6 +645,7 @@ class Column(metaclass=ColumnMeta):
                 "footer_attrs",
                 "widget_attrs",
                 "form_field_widget_params",
+                "attached_filter_initial",
             ],
         )
 
@@ -665,10 +669,11 @@ class Column(metaclass=ColumnMeta):
         self.apply_template_kwargs()
         if self.data_key is None:
             self.data_key = self.name
+        self.data_key = self.data_key.replace(".", "__")
         if listing.model:
             try:
-                if "." in self.data_key:
-                    attr, foreign_attr = self.data_key.split(".", maxsplit=1)
+                if "__" in self.data_key:
+                    attr, foreign_attr = self.data_key.split("__", maxsplit=1)
                     f = listing.model._meta.get_field(attr)
                     f = f.related_model._meta.get_field(foreign_attr)
                 else:
@@ -1736,6 +1741,20 @@ class LinkObjectColumn(LinkColumn):
         return rec.get_href()
 
 
+class LinkValueObjectColumn(LinkColumn):
+    editable = False
+
+    def get_href(self, rec, ctx, value):
+        if not isinstance(value, models.Model):
+            return None
+        try:
+            return value.get_absolute_url()
+        except AttributeError:
+            raise NotImplementedError(
+                f"You have to define a get_absolute_url() method for {value.__class__.__name__}"
+            )
+
+
 class ForeignKeyColumn(LinkColumn):
     from_model_field_classes = (models.ForeignKey,)
     form_field_class = forms.ModelChoiceField
@@ -1924,8 +1943,9 @@ class GroupByFilterColumn(Column):
 
     def action_filter(self, rec):
         url = rec.get_url(
-            filters=self.listing.gb_model_filters_mapping,
+            filters=self.listing.gb_filters_rec_key,
             without="gb_cols,gb_annotate_cols,sort,page,per_page",
+            **self.listing.gb_filters_initial,
         )
         out = f'<a class="{self.theme_button_link_class} gb-filter" href="{url}"'
         if self.link_target:

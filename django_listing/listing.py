@@ -26,6 +26,7 @@ from django_listing import (
     EXPORT_FORMATS_KEEP_ORIGINAL_TYPE,
     EXPORT_FORMATS_USE_COL_NAME,
     EXPORT_EXCEL_SANITIZE_RE,
+    FILTER_QUERYSTRING_PREFIX,
 )
 
 from .columns import (
@@ -203,7 +204,7 @@ LISTING_PARAMS_KEYS = {
     "variations",
 }
 
-attached_formSET_PREFIX = "listing"
+attached_formset_prefix = "listing"
 
 LISTING_ANNOTATIONS = {
     "min": (pgettext_lazy("abbreviation", "Min"), Min),
@@ -632,6 +633,7 @@ class Listing(ListingBase):
         self._have_to_refresh = False
         self.columns_sort_ascending = {}
         self.columns_sort_list = []
+        self.gb_filters_initial = {}
 
         # listing initialisation must be in 2 steps because when a class is
         # passed to a template, it is automatically instanciated by Django
@@ -788,12 +790,25 @@ class Listing(ListingBase):
             )
             self.gb_cols_names = gb_cols_names
             gb_cols = [self.columns.get(cname) for cname in gb_cols_names]
+            self.gb_filters_rec_key = {
+                # equivalent to (c.attached_filter or c.name): (c.data_key or c.name)
+                # but cannot do that here as columns are not totally initialized yet
+                (c.init_kwargs.get("attached_filter") or c.init_args[0]): (
+                    c.data_key or c.init_args[0]
+                )
+                for c in gb_cols
+            }
+            for c in gb_cols:
+                # equivalent to c.attached_filter_initial
+                attached_filter_initial = (
+                    c.init_kwargs.get("attached_filter_initial")
+                    or getattr(self, "columns_attached_filter_initial", None)
+                    or {}
+                )
+                for k, v in attached_filter_initial.items():
+                    self.gb_filters_initial[FILTER_QUERYSTRING_PREFIX + k] = v
             if self.gb_count_layout == "begin":
                 gb_cols.append(IntegerColumn("count"))
-            mfn2f = self.filters.modelfieldname2filter
-            self.gb_model_filters_mapping = {
-                mfn2f[c].input_name: c for c in gb_cols_names if c in mfn2f
-            }
             self.gb_queryset_fields = [
                 # As col as not been initialized yet (and cannot do it here),
                 # have to manually extract col.data_key and col.name
@@ -1568,7 +1583,7 @@ class Listing(ListingBase):
                 post_data,
                 post_files,
                 initial=self.get_formset_initial_values(),
-                prefix="{}{}".format(attached_formSET_PREFIX, self.suffix),
+                prefix="{}{}".format(attached_formset_prefix, self.suffix),
             )
             for form in self._formset:
                 form.listing = self

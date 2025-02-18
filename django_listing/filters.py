@@ -13,7 +13,7 @@ from django import forms
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db import models
 from django.db.models import QuerySet
-from django.forms import FileField
+from django.forms import FileField, CheckboxInput
 from django.template import loader
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy, pgettext_lazy
@@ -269,9 +269,6 @@ class Filters(list):
                 filtr.bind_to_listing(listing)
                 filters.append(filtr)
         filters.name2filter = {f.name: f for f in filters if isinstance(f, Filter)}
-        filters.modelfieldname2filter = {
-            f.from_model_field_name: f for f in filters if isinstance(f, Filter)
-        }
         filters.listing = listing
         # extract labels and endings from given layout
         for row in chain(filters.form_layout, filters.form_layout_advanced):
@@ -365,6 +362,14 @@ class Filters(list):
                 (FiltersBaseForm,),
                 {"base_fields": fields},
             )
+            if self.listing.request.method == "POST":
+                for field_name, field in fields.items():
+                    if isinstance(field.widget, CheckboxInput):
+                        if field_name not in self.listing.request.POST:
+                            # Need to do that because
+                            # checkbox does not return off values
+                            if field_name in self.listing.request_data:
+                                del self.listing.request_data[field_name]
             self._form = form_class(self.listing.request_data or None, initial=initial)
             self._form.listing = self.listing
         return self._form
@@ -553,6 +558,7 @@ class Filter(metaclass=FilterMeta):
         self.apply_template_kwargs()
         if self.filter_key is None:
             self.filter_key = self.name
+        self.filter_key = self.filter_key.replace(".", "__")
         if self.field_name is None:
             self.field_name, *dummy = self.filter_key.split("__")
         if self.format_label is None:
