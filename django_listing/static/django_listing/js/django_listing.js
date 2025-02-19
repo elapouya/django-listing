@@ -259,7 +259,6 @@ function djlst_post_attached_form(event) {
         return $(this).attr("data-pk")
     }).get().join(',');
     let ajax_url = listing_div.attr("ajax_url");
-    // listing_div.addClass("spinning");
     let listing_id = listing_div.attr("id");
     let listing_suffix = listing_div.attr("listing-suffix");
     let listing_target = nav_obj.attr("listing-target");
@@ -572,10 +571,19 @@ function djlst_selection_changed_hook(e) {
             selected_items.text(selected_items.attr('many').replace('{nb}', count));
         }
     }
+
+    const all_count = listing.attr("nb-rows");
+    const selected_pill = `<span class="badge rounded-pill text-bg-dark">${count}</span>`
+    const all_pill = `<span class="badge rounded-pill text-bg-dark">${all_count}</span>`
+    $(".attached-form button.delete span.button-extra-middle").html(selected_pill);
+    $(".attached-form button.update span.button-extra-middle").html(selected_pill);
+    $(".attached-form button.delete_all span.button-extra-middle").html(all_pill);
+    $(".attached-form button.update_all span.button-extra-middle").html(all_pill);
+
     $(document).trigger("djlst_selection_changed", {
         listing: listing,
         selected_count: count,
-        all_count:listing.attr("nb-rows")
+        all_count: all_count
     });
 }
 
@@ -702,6 +710,15 @@ function djlst_listing_on_load() {
         });
     });
     $(".django-listing-container.format-numbers .type-Decimal,.django-listing-container.format-numbers .type-int,.django-listing-container.format-numbers .type-float,.django-listing-container.format-numbers .format-number").djlst_format_digits();
+
+    $(".django-listing-container").each(function () {
+        const $listing = $(this);
+        const all_count = $listing.attr("nb-rows");
+        const all_pill = `<span class="badge rounded-pill text-bg-dark">${all_count}</span>`
+        const $attached_form = $('body form[related-listing="' + this.id + '"]');
+        $attached_form.find("button.delete_all span.button-extra-middle").html(all_pill);
+        $attached_form.find("button.update_all span.button-extra-middle").html(all_pill);
+    });
 }
 
 function djlst_follow_file_generation() {
