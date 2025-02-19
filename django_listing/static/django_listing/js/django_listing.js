@@ -228,12 +228,12 @@ function djlst_post_attached_form(event) {
         listing_div.find('.row-container').addClass('selected');
     }
     if (action_button == "update_all" || (action_button == "update" && selected_rows.length > 1)) {
-        const visibleCheckboxCount = attached_form.find('input:checkbox:visible').length;
+        const visibleCheckboxCount = attached_form.find('input.mass-op-cb:visible').length;
         if (visibleCheckboxCount == 0) {
                 djlst_show_mass_op_cbs(attached_form);
                 djlst_clear_form(attached_form);
         }
-        const checkedCheckboxCount = attached_form.find('input:checkbox:checked').length;
+        const checkedCheckboxCount = attached_form.find('input.mass-op-cb:checked').length;
         if (checkedCheckboxCount == 0 || visibleCheckboxCount == 0) {
             setTimeout(function() { alert(use_mass_cb_msg);}, 50);
             return;
