@@ -17,7 +17,7 @@
             {% endfor %}
             </ul>
         {% endif %}
-
+        <div class="form-fields"><div class="form-fields-inner">
         {% for row in attached_form.layout %}
             <div class="form-row d-lg-flex">
                 {% for field_name in row %}
@@ -49,6 +49,7 @@
                 {% endfor %}
             </div>
         {% endfor %}
+        </div></div>
 
         <div class="form-buttons">
             <div class="form-buttons-lines">

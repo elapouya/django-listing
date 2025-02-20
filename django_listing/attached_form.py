@@ -44,6 +44,7 @@ ATTACHED_FORM_PARAMS_KEYS = {
     "have_empty_choice",
     "force_select",
     "layout",
+    "layout_name",
     "attrs",
     "buttons",
     "ListingBaseForm",
@@ -166,6 +167,7 @@ class AttachedForm:
     update_all_button_label = pgettext_lazy("Attached form", "Update ALL")
     template_name = ThemeTemplate("attached_form.html")
     layout = None
+    layout_name = None
     listing = None
     buttons = "reset,submit"
     name = "attached_form"
@@ -228,6 +230,10 @@ class AttachedForm:
     def init(self, listing, *args, **kwargs):
         self.set_listing(listing)
         self.set_kwargs(**kwargs)
+        if isinstance(self.layout_name, str):
+            dynamic_layout = kwargs.get(f"layout_{self.layout_name}")
+            if dynamic_layout:
+                self.layout = dynamic_layout
         if isinstance(self.layout, str):
             # transform layout string into list of lists
             self.layout = list(map(lambda s: s.split(","), self.layout.split(";")))
