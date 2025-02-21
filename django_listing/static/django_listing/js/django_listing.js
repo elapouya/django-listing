@@ -575,10 +575,8 @@ function djlst_selection_changed_hook(e) {
     const all_count = listing.attr("nb-rows");
     const selected_pill = `<span class="badge rounded-pill text-bg-dark">${count}</span>`
     const all_pill = `<span class="badge rounded-pill text-bg-dark">${all_count}</span>`
-    $(".attached-form button.delete span.button-extra-middle").html(selected_pill);
-    $(".attached-form button.update span.button-extra-middle").html(selected_pill);
-    $(".attached-form button.delete_all span.button-extra-middle").html(all_pill);
-    $(".attached-form button.update_all span.button-extra-middle").html(all_pill);
+    $(".attached-form button.selected-count span.button-extra-middle").html(selected_pill);
+    $(".attached-form button.all-count span.button-extra-middle").html(all_pill);
 
     $(document).trigger("djlst_selection_changed", {
         listing: listing,
@@ -716,8 +714,7 @@ function djlst_listing_on_load() {
         const all_count = $listing.attr("nb-rows");
         const all_pill = `<span class="badge rounded-pill text-bg-dark">${all_count}</span>`
         const $attached_form = $('body form[related-listing="' + this.id + '"]');
-        $attached_form.find("button.delete_all span.button-extra-middle").html(all_pill);
-        $attached_form.find("button.update_all span.button-extra-middle").html(all_pill);
+        $attached_form.find("button.all-count span.button-extra-middle").html(all_pill);
     });
 }
 

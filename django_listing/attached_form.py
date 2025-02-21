@@ -20,7 +20,7 @@ from .exceptions import (
 )
 from .html_attributes import HTMLAttributes
 from .theme_config import ThemeTemplate, ThemeAttribute
-from .utils import init_dicts_from_class
+from .utils import init_dicts_from_class, NOT_PRESENT
 
 __all__ = ["ATTACHED_FORM_PARAMS_KEYS", "AttachedForm"]
 
@@ -29,15 +29,6 @@ ATTACHED_FORM_PARAMS_KEYS = {
     "action",
     "attached_form_name",
     "display_errors",
-    "reset_button_label",
-    "submit_button_label",
-    "delete_all_button_label",
-    "delete_button_label",
-    "clear_button_label",
-    "insert_button_label",
-    "duplicate_button_label",
-    "update_button_label",
-    "update_all_button_label",
     "submit_action",
     "template_name",
     "django_form_class",
@@ -48,24 +39,6 @@ ATTACHED_FORM_PARAMS_KEYS = {
     "attrs",
     "buttons",
     "ListingBaseForm",
-    "theme_reset_button_class",
-    "theme_submit_button_class",
-    "theme_delete_all_button_class",
-    "theme_delete_button_class",
-    "theme_clear_button_class",
-    "theme_insert_button_class",
-    "theme_duplicate_button_class",
-    "theme_update_button_class",
-    "theme_update_all_button_class",
-    "theme_reset_button_icon",
-    "theme_submit_button_icon",
-    "theme_delete_all_button_icon",
-    "theme_delete_button_icon",
-    "theme_clear_button_icon",
-    "theme_insert_button_icon",
-    "theme_duplicate_button_icon",
-    "theme_update_button_icon",
-    "theme_update_all_button_icon",
 }
 
 
@@ -219,13 +192,25 @@ class AttachedForm:
     def set_listing(self, listing):
         self.listing = listing
 
+    def get_param(self, k, default=NOT_PRESENT):
+        if hasattr(self, k):
+            return getattr(self, k)
+        elif k in self.init_kwargs:
+            return self.init_kwargs[k]
+        elif hasattr(self.listing, key := f"attached_form_{k}"):
+            return getattr(self.listing, key)
+        elif hasattr(self.listing, key := f"{self.name}_{k}"):
+            return getattr(self.listing, key)
+        return default
+
     def set_kwargs(self, **kwargs):
         for k in ATTACHED_FORM_PARAMS_KEYS:
-            listing_key = "{}_{}".format(self.name, k)
             if k in kwargs:
                 setattr(self, k, kwargs[k])
-            elif hasattr(self.listing, listing_key):
-                setattr(self, k, getattr(self.listing, listing_key))
+            elif hasattr(self.listing, key := f"attached_form_{k}"):
+                setattr(self, k, getattr(self.listing, key))
+            elif hasattr(self.listing, key := f"{self.name}_{k}"):
+                setattr(self, k, getattr(self.listing, key))
 
     def init(self, listing, *args, **kwargs):
         self.set_listing(listing)
@@ -271,26 +256,15 @@ class AttachedForm:
                 if isinstance(button, str):
                     # Will try to replace with a relevant tuple
                     # must be defined has (action, label, icon css class, button css class)
-                    if button == "reset":
-                        button = (
-                            "reset",
-                            self.reset_button_label,
-                            self.theme_reset_button_icon,
-                            self.theme_reset_button_class,
-                        )
-                    elif button == "submit":
-                        button = (
-                            self.submit_action,
-                            self.submit_button_label,
-                            self.theme_submit_button_icon,
-                            self.theme_submit_button_class,
-                        )
-                    elif hasattr(self, f"{button}_button_label"):
+                    if button == "submit":
+                        button = self.submit_action
+                    label = self.get_param(f"{button}_button_label")
+                    if label != NOT_PRESENT:
                         button = (
                             button,
-                            getattr(self, f"{button}_button_label"),
-                            getattr(self, f"theme_{button}_button_icon", ""),
-                            getattr(self, f"theme_{button}_button_class", ""),
+                            self.get_param(f"{button}_button_label"),
+                            self.get_param(f"theme_{button}_button_icon", ""),
+                            self.get_param(f"theme_{button}_button_class", ""),
                         )
                     else:
                         button = (button, button.capitalize(), None, None)

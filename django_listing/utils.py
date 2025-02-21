@@ -98,4 +98,10 @@ class JsonDirect(str):
     pass
 
 
+class NotPresent:
+    pass
+
+
+NOT_PRESENT = NotPresent()
+
 # TODO : create functions to add sum/min/max/avg columns to a sequence
