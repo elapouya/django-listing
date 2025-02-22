@@ -224,7 +224,7 @@ class AttachedForm:
         self.set_listing(listing)
         self.set_kwargs(**kwargs)
         layout_key = f"layout_{self.layout_name}" if self.layout_name else "layout"
-        self.dynamic_layout = getattr(self, layout_key)
+        self.dynamic_layout = getattr(self, layout_key, self.layout)
         if isinstance(self.dynamic_layout, str):
             # transform layout string into list of lists
             self.dynamic_layout = list(
