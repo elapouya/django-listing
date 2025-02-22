@@ -18,7 +18,7 @@
             </ul>
         {% endif %}
         <div class="form-fields"><div class="form-fields-inner">
-        {% for row in attached_form.layout %}
+        {% for row in attached_form.dynamic_layout %}
             <div class="form-row d-lg-flex">
                 {% for field_name in row %}
                     {% get_form_field form field_name as field %}

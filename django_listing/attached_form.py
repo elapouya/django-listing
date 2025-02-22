@@ -211,22 +211,30 @@ class AttachedForm:
                 setattr(self, k, getattr(self.listing, key))
             elif hasattr(self.listing, key := f"{self.name}_{k}"):
                 setattr(self, k, getattr(self.listing, key))
+        for k, v in kwargs.items():
+            if k.startswith("layout_"):
+                setattr(self, k, v)
+        for k, v in self.listing.__dict__.items():
+            if k.startswith("attached_form_layout_"):
+                setattr(self, k[len("attached_form_") :], v)
 
     def init(self, listing, *args, **kwargs):
+        if not self.layout_name:
+            self.layout_name = listing.request.POST.get("attached_form_layout_name")
         self.set_listing(listing)
         self.set_kwargs(**kwargs)
-        if isinstance(self.layout_name, str):
-            dynamic_layout = kwargs.get(f"layout_{self.layout_name}")
-            if dynamic_layout:
-                self.layout = dynamic_layout
-        if isinstance(self.layout, str):
+        layout_key = f"layout_{self.layout_name}" if self.layout_name else "layout"
+        self.dynamic_layout = getattr(self, layout_key)
+        if isinstance(self.dynamic_layout, str):
             # transform layout string into list of lists
-            self.layout = list(map(lambda s: s.split(","), self.layout.split(";")))
-        if self.layout:
+            self.dynamic_layout = list(
+                map(lambda s: s.split(","), self.dynamic_layout.split(";"))
+            )
+        if self.dynamic_layout:
             self.listing.form_model_fields = []
             self.listing.form_serialize_cols = []
             self.listing.form_no_autofill_cols = []
-            for row in self.layout:
+            for row in self.dynamic_layout:
                 for field_name in row:
                     field_name = field_name.strip()
                     col = self.listing.columns.get(field_name)
@@ -237,9 +245,10 @@ class AttachedForm:
                             self.listing.form_serialize_cols.append(col)
                         if col.form_no_autofill:
                             self.listing.form_no_autofill_cols.append(col.name)
-            layout_str = ";".join(map(lambda l: ",".join(l), self.layout))
+            layout_str = ";".join(map(lambda l: ",".join(l), self.dynamic_layout))
             self.listing.add_form_input_hiddens(
                 attached_form_layout=layout_str,
+                attached_form_layout_name=self.layout_name,
                 attached_form_name=self.name,
                 action=self.action,
                 **self.get_form_hiddens(),
@@ -319,11 +328,11 @@ class AttachedForm:
 
     def create_form_from_layout(self, **kwargs):
         fields = {}
-        if not self.layout:
+        if not self.dynamic_layout:
             raise InvalidAttachedForm(
                 _("You must specify a list of columns names in the form layout")
             )
-        for row in self.layout:
+        for row in self.dynamic_layout:
             for field_name in row:
                 field = self.get_form_field_from_layout_field(field_name, **kwargs)
                 fields[field_name] = field

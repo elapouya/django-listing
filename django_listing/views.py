@@ -334,13 +334,20 @@ class ListingViewMixin:
                 django_form = form_class(listing.request.POST, listing.request.FILES)
         else:
             layout = listing.request.POST.get("attached_form_layout")
+            layout_name = listing.request.POST.get("attached_form_layout_name")
             name = listing.request.POST.get("attached_form_name")
             if not layout or not name:
                 raise InvalidAttachedForm(
                     "At least a form layout and name are mandatory in POST data "
                     "to build a relevant form instance"
                 )
-            attached_form = AttachedForm(name=name, layout=layout)
+            layout_key = f"layout_{layout_name}" if layout_name else "layout"
+            kwargs = {
+                "name": name,
+                layout_key: layout,
+                "layout_name": layout_name,
+            }
+            attached_form = AttachedForm(**kwargs)
             attached_form = attached_form.bind_to_listing(listing)
             django_form = attached_form.get_form()
         return django_form
@@ -593,6 +600,7 @@ class ListingViewMixin:
         self.request.POST = dict(
             csrfmiddlewaretoken=self.request.POST.get("csrfmiddlewaretoken")
         )
+        attached_form.init(listing, layout_name="")
         form_html = attached_form.render(self.ajax_request_context)
         return self.json_response({"attached_form": form_html})
 
