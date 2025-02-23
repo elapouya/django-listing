@@ -258,6 +258,11 @@ def filters_form_field(listing, name):
 
 
 @register.simple_tag()
+def is_str(obj):
+    return isinstance(obj, str)
+
+
+@register.simple_tag()
 def get_filter(listing, name):
     return listing.filters.get(name)
 

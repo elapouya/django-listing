@@ -739,4 +739,92 @@ a.cell-filter {
     }
 }
 
+#content-body:has(.attached-form-container.flipped) > *:not(.attached-form-container) {
+  pointer-events: none;
+  opacity: 0.2;
+}
+
+@keyframes flipIn3D {
+    0% {
+        transform: rotateY(90deg);
+    }
+    100% {
+        transform: rotateY(0deg);
+    }
+}
+
+@keyframes flipOut3D {
+    0% {
+        transform: rotateY(0deg);
+    }
+    100% {
+        transform: rotateY(-90deg);
+    }
+}
+
+.attached-form-container {
+    .form-buttons {
+        display: flex;
+        flex-grow: 1;
+        align-items: end;
+
+        .form-buttons-lines {
+            display: flex;
+            align-items: stretch;
+            flex-direction: column;
+            flex-grow: 1;
+
+            .form-buttons-line {
+                display: flex;
+                align-content: end;
+                flex-grow: 1;
+
+                .spacer {
+                    min-width: 10px;
+                }
+
+                & > button {
+                    flex: 1;
+                    margin: 0 3px;
+                    padding-left: 8px;
+                    padding-right: 8px;
+                }
+            }
+        }
+    }
+    &.animate {
+        padding: 5px;
+        &.flipped .form-fields {
+            position: relative;
+            perspective: 1000px;
+            perspective-origin: center;
+            transform-style: preserve-3d;
+            transform-origin: center center;
+
+            .form-fields-inner {
+                position: relative; /* Changed from absolute */
+                backface-visibility: hidden;
+                transform-style: preserve-3d;
+                transform-origin: center center;
+                animation: flipIn3D 0.3s linear forwards;
+            }
+        }
+        .form-fields.flip-out {
+            position: relative;
+            perspective: 1000px;
+            perspective-origin: center;
+            transform-style: preserve-3d;
+            transform-origin: center center;
+
+            .form-fields-inner {
+                position: relative; /* Changed from absolute */
+                backface-visibility: hidden;
+                transform-style: preserve-3d;
+                transform-origin: center center;
+                animation: flipOut3D 0.3s linear forwards;
+            }
+        }
+    }
+}
+
 

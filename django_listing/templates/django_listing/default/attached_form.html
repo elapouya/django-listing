@@ -21,30 +21,35 @@
         {% for row in attached_form.dynamic_layout %}
             <div class="form-row d-lg-flex">
                 {% for field_name in row %}
-                    {% get_form_field form field_name as field %}
-                    {% get_attachedform_col attached_form field_name as col %}
-                    {% if field %}
-                        <div class="form-field {{ field_name }} cls-{{ col.get_type }}{% if attached_form.display_errors and field.errors %} errors{% endif %}">
-                            {% if attached_form.display_errors and field.errors %}<span class="listing-icon-attention"></span> {{ field.errors }}{% endif %}
-                            <div class="label_input {{ col.form_field_input_container_css }}">
-                                {% if col.reverse_form_label_tag %}
-                                    {{ field }}{{ field.label_tag }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
-                                    {% if not col.no_mass_op %}
-                                        <input type="checkbox" name="{{ field_name }}_mass_op" value="checked" class="mass-op-cb" style="display: none">
+                    {% is_str field_name as standard_field %}
+                    {% if standard_field %}
+                        {% get_form_field form field_name as field %}
+                        {% get_attachedform_col attached_form field_name as col %}
+                        {% if field %}
+                            <div class="form-field {{ field_name }} cls-{{ col.get_type }}{% if attached_form.display_errors and field.errors %} errors{% endif %}">
+                                {% if attached_form.display_errors and field.errors %}<span class="listing-icon-attention"></span> {{ field.errors }}{% endif %}
+                                <div class="label_input {{ col.form_field_input_container_css }}">
+                                    {% if col.reverse_form_label_tag %}
+                                        {{ field }}{{ field.label_tag }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
+                                        {% if not col.no_mass_op %}
+                                            <input type="checkbox" name="{{ field_name }}_mass_op" value="checked" class="mass-op-cb" style="display: none">
+                                        {% endif %}
+                                    {% else %}
+                                        {% if not col.no_mass_op %}
+                                            <input type="checkbox" name="{{ field_name }}_mass_op" value="checked" class="mass-op-cb" style="display: none">
+                                        {% endif %}
+                                        {{ field.label_tag }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
+                                        {{ field }}
                                     {% endif %}
-                                {% else %}
-                                    {% if not col.no_mass_op %}
-                                        <input type="checkbox" name="{{ field_name }}_mass_op" value="checked" class="mass-op-cb" style="display: none">
-                                    {% endif %}
-                                    {{ field.label_tag }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
-                                    {{ field }}
+                                </div>
+                                {% if ending %}<span class="ending">{{ ending }}</span>{% endif %}
+                                {% if field.help_text %}
+                                    <p class="help">{{ field.help_text|safe }}</p>
                                 {% endif %}
                             </div>
-                            {% if ending %}<span class="ending">{{ ending }}</span>{% endif %}
-                            {% if field.help_text %}
-                                <p class="help">{{ field.help_text|safe }}</p>
-                            {% endif %}
-                        </div>
+                        {% endif %}
+                    {% else %}
+                        {{ field_name }}
                     {% endif %}
                 {% endfor %}
             </div>
@@ -56,32 +61,36 @@
                 {% for buttons_line in attached_form.buttons %}
                 <div class="form-buttons-line">
                     {% for action,label,icon,css_class in buttons_line %}
-                        {% listing_has_permission_for_action listing action as has_button_perm %}
-                        {% listing_confirm_msg_for_action listing action as confirm_msg %}
-                        {% listing_confirm_msg_nb_items_for_action listing action as confirm_msg_nb_items %}
-                        <button type="{% if action == 'reset' %}reset{% elif listing.accept_ajax %}button{% else %}submit{% endif %}"
-                                class="{{ action }}{% if not has_button_perm %} no-perm disabled{% endif %}{% if css_class %} {{ css_class }}{% endif %}"
-                                {% if confirm_msg %}confirm-msg="{{ confirm_msg }}"{% endif %}
-                                {% if confirm_msg_nb_items %}confirm-msg-nb-items="{{ confirm_msg_nb_items }}"{% endif %}
-                                {% if action != 'reset' %}name="action_button" value="{{ action }}"{% endif %}
-                                {% if label %}title="{{ label|safe }}"{% endif %}
-                        >
-                            <span class="button-icon-label">
-                            <span class="button-extra-top"></span>
-                            {% if icon %}
-                                <span class="button-icon"><span class="{{ icon }}"></span></span>
-                            {% endif %}
-                            <span class="button-extra-middle"></span>
-                            {% if label %}
-                                <span class="button-label">{{ label|safe }}</span>
-                            {% endif %}
-                            <span class="button-extra-bottom"></span>
-                            </span>
-                        </button>
+                        {% if action == "_" %}
+                            <div class="spacer"></div>
+                        {% else %}
+                            {% listing_has_permission_for_action listing action as has_button_perm %}
+                            {% listing_confirm_msg_for_action listing action as confirm_msg %}
+                            {% listing_confirm_msg_nb_items_for_action listing action as confirm_msg_nb_items %}
+                            <button type="{% if action == 'reset' %}reset{% elif listing.accept_ajax %}button{% else %}submit{% endif %}"
+                                    class="{{ action }}{% if not has_button_perm %} no-perm disabled{% endif %}{% if css_class %} {{ css_class }}{% endif %}"
+                                    {% if confirm_msg %}confirm-msg="{{ confirm_msg }}"{% endif %}
+                                    {% if confirm_msg_nb_items %}confirm-msg-nb-items="{{ confirm_msg_nb_items }}"{% endif %}
+                                    {% if action != 'reset' %}name="action_button" value="{{ action }}"{% endif %}
+                                    {% if label %}title="{{ label|safe }}"{% endif %}
+                            >
+                                <span class="button-icon-label">
+                                <span class="button-extra-top"></span>
+                                {% if icon %}
+                                    <span class="button-icon"><span class="{{ icon }}"></span></span>
+                                {% endif %}
+                                <span class="button-extra-middle"></span>
+                                {% if label %}
+                                    <span class="button-label">{{ label|safe }}</span>
+                                {% endif %}
+                                <span class="button-extra-bottom"></span>
+                                </span>
+                            </button>
+                        {% endif %}
                     {% endfor %}
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
     {% endwith %}
 </form>

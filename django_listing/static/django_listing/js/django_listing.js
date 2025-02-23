@@ -229,8 +229,8 @@ async function djlst_post_attached_form(event) {
     let listing_div = $("#" + attached_form.attr("related-listing"));
     let selected_rows = listing_div.find(".row-container.selected");
     if (!nav_obj.hasClass("flip") && attached_form_container.hasClass("flipped")) {
-        form_fields.removeClass('flip-in').addClass('flip-out');
-        await djlst_sleep(300);
+        form_fields.addClass('flip-out');
+        if (attached_form.hasClass("animate")) await djlst_sleep(300);
     }
     if (action_button == "update_all") {
         listing_div.find('.row-container').addClass('selected');
@@ -266,7 +266,7 @@ async function djlst_post_attached_form(event) {
     if (nav_obj.hasClass("flip")) {
         form_fields.addClass('flip-out');
         attached_form_container.addClass('flipped');
-        await djlst_sleep(300);
+        if (attached_form.hasClass("animate")) await djlst_sleep(300);
     }
     let selected_pks = selected_rows.map(function () {
         return $(this).attr("data-pk")
@@ -574,9 +574,9 @@ function djlst_selection_changed_hook(e) {
     let form = $("#" + listing.attr('attached-form-id'));
     let count = listing.find('.row-container.selected').length;
     if (count === 0) {
-        $(".disabled-if-no-selection").addClass("disabled");
+        $(".selected-count,.disabled-if-no-selection").addClass("disabled");
     } else {
-        $(".disabled-if-no-selection:not(.no-perm)").removeClass("disabled");
+        $(".selected-count:not(.no-perm),.disabled-if-no-selection:not(.no-perm)").removeClass("disabled");
     }
     if (count > 1) {
         djlst_clear_form(form);
@@ -740,6 +740,12 @@ function djlst_listing_on_load() {
         const all_pill = `<span class="badge rounded-pill text-bg-dark">${all_count}</span>`
         const $attached_form = $('body form[related-listing="' + this.id + '"]');
         $attached_form.find("button.all-count span.button-extra-middle").html(all_pill);
+        console.log("all_count =", all_count);
+        if (all_count === "0") {
+            $attached_form.find("button.all-count").addClass("disabled");
+        } else {
+            $attached_form.find("button.all-count").removeClass("disabled");
+        }
     });
 }
 

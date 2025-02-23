@@ -236,16 +236,24 @@ class AttachedForm:
             self.listing.form_no_autofill_cols = []
             for row in self.dynamic_layout:
                 for field_name in row:
-                    field_name = field_name.strip()
-                    col = self.listing.columns.get(field_name)
-                    if col:
-                        if col.model_field:
-                            self.listing.form_model_fields.append(col.model_field.name)
-                        if col.form_field_serialize:
-                            self.listing.form_serialize_cols.append(col)
-                        if col.form_no_autofill:
-                            self.listing.form_no_autofill_cols.append(col.name)
-            layout_str = ";".join(map(lambda l: ",".join(l), self.dynamic_layout))
+                    if isinstance(field_name, str):
+                        field_name = field_name.strip()
+                        col = self.listing.columns.get(field_name)
+                        if col:
+                            if col.model_field:
+                                self.listing.form_model_fields.append(
+                                    col.model_field.name
+                                )
+                            if col.form_field_serialize:
+                                self.listing.form_serialize_cols.append(col)
+                            if col.form_no_autofill:
+                                self.listing.form_no_autofill_cols.append(col.name)
+            layout_str = ";".join(
+                map(
+                    lambda l: ",".join(filter(lambda s: isinstance(s, str), l)),
+                    self.dynamic_layout,
+                )
+            )
             self.listing.add_form_input_hiddens(
                 attached_form_layout=layout_str,
                 attached_form_layout_name=self.layout_name,
@@ -334,8 +342,9 @@ class AttachedForm:
             )
         for row in self.dynamic_layout:
             for field_name in row:
-                field = self.get_form_field_from_layout_field(field_name, **kwargs)
-                fields[field_name] = field
+                if isinstance(field_name, str):
+                    field = self.get_form_field_from_layout_field(field_name, **kwargs)
+                    fields[field_name] = field
         form_class = type(
             "{}{}".format(self.name, self.listing.suffix),
             (self.form_base_class,),
