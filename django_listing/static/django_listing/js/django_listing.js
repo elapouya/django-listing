@@ -318,7 +318,7 @@ async function djlst_post_attached_form(event) {
                 "djlst_ajax_attached_form_loaded",
                 {listing: listing_target, form: new_attached_form, response:mixed_response}
             );
-            if (!nav_obj.hasClass("flip") && attached_form_container.hasClass("flipped")) {
+            if ((!nav_obj.hasClass("flip") || mixed_response.layout_name === "") && attached_form_container.hasClass("flipped")) {
                 setTimeout(() => {
                     attached_form_container.removeClass('flipped');
                     form_fields.removeClass('flip-out');
@@ -740,7 +740,6 @@ function djlst_listing_on_load() {
         const all_pill = `<span class="badge rounded-pill text-bg-dark">${all_count}</span>`
         const $attached_form = $('body form[related-listing="' + this.id + '"]');
         $attached_form.find("button.all-count span.button-extra-middle").html(all_pill);
-        console.log("all_count =", all_count);
         if (all_count === "0") {
             $attached_form.find("button.all-count").addClass("disabled");
         } else {

@@ -1,3 +1,8 @@
+0.10.14 (2025-02-23)
+--------------------
+- Add dynamic attached form layout
+- Add animation on attached form layout change
+
 0.10.12 (2025-02-18)
 --------------------
 - Improved Group-By

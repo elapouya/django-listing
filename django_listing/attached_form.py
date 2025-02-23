@@ -218,7 +218,12 @@ class AttachedForm:
             if k.startswith("attached_form_layout_"):
                 setattr(self, k[len("attached_form_") :], v)
 
-    def init(self, listing, *args, **kwargs):
+    def init(self, listing, purge_post_data=False, *args, **kwargs):
+        if purge_post_data:
+            listing.request.POST = dict(
+                csrfmiddlewaretoken=listing.request.POST.get("csrfmiddlewaretoken")
+            )
+        self._form = None
         if not self.layout_name:
             self.layout_name = listing.request.POST.get("attached_form_layout_name")
         self.set_listing(listing)

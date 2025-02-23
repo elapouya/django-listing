@@ -455,6 +455,11 @@ class ListingViewMixin:
                 mixed_response = process_method(
                     listing, form, instance, *args, **kwargs
                 )
+                if (
+                    "attached_form" in mixed_response
+                    and "layout_name" not in mixed_response
+                ):
+                    mixed_response["layout_name"] = listing.attached_form.layout_name
             if getattr(form, "errors", False):
                 raise ListingException(
                     f"You cannot add errors in form object inside "
@@ -596,11 +601,7 @@ class ListingViewMixin:
 
     def manage_attached_form_clear_action(self, listing, *args, **kwargs):
         attached_form = listing.attached_form
-        # Purge all post data except csrf token
-        self.request.POST = dict(
-            csrfmiddlewaretoken=self.request.POST.get("csrfmiddlewaretoken")
-        )
-        attached_form.init(listing, layout_name="")
+        attached_form.init(listing, purge_post_data=True, layout_name="")
         form_html = attached_form.render(self.ajax_request_context)
         return self.json_response({"attached_form": form_html})
 
