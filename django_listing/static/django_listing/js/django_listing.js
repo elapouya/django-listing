@@ -4,6 +4,8 @@ function djlst_format_number(val) {
     return formattedText;
 }
 
+const djlst_sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 $.fn.djlst_format_digits = function() {
     return this.each(function() {
         const $element = $(this);
@@ -216,14 +218,20 @@ function djlst_hide_mass_op_cbs(form) {
     djlst_mass_op_cbs_displayed = false;
 }
 
-function djlst_post_attached_form(event) {
+async function djlst_post_attached_form(event) {
     event.preventDefault();
-    let nav_obj = $(this);
-    let action_button = nav_obj.val();
-    let attached_form = nav_obj.closest("form.listing-form");
+    const nav_obj = $(this);
+    const form_fields = nav_obj.closest('form').find('.form-fields');
+    const action_button = nav_obj.val();
+    const attached_form = nav_obj.closest("form.listing-form");
+    const attached_form_container = attached_form.closest(".attached-form-container");
     let attached_form_id = attached_form.attr("id");
     let listing_div = $("#" + attached_form.attr("related-listing"));
     let selected_rows = listing_div.find(".row-container.selected");
+    if (!nav_obj.hasClass("flip") && attached_form_container.hasClass("flipped")) {
+        form_fields.removeClass('flip-in').addClass('flip-out');
+        await djlst_sleep(300);
+    }
     if (action_button == "update_all") {
         listing_div.find('.row-container').addClass('selected');
     }
@@ -254,6 +262,11 @@ function djlst_post_attached_form(event) {
         if (selected_rows.length >= confirm_msg_nb_items) {
             if (!confirm(confirm_msg)) return;
         }
+    }
+    if (nav_obj.hasClass("flip")) {
+        form_fields.addClass('flip-out');
+        attached_form_container.addClass('flipped');
+        await djlst_sleep(300);
     }
     let selected_pks = selected_rows.map(function () {
         return $(this).attr("data-pk")
@@ -289,6 +302,12 @@ function djlst_post_attached_form(event) {
             if (mixed_response.attached_form) {
                 attached_form.replaceWith(mixed_response.attached_form);
                 djlst_selection_changed_hook(listing_div);
+                if (attached_form_container.hasClass("flipped")) {
+                    new_attached_form = $("#" + attached_form_id);
+                    new_attached_form.find(".mass-op-cb").hide();
+                    new_attached_form.removeClass("mass-op-cbs-displayed");
+                    djlst_mass_op_cbs_displayed = false;
+                }
             }
             if (mixed_response.object_pk) {
                 new_attached_form = $("#" + attached_form_id);
@@ -299,6 +318,12 @@ function djlst_post_attached_form(event) {
                 "djlst_ajax_attached_form_loaded",
                 {listing: listing_target, form: new_attached_form, response:mixed_response}
             );
+            if (!nav_obj.hasClass("flip") && attached_form_container.hasClass("flipped")) {
+                setTimeout(() => {
+                    attached_form_container.removeClass('flipped');
+                    form_fields.removeClass('flip-out');
+                }, 300);
+            }
         },
         error: function (response) {
             text = "An error occured.\n\nIndications :\n\n" + response.responseText;
