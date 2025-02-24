@@ -378,6 +378,13 @@ class Record:
                 final_object = getattr(foreign_object, foreign_attr, None)
             else:
                 final_object = getattr(obj, data_key, None)
+            if (
+                isinstance(final_object, int)
+                # use class name to avoid cyclic import
+                and col.__class__.__name__ == "AutoCompleteColumn"
+                and col.queryset
+            ):
+                final_object = col.queryset.filter(pk=final_object).first()
             if final_object is None:
                 continue
             if isinstance(final_object, Model):

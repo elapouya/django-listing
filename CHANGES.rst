@@ -1,3 +1,7 @@
+0.10.15 (2025-02-24)
+--------------------
+- Improve object serialization in listing
+
 0.10.14 (2025-02-23)
 --------------------
 - Add dynamic attached form layout
