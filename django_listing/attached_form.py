@@ -212,10 +212,12 @@ class AttachedForm:
             elif hasattr(self.listing, key := f"{self.name}_{k}"):
                 setattr(self, k, getattr(self.listing, key))
         for k, v in kwargs.items():
-            if k.startswith("layout_"):
+            if k.startswith("layout_") or k.startswith("theme_"):
                 setattr(self, k, v)
         for k, v in self.listing.__dict__.items():
-            if k.startswith("attached_form_layout_"):
+            if k.startswith("attached_form_layout_") or k.startswith(
+                "attached_form_theme_"
+            ):
                 setattr(self, k[len("attached_form_") :], v)
 
     def init(self, listing, purge_post_data=False, *args, **kwargs):

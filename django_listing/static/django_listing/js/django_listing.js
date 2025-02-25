@@ -570,13 +570,18 @@ function djlst_reload_listing_from_form(elt, additional_data) {
 }
 
 function djlst_selection_changed_hook(e) {
-    let listing = e.closest("div.django-listing-selecting");
+    const listing = e.closest("div.django-listing-selecting");
+    const $attached_form = $('body form[related-listing="' + listing.attr("id") + '"]');
     let form = $("#" + listing.attr('attached-form-id'));
     let count = listing.find('.row-container.selected').length;
     if (count === 0) {
         $(".selected-count,.disabled-if-no-selection").addClass("disabled");
+        $attached_form.find("button.hide-if-no-selection").hide();
+        $attached_form.find("button.hide-if-selection").show();
     } else {
         $(".selected-count:not(.no-perm),.disabled-if-no-selection:not(.no-perm)").removeClass("disabled");
+        $attached_form.find("button.hide-if-no-selection").show();
+        $attached_form.find("button.hide-if-selection").hide();
     }
     if (count > 1) {
         djlst_clear_form(form);
@@ -600,8 +605,8 @@ function djlst_selection_changed_hook(e) {
     const all_count = listing.attr("nb-rows");
     const selected_pill = `<span class="badge rounded-pill text-bg-dark">${count}</span>`
     const all_pill = `<span class="badge rounded-pill text-bg-dark">${all_count}</span>`
-    $(".attached-form button.selected-count span.button-extra-middle").html(selected_pill);
-    $(".attached-form button.all-count span.button-extra-middle").html(all_pill);
+    $attached_form.find("button.selected-count span.button-extra-middle").html(selected_pill);
+    $attached_form.find("button.all-count span.button-extra-middle").html(all_pill);
 
     $(document).trigger("djlst_selection_changed", {
         listing: listing,
@@ -745,6 +750,8 @@ function djlst_listing_on_load() {
         } else {
             $attached_form.find("button.all-count").removeClass("disabled");
         }
+        $attached_form.find("button.hide-if-no-selection").hide();
+        $attached_form.find("button.hide-if-selection").show();
     });
 }
 
