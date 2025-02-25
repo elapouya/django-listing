@@ -456,7 +456,8 @@ class ListingViewMixin:
                     listing, form, instance, *args, **kwargs
                 )
                 if (
-                    "attached_form" in mixed_response
+                    isinstance(mixed_response, dict)
+                    and "attached_form" in mixed_response
                     and "layout_name" not in mixed_response
                 ):
                     mixed_response["layout_name"] = listing.attached_form.layout_name

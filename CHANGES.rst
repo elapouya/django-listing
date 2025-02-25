@@ -1,3 +1,7 @@
+0.10.16 (2025-02-25)
+--------------------
+- fix mixed_response management
+
 0.10.15 (2025-02-24)
 --------------------
 - Improve object serialization in listing
