@@ -297,12 +297,16 @@ async function djlst_post_attached_form(event) {
         success: function (mixed_response) {
             let new_attached_form;
             if (mixed_response.listing) {
-                listing_div.replaceWith(mixed_response.listing);
+                listing_div.replaceWith(mixed_response.listing)
+                // very important : reload listing_div from the DOM
+                listing_div = $("#" + listing_id);
+                djlst_listing_on_load();
             }
             if (mixed_response.attached_form) {
                 attached_form.replaceWith(mixed_response.attached_form);
                 djlst_selection_changed_hook(listing_div);
                 if (attached_form_container.hasClass("flipped")) {
+                    // very important : reload attached form from the DOM
                     new_attached_form = $("#" + attached_form_id);
                     new_attached_form.find(".mass-op-cb").hide();
                     new_attached_form.removeClass("mass-op-cbs-displayed");
@@ -569,11 +573,15 @@ function djlst_reload_listing_from_form(elt, additional_data) {
     djlst_load_listing_url(listing, url, additional_data);
 }
 
-function djlst_selection_changed_hook(e) {
-    const listing = e.closest("div.django-listing-selecting");
-    const $attached_form = $('body form[related-listing="' + listing.attr("id") + '"]');
-    let form = $("#" + listing.attr('attached-form-id'));
-    let count = listing.find('.row-container.selected').length;
+function djlst_update_attached_form_buttons($listing, $attached_form) {
+    const all_count = $listing.attr("nb-rows");
+    if (all_count === "0") {
+        $attached_form.find("button.all-count").addClass("disabled");
+    } else {
+        $attached_form.find("button.all-count").removeClass("disabled");
+    }
+    let form = $("#" + $listing.attr('attached-form-id'));
+    let count = $listing.find('.row-container.selected').length;
     if (count === 0) {
         $(".selected-count,.disabled-if-no-selection").addClass("disabled");
         $attached_form.find("button.hide-if-no-selection").hide();
@@ -589,7 +597,7 @@ function djlst_selection_changed_hook(e) {
     } else {
         djlst_hide_mass_op_cbs(form);
     }
-    let selection_menu_id = listing.attr('selection-menu-id');
+    let selection_menu_id = $listing.attr('selection-menu-id');
     if (selection_menu_id) {
         let selection_menu = $('#' + selection_menu_id);
         let selected_items = selection_menu.find('span.selected_items')
@@ -602,16 +610,23 @@ function djlst_selection_changed_hook(e) {
         }
     }
 
-    const all_count = listing.attr("nb-rows");
     const selected_pill = `<span class="badge rounded-pill text-bg-dark">${count}</span>`
     const all_pill = `<span class="badge rounded-pill text-bg-dark">${all_count}</span>`
     $attached_form.find("button.selected-count span.button-extra-middle").html(selected_pill);
     $attached_form.find("button.all-count span.button-extra-middle").html(all_pill);
 
+    return {selected_count: count, all_count: all_count}
+}
+
+function djlst_selection_changed_hook(e) {
+    const $listing = e.closest("div.django-listing-selecting");
+    const $attached_form = $('body form[related-listing="' + $listing.attr("id") + '"]');
+    const data = djlst_update_attached_form_buttons($listing, $attached_form);
+
     $(document).trigger("djlst_selection_changed", {
-        listing: listing,
-        selected_count: count,
-        all_count: all_count
+        listing: $listing,
+        selected_count: data.selected,
+        all_count: data.all
     });
 }
 
@@ -741,17 +756,8 @@ function djlst_listing_on_load() {
 
     $(".django-listing-container").each(function () {
         const $listing = $(this);
-        const all_count = $listing.attr("nb-rows");
-        const all_pill = `<span class="badge rounded-pill text-bg-dark">${all_count}</span>`
         const $attached_form = $('body form[related-listing="' + this.id + '"]');
-        $attached_form.find("button.all-count span.button-extra-middle").html(all_pill);
-        if (all_count === "0") {
-            $attached_form.find("button.all-count").addClass("disabled");
-        } else {
-            $attached_form.find("button.all-count").removeClass("disabled");
-        }
-        $attached_form.find("button.hide-if-no-selection").hide();
-        $attached_form.find("button.hide-if-selection").show();
+        djlst_update_attached_form_buttons($listing, $attached_form);
     });
 }
 
