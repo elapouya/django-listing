@@ -4,6 +4,7 @@
 # @author: Eric Lapouyade
 #
 import copy
+import re
 
 from django import forms
 from django.core.exceptions import ValidationError
@@ -212,11 +213,17 @@ class AttachedForm:
             elif hasattr(self.listing, key := f"{self.name}_{k}"):
                 setattr(self, k, getattr(self.listing, key))
         for k, v in kwargs.items():
-            if k.startswith("layout_") or k.startswith("theme_"):
+            if (
+                k.startswith("layout_")
+                or k.startswith("theme_")
+                or k.endswith("_button_label")
+            ):
                 setattr(self, k, v)
         for k, v in self.listing.__dict__.items():
-            if k.startswith("attached_form_layout_") or k.startswith(
-                "attached_form_theme_"
+            if (
+                k.startswith("attached_form_layout_")
+                or k.startswith("attached_form_theme_")
+                or re.match(r"^attached_form_.*_button_label$", k)
             ):
                 setattr(self, k[len("attached_form_") :], v)
 
@@ -283,6 +290,7 @@ class AttachedForm:
                     if button == "submit":
                         button = self.submit_action
                     label = self.get_param(f"{button}_button_label")
+                    print(f"{button=} {label=}")
                     if label != NOT_PRESENT:
                         button = (
                             button,
