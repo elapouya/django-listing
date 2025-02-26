@@ -382,7 +382,7 @@ class Record:
                 isinstance(final_object, int)
                 # use class name to avoid cyclic import
                 and col.__class__.__name__ == "AutoCompleteColumn"
-                and col.queryset
+                and hasattr(col, "queryset")
             ):
                 final_object = col.queryset.filter(pk=final_object).first()
             if final_object is None:
@@ -411,16 +411,13 @@ class Record:
             form_data.update(func(self._obj, self._listing.form_serialize_cols))
         if self._listing.form_no_autofill_cols:
             additional_data["no_autofill"] = self._listing.form_no_autofill_cols
-        try:
-            serialized_obj = object_serializer.serialize(
-                [self._obj],
-                form_data=form_data,
-                additional_data=additional_data,
-                separators=(",", ":"),
-                **kwargs,
-            )
-        except AttributeError:
-            i = 0
+        serialized_obj = object_serializer.serialize(
+            [self._obj],
+            form_data=form_data,
+            additional_data=additional_data,
+            separators=(",", ":"),
+            **kwargs,
+        )
         return base64.b64encode(serialized_obj.encode()).decode()
 
     def is_first_qs_record(self):
