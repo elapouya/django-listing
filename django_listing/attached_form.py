@@ -290,7 +290,6 @@ class AttachedForm:
                     if button == "submit":
                         button = self.submit_action
                     label = self.get_param(f"{button}_button_label")
-                    print(f"{button=} {label=}")
                     if label != NOT_PRESENT:
                         button = (
                             button,
