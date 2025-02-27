@@ -6,7 +6,7 @@
 
 from django.utils.safestring import mark_safe
 
-__all__ = ["HTMLAttributes", "Tag"]
+__all__ = ["HTMLAttributes", "Tag", "Html"]
 
 
 class HTMLAttributes(dict):
@@ -89,3 +89,11 @@ class Tag:
     def __str__(self):
         attributes_html = " ".join(f'{k}="{v}"' for k, v in self.attributes.items())
         return mark_safe(f"<{self.tag} {attributes_html}>{self.text}</{self.tag}>")
+
+
+class Html:
+    def __init__(self, html):
+        self.html = html
+
+    def __str__(self):
+        return mark_safe(self.html)

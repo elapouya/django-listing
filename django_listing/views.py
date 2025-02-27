@@ -445,6 +445,7 @@ class ListingViewMixin:
             if process_method:
                 mixed_response = process_method(form, instance, *args, **kwargs)
             else:
+                # then in view if not found in listing
                 process_method = getattr(self, process_meth_name, None)
                 if not process_method:
                     raise ListingException(
@@ -455,12 +456,12 @@ class ListingViewMixin:
                 mixed_response = process_method(
                     listing, form, instance, *args, **kwargs
                 )
-                if (
-                    isinstance(mixed_response, dict)
-                    and "attached_form" in mixed_response
-                    and "layout_name" not in mixed_response
-                ):
-                    mixed_response["layout_name"] = listing.attached_form.layout_name
+            if (
+                isinstance(mixed_response, dict)
+                and "attached_form" in mixed_response
+                and not mixed_response.get("layout_name")
+            ):
+                mixed_response["layout_name"] = listing.attached_form.layout_name or ""
             if getattr(form, "errors", False):
                 raise ListingException(
                     f"You cannot add errors in form object inside "
@@ -602,7 +603,7 @@ class ListingViewMixin:
 
     def manage_attached_form_clear_action(self, listing, *args, **kwargs):
         attached_form = listing.attached_form
-        attached_form.init(listing, purge_post_data=True, layout_name="")
+        attached_form.set_layout("")
         form_html = attached_form.render(self.ajax_request_context)
         return self.json_response({"attached_form": form_html})
 

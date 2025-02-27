@@ -9,6 +9,7 @@ import re
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms.fields import FileField
+from django.http import QueryDict
 from django.template import loader
 from django.utils.translation import gettext as _
 from django.utils.translation import pgettext_lazy
@@ -227,16 +228,23 @@ class AttachedForm:
             ):
                 setattr(self, k[len("attached_form_") :], v)
 
-    def init(self, listing, purge_post_data=False, *args, **kwargs):
-        if purge_post_data:
-            listing.request.POST = dict(
-                csrfmiddlewaretoken=listing.request.POST.get("csrfmiddlewaretoken")
-            )
+    def init(self, listing, *args, **kwargs):
         self._form = None
         if not self.layout_name:
             self.layout_name = listing.request.POST.get("attached_form_layout_name")
         self.set_listing(listing)
         self.set_kwargs(**kwargs)
+        self.set_layout(self.layout_name, purge_post_data=False)
+        self.init_buttons()
+
+    def set_layout(self, name, purge_post_data=True):
+        self.layout_name = name
+        self._form = None
+        if purge_post_data:
+            csrf = self.listing.request.POST.get("csrfmiddlewaretoken")
+            self.listing.request.POST = QueryDict(
+                f"csrfmiddlewaretoken={csrf}", mutable=True
+            )
         layout_key = f"layout_{self.layout_name}" if self.layout_name else "layout"
         self.dynamic_layout = getattr(self, layout_key, self.layout)
         if isinstance(self.dynamic_layout, str):
@@ -275,7 +283,6 @@ class AttachedForm:
                 action=self.action,
                 **self.get_form_hiddens(),
             )
-        self.init_buttons()
 
     def init_buttons(self):
         if isinstance(self.buttons, str):
