@@ -1,3 +1,7 @@
+0.10.17 (2025-02-28)
+--------------------
+- Improve attached form buttons
+
 0.10.16 (2025-02-25)
 --------------------
 - fix mixed_response management

@@ -220,13 +220,13 @@ class AttachedForm:
                 or k.endswith("_button_label")
             ):
                 setattr(self, k, v)
-        for k, v in self.listing.__dict__.items():
+        for k in dir(self.listing):
             if (
                 k.startswith("attached_form_layout_")
                 or k.startswith("attached_form_theme_")
                 or re.match(r"^attached_form_.*_button_label$", k)
             ):
-                setattr(self, k[len("attached_form_") :], v)
+                setattr(self, k[len("attached_form_") :], getattr(self.listing, k))
 
     def init(self, listing, *args, **kwargs):
         self._form = None

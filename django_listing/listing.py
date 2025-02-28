@@ -468,7 +468,7 @@ class Listing(ListingBase):
     )
     confirm_msg_nb_items_for_update = 0
     confirm_msg_for_update_all = gettext_lazy(
-        "WARNING : Do you really want to UPDATE absolutely all {nb_all_items} items ?"
+        "WARNING : Do you really want to UPDATE absolutely ALL {nb_all_items} items ?"
         "\n\n"
         "This will process ALL items in ALL pages in the actual listing. Note that "
         "it will take in account the filter : only filtered items will be processed."
@@ -478,7 +478,7 @@ class Listing(ListingBase):
         "only one or more fields with value(s) you want to apply on all items."
     )
     confirm_msg_for_delete_all = gettext_lazy(
-        "WARNING : Do you really want to DELETE absolutely all {nb_all_items} items ?"
+        "WARNING : Do you really want to DELETE absolutely ALL {nb_all_items} items ?"
         "\n\n"
         "This will process ALL items in ALL pages in the actual listing. Note that "
         "it will take in account the filter : only filtered items will be processed."
@@ -669,6 +669,13 @@ class Listing(ListingBase):
 
     def plan_refresh(self):
         self._have_to_refresh = True
+
+    def get_filtered_and_selected_queryset(self):
+        qs = self.records.get_filtered_queryset()
+        selected_rows = self.get_selected_rows()
+        if selected_rows:
+            qs = qs.filter(pk__in=selected_rows)
+        return qs
 
     def add_onready_snippet(self, snippet):
         if not hasattr(self.request, "django_listing_onready_snippets"):

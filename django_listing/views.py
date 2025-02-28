@@ -3,7 +3,6 @@
 #
 # @author: Eric Lapouyade
 #
-import json
 import traceback
 from urllib.parse import parse_qs
 

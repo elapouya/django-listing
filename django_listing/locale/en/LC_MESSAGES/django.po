@@ -339,7 +339,7 @@ msgstr ""
 #: listing.py:474
 #, python-brace-format
 msgid ""
-"WARNING : Do you really want to UPDATE absolutely all {nb_all_items} "
+"WARNING : Do you really want to UPDATE absolutely ALL {nb_all_items} "
 "items ?\n"
 "\n"
 "This will process ALL items in ALL pages in the actual listing. Note that it "
@@ -353,7 +353,7 @@ msgstr ""
 #: listing.py:484
 #, python-brace-format
 msgid ""
-"WARNING : Do you really want to DELETE absolutely all {nb_all_items} "
+"WARNING : Do you really want to DELETE absolutely ALL {nb_all_items} "
 "items ?\n"
 "\n"
 "This will process ALL items in ALL pages in the actual listing. Note that it "

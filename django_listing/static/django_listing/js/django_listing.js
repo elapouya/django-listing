@@ -578,7 +578,7 @@ function djlst_update_attached_form_buttons($listing, $attached_form) {
     if (all_count === "0") {
         $attached_form.find("button.all-count").addClass("disabled");
     } else {
-        $attached_form.find("button.all-count").removeClass("disabled");
+        $attached_form.find("button.all-count:not(.no-perm)").removeClass("disabled");
     }
     let form = $("#" + $listing.attr('attached-form-id'));
     let count = $listing.find('.row-container.selected').length;
