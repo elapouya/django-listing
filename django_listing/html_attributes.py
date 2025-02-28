@@ -79,11 +79,18 @@ class HTMLAttributes(dict):
 
 
 class Tag:
-    def __init__(self, tag, text, **attributes):
+    def __init__(self, tag, text, **kwargs):
+        """If named argument begins by a "_" replace them by a "-"
+        this is useful because, "-" cannot be used in a name in python.
+        This is also useful to use class which is reserved : use "_class" instead.
+        """
+        attributes = {}
+        for k, v in kwargs.items():
+            if k.startswith("_"):
+                k = k.replace("_", "-")[1:]
+            attributes[k] = v
         self.tag = tag
         self.text = text
-        if "_class" in attributes:
-            attributes["class"] = attributes.pop("_class")
         self.attributes = attributes
 
     def __str__(self):
