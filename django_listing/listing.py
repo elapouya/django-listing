@@ -766,6 +766,10 @@ class Listing(ListingBase):
                     select_info.append((name, label, False))
         return list(sorted(select_info, key=lambda x: x[1]))
 
+    def get_gb_listing_template_name(self):
+        # str() is important here to force descriptor .get()
+        return str(self.listing_template_name)
+
     def manage_group_by(self):
         if self.has_group_by:
             self.gb_cols_names = []
@@ -785,7 +789,7 @@ class Listing(ListingBase):
                     for a, (alabel, afunc) in LISTING_ANNOTATIONS.items():
                         ach[f"{name}_annotate_{a}"] = f"{header} ({alabel})"
         if self.gb_cols:
-            self.listing_template_name = ThemeTemplate("listing.html")
+            self.listing_template_name = self.get_gb_listing_template_name()
             self.attrs = {
                 "class": "table table-hover table-bordered table-striped table-sm"
             }
@@ -1225,6 +1229,8 @@ class Listing(ListingBase):
             listing_container_class += " attached_form_autofill"
         if self.format_numbers:
             listing_container_class += " format-numbers"
+        if self.gb_cols:
+            listing_container_class += " has-gb-cols"
         sel_css_class = LISTING_SELECTOR_CSS_CLASS if self.selection_has_overlay else ""
         hover_css_class = (
             LISTING_SELECTION_HOVER_CSS_CLASS if self.selection_mode == "hover" else ""
@@ -1669,3 +1675,8 @@ class Listing(ListingBase):
 class DivListing(Listing):
     listing_template_name = ThemeTemplate("listing_div.html")
     theme_row_class = "row-container"
+
+    def get_gb_listing_template_name(self):
+        # str() is important here to force descriptor .get()
+        # div is unwanted when grouping : go back to standard listing
+        return str(ThemeTemplate("listing.html"))

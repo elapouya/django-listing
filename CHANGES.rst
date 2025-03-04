@@ -1,6 +1,8 @@
-0.10.18 (2025-02-28)
+0.10.19 (2025-03-04)
 --------------------
 - Improve attached form buttons
+- Fix group-by listing template
+- Fix charts labels
 
 0.10.16 (2025-02-25)
 --------------------

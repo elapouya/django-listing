@@ -120,6 +120,7 @@ class ThemeConfigBase(metaclass=ThemeConfigMeta):
 
 class ThemeAttribute:
     # This is a descriptor to dynamically get theme information
+    # to come : read session to enable user to change theme on-the-fly
     def __init__(self, attrname):
         self.attrname = attrname
 
@@ -135,6 +136,8 @@ class ThemeAttribute:
 
 
 class ThemeTemplate(str):
+    # This is a descriptor to dynamically get theme information
+    # to come : read session to enable user to change theme on-the-fly
     def __init__(self, template_name):
         self.template_name = template_name
 

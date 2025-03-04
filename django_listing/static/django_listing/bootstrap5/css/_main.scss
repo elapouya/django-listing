@@ -744,6 +744,11 @@ a.cell-filter {
   opacity: 0.2;
 }
 
+div:has(.has-gb-cols) + div.attached-form-container {
+  pointer-events: none;
+  opacity: 0.2;
+}
+
 @keyframes flipIn3D {
     0% {
         transform: rotateY(90deg);

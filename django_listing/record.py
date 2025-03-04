@@ -496,9 +496,9 @@ class Record:
 
     def get(self, key, default=None):
         obj = self._obj
-        # If group by is activated, read directly, do not recurse
-        if self._listing.gb_cols:
-            return obj.get(key, default)
+        # case obj is a dict, try without splitting key (case group by)
+        if isinstance(obj, dict) and key in obj:
+            return obj.get(key)
         try:
             if isinstance(key, int):
                 obj = obj[key]
