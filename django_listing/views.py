@@ -134,6 +134,7 @@ class ListingViewMixin:
                 filename
             )
             response.set_cookie("file_generation", "done")
+            response.set_cookie("last_file_generation_filename", filename)
             return response
         return response
 

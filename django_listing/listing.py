@@ -105,6 +105,7 @@ LISTING_PARAMS_KEYS = {
     "confirm_msg_nb_items_for_delete",
     "confirm_msg_for_update",
     "confirm_msg_nb_items_for_update",
+    "container_attrs",
     "data",
     "datetimepicker_date_format",
     "datetimepicker_datetime_format",
@@ -487,6 +488,7 @@ class Listing(ListingBase):
     attached_form_autofill = False
     attached_form_base_class = ListingBaseForm
     attached_form_css_id = None
+    container_attrs = {}
     current_page = None  # set in RecordManager.compute_current_page_records()
     data = None
     datetimepicker_date_format = "Y-m-d"
@@ -624,7 +626,9 @@ class Listing(ListingBase):
         self.editing_really_hidden_columns = set()
         self.can_edit_columns = []
         self.col_cell_renderers = {}
-        init_dicts_from_class(self, ["global_context", "attrs", "row_attrs"])
+        init_dicts_from_class(
+            self, ["global_context", "attrs", "container_attrs", "row_attrs"]
+        )
         self._initialized = False
         self._render_initialized = False
         self._formset = None
@@ -1063,6 +1067,8 @@ class Listing(ListingBase):
                 self.columns_sort_ascending[col_name] = ascending
         if not isinstance(self.row_attrs, HTMLAttributes):
             self.row_attrs = HTMLAttributes(self.row_attrs)
+        if not isinstance(self.container_attrs, HTMLAttributes):
+            self.container_attrs = HTMLAttributes(self.container_attrs)
         self.row_attrs.add(
             "class", {self.theme_div_row_container_class, self.theme_row_class}
         )
@@ -1205,32 +1211,39 @@ class Listing(ListingBase):
             "bottom",
             "both",
         ]
-        listing_container_class = "{} {}".format(
-            self.theme_container_class, self.theme_class
-        )
+        ca = self.container_attrs  # This is a HtmlAttributes object
+        ca.add("id", self.css_id)
+        ca.add("class", {self.theme_container_class, self.theme_class})
         if self.accept_ajax:
-            listing_container_class += " django-listing-ajax"
+            ca.add("class", "django-listing-ajax")
+            ca.add("class", "django-listing-ajax")
         if self.can_edit:
-            listing_container_class += " django-listing-editing"
+            ca.add("class", "django-listing-editing")
         if self.can_select:
-            listing_container_class += " django-listing-selecting"
+            ca.add("class", "django-listing-selecting")
             if self.selection_multiple:
-                listing_container_class += " selection_multiple"
+                ca.add("class", "selection_multiple")
                 if self.selection_multiple_ctrl:
-                    listing_container_class += " selection-multiple-ctrl"
+                    ca.add("class", "selection-multiple-ctrl")
             else:
-                listing_container_class += " selection_unique"
-            listing_container_class += " selection_position_{}".format(
-                self.selection_position
-            )
+                ca.add("class", "selection_unique")
+            ca.add("class", f"selection_position_{self.selection_position}")
         if self.has_upload:
-            listing_container_class += " has_upload"
+            ca.add("class", "has_upload")
         if self.attached_form_autofill:
-            listing_container_class += " attached_form_autofill"
+            ca.add("class", "attached_form_autofill")
         if self.format_numbers:
-            listing_container_class += " format-numbers"
+            ca.add("class", "format-numbers")
         if self.gb_cols:
-            listing_container_class += " has-gb-cols"
+            ca.add("class", "has-gb-cols")
+        ca.add("ajax_url", self.get_url())
+        if self.selection_menu_id:
+            ca.add("selection-menu-id", self.selection_menu_id)
+        ca.add("attached-form-id", self.attached_form_css_id)
+        if self.paginator:
+            ca.add("nb-rows", self.paginator.count)
+        if self.has_nb_unfiltered_rows:
+            ca.add("nb-unfiltered-rows", self.records.get_unfiltered_count())
         sel_css_class = LISTING_SELECTOR_CSS_CLASS if self.selection_has_overlay else ""
         hover_css_class = (
             LISTING_SELECTION_HOVER_CSS_CLASS if self.selection_mode == "hover" else ""
@@ -1240,7 +1253,6 @@ class Listing(ListingBase):
             self.page_context.flatten(),
             nb_columns=len(self.selected_columns),
             listing=self,
-            listing_container_class=listing_container_class,
             has_top_toolbar=has_top_toolbar,
             has_bottom_toolbar=has_bottom_toolbar,
             get=self.request.GET,

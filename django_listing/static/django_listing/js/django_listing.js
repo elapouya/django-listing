@@ -120,6 +120,9 @@ function djlst_load_listing_url(nav_obj, url, additional_data) {
     if (additional_data) {
         request_data = { ...request_data, ...additional_data };
     }
+    $(document).trigger("djlst_before_load_listing_url",
+        {listing: listing_target, url: url, payload:request_data}
+    );
     update_csrf_token();
     $.ajax({
         type: "POST",
@@ -141,6 +144,7 @@ function djlst_load_listing_url(nav_obj, url, additional_data) {
             alert(text);
         },
     });
+    $(document).trigger("djlst_after_load_listing_url");
     return false;
 }
 
@@ -178,6 +182,9 @@ function djlst_post_action_button(event) {
     request_data[$(this).attr('name')] = $(this).val();
     request_data = djlst_add_filter_request_data(listing_div, nav_obj, request_data);
     update_csrf_token();
+    $(document).trigger("djlst_before_post_action_button",
+        {listing: listing_target, payload:request_data}
+    );
     $.ajax({
         type: "POST",
         url: ajax_url,
@@ -198,6 +205,9 @@ function djlst_post_action_button(event) {
             alert(text);
         }
     });
+    $(document).trigger("djlst_after_post_action_button",
+        {listing: listing_target, payload:request_data}
+    );
 }
 
 var djlst_mass_op_cbs_displayed = false;
@@ -289,6 +299,10 @@ async function djlst_post_attached_form(event) {
         serialized_data: nav_obj.closest('form').serialize()
     };
     request_data = djlst_add_filter_request_data(listing_div, nav_obj, request_data);
+    $(document).trigger("djlst_before_attached_form_post",
+        {listing: listing_target, form: attached_form, payload:request_data}
+    );
+
     update_csrf_token();
     $.ajax({
         type: "POST",
@@ -334,6 +348,10 @@ async function djlst_post_attached_form(event) {
             alert(text);
         }
     });
+    $(document).trigger("djlst_after_attached_form_post",
+        {listing: listing_target, form: attached_form, payload:request_data}
+    );
+
 }
 
 var djlst_last_selected_rows_container = null;
@@ -761,16 +779,6 @@ function djlst_listing_on_load() {
     });
 }
 
-function djlst_follow_file_generation() {
-    var status = Cookies.get('file_generation');
-    if (status !== 'done') {
-        setTimeout(djlst_follow_file_generation, 300);
-    } else {
-        Cookies.remove('file_generation');
-        $('.spinning').removeClass('spinning').addClass('done');
-    }
-}
-
 function djlst_attached_form_input_changed(event) {
     if (djlst_mass_op_cbs_displayed) {
         $(this).closest(".form-field").find(".mass-op-cb:visible").prop('checked', true);
@@ -983,11 +991,33 @@ $(document).ready(function () {
         const params = new URLSearchParams(qs);
         const sort_value = params.get('sort');
         if (sort_value) filter_data["sort"] = sort_value;
+        // Get form payload for event
+        const formDataArray = $form.serializeArray();
+        let payload = {};
+        $.each(formDataArray, function(i, field) {
+            payload[field.name] = field.value;
+        });
+        $(document).trigger("djlst_before_file_generation",
+            {listing: $listing_div, filter_data:filter_data, payload:payload}
+        );
         djlst_patch_form_data($form, filter_data);
         Cookies.set('file_generation', 'working', {expires: 1});
         let listing_div = $(this).closest("div.django-listing-ajax");
         listing_div.addClass("spinning").removeClass('done');
-        djlst_follow_file_generation();
+
+        function follow_file_generation() {
+            const status = Cookies.get('file_generation');
+            if (status !== 'done') {
+                setTimeout(follow_file_generation, 300);
+            } else {
+                Cookies.remove('file_generation');
+                $('.spinning').removeClass('spinning').addClass('done');
+                $(document).trigger("djlst_after_file_generation",
+                    {listing: $listing_div, filter_data:filter_data, payload:payload}
+                );
+            }
+        }
+        follow_file_generation();
     });
 
     // make attached form always visible on big listings

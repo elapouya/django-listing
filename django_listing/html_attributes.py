@@ -19,6 +19,8 @@ class HTMLAttributes(dict):
 
     def add(self, attr, value):
         if value is not None:
+            if isinstance(value, int):
+                value = str(value)
             if attr not in self:
                 s = set()
             else:
@@ -31,9 +33,11 @@ class HTMLAttributes(dict):
             else:
                 s.add(value)
             if attr == "style":
-                self[attr] = (";".join(s)).strip()
+                # use str to consume lazy strings
+                self[attr] = (";".join(map(str, s))).strip()
             else:
-                self[attr] = (" ".join(s)).strip()
+                # use str to consume lazy strings
+                self[attr] = (" ".join(map(str, s))).strip()
 
     def remove(self, attr, value):
         if value is not None:

@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 from django.forms.fields import FileField
 from django.http import QueryDict
 from django.template import loader
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.utils.translation import pgettext_lazy
 
@@ -284,6 +285,40 @@ class AttachedForm:
                 **self.get_form_hiddens(),
             )
 
+    def build_buttons_attrs(self, button, label):
+        attrs = HTMLAttributes(self.get_param(f"theme_{button}_button_attrs", {}))
+        """                            
+            {% listing_has_permission_for_action listing action as has_button_perm %}
+            {% listing_confirm_msg_for_action listing action as confirm_msg %}
+            {% listing_confirm_msg_nb_items_for_action listing action as confirm_msg_nb_items %}
+            <button type="{% if action == 'reset' %}reset{% elif listing.accept_ajax %}button{% else %}submit{% endif %}"
+                    class="{{ action }}{% if not has_button_perm %} no-perm disabled{% endif %}{% if css_class %} {{ css_class }}{% endif %}"
+                    {% if confirm_msg %}confirm-msg="{{ confirm_msg }}"{% endif %}
+                    {% if confirm_msg_nb_items %}confirm-msg-nb-items="{{ confirm_msg_nb_items }}"{% endif %}
+                    {% if action != 'reset' %}name="action_button" value="{{ action }}"{% endif %}
+                    {% if label %}title="{{ label|safe }}"{% endif %}
+            >
+"""
+        if button == "reset":
+            attrs.add("type", "reset")
+        elif self.listing.accept_ajax:
+            attrs.add("type", "button")
+        else:
+            attrs.add("type", "submit")
+        attrs.add("class", button)
+        attrs.add("class", self.get_param(f"theme_{button}_button_class", None))
+        if not self.listing.has_permission_for_action(button):
+            attrs.add("class", {"no-perm", "disabled"})
+        if msg := self.listing.get_confirm_msg_for_action(button):
+            attrs.add("confirm-msg", msg)
+        if nb_items := self.listing.get_confirm_msg_nb_items_for_action(button):
+            attrs.add("confirm-msg-nb-items", nb_items)
+        if button != "reset":
+            attrs.update(name="action_button", value=button)
+        if label:
+            attrs.add("label", label)
+        return attrs
+
     def init_buttons(self):
         if isinstance(self.buttons, str):
             self.buttons = list(map(lambda s: s.split(","), self.buttons.split(";")))
@@ -298,14 +333,15 @@ class AttachedForm:
                         button = self.submit_action
                     label = self.get_param(f"{button}_button_label")
                     if label != NOT_PRESENT:
+                        attrs = self.build_buttons_attrs(button, label)
                         button = (
                             button,
                             self.get_param(f"{button}_button_label"),
                             self.get_param(f"theme_{button}_button_icon", ""),
-                            self.get_param(f"theme_{button}_button_class", ""),
+                            attrs,
                         )
                     else:
-                        button = (button, button.capitalize(), None, None)
+                        button = (button, button.capitalize(), None, "")
                     buttons_line[i] = button
                 if len(button) != 4:
                     raise InvalidListingConfiguration(

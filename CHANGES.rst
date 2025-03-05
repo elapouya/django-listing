@@ -1,3 +1,8 @@
+0.10.20 (2025-03-05)
+--------------------
+- Trigger some more events to catch before/after post/file generation moment
+- Use HtmlAttributes in listing container and attached form buttons
+
 0.10.19 (2025-03-04)
 --------------------
 - Improve attached form buttons

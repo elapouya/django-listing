@@ -1,14 +1,6 @@
 {% load django_listing %}
 {% autoescape off %}
-    <div id="{{ listing.css_id }}"
-         listing-suffix="{{ listing.suffix }}"
-         class="{{ listing_container_class }}"
-         ajax_url="{{ listing.get_url }}"
-         {% if listing.selection_menu_id %}selection-menu-id="{{ listing.selection_menu_id }}"{% endif %}
-         attached-form-id="{{ listing.attached_form_css_id }}"
-         {% if listing.paginator %}nb-rows="{{ listing.paginator.count }}"{% endif %}
-         {% if listing.has_nb_unfiltered_rows %}nb-unfiltered-rows="{{ listing.records.get_unfiltered_count }}"{% endif %}
-    >
+    <div{{ listing.container_attrs }}>
     <style>
         @media (max-width: {{ listing.theme_localized_small_device_styles_width }}) {
           {% for style in listing.get_localized_small_device_styles %}{{ style }}
