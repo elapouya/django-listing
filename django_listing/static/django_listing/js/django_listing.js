@@ -977,7 +977,7 @@ $(document).ready(function () {
    $('form.attached-form input[type="text"], form.attached-form input[type="number"]').on('keypress', function(e) {
         // Check if the pressed key is Enter (keyCode 13) and not textarea
         // otherwise, the first button found will be pressed !!!
-        if (e.which === 13 && e.target.tagName.toLowerCase() !== 'textarea') {
+        if (e.which === 13) {
             // Prevent the default action (form submission)
             e.preventDefault();
             // If the value has changed, manually trigger the change event
