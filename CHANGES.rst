@@ -1,3 +1,7 @@
+0.10.21 (2025-03-07)
+--------------------
+- Fix Listing.get_view()
+
 0.10.20 (2025-03-05)
 --------------------
 - Trigger some more events to catch before/after post/file generation moment

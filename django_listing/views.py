@@ -284,8 +284,8 @@ class ListingViewMixin:
             self.listing = listing
             response = None
             if listing:
-                listing.render_init(RequestContext(request))
                 listing.set_view(self)
+                listing.render_init(RequestContext(request))
                 if isinstance(listing.action, str) and listing.action:
                     method = getattr(self, "manage_listing_%s" % listing.action, None)
                     if callable(method):
@@ -712,6 +712,7 @@ class ListingViewMixin:
         for listing in self.yield_listing_instances():
             listing.request = self.request
             if listing.is_initialized() and not listing.is_render_initialized():
+                listing.set_view(self)
                 listing.render_init(RequestContext(self.request))
 
         return self.listing_instances_context()
