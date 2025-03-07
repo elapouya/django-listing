@@ -974,6 +974,18 @@ $(document).ready(function () {
         }
     });
 
+   $('form.attached-form input[type="text"], form.attached-form input[type="number"]').on('keypress', function(e) {
+        // Check if the pressed key is Enter (keyCode 13) and not textarea
+        // otherwise, the first button found will be pressed !!!
+        if (e.which === 13 && e.target.tagName.toLowerCase() !== 'textarea') {
+            // Prevent the default action (form submission)
+            e.preventDefault();
+            // If the value has changed, manually trigger the change event
+            $(this).blur().focus();
+            return false;
+        }
+    });
+
     $(document.body).on("click", ".file-generation-button", function() {
         const nav_obj = $(this);
         let select = $(this).siblings("select");
