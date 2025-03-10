@@ -287,18 +287,6 @@ class AttachedForm:
 
     def build_buttons_attrs(self, button, label):
         attrs = HTMLAttributes(self.get_param(f"theme_{button}_button_attrs", {}))
-        """                            
-            {% listing_has_permission_for_action listing action as has_button_perm %}
-            {% listing_confirm_msg_for_action listing action as confirm_msg %}
-            {% listing_confirm_msg_nb_items_for_action listing action as confirm_msg_nb_items %}
-            <button type="{% if action == 'reset' %}reset{% elif listing.accept_ajax %}button{% else %}submit{% endif %}"
-                    class="{{ action }}{% if not has_button_perm %} no-perm disabled{% endif %}{% if css_class %} {{ css_class }}{% endif %}"
-                    {% if confirm_msg %}confirm-msg="{{ confirm_msg }}"{% endif %}
-                    {% if confirm_msg_nb_items %}confirm-msg-nb-items="{{ confirm_msg_nb_items }}"{% endif %}
-                    {% if action != 'reset' %}name="action_button" value="{{ action }}"{% endif %}
-                    {% if label %}title="{{ label|safe }}"{% endif %}
-            >
-"""
         if button == "reset":
             attrs.add("type", "reset")
         elif self.listing.accept_ajax:
