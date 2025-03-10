@@ -300,7 +300,7 @@ async function djlst_post_attached_form(event) {
     };
     request_data = djlst_add_filter_request_data(listing_div, nav_obj, request_data);
     $(document).trigger("djlst_before_attached_form_post",
-        {listing: listing_target, form: attached_form, payload:request_data}
+        {listing: listing_target, form: attached_form, payload:request_data, nav_obj:nav_obj}
     );
 
     update_csrf_token();
@@ -349,7 +349,7 @@ async function djlst_post_attached_form(event) {
         }
     });
     $(document).trigger("djlst_after_attached_form_post",
-        {listing: listing_target, form: attached_form, payload:request_data}
+        {listing: listing_target, form: attached_form, payload:request_data, nav_obj:nav_obj}
     );
 
 }
