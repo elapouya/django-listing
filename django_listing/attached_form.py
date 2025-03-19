@@ -90,24 +90,52 @@ class ListingBaseForm(forms.BaseForm):
                 self.add_error(name, e)
 
     def _clean_form(self):
+        self.mass_op_fields = set()
         if self.do_not_clean:
             return
         try:
             method = None
             view = self.listing.get_view()
             if view:
-                method_name = (
-                    f"manage_listing_{view.listing.id[:-3]}_{self.form_name}_clean"
-                )
-                method = getattr(view, method_name, None)
+                # get mass op checkboxes if set
+                self.mass_op_fields = {
+                    k[:-8]  # remove "_mass_op", keep only original field name
+                    for k, v in view.request.POST.items()
+                    if k.endswith("_mass_op") and v
+                }
+
+                if self.mass_op_fields:
+                    method_name = (
+                        f"manage_listing_{view.listing.id[:-3]}"
+                        f"_{self.form_name}_mass_op_clean"
+                    )
+                    method = getattr(view, method_name, None)
+
+                if not method:
+                    method_name = (
+                        f"manage_listing_{view.listing.id[:-3]}_{self.form_name}_clean"
+                    )
+                    method = getattr(view, method_name, None)
+                if not method and self.mass_op_fields:
+                    method_name = f"manage_listing_{self.form_name}_mass_op_clean"
+                    method = getattr(view, method_name, None)
                 if not method:
                     method_name = f"manage_listing_{self.form_name}_clean"
+                    method = getattr(view, method_name, None)
+                if not method and self.mass_op_fields:
+                    method_name = f"manage_listing_attached_form_mass_op_clean"
                     method = getattr(view, method_name, None)
                 if not method:
                     method_name = f"manage_listing_attached_form_clean"
                     method = getattr(view, method_name, None)
+            if not method and self.mass_op_fields:
+                method_name = f"{self.form_name}_mass_op_clean"
+                method = getattr(self.listing, method_name, None)
             if not method:
                 method_name = f"{self.form_name}_clean"
+                method = getattr(self.listing, method_name, None)
+            if not method and self.mass_op_fields:
+                method_name = f"attached_form_mass_op_clean"
                 method = getattr(self.listing, method_name, None)
             if not method:
                 method_name = f"attached_form_clean"

@@ -1,3 +1,7 @@
+0.10.24 (2025-03-19)
+--------------------
+- Add support for a specific attached form mass op clean method
+
 0.10.23 (2025-03-10)
 --------------------
 - Improve django-listing events
