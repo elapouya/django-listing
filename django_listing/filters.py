@@ -88,6 +88,7 @@ FILTERS_PARAMS_KEYS = {
     "default_value_func",
     "form_field_input_container_css",
     "reverse_form_label_tag",
+    "resolve_qs_value",
 }
 
 # Declare keys for django form fields
@@ -502,6 +503,7 @@ class Filter(metaclass=FilterMeta):
     params_keys = None
     queryset = None
     required = False
+    resolve_qs_value = False
     shrink_width = None
     url = None
     value = None
@@ -703,6 +705,12 @@ class Filter(metaclass=FilterMeta):
 
     def filter_queryset(self, qs, cleaned_data=None):
         cleaned_value = cleaned_data.get(self.input_name + self.listing.suffix)
+        if self.resolve_qs_value and isinstance(cleaned_value, QuerySet):
+            # when using multi-selection select, Django returns the queryset
+            # representing the selection : this may cause very slow filtering.
+            # Instead, using PKs corresponding to this selection are much faster :
+            # this is the purpose of resolve_qs_value attribute
+            cleaned_value = list(cleaned_value.values_list("pk", flat=True))
         if not cleaned_value:
             return qs
         method_name = f"filter_queryset_{self.name}"
@@ -1074,3 +1082,4 @@ class AutocompleteForeignKeyFilter(Filter):
 class AutocompleteMultipleForeignKeyFilter(AutocompleteForeignKeyFilter):
     form_field_class = forms.ModelMultipleChoiceField
     widget_class = autocomplete.ModelSelect2Multiple
+    resolve_qs_value = True

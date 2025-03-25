@@ -1,5 +1,6 @@
-0.10.25 (2025-03-25)
+0.10.26 (2025-03-25)
 --------------------
+- Add resolve_qs_value filter attribute
 - Fix filters form with multi-selection selects
 
 0.10.24 (2025-03-19)
