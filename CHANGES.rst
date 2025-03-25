@@ -1,3 +1,7 @@
+0.10.25 (2025-03-25)
+--------------------
+- Fix filters form with multi-selection selects
+
 0.10.24 (2025-03-19)
 --------------------
 - Add support for a specific attached form mass op clean method

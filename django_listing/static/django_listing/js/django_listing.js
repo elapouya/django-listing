@@ -49,6 +49,23 @@ function update_csrf_token() {
     });
 }
 
+function djlst_get_form_data_advanced(form) {
+    const formData = new FormData(form);
+    let form_data = {};
+
+    // Group values by key name
+    for (const [key, value] of formData.entries()) {
+        if (!form_data[key]) {
+            // First occurrence of this key
+            form_data[key] = formData.getAll(key).length > 1 ? formData.getAll(key) : value;
+        }
+        // If there's only one value, it's stored directly
+        // If there are multiple values, we store them as an array
+    }
+
+    return form_data;
+}
+
 function djlst_add_filter_request_data($listing_div, $nav_obj, data) {
     // if filter form available and post method is used :
     // merge form data inside ajax payload
@@ -57,7 +74,7 @@ function djlst_add_filter_request_data($listing_div, $nav_obj, data) {
     if (filter_form.length) {
         const method = filter_form.attr("method");
         if (method !== undefined && method.toLowerCase() == "post") {
-            let form_data = Object.fromEntries(new FormData(filter_form[0]));
+            let form_data = djlst_get_form_data_advanced(filter_form[0]);
             data = { ...data, ...form_data };
         }
     }
@@ -128,6 +145,7 @@ function djlst_load_listing_url(nav_obj, url, additional_data) {
         type: "POST",
         url: url,
         data: request_data,
+        traditional: true,
         success: function (mixed_response) {
             if (mixed_response.filters_form) {
                 filter_form.replaceWith(mixed_response.filters_form);
@@ -189,6 +207,7 @@ function djlst_post_action_button(event) {
         type: "POST",
         url: ajax_url,
         data: request_data,
+        traditional: true,
         success: function (mixed_response) {
             if (mixed_response.filters_form) {
                 filter_form.replaceWith(mixed_response.filters_form);
@@ -308,6 +327,7 @@ async function djlst_post_attached_form(event) {
         type: "POST",
         url: ajax_url,
         data: request_data,
+        traditional: true,
         success: function (mixed_response) {
             let new_attached_form;
             if (mixed_response.listing) {
@@ -741,6 +761,7 @@ function djlst_view_object_popup(event) {
         type: "POST",
         url: ajax_url,
         data: request_data,
+        traditional: true,
         success: function (response) {
             listing_div.removeClass("spinning");
             $("#listing-popup-container").html(response);
