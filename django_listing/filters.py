@@ -1056,7 +1056,10 @@ class AutocompleteForeignKeyFilter(Filter):
             for f_name in self.filter_key.split("__"):
                 if f_name == "in":
                     break
-                related_model = related_model._meta.get_field(f_name).related_model
+                try:
+                    related_model = related_model._meta.get_field(f_name).related_model
+                except FieldDoesNotExist:
+                    break
             params["queryset"] = related_model.objects.all()
         return params
 

@@ -1,3 +1,7 @@
+0.10.27 (2025-03-26)
+--------------------
+- Filters form now accept virtual fields (django annotate)
+
 0.10.26 (2025-03-25)
 --------------------
 - Add resolve_qs_value filter attribute
