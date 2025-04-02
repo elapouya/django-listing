@@ -7,12 +7,36 @@ function djlst_format_number(val) {
 const djlst_sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 $.fn.djlst_format_digits = function() {
-    return this.each(function() {
-        const $element = $(this);
-        const text = $element.text().trim();
-        const formattedText = text.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-        $element.text(formattedText);
-    });
+  return this.each(function() {
+    // Save the original HTML content
+    var $this = $(this);
+
+    // Use a replacement function with a regex
+    // that only targets sequences of digits in visible text
+    var html = $this.html();
+
+    // Function that will be applied to text nodes only
+    var formatTextNode = function(node) {
+      if (node.nodeType === 3) { // Type 3 = text node
+        // Replace only sequences of digits
+        var text = node.nodeValue;
+        var formattedText = text.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ');
+        if (text !== formattedText) {
+          node.nodeValue = formattedText;
+        }
+      } else if (node.nodeType === 1) { // Type 1 = element
+        // Recursively process children
+        for (var i = 0; i < node.childNodes.length; i++) {
+          formatTextNode(node.childNodes[i]);
+        }
+      }
+    };
+
+    // Apply formatting to all text nodes of the element
+    for (var i = 0; i < this.childNodes.length; i++) {
+      formatTextNode(this.childNodes[i]);
+    }
+  });
 };
 
 function djlst_replaceUrlParam(url, param_name, param_value) {
