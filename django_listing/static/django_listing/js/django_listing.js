@@ -20,7 +20,7 @@ $.fn.djlst_format_digits = function() {
       if (node.nodeType === 3) { // Type 3 = text node
         // Replace only sequences of digits
         var text = node.nodeValue;
-        var formattedText = text.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ');
+        var formattedText = text.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1\u00A0');
         if (text !== formattedText) {
           node.nodeValue = formattedText;
         }

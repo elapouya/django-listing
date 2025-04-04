@@ -1677,6 +1677,8 @@ class LinkColumn(Column):
         elif callable(link_attrs):
             link_attrs = link_attrs(rec, value)
         attrs = HTMLAttributes(link_attrs or {})
+        if self.link_target:
+            attrs["target"] = self.link_target
         return attrs
 
     def get_href_tpl(self, rec, value):
