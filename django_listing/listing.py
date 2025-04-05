@@ -7,11 +7,13 @@
 import collections
 import logging
 import re
+from datetime import datetime
 from urllib.parse import urlsplit, urlunsplit, quote
 
 import tablib
 from django import forms
 from django.conf import settings
+from django.contrib import messages
 from django.db.models import Model, Count, Min, Max, Sum, Avg
 from django.db.models.query import QuerySet
 from django.http import QueryDict
@@ -125,6 +127,7 @@ LISTING_PARAMS_KEYS = {
     "exclude_columns",
     "export",
     "export_columns",
+    "export_max_rows",
     "filters",
     "footer_snippet",
     "footer_template_name",
@@ -507,6 +510,7 @@ class Listing(ListingBase):
     exclude_columns = None
     export = None
     export_columns = None
+    export_max_rows = None
     exported_columns = None
     filters = None
     footer_snippet = None
@@ -1097,9 +1101,12 @@ class Listing(ListingBase):
             if self.request_media_for:
                 for feature in self.request_media_for:
                     self.need_media_for(feature)
-            is_exporting = self.export_data()
-            if is_exporting:
-                return "Sending listing export file..."
+            try:
+                is_exporting = self.export_data()
+                if is_exporting:
+                    return "Sending listing export file..."
+            except ListingException as e:
+                messages.error(self.request, str(e))
             if self.can_edit:
                 self.datetimepicker_init()
             if self.has_upload:
@@ -1151,6 +1158,12 @@ class Listing(ListingBase):
         if self.export:
             if not self.has_permission_for_action("export"):
                 raise ListingException(_("[You do not have permission to export data]"))
+            if self.export_max_rows and self.exported_nb_rows() > self.export_max_rows:
+                raise ListingException(
+                    _(
+                        "[You cannot export when there are more than {} rows in listing]"
+                    ).format(self.export_max_rows)
+                )
             export_format = self.export.upper()
             if export_format in EXPORT_FORMATS:
                 use_col_name = export_format in EXPORT_FORMATS_USE_COL_NAME
@@ -1345,7 +1358,16 @@ class Listing(ListingBase):
         # Excel sanitization
         if isinstance(value, str):
             value = EXPORT_EXCEL_SANITIZE_RE.sub(" ", value)
+        elif isinstance(value, datetime):
+            if timezone.is_aware(value):
+                # Convert to the same timezone as the input datetime
+                # and then remove the timezone information
+                return timezone.localtime(value).replace(tzinfo=None)
+            value = value.replace(tzinfo=None)
         return value
+
+    def exported_nb_rows(self):
+        return self.records.export_count()
 
     def exported_rows(self, keep_original_type=True):
         for rec in self.records.export():

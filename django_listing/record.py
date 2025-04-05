@@ -255,6 +255,11 @@ class RecordManager:
             for i, obj in enumerate(qs):
                 yield Record(lsg, obj, i)
 
+    def export_count(self):
+        lsg = self.listing
+        qs = self.filter_queryset(lsg.data)
+        return qs.count()
+
     def filter_queryset(self, qs):
         if self.listing.filters:
             qs = self.listing.filters.filter_queryset(qs)

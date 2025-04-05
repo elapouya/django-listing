@@ -1557,6 +1557,8 @@ class DateColumn(Column):
 
     def get_cell_exported_value(self, rec, keep_original_type=True):
         value = super().get_cell_value(rec)
+        if isinstance(value, datetime.datetime):
+            value = value.date()
         return value
 
 
