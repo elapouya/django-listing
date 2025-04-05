@@ -729,8 +729,6 @@ class InsertableListing1(Listing):
 
     gender__input_type = "radio"
     salary__min_value = 0
-    columns_no_choice_msg = _("Please choose...")
-    columns_label_suffix = ""
     save_to_database = True
     exclude_columns = "interests"
     permission_required_for_insert = False
@@ -749,8 +747,6 @@ class InsertableListing2(FilterListingMixin, Listing):
     paginator_has_page_info = False
     gender__input_type = "radio"
     salary__min_value = 0
-    columns_no_choice_msg = _("Please choose...")
-    columns_label_suffix = ""
     save_to_database = True
     exclude_columns = "interests"
     selection_multiple = True
