@@ -953,7 +953,7 @@ $(document).ready(function () {
     $(document.body).on("change", ".attached-form-container input:not(.mass-op-cb)", djlst_attached_form_input_changed);
     $(document.body).on("change", ".attached-form-container select,.attached-form-container textarea", djlst_attached_form_input_changed);
     $(document.body).on("click", ".listing-form.filters-form-ajax .submit-button", function () {djlst_reload_listing_from_form(this); return false;});
-    $(document.body).on("click", ".listing-form.filters-form-ajax button.reset-button", function () {window.location.reload();});
+    $(document.body).on("click", ".listing-form.filters-form-ajax button.reset-button", function () {window.location.href = window.location.href;});
 
     $(".django-listing-container").each(function () {
         djlst_selection_changed_hook($(this));
