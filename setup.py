@@ -48,7 +48,7 @@ setup(
     long_description=long_description,
     classifiers=[
         "Intended Audience :: Developers",
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Framework :: Django",
         "Framework :: Django :: 2.0",
         "Framework :: Django :: 3.0",
@@ -61,6 +61,8 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
     ],
     keywords="table, datatable, listing, data grid",
     url="https://github.com/elapouya/django-listing",

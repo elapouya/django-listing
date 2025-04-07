@@ -1,3 +1,9 @@
+0.10.28 (2025-04-07)
+--------------------
+- Add export_max_rows listing option
+- Improve number JS formating
+- Improve link_target column attribute support
+
 0.10.27 (2025-03-26)
 --------------------
 - Filters form now accept virtual fields (django annotate)
