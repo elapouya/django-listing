@@ -25,6 +25,8 @@ PAGINATOR_PARAMS_KEYS = {
     "goto_page_tpl",
     "has_editable_page_info",
     "has_first_last",
+    "has_first",
+    "has_last",
     "has_goto_page",
     "has_page_info",
     "has_prev_next",
@@ -67,6 +69,8 @@ class Paginator(DjangoPaginator):
     prev_text = pgettext_lazy("paginator", "Previous")
     next_text = pgettext_lazy("paginator", "Next")
     has_first_last = False
+    has_first = False
+    has_last = False
     first_text = pgettext_lazy("paginator", "First")
     last_text = pgettext_lazy("paginator", "Last")
     fast_page_step = 0
