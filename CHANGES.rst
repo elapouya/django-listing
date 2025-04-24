@@ -1,6 +1,8 @@
-0.10.29 (2025-04-24)
+0.10.30 (2025-04-24)
 --------------------
 - Improve charts
+- Fix selection_has_overlay bug
+- add has_first and has_last attribute to Paginator
 
 0.10.28 (2025-04-07)
 --------------------

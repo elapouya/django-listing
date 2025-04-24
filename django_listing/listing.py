@@ -1128,7 +1128,6 @@ class Listing(ListingBase):
                 self.selection_initial, list
             ):
                 self.selection_initial = [self.selection_initial]
-            self.selection_has_overlay = self.selection_mode in ["overlay", "hover"]
             if self.attached_form:
                 self.attached_form.render_init(context)
             self.global_context_init()
@@ -1224,6 +1223,7 @@ class Listing(ListingBase):
             "bottom",
             "both",
         ]
+        self.selection_has_overlay = self.selection_mode in ["overlay", "hover"]
         ca = self.container_attrs  # This is a HtmlAttributes object
         ca.add("id", self.css_id)
         ca.add("class", {self.theme_container_class, self.theme_class})
