@@ -8,7 +8,7 @@
             {% for part in group %}
                 {% if part == 'first' %}
                     {# ------------------------------- First button ---------------------------------------- #}
-                    {% if paginator.has_first_last %}
+                    {% if paginator.has_first_last or paginator.has_first %}
                         {% if current_page.has_previous or not paginator.hide_disabled_buttons %}
                             {% block pagination_first %}
                                 <li class="listing-nav {{ paginator.theme_button_li_class }} first{% if not current_page.has_previous %} {{ listing.theme_button_disabled_class }}{% endif %}">
@@ -164,7 +164,7 @@
 
                 {% elif part == 'last' %}
                     {# ------------------------------- Last button ---------------------------------------- #}
-                    {% if paginator.has_first_last %}
+                    {% if paginator.has_first_last or paginator.has_last %}
                         {% if current_page.has_next or not paginator.hide_disabled_buttons %}
                             {% block pagination_last %}
                                 <li class="listing-nav {{ paginator.theme_button_li_class }} last{% if not current_page.has_next %} {{ listing.theme_button_disabled_class }}{% endif %}">
