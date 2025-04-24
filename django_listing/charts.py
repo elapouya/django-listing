@@ -12,6 +12,17 @@ __all__ = [
 ]
 
 
+class ApexChartsMixin:
+    """This is to be included in every listing where a chart need to be rendered.
+    IMPORTANT : this includes ALL charts that do not display chart
+                but have a variation that does display one.
+    """
+
+    def render_init(self, *args, **kwargs):
+        self.need_media_for("apexcharts")
+        super().render_init(*args, **kwargs)
+
+
 class BaseChartMixin:
     listing_template_name = ThemeTemplate("chart.html")
     chart_height = 600

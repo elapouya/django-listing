@@ -6,14 +6,22 @@
             {{ data|json_script:data.json_id }}
             <div id="{{ data.chart_div_id }}"></div>
             <script>
-                (() => {
-                    {% block apexcharts_additional_options %}
-                    const additional_options = {}
-                    {% endblock %}
-                    const data = JSON.parse(document.getElementById("{{ data.json_id }}").textContent);
-                    const apex_options = {...data.apexcharts_options,...additional_options};
-                    new ApexCharts(document.querySelector("#{{data.chart_div_id}}"), apex_options).render();
-                })();
+                $(document).ready(function () {
+                    // Check if ApexCharts is loaded
+                    if (typeof ApexCharts === 'undefined') {
+                        console.error("django-listing : ApexCharts library not loaded");
+                        $("#{{ data.chart_div_id }}").html('<br>ApexCharts library not loaded, please add this attribute in your listing clss : <br><br><pre>request_media_for = "apexcharts"</pre>');
+                        return;
+                    }
+                    (() => {
+                        {% block apexcharts_additional_options %}
+                            const additional_options = {}
+                        {% endblock %}
+                        const data = JSON.parse(document.getElementById("{{ data.json_id }}").textContent);
+                        const apex_options = {...data.apexcharts_options, ...additional_options};
+                        new ApexCharts(document.querySelector("#{{data.chart_div_id}}"), apex_options).render();
+                    })();
+                });
             </script>
             <br style="clear: both;"/>
         {% else %}
