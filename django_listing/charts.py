@@ -1,7 +1,7 @@
 from django_listing.theme_config import ThemeTemplate
 from decimal import Decimal
 from django.conf import settings
-from .utils import to_js_timestamp
+from .utils import to_js_timestamp, FastAttrDict
 
 __all__ = [
     "BaseChartMixin",
@@ -27,6 +27,7 @@ class BaseChartMixin:
     listing_template_name = ThemeTemplate("chart.html")
     chart_height = 600
     chart_width = 800
+    chart_series_name = "series name TO BE DEFINED"
 
     def get_chart_records(self):
         # If you derive this method, you need to cache results as this method
@@ -68,17 +69,20 @@ class BaseChartMixin:
     def get_chart_div_id(self):
         return f"{self.css_id}-chart-id"
 
+    def get_chart_series_name(self):
+        return self.chart_series_name
+
     def chart_data(self):
-        chart_div_id = self.get_chart_div_id()
         return dict(
             chart_div_id=self.get_chart_div_id(),
             json_id=self.get_chart_json_id(),
-            apexcharts_options=self.get_apex_options(
-                chart_div_id, *self.get_chart_args()
-            ),
+            apexcharts_options=self.get_chart_options(),
         )
 
-    def get_chart_args(self):
+    def get_chart_options(self, records):
+        raise NotImplemented
+
+    def get_chart_context(self):
         colors = []
         values = []
         labels = []
@@ -86,25 +90,32 @@ class BaseChartMixin:
             colors.append(self.get_chart_rec_color(rec))
             values.append(self.get_chart_rec_values(rec))
             labels.append(self.get_chart_rec_label(rec))
-        width = self.get_chart_width()
-        height = self.get_chart_height()
-        return values, labels, colors, width, height
+        return FastAttrDict(
+            values=values,
+            labels=labels,
+            colors=colors,
+            width=self.get_chart_width(),
+            height=self.get_chart_height(),
+            chart_div_id=self.get_chart_div_id(),
+            series_name=self.get_chart_series_name(),
+        )
 
 
 class PieChartMixin(BaseChartMixin):
     listing_template_name = ThemeTemplate("chart_pie.html")
 
-    def get_apex_options(self, chart_div_id, values, labels, colors, width, height):
+    def get_chart_options(self):
+        context = self.get_chart_context()
         options = {
-            "series": values,
+            "series": context.values,
             "chart": {
-                "id": chart_div_id,
-                "width": width,
-                "height": height,
+                "id": context.chart_div_id,
+                "width": context.width,
+                "height": context.height,
                 "type": "pie",
             },
-            "colors": colors,
-            "labels": labels,
+            "colors": context.colors,
+            "labels": context.labels,
             "dataLabels": {"style": {"fontSize": "16px"}},
         }
         return options
@@ -113,16 +124,17 @@ class PieChartMixin(BaseChartMixin):
 class BarChartMixin(BaseChartMixin):
     listing_template_name = ThemeTemplate("chart_bar.html")
 
-    def get_apex_options(self, chart_div_id, values, labels, colors, width, height):
+    def get_chart_options(self):
+        context = self.get_chart_context()
         options = {
-            "series": [{"data": values, "name": ""}],
+            "series": [{"data": context.values, "name": context.series_name}],
             "chart": {
-                "id": chart_div_id,
-                "width": width,
-                "height": height,
+                "id": context.chart_div_id,
+                "width": context.width,
+                "height": context.height,
                 "type": "bar",
             },
-            "colors": colors,
+            "colors": context.colors,
             "plotOptions": {
                 "bar": {
                     "columnWidth": "45%",
@@ -139,8 +151,8 @@ class BarChartMixin(BaseChartMixin):
             },
             "legend": {"show": False},
             "xaxis": {
-                "categories": labels,
-                "labels": {"style": {"colors": colors, "fontSize": "12px"}},
+                "categories": context.labels,
+                "labels": {"style": {"colors": context.colors, "fontSize": "12px"}},
             },
         }
         return options
@@ -163,20 +175,21 @@ class TimestampedChartMixin(BaseChartMixin):
 class TimestampedBarChartMixin(TimestampedChartMixin):
     listing_template_name = ThemeTemplate("chart_trend_bar.html")
 
-    def get_apex_options(self, chart_div_id, values, labels, colors, width, height):
+    def get_chart_options(self):
+        context = self.get_chart_context()
         options = {
-            "colors": colors,
+            "colors": context.colors,
             "series": [
                 {
-                    "name": "Active values (Sum)",
-                    "data": values,
+                    "name": context.series_name,
+                    "data": context.values,
                 }
             ],
             "chart": {
-                "id": chart_div_id,
+                "id": context.chart_div_id,
                 "type": "bar",
-                "width": width,
-                "height": height,
+                "width": context.width,
+                "height": context.height,
                 "zoom": {
                     "autoScaleYaxis": True,
                 },
@@ -221,20 +234,21 @@ class TimestampedLineChartMixin(BaseChartMixin):
             val = float(val)
         return [timestamp, val]
 
-    def get_apex_options(self, chart_div_id, values, labels, colors, width, height):
+    def get_chart_options(self):
+        context = self.get_chart_context()
         options = {
-            "colors": colors,
+            "colors": context.colors,
             "series": [
                 {
-                    "name": "Active values (Sum)",
-                    "data": values,
+                    "name": context.series_name,
+                    "data": context.values,
                 }
             ],
             "chart": {
                 "id": "chart",
                 "type": "line",
-                "width": width,
-                "height": height,
+                "width": context.width,
+                "height": context.height,
                 "zoom": {
                     "autoScaleYaxis": True,
                 },

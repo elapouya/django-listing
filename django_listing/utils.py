@@ -94,6 +94,20 @@ def to_js_timestamp(dt_obj):
     return int(dt_obj.timestamp() * 1000)
 
 
+class FastAttrDict(dict):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__dict__ = self
+
+    def setattr_to_object(self, obj):
+        # Important to loop here as for Django model object it is mandatory
+        for k, v in self.items():
+            setattr(obj, k, v)
+
+    def map_to_object(self, obj):
+        obj.__dict__.update(self)
+
+
 class JsonDirect(str):
     pass
 
