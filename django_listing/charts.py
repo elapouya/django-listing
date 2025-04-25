@@ -28,6 +28,11 @@ class BaseChartMixin:
     chart_height = 600
     chart_width = 800
     chart_series_name = "series name TO BE DEFINED"
+    chart_stroke_curve = "straight"  # could be "straight", "smooth", "stepline"
+    chart_has_grid = True
+    chart_has_dropshadow = True
+    chart_grid_border_color = "#aaaaaa"
+    chart_grid_colors = ["#ffffff", "#e8e8e8"]
 
     def get_chart_records(self):
         # If you derive this method, you need to cache results as this method
@@ -72,6 +77,17 @@ class BaseChartMixin:
     def get_chart_series_name(self):
         return self.chart_series_name
 
+    def get_chart_series(self, context):
+        return [
+            {
+                "name": context.series_name,
+                "data": context.values,
+            },
+        ]
+
+    def get_xaxis(self, context):
+        raise NotImplemented
+
     def chart_data(self):
         return dict(
             chart_div_id=self.get_chart_div_id(),
@@ -98,6 +114,11 @@ class BaseChartMixin:
             height=self.get_chart_height(),
             chart_div_id=self.get_chart_div_id(),
             series_name=self.get_chart_series_name(),
+            stroke_curve=self.chart_stroke_curve,
+            has_grid=self.chart_has_grid,
+            grid_border_color=self.chart_grid_border_color,
+            grid_colors=self.chart_grid_colors,
+            has_dropshadow=self.chart_has_dropshadow,
         )
 
 
@@ -124,10 +145,16 @@ class PieChartMixin(BaseChartMixin):
 class BarChartMixin(BaseChartMixin):
     listing_template_name = ThemeTemplate("chart_bar.html")
 
+    def get_chart_xaxis(self, context):
+        return {
+            "categories": context.labels,
+            "labels": {"style": {"colors": context.colors, "fontSize": "12px"}},
+        }
+
     def get_chart_options(self):
         context = self.get_chart_context()
         options = {
-            "series": [{"data": context.values, "name": context.series_name}],
+            "series": self.get_chart_series(context),
             "chart": {
                 "id": context.chart_div_id,
                 "width": context.width,
@@ -150,11 +177,25 @@ class BarChartMixin(BaseChartMixin):
                 "style": {"fontSize": "12px", "colors": ["#222222"]},
             },
             "legend": {"show": False},
-            "xaxis": {
-                "categories": context.labels,
-                "labels": {"style": {"colors": context.colors, "fontSize": "12px"}},
-            },
+            "xaxis": self.get_chart_xaxis(context),
         }
+        if context.has_dropshadow:
+            options["chart"]["dropShadow"] = {
+                "enabled": True,
+                "color": "#000",
+                "top": 18,
+                "left": 7,
+                "blur": 10,
+                "opacity": 0.5,
+            }
+        if context.has_grid:
+            options["grid"] = {
+                "borderColor": context.grid_border_color,
+                "row": {
+                    "colors": context.grid_colors,
+                    "opacity": 0.5,
+                },
+            }
         return options
 
 
@@ -175,16 +216,17 @@ class TimestampedChartMixin(BaseChartMixin):
 class TimestampedBarChartMixin(TimestampedChartMixin):
     listing_template_name = ThemeTemplate("chart_trend_bar.html")
 
+    def get_chart_xaxis(self, context):
+        return {
+            "type": "datetime",
+            "tickAmount": 6,
+        }
+
     def get_chart_options(self):
         context = self.get_chart_context()
         options = {
             "colors": context.colors,
-            "series": [
-                {
-                    "name": context.series_name,
-                    "data": context.values,
-                }
-            ],
+            "series": self.get_chart_series(context),
             "chart": {
                 "id": context.chart_div_id,
                 "type": "bar",
@@ -206,20 +248,91 @@ class TimestampedBarChartMixin(TimestampedChartMixin):
                 "size": 0,
                 "style": "hollow",
             },
-            "xaxis": {
-                "type": "datetime",
-                "tickAmount": 6,
-            },
+            "xaxis": self.get_chart_xaxis(context),
             "tooltip": {
                 "x": {
                     "format": "dd MMM yyyy",
                 }
             },
         }
+        if context.has_dropshadow:
+            options["chart"]["dropShadow"] = {
+                "enabled": True,
+                "color": "#000",
+                "top": 18,
+                "left": 7,
+                "blur": 10,
+                "opacity": 0.5,
+            }
+        if context.has_grid:
+            options["grid"] = {
+                "borderColor": context.grid_border_color,
+                "row": {
+                    "colors": context.grid_colors,
+                    "opacity": 0.5,
+                },
+            }
         return options
 
 
-class TimestampedLineChartMixin(BaseChartMixin):
+class LineChartMixin(BaseChartMixin):
+    listing_template_name = ThemeTemplate("chart_trend_bar.html")
+    chart_labels_rec_key = None
+    per_page = 1000
+
+    def get_chart_options(self):
+        context = self.get_chart_context()
+        options = {
+            "colors": context.colors,
+            "series": self.get_chart_series(context),
+            "chart": {
+                "id": "chart",
+                "type": "line",
+                "width": context.width,
+                "height": context.height,
+                "zoom": {
+                    "autoScaleYaxis": True,
+                },
+            },
+            "stroke": {
+                "curve": context.stroke_curve,
+            },
+            "dataLabels": {
+                "enabled": False,
+            },
+            "markers": {
+                "size": 0,
+                "style": "hollow",
+            },
+            "xaxis": self.get_chart_xaxis(context),
+            "tooltip": {
+                "x": {
+                    "format": "dd MMM yyyy",
+                }
+            },
+        }
+        if context.has_dropshadow:
+            options["chart"]["dropShadow"] = {
+                "enabled": True,
+                "color": "#000",
+                "top": 18,
+                "left": 7,
+                "blur": 10,
+                "opacity": 0.5,
+            }
+        if context.has_grid:
+            options["grid"] = {
+                "borderColor": context.grid_border_color,
+                "row": {
+                    "colors": context.grid_colors,
+                    "opacity": 0.5,
+                },
+            }
+
+        return options
+
+
+class TimestampedLineChartMixin(LineChartMixin):
     listing_template_name = ThemeTemplate("chart_trend_bar.html")
     chart_labels_rec_key = None
     per_page = 1000
@@ -234,16 +347,17 @@ class TimestampedLineChartMixin(BaseChartMixin):
             val = float(val)
         return [timestamp, val]
 
+    def get_chart_xaxis(self, context):
+        return {
+            "type": "datetime",
+            "tickAmount": 6,
+        }
+
     def get_chart_options(self):
         context = self.get_chart_context()
         options = {
             "colors": context.colors,
-            "series": [
-                {
-                    "name": context.series_name,
-                    "data": context.values,
-                }
-            ],
+            "series": self.get_chart_series(context),
             "chart": {
                 "id": "chart",
                 "type": "line",
@@ -253,6 +367,9 @@ class TimestampedLineChartMixin(BaseChartMixin):
                     "autoScaleYaxis": True,
                 },
             },
+            "stroke": {
+                "curve": context.stroke_curve,
+            },
             "dataLabels": {
                 "enabled": False,
             },
@@ -260,14 +377,29 @@ class TimestampedLineChartMixin(BaseChartMixin):
                 "size": 0,
                 "style": "hollow",
             },
-            "xaxis": {
-                "type": "datetime",
-                "tickAmount": 6,
-            },
+            "xaxis": self.get_chart_xaxis(context),
             "tooltip": {
                 "x": {
                     "format": "dd MMM yyyy",
                 }
             },
         }
+        if context.has_dropshadow:
+            options["chart"]["dropShadow"] = {
+                "enabled": True,
+                "color": "#000",
+                "top": 18,
+                "left": 7,
+                "blur": 10,
+                "opacity": 0.5,
+            }
+        if context.has_grid:
+            options["grid"] = {
+                "borderColor": context.grid_border_color,
+                "row": {
+                    "colors": context.grid_colors,
+                    "opacity": 0.5,
+                },
+            }
+
         return options

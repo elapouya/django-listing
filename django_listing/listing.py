@@ -102,6 +102,7 @@ LISTING_PARAMS_KEYS = {
     "allow_empty_first_page",
     "anchor_hash",
     "attrs",
+    "chart_options_template",
     "columns_headers",
     "confirm_msg_for_delete",
     "confirm_msg_nb_items_for_delete",
@@ -461,6 +462,7 @@ class Listing(ListingBase):
     attrs = {"class": "table table-hover table-bordered table-striped table-sm"}
     can_edit = False
     can_select = False
+    chart_options_template = None
     columns = None
     columns_headers = None
     confirm_msg_for_delete = gettext_lazy(

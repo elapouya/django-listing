@@ -1,13 +1,11 @@
 {% extends "./chart.html" %}
 
 <script>
-{% block apexcharts_additional_options %}
-const additional_options = {
-    legend: {
-        formatter: function (seriesName, opts) {
-            return [seriesName, ' : <span class="format-number">' + opts.w.globals.series[opts.seriesIndex] + '</span>']
+    {% block apexcharts_additional_options %}
+        apex_options.legend = {
+            formatter: function (seriesName, opts) {
+                return [seriesName, ' : <span class="format-number">' + opts.w.globals.series[opts.seriesIndex] + '</span>']
+            }
         }
-    }
-}
-{% endblock %}
+    {% endblock %}
 </script>

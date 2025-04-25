@@ -14,11 +14,12 @@
                         return;
                     }
                     (() => {
-                        {% block apexcharts_additional_options %}
-                            const additional_options = {}
-                        {% endblock %}
                         const data = JSON.parse(document.getElementById("{{ data.json_id }}").textContent);
-                        const apex_options = {...data.apexcharts_options, ...additional_options};
+                        let apex_options = data.apexcharts_options;
+                        {% block apexcharts_additional_options %}{% endblock %}
+                        {% if listing.chart_options_template %}
+                            {% include listing.chart_options_template %}
+                        {% endif %}
                         new ApexCharts(document.querySelector("#{{data.chart_div_id}}"), apex_options).render();
                     })();
                 });
