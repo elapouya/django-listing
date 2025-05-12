@@ -50,7 +50,8 @@ class BaseChartMixin:
 
     def get_chart_series_colors(self, series):
         colors = []
-        for idx, s in enumerate(series):
+        for i, s in enumerate(series):
+            idx = i * 2  # otherwise colors are too near
             dlst_settings = settings.django_listing_settings
             gradient = dlst_settings.CHARTS_DEFAULT_GRADIENT
             gradient_default = dlst_settings.CHARTS_DEFAULT_GRADIENT_OVERFLOW
@@ -76,7 +77,7 @@ class BaseChartMixin:
         return self.chart_width
 
     def get_apex_options(self):
-        raise NotImplemented
+        raise NotImplementedError("Please define get_apex_options() method")
 
     def get_chart_json_id(self):
         return f"{self.css_id}-chart-json-id"
@@ -95,8 +96,8 @@ class BaseChartMixin:
             },
         ]
 
-    def get_xaxis(self, context):
-        raise NotImplemented
+    def get_chart_xaxis(self, context):
+        raise NotImplementedError("Please define get_chart_xaxis() method")
 
     def chart_data(self):
         return dict(
@@ -106,7 +107,7 @@ class BaseChartMixin:
         )
 
     def get_chart_options(self, records):
-        raise NotImplemented
+        raise NotImplementedError("Please define get_chart_options() method")
 
     def get_chart_context(self):
         colors = []
@@ -116,7 +117,7 @@ class BaseChartMixin:
             colors.append(self.get_chart_rec_color(rec))
             values.append(self.get_chart_rec_values(rec))
             labels.append(self.get_chart_rec_label(rec))
-        return FastAttrDict(
+        context = FastAttrDict(
             values=values,
             labels=labels,
             colors=colors,
@@ -130,6 +131,8 @@ class BaseChartMixin:
             grid_colors=self.chart_grid_colors,
             has_dropshadow=self.chart_has_dropshadow,
         )
+        context.series = self.get_chart_series(context)
+        return context
 
 
 class PieChartMixin(BaseChartMixin):
@@ -164,7 +167,7 @@ class BarChartMixin(BaseChartMixin):
     def get_chart_options(self):
         context = self.get_chart_context()
         options = {
-            "series": self.get_chart_series(context),
+            "series": context.series,
             "chart": {
                 "id": context.chart_div_id,
                 "width": context.width,
@@ -236,7 +239,7 @@ class TimestampedBarChartMixin(TimestampedChartMixin):
         context = self.get_chart_context()
         options = {
             "colors": context.colors,
-            "series": self.get_chart_series(context),
+            "series": context.series,
             "chart": {
                 "id": context.chart_div_id,
                 "type": "bar",
