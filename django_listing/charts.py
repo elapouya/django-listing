@@ -292,9 +292,11 @@ class LineChartMixin(BaseChartMixin):
 
     def get_chart_options(self):
         context = self.get_chart_context()
+        series = self.get_chart_series(context)
+        colors = self.get_chart_series_colors(series)
         options = {
-            "colors": context.colors,
-            "series": self.get_chart_series(context),
+            "colors": colors,
+            "series": series,
             "chart": {
                 "id": "chart",
                 "type": "line",
