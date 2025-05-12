@@ -48,6 +48,16 @@ class BaseChartMixin:
         color = gradient[idx] if idx < len(gradient) else gradient_default
         return color
 
+    def get_chart_series_colors(self, series):
+        colors = []
+        for idx, s in enumerate(series):
+            dlst_settings = settings.django_listing_settings
+            gradient = dlst_settings.CHARTS_DEFAULT_GRADIENT
+            gradient_default = dlst_settings.CHARTS_DEFAULT_GRADIENT_OVERFLOW
+            color = gradient[idx] if idx < len(gradient) else gradient_default
+            colors.append(color)
+        return colors
+
     def get_chart_rec_values(self, rec):
         val = rec.get(self.chart_values_rec_key)
         if isinstance(val, Decimal):
@@ -337,9 +347,6 @@ class TimestampedLineChartMixin(LineChartMixin):
     chart_labels_rec_key = None
     per_page = 1000
 
-    def get_chart_rec_color(self, rec):
-        return settings.django_listing_settings.CHARTS_DEFAULT_TREND_BAR_COLOR
-
     def get_chart_rec_values(self, rec):
         val = rec.get(self.chart_values_rec_key)
         timestamp = rec.get(self.chart_timestamps_rec_key)
@@ -355,9 +362,11 @@ class TimestampedLineChartMixin(LineChartMixin):
 
     def get_chart_options(self):
         context = self.get_chart_context()
+        series = self.get_chart_series(context)
+        colors = self.get_chart_series_colors(series)
         options = {
-            "colors": context.colors,
-            "series": self.get_chart_series(context),
+            "colors": colors,
+            "series": series,
             "chart": {
                 "id": "chart",
                 "type": "line",
