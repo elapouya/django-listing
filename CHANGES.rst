@@ -1,6 +1,8 @@
-0.10.32 (2025-05-19)
+0.10.33 (2025-05-19)
 --------------------
 - Fix bug about integer data_key
+- ChoiceFilter choices param can now be a callable
+- Fix footer aggregation
 
 0.10.31 (2025-05-14)
 --------------------

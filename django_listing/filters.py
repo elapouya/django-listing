@@ -929,6 +929,8 @@ class ChoiceFilter(Filter):
     def get_form_field_params(self, **kwargs):
         params = super().get_form_field_params(**kwargs)
         self.set_params_choices(params)
+        if callable(params["choices"]):
+            params["choices"] = params["choices"](self)
         params["choices"] = [("", self.no_choice_msg)] + list(params["choices"])
         return params
 

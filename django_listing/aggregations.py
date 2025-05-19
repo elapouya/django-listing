@@ -126,9 +126,11 @@ class Aggregation(metaclass=AggregationMeta):
         return self.get_aggregated_value_from_current_page()
 
     def get_aggregated_value(self):
+        listing = self.column.listing
         if self.global_aggregation:
-            data = self.column.listing.data
+            data = listing.data
             if isinstance(data, QuerySet):
+                data = listing.records.get_filtered_queryset()
                 return self.get_aggregated_value_from_queryset(data)
             else:
                 return self.get_aggregated_value_from_sequence(data)
