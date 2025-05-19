@@ -669,7 +669,8 @@ class Column(metaclass=ColumnMeta):
         self.apply_template_kwargs()
         if self.data_key is None:
             self.data_key = self.name
-        self.data_key = self.data_key.replace(".", "__")
+        if isinstance(self.data_key, str):
+            self.data_key = self.data_key.replace(".", "__")
         if listing.model:
             try:
                 if "__" in self.data_key:
