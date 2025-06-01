@@ -1696,11 +1696,13 @@ class Listing(ListingBase):
         if perms is None:
             perms = getattr(self, perm_attr_name, True)
         if perms is True:
-            app_label = self.model._meta.app_label
-            model_name = self.model._meta.model_name
-            permission_action = self.PERMISSION_ACTIONS.get(action, action)
-            if permission_action:
-                perms = (f"{app_label}.{permission_action}_{model_name}",)
+            model = self.model or getattr(self._view, "model", None)
+            if model:
+                app_label = model._meta.app_label
+                model_name = model._meta.model_name
+                permission_action = self.PERMISSION_ACTIONS.get(action, action)
+                if permission_action:
+                    perms = (f"{app_label}.{permission_action}_{model_name}",)
         if perms == False:
             return True
         if perms is not None:

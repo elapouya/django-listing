@@ -244,21 +244,31 @@ class RecordManager:
 
     def export(self):
         lsg = self.listing
-        qs = self.filter_queryset(lsg.data)
-        qs = self.order_queryset(qs)
+        export_data = self.get_export_data()
+        export_data = self.order_data(export_data)
         if lsg.gb_cols:
-            records = [Record(lsg, obj, i) for i, obj in enumerate(qs)]
+            records = [Record(lsg, obj, i) for i, obj in enumerate(export_data)]
             self.group_by_foreignkey_object_map(records)
             for rec in records:
                 yield rec
         else:
-            for i, obj in enumerate(qs):
+            for i, obj in enumerate(export_data):
                 yield Record(lsg, obj, i)
 
+    def get_export_data(self):
+        data = self.listing.data
+        if isinstance(data, QuerySet):
+            export_data = self.filter_queryset(data)
+        else:
+            export_data = self.filter_sequence(data)
+        return export_data
+
     def export_count(self):
-        lsg = self.listing
-        qs = self.filter_queryset(lsg.data)
-        return qs.count()
+        export_data = self.get_export_data()
+        if isinstance(export_data, QuerySet):
+            return export_data.count()
+        else:
+            return len(export_data)
 
     def filter_queryset(self, qs):
         if self.listing.filters:
@@ -270,7 +280,14 @@ class RecordManager:
         qs = self.filter_queryset(qs)
         return qs
 
-    def order_queryset(self, qs):
+    def order_data(self, data):
+        if isinstance(data, QuerySet):
+            data = self.order_queryset(data)
+        else:
+            data = self.order_sequence(data)
+        return data
+
+    def get_order_by(self):
         lsg = self.listing
         if lsg.force_order_by:
             if isinstance(lsg.force_order_by, str):
@@ -296,7 +313,22 @@ class RecordManager:
                     order_by = lsg.gb_queryset_fields
                 else:
                     order_by = ["pk"]
+        return order_by
+
+    def order_queryset(self, qs):
+        order_by = self.get_order_by()
         return qs.order_by(*order_by)
+
+    def order_sequence(self, data):
+        # only manage one level sort
+        order_by = self.get_order_by()
+        if order_by:
+            sort_key = order_by[0]
+            sort_desc = sort_key[0] == "-"
+            if sort_desc:
+                sort_key = sort_key[1:]
+            data = sorted(data, key=lambda x: x[sort_key], reverse=sort_desc)
+        return data
 
     def get_objs_from_queryset(self):
         if not hasattr(self, "_queryset_objs"):

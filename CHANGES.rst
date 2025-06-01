@@ -1,3 +1,7 @@
+0.10.34 (2025-06-01)
+--------------------
+- Better sequence support
+
 0.10.33 (2025-05-19)
 --------------------
 - Fix bug about integer data_key
