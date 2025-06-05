@@ -1,3 +1,7 @@
+0.10.35 (2025-06-05)
+--------------------
+- Variation number can now be set in view as attribute
+
 0.10.34 (2025-06-01)
 --------------------
 - Better sequence support
