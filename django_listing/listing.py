@@ -201,6 +201,8 @@ LISTING_PARAMS_KEYS = {
     "theme_sortable_class",
     "theme_sorted_class",
     "theme_spinner_icon",
+    "theme_row_class",
+    "theme_table_header_class",
     "toolbar",
     "toolbar_placement",
     "unsortable",
@@ -614,6 +616,7 @@ class Listing(ListingBase):
     theme_button_active_class = ThemeAttribute("theme_button_active_class")
     theme_div_row_container_class = ThemeAttribute("theme_div_row_container_class")
     theme_row_class = ThemeAttribute("theme_row_class")
+    theme_table_header_class = ThemeAttribute("theme_table_header_class")
     theme_localized_small_device_styles_width = ThemeAttribute(
         "theme_localized_small_device_styles_width"
     )

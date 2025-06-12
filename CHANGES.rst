@@ -1,3 +1,7 @@
+0.10.36 (2025-06-12)
+--------------------
+- Add theme parameter to customize listing table header css class
+
 0.10.35 (2025-06-05)
 --------------------
 - Variation number can now be set in view as attribute

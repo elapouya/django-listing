@@ -37,7 +37,7 @@
                     {% block listing_header %}
                         {% if listing.has_header %}
                             <thead>
-                            <tr class="{{ theme_config.theme_row_class }}">
+                            <tr class="{{ listing.theme_table_header_class }}">
                                 {% for col in listing.header_columns %}{{ col.html }}
                                 {% endfor %}
                             </tr>

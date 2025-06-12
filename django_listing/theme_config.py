@@ -49,6 +49,7 @@ class ThemeConfigBase(metaclass=ThemeConfigMeta):
     theme_div_row_container_class = ""
     theme_listing_class = "django-listing"  # do not modify
     theme_row_class = "row-container"
+    theme_table_header_class = "table-header-row"
     theme_sort_asc_class = "asc"
     theme_sort_asc_icon = "listing-icon-angle-up"
     theme_sort_desc_class = "desc"
