@@ -1,3 +1,7 @@
+0.10.37 (2025-06-19)
+--------------------
+- Add form_field_serialize_func column attribute
+
 0.10.36 (2025-06-12)
 --------------------
 - Add theme parameter to customize listing table header css class

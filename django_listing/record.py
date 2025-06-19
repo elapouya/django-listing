@@ -407,6 +407,11 @@ class Record:
     def get_form_serialized_cols(self, obj, cols):
         data = {}
         for col in cols:
+            if col.form_field_serialize_func:
+                value = col.form_field_serialize_func(col, obj)
+                if value is not None:
+                    data[col.name] = value
+                continue
             data_key = col.data_key
             final_object = None
             if "__" in data_key:
@@ -437,8 +442,7 @@ class Record:
     def get_serialized_object(self, **kwargs):
         method = getattr(self._obj, "get_serialized_additional_data", None)
         additional_data = method() if method else {}
-        method = getattr(self._obj, "get_serialized_form_data", None)
-        form_data = method() if method else {}
+        form_data = {}
         if self._listing.form_serialize_cols:
             func = self._listing.form_serialize_cols_func
             if func is None:
@@ -448,6 +452,9 @@ class Record:
             form_data.update(func(self._obj, self._listing.form_serialize_cols))
         if self._listing.form_no_autofill_cols:
             additional_data["no_autofill"] = self._listing.form_no_autofill_cols
+        method = getattr(self._obj, "get_serialized_form_data", None)
+        if method:
+            form_data.update(method())
         serialized_obj = object_serializer.serialize(
             [self._obj],
             form_data=form_data,
