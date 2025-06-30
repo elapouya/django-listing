@@ -413,6 +413,19 @@ class Record:
                     data[col.name] = value
                 continue
             data_key = col.data_key
+            from django_listing import MultiAutoCompleteColumn
+
+            if isinstance(col, MultiAutoCompleteColumn):
+                m2m_qs = getattr(obj, data_key).all()
+                m2m_pks_labels = []
+                for m2m_obj in m2m_qs:
+                    form_label_func = getattr(m2m_obj, FORM_LABEL_METHOD_NAME, None)
+                    if form_label_func is None:
+                        form_label_func = lambda: str(m2m_obj)
+                    m2m_pks_labels.append((m2m_obj.pk, form_label_func()))
+                data[col.name] = m2m_pks_labels
+                continue
+
             final_object = None
             if "__" in data_key:
                 attr, foreign_attr = data_key.split("__", maxsplit=1)
@@ -420,10 +433,13 @@ class Record:
                 final_object = getattr(foreign_object, foreign_attr, None)
             else:
                 final_object = getattr(obj, data_key, None)
+
+            from django_listing import AutoCompleteColumn
+
             if (
                 isinstance(final_object, int)
                 # use class name to avoid cyclic import
-                and col.__class__.__name__ == "AutoCompleteColumn"
+                and isinstance(col, AutoCompleteColumn)
                 and hasattr(col, "queryset")
             ):
                 final_object = col.queryset.filter(pk=final_object).first()

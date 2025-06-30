@@ -97,7 +97,7 @@ class ListingViewMixin:
                                 if len(v) == 1:
                                     request.POST[k] = v[0]
                                 else:
-                                    request.POST[k] = v
+                                    request.POST.setlist(k, v)
                         # Manage checkbox cases on mass-op :
                         # When checkbox is off : JS serialize do not transmit checkbox
                         # input name, so create it...

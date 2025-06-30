@@ -73,6 +73,7 @@ __all__ = [
     "SequenceColumns",
     "TimeColumn",
     "TotalColumn",
+    "MultiAutoCompleteColumn",
 ]
 
 COLUMNS_PARAMS_KEYS = {
@@ -1362,6 +1363,9 @@ class ChoiceColumn(Column):
         else:
             widget = forms.Select
             widget_attrs.add("class", self.theme_form_select_widget_class)
+        widget_attrs[
+            "id"
+        ] = f"id-attachedForm-{self.name}{self.listing.suffix}".replace("_", "-")
         return widget(attrs=widget_attrs)
 
 
@@ -1427,7 +1431,7 @@ class ManyColumn(Column):
     def init(self, *args, **kwargs):
         super().init(*args, **kwargs)
         qs = getattr(self, "queryset", None)
-        if not qs and self.model_field:
+        if qs is None and self.model_field:
             self.queryset = self.model_field.related_model.objects.all()
 
     def get_cell_value(self, rec):
@@ -1799,6 +1803,12 @@ class AutoCompleteColumn(ForeignKeyColumn):
     def init(self, *args, **kwargs):
         super().init(*args, **kwargs)
         self.listing.need_media_for("autocomplete")
+
+
+class MultiAutoCompleteColumn(AutoCompleteColumn):
+    """tell serialization to get all pk/label needed"""
+
+    pass
 
 
 class FileColumn(LinkColumn):

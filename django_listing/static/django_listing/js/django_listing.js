@@ -720,27 +720,40 @@ function djlst_fill_form(form, obj, pk) {
             } else if (element.is("input[type='checkbox']")) {
                 element.prop("checked", value);
             } else if (element.is("select")) {
-                let label = value;
-                if (Array.isArray(value)) {
-                    label = value[1];
-                    value = value[0];  // this last !!
-                }
-                if (typeof value === 'boolean') value = (value) ? "True" : "False";
-                if (!value) value = "";
-                let option = element.find("option[value='" + value + "']");
-                if (option.length === 0) {
-                    // If option doesn't exist, create it and remove others
-                    if (element.hasClass("select2-hidden-accessible")) {
-                        element.empty();
+                // If 2-dimension array : this is a multi-select
+                if (Array.isArray(value) && value.every(Array.isArray)) {
+                    element.empty();
+                    for (const [pk, label] of value) {
+                        element.append($("<option>", {
+                            value: pk,
+                            text: label,
+                            selected: true
+                        }));
                     }
-                    element.append($("<option>", {
-                        value: value,
-                        text: label
-                    }));
-                }
-                element.val(value);
-                if (element.hasClass("select2-hidden-accessible")) {
                     element.trigger('change');
+                } else {
+                    let label = value;
+                    if (Array.isArray(value)) {
+                        label = value[1];
+                        value = value[0];  // this last !!
+                    }
+                    if (typeof value === 'boolean') value = (value) ? "True" : "False";
+                    if (!value) value = "";
+                    let option = element.find("option[value='" + value + "']");
+                    if (option.length === 0) {
+                        // If option doesn't exist, create it and remove others
+                        if (element.hasClass("select2-hidden-accessible")) {
+                            element.empty();
+                        }
+                        element.append($("<option>", {
+                            value: value,
+                            text: label,
+                        }));
+                    }
+                    element.val(value);
+                    if (element.hasClass("select2-hidden-accessible")) {
+                        element.trigger('change');
+                    }
                 }
             } else {
                 element.val(value);

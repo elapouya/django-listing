@@ -1,3 +1,9 @@
+0.10.38 (2025-06-30)
+--------------------
+- Fix select input id in attached form
+- Fix multi-selection values in POST
+- Add multi-selection Select2 handling
+
 0.10.37 (2025-06-19)
 --------------------
 - Add form_field_serialize_func column attribute
