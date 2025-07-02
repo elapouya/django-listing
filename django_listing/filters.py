@@ -703,15 +703,19 @@ class Filter(metaclass=FilterMeta):
         )
         return default_value
 
-    def filter_queryset(self, qs, cleaned_data=None):
+    def get_queryset_clean_value(self, cleaned_data):
         cleaned_value = cleaned_data.get(self.input_name + self.listing.suffix)
+        return cleaned_value
+
+    def filter_queryset(self, qs, cleaned_data=None):
+        cleaned_value = self.get_queryset_clean_value(cleaned_data)
         if self.resolve_qs_value and isinstance(cleaned_value, QuerySet):
             # when using multi-selection select, Django returns the queryset
             # representing the selection : this may cause very slow filtering.
             # Instead, using PKs corresponding to this selection are much faster :
             # this is the purpose of resolve_qs_value attribute
             cleaned_value = list(cleaned_value.values_list("pk", flat=True))
-        if not cleaned_value:
+        if cleaned_value is not False and not cleaned_value:
             return qs
         method_name = f"filter_queryset_{self.name}"
         method = getattr(self.listing, method_name, None)
@@ -894,6 +898,15 @@ class BooleanFilter(Filter):
             ("False", self.false_msg),
         ]
         return params
+
+    def filter_queryset(self, qs, cleaned_data):
+        data_key = self.input_name + self.listing.suffix
+        cleaned_value = cleaned_data.get(data_key)
+        if cleaned_value:
+            cleaned_data[data_key] = cleaned_value is True or (
+                isinstance(cleaned_value, str) and cleaned_value.lower() == "true"
+            )
+        return super().filter_queryset(qs, cleaned_data)
 
 
 class ChoiceFilter(Filter):

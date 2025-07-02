@@ -3,7 +3,7 @@
    isort:skip_file
 """
 
-__version__ = "0.10.38"
+__version__ = "0.10.39"
 __author__ = "Eric Lapouyade"
 __copyright__ = "Copyright 2018, The Django listing Project"
 __credits__ = ["Eric Lapouyade"]

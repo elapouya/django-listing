@@ -1,3 +1,7 @@
+0.10.39 (2025-07-02)
+--------------------
+- Fix __isnull filtering
+
 0.10.38 (2025-06-30)
 --------------------
 - Fix select input id in attached form
