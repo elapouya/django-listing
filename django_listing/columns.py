@@ -1421,10 +1421,12 @@ class MultipleChoiceColumn(Column):
 
 class ManyColumn(Column):
     many_separator = ", "
-    params_keys = "many_separator,cell_map,cell_map_value,cell_filter,cell_reduce"
+    params_keys = (
+        "many_separator,cell_map,cell_map_value,cell_filter,"
+        "cell_reduce,no_foreignkey_link"
+    )
     from_model_field_classes = (models.ManyToManyField, models.ManyToManyRel)
     form_field_class = forms.ModelMultipleChoiceField
-    params_keys = "no_foreignkey_link"
     no_foreignkey_link = False
     editable = False
 
@@ -1436,9 +1438,12 @@ class ManyColumn(Column):
 
     def get_cell_value(self, rec):
         value = super().get_cell_value(rec)
-        value = self.cell_filter(value)
-        value = map(self.cell_map, value)
-        value = self.cell_reduce(value)
+        if self.cell_filter is not None:
+            value = self.cell_filter(value)
+        if self.cell_map is not None:
+            value = map(self.cell_map, value)
+        if self.cell_reduce is not None:
+            value = self.cell_reduce(value)
         return mark_safe(value)
 
     def get_cell_filter_link(self, rec, ctx, value):
