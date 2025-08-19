@@ -382,6 +382,8 @@ class ListingVariations(ListingBase):
                 self.suffix = Listing.get_suffix(request, self)
             variation = request.GET.get("variation" + self.suffix)
             if not variation:
+                variation = request.POST.get("variation" + self.suffix)
+            if not variation:
                 variation = str(self.stored_params.get("variation", ""))
             if variation and variation.isdigit():
                 variation = int(variation)
