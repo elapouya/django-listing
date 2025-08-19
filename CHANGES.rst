@@ -1,3 +1,7 @@
+0.10.41 (2025-08-19)
+--------------------
+- Fix Filter.default_value_func
+
 0.10.40 (2025-08-13)
 --------------------
 - Fix ManyColumn params_keys

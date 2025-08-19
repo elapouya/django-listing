@@ -315,8 +315,10 @@ class Filters(list):
     def extract_params(self):
         request_data = self.listing.request_data
         for f in self:
-            if not request_data and f.default_value is not None:
-                f.value = f.default_value
+            if not request_data and (
+                f.default_value is not None or callable(f.default_value_func)
+            ):
+                f.value = f.get_default_value()
             else:
                 f.extract_params(request_data)
 
