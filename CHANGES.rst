@@ -1,3 +1,8 @@
+0.10.43 (2025-08-23)
+--------------------
+- Fix filter inside a cell
+- Better filters form reset button
+
 0.10.42 (2025-08-19)
 --------------------
 - Fix Filter.default_value_func
