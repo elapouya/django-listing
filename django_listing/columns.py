@@ -820,7 +820,7 @@ class Column(metaclass=ColumnMeta):
             filter_name = self.cell_with_filter_name or self.name
             filter_obj = filters.get(filter_name)
             if filter_obj:
-                rec_val = rec.get(filter_name)
+                rec_val = rec.get(filter_name, value)
                 rec_val = getattr(rec_val, "pk", rec_val)  # case it is a model object
                 only_one_with_prefix = (
                     FILTER_QUERYSTRING_PREFIX if self.has_cell_filter_single else None
