@@ -924,7 +924,6 @@ function djlst_patch_form_data($form, extraData) {
 }
 
 $(document).ready(function () {
-
     $(document.body).on("click", ".filters-form .advanced-button", function () {
         const form = $(this).closest(".filters-form");
         form.find(".filters-layout-advanced").slideToggle();
@@ -966,7 +965,17 @@ $(document).ready(function () {
     $(document.body).on("change", ".attached-form-container input:not(.mass-op-cb)", djlst_attached_form_input_changed);
     $(document.body).on("change", ".attached-form-container select,.attached-form-container textarea", djlst_attached_form_input_changed);
     $(document.body).on("click", ".listing-form.filters-form-ajax .submit-button", function () {djlst_reload_listing_from_form(this); return false;});
-    $(document.body).on("click", ".listing-form.filters-form-ajax button.reset-button", function () {window.location.href = window.location.href;});
+    $(document.body).on("click", ".listing-form.filters-form-ajax button.reset-button", function (e) {
+        // filter form reset button must reload without f_* params in querystring
+        e.preventDefault();
+        let url = new URL(window.location.href);
+        url.searchParams.forEach(function(value, key) {
+            if (key.startsWith("f_")) {
+                url.searchParams.delete(key);
+            }
+        });
+        window.location.href = url.toString();
+    });
 
     $(".django-listing-container").each(function () {
         djlst_selection_changed_hook($(this));
