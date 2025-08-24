@@ -65,6 +65,7 @@ FILTERS_KEYS = {
 FILTERS_PARAMS_KEYS = {
     "format_label",
     "container_attrs",
+    "filter_distinct",
     "filter_key",
     "field_name",
     "input_type",
@@ -484,6 +485,7 @@ class Filter(metaclass=FilterMeta):
     default_value = None
     default_value_func = None
     field_name = None
+    filter_distinct = False
     filter_key = None
     filter_queryset_method = None
     flex_width = None
@@ -737,12 +739,15 @@ class Filter(metaclass=FilterMeta):
             words = filter(None, cleaned_value.split())
             for word in words:
                 qs = qs.filter(**{self.filter_key: word})
-            return qs
-        if "__" not in self.filter_key and isinstance(
+        elif "__" not in self.filter_key and isinstance(
             cleaned_value, (QuerySet, list, tuple)
         ):
-            return qs.filter(**{f"{self.filter_key}__in": cleaned_value})
-        return qs.filter(**{self.filter_key: cleaned_value})
+            qs = qs.filter(**{f"{self.filter_key}__in": cleaned_value})
+        else:
+            qs = qs.filter(**{self.filter_key: cleaned_value})
+        if self.filter_distinct:
+            qs = qs.distinct()
+        return qs
 
     def filter_sequence(self, seq):
         if not self.value:
