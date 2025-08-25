@@ -652,6 +652,12 @@ class Column(metaclass=ColumnMeta):
             ],
         )
 
+    def __str__(self):
+        return f"{self.__class__.__name__} {self.name=}"
+
+    def __repr__(self):
+        return self.__str__()
+
     def bind_to_listing(self, listing):
         self.init(listing, *self.init_args, **self.init_kwargs)
 
