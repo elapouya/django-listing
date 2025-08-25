@@ -272,7 +272,7 @@ class Columns(list):
         if isinstance(exported_cols_name, str):
             exported_cols_name = list(map(str.strip, exported_cols_name.split(",")))
         if exported_cols_name:
-            cols = [self.name2col[c] for c in exported_cols_name]
+            cols = [self.name2col[c] for c in exported_cols_name if c in self.name2col]
         return cols
 
     def select(self, select_cols_name=None, exclude_cols_name=None):

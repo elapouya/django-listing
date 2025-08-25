@@ -1,3 +1,8 @@
+0.10.44 (2025-08-25)
+--------------------
+- Fix group by
+- Add filter_distinct attribute
+
 0.10.43 (2025-08-23)
 --------------------
 - Fix filter inside a cell
