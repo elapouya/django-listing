@@ -33,6 +33,7 @@ class ActionsButtonsColumn(Column):
         "buttons_theme_li_class",
         "buttons_method",
         "buttons_url_func",
+        "buttons_visibility_func",
     )
     params_keys_suffixes = (
         "has_icon",
@@ -44,6 +45,7 @@ class ActionsButtonsColumn(Column):
         "title",
         "method",
         "url_func",
+        "visibility_func",
     )
     buttons = "move_up,move_down,view_object,edit_object,delete_object"
     buttons_template = ThemeTemplate("actions_buttons.html")
@@ -56,6 +58,7 @@ class ActionsButtonsColumn(Column):
     buttons_theme_button_class = "btn btn-primary"
     buttons_method = None
     buttons_url_func = None
+    buttons_visibility_func = None
     actions_query_string_keys = {
         "action_col",
         "action_button",
