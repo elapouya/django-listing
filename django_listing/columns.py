@@ -1789,7 +1789,7 @@ class ForeignKeyColumn(LinkColumn):
         if "queryset" in kwargs:
             self.queryset = kwargs["queryset"]
         qs = getattr(self, "queryset", None)
-        if qs is None and self.model_field:
+        if qs is None and self.model_field and self.model_field.related_model:
             self.queryset = self.model_field.related_model.objects.all()
 
     def get_cell_value(self, rec):
