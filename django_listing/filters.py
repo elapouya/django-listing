@@ -66,6 +66,7 @@ FILTERS_PARAMS_KEYS = {
     "format_label",
     "container_attrs",
     "filter_distinct",
+    "filter_exclude",
     "filter_key",
     "field_name",
     "input_type",
@@ -486,6 +487,7 @@ class Filter(metaclass=FilterMeta):
     default_value_func = None
     field_name = None
     filter_distinct = False
+    filter_exclude = False
     filter_key = None
     filter_queryset_method = None
     flex_width = None
@@ -735,16 +737,20 @@ class Filter(metaclass=FilterMeta):
                     qs = method(qs, word)
                 return qs
             return method(qs, cleaned_value)
+        if self.filter_exclude:
+            filter_op = qs.exclude
+        else:
+            filter_op = qs.filter
         if self.word_search and isinstance(cleaned_value, str):
             words = filter(None, cleaned_value.split())
             for word in words:
-                qs = qs.filter(**{self.filter_key: word})
+                qs = filter_op(**{self.filter_key: word})
         elif "__" not in self.filter_key and isinstance(
             cleaned_value, (QuerySet, list, tuple)
         ):
-            qs = qs.filter(**{f"{self.filter_key}__in": cleaned_value})
+            qs = filter_op(**{f"{self.filter_key}__in": cleaned_value})
         else:
-            qs = qs.filter(**{self.filter_key: cleaned_value})
+            qs = filter_op(**{self.filter_key: cleaned_value})
         if self.filter_distinct:
             qs = qs.distinct()
         return qs
