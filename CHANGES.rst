@@ -1,3 +1,7 @@
+0.10.45 (2025-09-03)
+--------------------
+- Add attrs, is_visible and is_disabled params on ActionsButtonsColumn
+
 0.10.44 (2025-08-25)
 --------------------
 - Fix group by

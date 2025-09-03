@@ -12,7 +12,13 @@ from django.template import loader
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from django_listing import Column, ListingException, ModelColumns, InvalidColumn
+from django_listing import (
+    Column,
+    ListingException,
+    ModelColumns,
+    InvalidColumn,
+    HTMLAttributes,
+)
 
 from .theme_config import ThemeTemplate
 
@@ -33,7 +39,9 @@ class ActionsButtonsColumn(Column):
         "buttons_theme_li_class",
         "buttons_method",
         "buttons_url_func",
-        "buttons_visibility_func",
+        "buttons_is_visible",
+        "buttons_is_disabled",
+        "buttons_attrs",
     )
     params_keys_suffixes = (
         "has_icon",
@@ -45,7 +53,9 @@ class ActionsButtonsColumn(Column):
         "title",
         "method",
         "url_func",
-        "visibility_func",
+        "is_visible",
+        "is_disabled",
+        "attrs",
     )
     buttons = "move_up,move_down,view_object,edit_object,delete_object"
     buttons_template = ThemeTemplate("actions_buttons.html")
@@ -58,7 +68,9 @@ class ActionsButtonsColumn(Column):
     buttons_theme_button_class = "btn btn-primary"
     buttons_method = None
     buttons_url_func = None
-    buttons_visibility_func = None
+    buttons_is_visible = True
+    buttons_is_disabled = False
+    buttons_attrs = None
     actions_query_string_keys = {
         "action_col",
         "action_button",
@@ -137,10 +149,29 @@ class ActionsButtonsColumn(Column):
         buttons_context = []
         for b in buttons:
             meth_name = f"get_button_{b}_context"
+            button_description = self.buttons_description[b]
+            is_visible = button_description["is_visible"]
+            if callable(is_visible):
+                is_visible = is_visible(rec)
+            is_disabled = button_description["is_disabled"]
+            if callable(is_disabled):
+                is_disabled = is_disabled(rec)
+            attrs = button_description["attrs"]
+            if callable(attrs):
+                attrs = attrs(rec)
+            if attrs:
+                attrs = HTMLAttributes(attrs)
+            theme_button_class = button_description["theme_button_class"]
+            if callable(theme_button_class):
+                theme_button_class = theme_button_class(rec)
             context = dict(
-                self.buttons_description[b],
+                button_description,
                 name=b,
                 name_css_class=b.replace("_", "-"),
+                is_visible=is_visible,
+                disabled=is_disabled,
+                attrs=attrs,
+                theme_button_class=theme_button_class,
             )
             context_method = getattr(self.listing, meth_name, None)
             if context_method is not None:
