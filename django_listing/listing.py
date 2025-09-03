@@ -840,7 +840,13 @@ class Listing(ListingBase):
             self.gb_queryset_fields = [
                 # As col as not been initialized yet (and cannot do it here),
                 # have to manually extract col.data_key and col.name
-                (col.init_kwargs.get("data_key") or col.init_args[0]).replace(".", "__")
+                (
+                    getattr(self, f"{name}__gb_data_key", None)
+                    or getattr(self, f"{name}__data_key", None)
+                    or col.init_kwargs.get("gb_data_key")
+                    or col.init_kwargs.get("data_key")
+                    or col.init_args[0]
+                ).replace(".", "__")
                 for name in gb_cols_names
                 if (col := self.columns.get(name))
             ]
@@ -1163,7 +1169,7 @@ class Listing(ListingBase):
         return self.render_template()
 
     def export_data(self):
-        if self.export:
+        if self.export and not hasattr(self.request, "export_data"):
             if not self.has_permission_for_action("export"):
                 raise ListingException(_("[You do not have permission to export data]"))
             if self.export_max_rows and self.exported_nb_rows() > self.export_max_rows:

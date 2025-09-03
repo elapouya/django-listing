@@ -625,7 +625,7 @@ class GroupByBaseListing:
         ExportSelectToolbarItem(),
         SortSelectToolbarItem(),
         VariationsToolbarItem(
-            # labels=("Listing", "Detailed", "Thumbnails", "Big thumbnails"),
+            labels=("Listing", "Detailed", "Thumbnails", "Big thumbnails"),
             icons=(
                 "listing-icon-menu-2",
                 "listing-icon-th-list-4",

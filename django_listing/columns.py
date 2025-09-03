@@ -112,6 +112,7 @@ COLUMNS_PARAMS_KEYS = {
     "form_field_serialize",
     "form_field_serialize_func",
     "form_no_autofill",
+    "gb_data_key",
     "has_cell_filter",
     "has_cell_filter_single",
     "header",
@@ -595,6 +596,7 @@ class Column(metaclass=ColumnMeta):
     from_model_field_classes = []
     from_model_field_order = 100
     form_no_autofill = False
+    gb_data_key = None
     has_cell_filter = False
     has_cell_filter_single = False
     header = None
