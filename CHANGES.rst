@@ -1,3 +1,7 @@
+0.10.46 (2025-09-05)
+--------------------
+- Fix filtering when an action button is pressed in an attached form
+
 0.10.45 (2025-09-03)
 --------------------
 - Add attrs, is_visible and is_disabled params on ActionsButtonsColumn

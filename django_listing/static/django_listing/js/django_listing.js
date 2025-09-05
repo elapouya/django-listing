@@ -271,6 +271,87 @@ function djlst_hide_mass_op_cbs(form) {
     djlst_mass_op_cbs_displayed = false;
 }
 
+function djlst_copy_f_fields_to_attached_form($attachedForm) {
+    // Find the related listing id on the attached form
+    var listingId = $attachedForm.attr('related-listing');
+    if (!listingId) return;
+
+    // Find the filter form that targets the same listing
+    var $filterForm = $('form[listing-id="' + listingId + '"]').first();
+    if ($filterForm.length === 0) return;
+
+    // Helper to escape name for jQuery attribute selector
+    var esc = function (s) { return s.replace(/([\\[\\].])/g, '\\$1'); };
+
+    // Iterate over unique names starting with f_
+    var seen = new Set();
+    $filterForm.find(':input[name^="f_"]').each(function () {
+      var $src = $(this);
+      var name = $src.attr('name');
+      if (!name || seen.has(name)) return;
+      seen.add(name);
+
+      // Destination inputs with the same name in the attached form
+      var $dst = $attachedForm.find(':input[name="' + esc(name) + '"]');
+      if ($dst.length === 0) return; // Do nothing if target field does not exist
+
+      // Read values from filter form group with same name
+      var $group = $filterForm.find(':input[name="' + esc(name) + '"]');
+      var first = $group.first();
+      var type = (first.attr('type') || '').toLowerCase();
+      var tag = (first[0] && first[0].tagName || '').toLowerCase();
+
+      var values = [];
+
+      if (tag === 'select') {
+        // Select (single or multiple)
+        var v = $group.val();
+        if (Array.isArray(v)) values = v.filter(function (x) { return x != null; });
+        else if (v != null) values = [v];
+      } else if (type === 'checkbox') {
+        // Checkbox group -> only checked ones
+        $group.filter(':checked').each(function () {
+          var val = $(this).val();
+          values.push(val == null || val === '' ? 'on' : val);
+        });
+      } else if (type === 'radio') {
+        var $checked = $group.filter(':checked').first();
+        if ($checked.length) values = [$checked.val()];
+      } else {
+        // Text-like input/textarea
+        var sv = first.val();
+        if (sv != null) values = [sv];
+      }
+
+      // Apply values to the destination group
+      var dFirst = $dst.first();
+      var dType = (dFirst.attr('type') || '').toLowerCase();
+      var dTag = (dFirst[0] && dFirst[0].tagName || '').toLowerCase();
+
+      if (dTag === 'select') {
+        if (dFirst.prop('multiple')) $dst.val(values);
+        else $dst.val(values.length ? values[0] : '');
+        $dst.trigger('change');
+      } else if (dType === 'checkbox') {
+        var set = new Set(values.map(String));
+        $dst.each(function () {
+          var $cb = $(this);
+          var cbVal = $cb.val();
+          if (cbVal == null || cbVal === '') cbVal = 'on';
+          $cb.prop('checked', set.has(String(cbVal)));
+        }).trigger('change');
+      } else if (dType === 'radio') {
+        var chosen = values.length ? String(values[0]) : null;
+        $dst.each(function () {
+          var $rb = $(this);
+          $rb.prop('checked', chosen !== null && String($rb.val()) === chosen);
+        }).trigger('change');
+      } else {
+        $dst.val(values.length ? values[0] : '').trigger('change');
+      }
+    });
+}
+
 async function djlst_post_attached_form(event) {
     event.preventDefault();
     const nav_obj = $(this);
@@ -316,6 +397,7 @@ async function djlst_post_attached_form(event) {
             if (!confirm(confirm_msg)) return;
         }
     }
+    djlst_copy_f_fields_to_attached_form(attached_form);
     if (nav_obj.hasClass("flip")) {
         form_fields.addClass('flip-out');
         attached_form_container.addClass('flipped');
