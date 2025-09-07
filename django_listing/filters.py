@@ -43,6 +43,7 @@ __all__ = [
     "MultipleChoiceFilter",
     "MultipleForeignKeyFilter",
     "TimeFilter",
+    "NoFilter",
 ]
 
 # Declare keys only for "Filters" object
@@ -74,6 +75,7 @@ FILTERS_PARAMS_KEYS = {
     "model_field",
     "name",
     "no_choice_msg",
+    "no_filtering",
     "order_by",
     "queryset",
     "shrink_width",
@@ -505,6 +507,7 @@ class Filter(metaclass=FilterMeta):
     listing = None
     name = None
     no_choice_msg = gettext_lazy("- No filtering -")
+    no_filtering = False
     order_by = None
     params_keys = None
     queryset = None
@@ -714,6 +717,8 @@ class Filter(metaclass=FilterMeta):
         return cleaned_value
 
     def filter_queryset(self, qs, cleaned_data=None):
+        if self.no_filtering:
+            return qs
         cleaned_value = self.get_queryset_clean_value(cleaned_data)
         if self.resolve_qs_value and isinstance(cleaned_value, QuerySet):
             # when using multi-selection select, Django returns the queryset
@@ -1114,3 +1119,8 @@ class AutocompleteMultipleForeignKeyFilter(AutocompleteForeignKeyFilter):
     form_field_class = forms.ModelMultipleChoiceField
     widget_class = autocomplete.ModelSelect2Multiple
     resolve_qs_value = True
+
+
+class NoFilter(Filter):
+    def filter_queryset(self, qs, cleaned_data=None):
+        return qs

@@ -1,3 +1,7 @@
+0.10.47 (2025-09-07)
+--------------------
+- Add no_filtering Filter attribute
+
 0.10.46 (2025-09-05)
 --------------------
 - Fix filtering when an action button is pressed in an attached form
