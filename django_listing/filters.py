@@ -851,6 +851,7 @@ class DateFilter(Filter):
     from_model_field_classes = (models.DateField,)
     form_field_class = forms.DateField
     widget_attrs = {"class": "form-control edit-datecolumn", "type": "date"}
+    widget_params = {"format": "%Y-%m-%d"}
     add_one_day = False  # useful for DateFilter on DateTimeField
 
     def filter_queryset(self, qs, cleaned_data):

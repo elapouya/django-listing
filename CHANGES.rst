@@ -1,3 +1,7 @@
+0.10.48 (2025-09-24)
+--------------------
+- Improve DateFilter
+
 0.10.47 (2025-09-07)
 --------------------
 - Add no_filtering Filter attribute
