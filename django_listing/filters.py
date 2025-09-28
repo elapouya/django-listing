@@ -44,6 +44,7 @@ __all__ = [
     "MultipleForeignKeyFilter",
     "TimeFilter",
     "NoFilter",
+    "DEFAULT_FILTER_HELP_TEXT",
 ]
 
 # Declare keys only for "Filters" object
@@ -88,6 +89,7 @@ FILTERS_PARAMS_KEYS = {
     "choices",
     "filter_queryset_method",
     "add_one_day",
+    "auto_help_text",
     "default_value",
     "default_value_func",
     "form_field_input_container_css",
@@ -118,6 +120,7 @@ FILTERS_FORM_FIELD_KEYS = {
 
 FILTERS_PARAMS_KEYS.update(FILTERS_KEYS)
 FILTERS_PARAMS_KEYS.update(FILTERS_FORM_FIELD_KEYS)
+DEFAULT_FILTER_HELP_TEXT = "&nbsp;"
 
 
 class FiltersBaseForm(forms.BaseForm):
@@ -581,7 +584,7 @@ class Filter(metaclass=FilterMeta):
             self.input_name = FILTER_QUERYSTRING_PREFIX + self.name
         self.label = self.get_label()
         if self.help_text is None:
-            self.help_text = "&nbsp;"  # otherwise formfields may me not aligned vertically. keep align-items: flex-end; on row
+            self.help_text = DEFAULT_FILTER_HELP_TEXT  # otherwise formfields may me not aligned vertically. keep align-items: flex-end; on row
         if self.from_model_field_name is None:
             self.from_model_field_name, *dummy = self.filter_key.split("__")
 
@@ -853,6 +856,20 @@ class DateFilter(Filter):
     widget_attrs = {"class": "form-control edit-datecolumn", "type": "date"}
     widget_params = {"format": "%Y-%m-%d"}
     add_one_day = False  # useful for DateFilter on DateTimeField
+    auto_help_text = True
+
+    def get_form_field_params(self, **kwargs):
+        params = super().get_form_field_params(**kwargs)
+        if self.auto_help_text and params.get("help_text") == DEFAULT_FILTER_HELP_TEXT:
+            if self.filter_key.endswith("__gte"):
+                params["help_text"] = _("Greater than or equal to")
+            if self.filter_key.endswith("__gt"):
+                params["help_text"] = _("Greater than to")
+            if self.filter_key.endswith("__lte"):
+                params["help_text"] = _("Less than or equal to")
+            if self.filter_key.endswith("__gt"):
+                params["help_text"] = _("Less than to")
+        return params
 
     def filter_queryset(self, qs, cleaned_data):
         if not self.value:

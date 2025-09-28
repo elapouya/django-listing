@@ -1,3 +1,7 @@
+0.10.49 (2025-09-28)
+--------------------
+- Add auto_help_text to DateFilter
+
 0.10.48 (2025-09-24)
 --------------------
 - Improve DateFilter
