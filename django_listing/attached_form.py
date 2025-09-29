@@ -11,14 +11,12 @@ from django.core.exceptions import ValidationError
 from django.forms.fields import FileField
 from django.http import QueryDict
 from django.template import loader
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.utils.translation import pgettext_lazy
 
 from .context import RenderContext
 from .exceptions import (
     InvalidAttachedForm,
-    ListingException,
     InvalidListingConfiguration,
 )
 from .html_attributes import HTMLAttributes
@@ -31,6 +29,7 @@ __all__ = ["ATTACHED_FORM_PARAMS_KEYS", "AttachedForm"]
 ATTACHED_FORM_PARAMS_KEYS = {
     "action",
     "attached_form_name",
+    "default_layout_name",  # what to use when layout_name = ""
     "display_errors",
     "submit_action",
     "template_name",
@@ -172,6 +171,7 @@ class AttachedForm:
     template_name = ThemeTemplate("attached_form.html")
     layout = None
     layout_name = None
+    default_layout_name = ""
     listing = None
     buttons = "reset,submit"
     name = "attached_form"
@@ -259,10 +259,12 @@ class AttachedForm:
 
     def init(self, listing, *args, **kwargs):
         self._form = None
-        if not self.layout_name:
-            self.layout_name = listing.request.POST.get("attached_form_layout_name")
         self.set_listing(listing)
         self.set_kwargs(**kwargs)
+        if callable(self.layout_name):
+            self.layout_name = self.layout_name(listing)
+        if not self.layout_name:
+            self.layout_name = listing.request.POST.get("attached_form_layout_name")
         self.set_layout(self.layout_name, purge_post_data=False)
         self.init_buttons()
 
@@ -274,7 +276,13 @@ class AttachedForm:
             self.listing.request.POST = QueryDict(
                 f"csrfmiddlewaretoken={csrf}", mutable=True
             )
-        layout_key = f"layout_{self.layout_name}" if self.layout_name else "layout"
+        layout_name = self.layout_name
+        if not layout_name:
+            if callable(self.default_layout_name):
+                layout_name = self.default_layout_name(self.listing)
+            else:
+                layout_name = self.default_layout_name
+        layout_key = f"layout_{layout_name}" if layout_name else "layout"
         self.dynamic_layout = getattr(self, layout_key, self.layout)
         if isinstance(self.dynamic_layout, str):
             # transform layout string into list of lists
