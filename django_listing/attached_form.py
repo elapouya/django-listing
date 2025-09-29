@@ -265,6 +265,8 @@ class AttachedForm:
             self.layout_name = self.layout_name(listing)
         if not self.layout_name:
             self.layout_name = listing.request.POST.get("attached_form_layout_name")
+        if not self.layout_name:
+            self.layout_name = ""  # avoid None value
         self.set_layout(self.layout_name, purge_post_data=False)
         self.init_buttons()
 
