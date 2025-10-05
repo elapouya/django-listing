@@ -2,7 +2,7 @@
 --------------------
 - Add LinkButtonToolbarItem
 
-0.10.48 (2025-09-24)0.10.50 (2025-09-28)
+0.10.50 (2025-09-28)
 --------------------
 - Add default_layout_name to AttachedForm
 - Add auto_help_text to DateFilter
