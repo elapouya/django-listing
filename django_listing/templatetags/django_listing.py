@@ -50,6 +50,8 @@ class ListingHeaderNode(template.Node):
         self.nodelist = nodelist
 
     def render(self, context):
+        if not hasattr(context, "request"):
+            return ""
         remaining_output = self.nodelist.render(context)
         template_name = ThemeTemplate.get("header.html")
         tpl = template.loader.get_template(template_name)
@@ -71,6 +73,8 @@ def do_listing_header(parser, token):
 
 @register.simple_tag(takes_context=True)
 def render_listing_footer(context):
+    if not hasattr(context, "request"):
+        return ""
     template_name = ThemeTemplate.get("footer.html")
     tpl = template.loader.get_template(template_name)
     request = context.request
