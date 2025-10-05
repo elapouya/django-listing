@@ -8,6 +8,7 @@ import re
 from itertools import count
 from types import GeneratorType
 
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from django_listing import EXPORT_FORMATS
@@ -32,6 +33,7 @@ __all__ = [
     "VariationsToolbarItem",
     "VariationsDropdownToolbarItem",
     "GroupByToolbarItem",
+    "LinkButtonToolbarItem",
 ]
 
 TOOLBAR_PARAMS_KEYS = {
@@ -359,6 +361,25 @@ class UnselectAllToolbarItem(ToolbarItem):
 class InvertSelectionToolbarItem(ToolbarItem):
     template_name = ThemeTemplate("tbi_invert_selection.html")
     label = _("Invert selection")
+
+
+class LinkButtonToolbarItem(ToolbarItem):
+    template_name = ThemeTemplate("tbi_link_button.html")
+    params_keys = ["url", "url_name", "querystring"]
+    label = _("** link button **")
+    url = "#"
+    url_name = None
+    querystring = ""
+
+    def get_context(self):
+        if callable(self.url):
+            self.url = self.url(self)
+        elif self.url_name:
+            self.url = reverse(self.url_name)
+        if self.querystring:
+            if self.querystring.startswith("?"):
+                self.querystring = self.querystring[1:]
+            self.url += "?" + self.querystring
 
 
 class GroupByToolbarItem(ToolbarItem):
