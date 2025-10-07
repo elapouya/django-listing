@@ -864,11 +864,11 @@ class DateFilter(Filter):
         if self.auto_help_text and params.get("help_text") == DEFAULT_FILTER_HELP_TEXT:
             if self.filter_key.endswith("__gte"):
                 params["help_text"] = _("Greater than or equal to")
-            if self.filter_key.endswith("__gt"):
+            elif self.filter_key.endswith("__gt"):
                 params["help_text"] = _("Greater than to")
-            if self.filter_key.endswith("__lte"):
+            elif self.filter_key.endswith("__lte"):
                 params["help_text"] = _("Less than or equal to")
-            if self.filter_key.endswith("__gt"):
+            elif self.filter_key.endswith("__lt"):
                 params["help_text"] = _("Less than to")
         return params
 
