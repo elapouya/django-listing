@@ -752,7 +752,8 @@ class Filter(metaclass=FilterMeta):
         if self.word_search and isinstance(cleaned_value, str):
             words = filter(None, cleaned_value.split())
             for word in words:
-                qs = filter_op(**{self.filter_key: word})
+                # DO NOT use filter_op here, not working in loops
+                qs = qs.filter(**{self.filter_key: word})
         elif "__" not in self.filter_key and isinstance(
             cleaned_value, (QuerySet, list, tuple)
         ):

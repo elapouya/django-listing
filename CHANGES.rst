@@ -1,3 +1,7 @@
+0.10.52 (2025-10-07)
+--------------------
+- Fix word_search in filters
+
 0.10.51 (2025-10-05)
 --------------------
 - Add LinkButtonToolbarItem
