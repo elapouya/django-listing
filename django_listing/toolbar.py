@@ -365,11 +365,12 @@ class InvertSelectionToolbarItem(ToolbarItem):
 
 class LinkButtonToolbarItem(ToolbarItem):
     template_name = ThemeTemplate("tbi_link_button.html")
-    params_keys = ["url", "url_name", "querystring"]
+    params_keys = ["url", "url_name", "querystring", "action"]
     label = _("** link button **")
     url = "#"
     url_name = None
     querystring = ""
+    action = None
 
     def get_context(self):
         if callable(self.url):

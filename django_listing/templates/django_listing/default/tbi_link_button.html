@@ -3,6 +3,7 @@
 <div class="btn-group-sm mr-2 toolbar_item {{ item.css_class }}" role="group">
     <a id="toolbar-item-{{ uniq_id }}-link-button-id"
        href="{{ item.url }}"
+       {% if item.action %}action="{{ item.action }}"{% endif %}
        class="link-button {{ item.theme_button_class }}">
         {% if item.icon %}<span class="{{ item.icon }}"></span>{% endif %}
         {% if item.label %}{{ item.label }}{% endif %}

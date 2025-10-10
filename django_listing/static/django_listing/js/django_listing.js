@@ -157,6 +157,10 @@ function djlst_load_listing_url(nav_obj, url, additional_data) {
         "listing_suffix": listing_suffix,
         "listing_part": listing_part,
     }
+    const action = nav_obj.attr("action");
+    if (action) {
+        request_data["action"] = action;
+    }
     request_data = djlst_add_filter_request_data(listing_div, nav_obj, request_data);
     if (additional_data) {
         request_data = { ...request_data, ...additional_data };
