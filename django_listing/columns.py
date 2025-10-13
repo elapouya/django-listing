@@ -149,6 +149,7 @@ COLUMNS_PARAMS_KEYS = {
     "time_format",
     "use_raw_value",
     "value_tpl",
+    "variation",
     "widget_attrs",
 }
 
@@ -1970,12 +1971,16 @@ class GroupByFilterColumn(Column):
     link_target = "_blank"
     theme_cell_with_filter_icon = "listing-icon-link-ext"
     exportable = False
+    variation = None
 
     def action_filter(self, rec):
+        variation_dict = (
+            {"variation": self.variation} if self.variation is not None else {}
+        )
         url = rec.get_url(
             filters=self.listing.gb_filters_rec_key,
             without="gb_cols,gb_annotate_cols,sort,page,per_page",
-            **self.listing.gb_filters_initial,
+            **{**self.listing.gb_filters_initial, **variation_dict},
         )
         out = f'<a class="{self.theme_button_link_class} gb-filter" href="{url}"'
         if self.link_target:

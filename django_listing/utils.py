@@ -7,6 +7,8 @@ import copy
 import pprint
 from datetime import datetime, date
 
+from django.core.exceptions import FieldError
+
 pp = pprint.PrettyPrinter(indent=4)
 
 
@@ -117,3 +119,42 @@ class NotPresent:
 
 
 NOT_PRESENT = NotPresent()
+
+
+# Validate a list of names for qs.values(...) without hitting the DB
+def validate_values_names(qs, names):
+    """
+    Return a dict mapping each name to:
+      {"ok": bool, "kind": "fieldpath|annotation|extra|invalid", "error": str|None}
+
+    Notes:
+      - No SQL is executed. We only inspect Query internals and model _meta.
+      - Works on Django 3.2 → 4.2/5.x. Private API but stable in practice.
+    """
+    q = qs.query
+    opts = qs.model._meta
+
+    # Annotation/alias names available to values()
+    ann_names = set(getattr(q, "annotations", {}) or {})
+    # Legacy .extra(select=...) aliases
+    extra_names = set(getattr(q, "extra_select", {}) or {})
+
+    out = {}
+    for name in names:
+        # 1) If it is an annotation/alias, it is valid
+        if name in ann_names:
+            out[name] = {"ok": True, "kind": "annotation", "error": None}
+            continue
+        if name in extra_names:
+            out[name] = {"ok": True, "kind": "extra", "error": None}
+            continue
+
+        # 2) Otherwise, validate as a model field path (a__b__c)
+        parts = name.split("__")
+        try:
+            # names_to_path only inspects model field metadata; no DB hit.
+            q.names_to_path(parts, opts, allow_many=True, fail_on_missing=True)
+            out[name] = {"ok": True, "kind": "fieldpath", "error": None}
+        except FieldError as e:
+            out[name] = {"ok": False, "kind": "invalid", "error": str(e)}
+    return out

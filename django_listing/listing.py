@@ -51,7 +51,7 @@ from .paginators import PAGINATOR_PARAMS_KEYS, Paginator
 from .record import RecordManager
 from .theme_config import ThemeAttribute, ThemeTemplate
 from .toolbar import TOOLBAR_PARAMS_KEYS, Toolbar
-from .utils import init_dicts_from_class
+from .utils import init_dicts_from_class, validate_values_names
 
 __all__ = ["ListingVariations", "Listing", "DivListing", "logger"]
 
@@ -769,7 +769,14 @@ class Listing(ListingBase):
             for name, label in self.original_columns_headers.items():
                 if name not in self.gb_cols_names:
                     select_info.append((name, label, False))
-        return list(sorted(select_info, key=lambda x: x[1]))
+        valid_names = {
+            k: v["ok"]
+            for k, v in validate_values_names(
+                self.data, (i[0] for i in select_info)
+            ).items()
+        }
+        valid_info = filter(lambda n: valid_names[n[0]], select_info)
+        return list(sorted(valid_info, key=lambda x: x[1]))
 
     def gb_annotate_cols_dlb(self):
         select_info = []
