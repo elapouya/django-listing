@@ -320,7 +320,6 @@ class AttachedForm:
                 attached_form_layout_name=self.layout_name,
                 attached_form_name=self.name,
                 action=self.action,
-                **self.get_form_hiddens(),
             )
 
     def build_buttons_attrs(self, button, label):
@@ -511,6 +510,7 @@ class AttachedForm:
             self.listing.attached_form_css_id = self.id = self.attrs.get("id")
             self.attrs.add("related-listing", self.listing.css_id)
             self._render_initialized = True
+            self.listing.add_form_input_hiddens(**self.get_form_hiddens())
 
     def render(self, request_context):
         self.render_init(request_context)
