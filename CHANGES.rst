@@ -1,6 +1,6 @@
 0.10.56 (2025-10-18)
 --------------------
-- Add manage_attached_form_mixed_response_data() management
+- Add manage_attached_form_mixed_response_data management
 
 0.10.53 (2025-10-07)0.10.55 (2025-10-13)
 --------------------
