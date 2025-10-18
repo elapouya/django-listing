@@ -497,6 +497,22 @@ class ListingViewMixin:
                     mixed_response["attached_form"] = attached_form_html
             if instance.pk:
                 mixed_response["object_pk"] = instance.pk
+
+            # Get additionnal data for mixed response
+            mixed_response_data_meth_name = "manage_attached_form_mixed_response_data"
+            data_method = getattr(listing, mixed_response_data_meth_name, None)
+            mixed_response_data = {}
+            if data_method:
+                mixed_response_data = data_method(form, instance, *args, **kwargs)
+            else:
+                # then in view if not found in listing
+                data_method = getattr(self, mixed_response_data_meth_name, None)
+                if data_method:
+                    mixed_response_data = data_method(
+                        listing, form, instance, *args, **kwargs
+                    )
+            if mixed_response_data:
+                mixed_response.update(mixed_response_data)
             return self.json_response(mixed_response)
         else:
             if not self.is_ajax:
