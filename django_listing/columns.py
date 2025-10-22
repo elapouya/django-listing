@@ -1977,10 +1977,16 @@ class GroupByFilterColumn(Column):
         variation_dict = (
             {"variation": self.variation} if self.variation is not None else {}
         )
+        filters_values = {
+            k: v
+            for k, v in self.listing.request.POST.items()
+            if k.startswith(FILTER_QUERYSTRING_PREFIX)
+        }
         url = rec.get_url(
             filters=self.listing.gb_filters_rec_key,
             without="gb_cols,gb_annotate_cols,sort,page,per_page",
-            **{**self.listing.gb_filters_initial, **variation_dict},
+            **{**filters_values, **variation_dict},
+            # **{**self.listing.gb_filters_initial, **variation_dict},
         )
         out = f'<a class="{self.theme_button_link_class} gb-filter" href="{url}"'
         if self.link_target:

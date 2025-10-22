@@ -1,3 +1,7 @@
+0.10.57 (2025-10-23)
+--------------------
+- Improve grouping
+
 0.10.56 (2025-10-18)
 --------------------
 - Add manage_attached_form_mixed_response_data() management
