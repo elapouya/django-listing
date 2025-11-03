@@ -1,3 +1,7 @@
+0.10.59 (2025-11-03)
+--------------------
+- Fix unchecked checkboxes in filter form
+
 0.10.58 (2025-10-25)
 --------------------
 - Add JS djlst_set_form_input()

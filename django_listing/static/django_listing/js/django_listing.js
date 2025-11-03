@@ -74,20 +74,52 @@ function update_csrf_token() {
 }
 
 function djlst_get_form_data_advanced(form) {
-    const formData = new FormData(form);
-    let form_data = {};
+  // read form fields including uncheked checkboxes
+  const fd = new FormData(form);
+  const data = {};
 
-    // Group values by key name
-    for (const [key, value] of formData.entries()) {
-        if (!form_data[key]) {
-            // First occurrence of this key
-            form_data[key] = formData.getAll(key).length > 1 ? formData.getAll(key) : value;
-        }
-        // If there's only one value, it's stored directly
-        // If there are multiple values, we store them as an array
+  // 1) Fill with FormData entries (checked checkboxes + other inputs)
+  for (const [key, value] of fd.entries()) {
+    // If multiple entries for the same key, store as array
+    if (data[key] === undefined) {
+      const all = fd.getAll(key);
+      data[key] = all.length > 1 ? all : value;
     }
+  }
 
-    return form_data;
+  // 2) Complete with unchecked checkboxes
+  //    We want both checked and unchecked per checkbox group.
+  const checkboxes = Array.from(form.querySelectorAll('input[type="checkbox"][name]'));
+
+  // Group checkboxes by name
+  const byName = checkboxes.reduce((acc, cb) => {
+    (acc[cb.name] ||= []).push(cb);
+    return acc;
+  }, {});
+
+  Object.entries(byName).forEach(([name, group]) => {
+    // Is it a group (several checkboxes with same name) or a single checkbox?
+    if (group.length === 1) {
+      const cb = group[0];
+      // If FormData didn't include it, it's unchecked => boolean
+      if (data[name] === undefined) data[name] = cb.checked ? (cb.value || true) : false;
+      // If included (checked), normalize single checked value to boolean if desired:
+      // uncomment next line if you prefer boolean instead of value for single checkbox
+      // if (data[name] !== undefined) data[name] = true;
+    } else {
+      // Multiple checkboxes (same name): collect checked and unchecked values
+      const checkedValues = group.filter(cb => cb.checked).map(cb => cb.value || 'on');
+      const uncheckedValues = group.filter(cb => !cb.checked).map(cb => cb.value || 'on');
+
+      // Ensure checked values are present (FormData already had them, but we normalize)
+      data[name] = checkedValues;
+
+      // Expose unchecked explicitly with a companion key
+      data[`${name}__unchecked`] = uncheckedValues;
+    }
+  });
+
+  return data;
 }
 
 function djlst_add_filter_request_data($listing_div, $nav_obj, data) {
