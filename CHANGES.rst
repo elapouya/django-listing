@@ -1,3 +1,7 @@
+0.10.60 (2026-01-08)
+--------------------
+- Add patch_attached_form_buttons_attrs()
+
 0.10.59 (2025-11-03)
 --------------------
 - Fix unchecked checkboxes in filter form
