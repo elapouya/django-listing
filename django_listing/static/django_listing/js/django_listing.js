@@ -402,10 +402,12 @@ async function djlst_post_attached_form(event) {
         form_fields.addClass('flip-out');
         if (attached_form.hasClass("animate")) await djlst_sleep(300);
     }
-    if (action_button == "update_all") {
+    const mass_cb_required = nav_obj.hasClass("mass-cb-required")
+
+    if (action_button == "update_all" || mass_cb_required) {
         listing_div.find('.row-container').addClass('selected');
     }
-    if (action_button == "update_all" || (action_button == "update" && selected_rows.length > 1)) {
+    if (action_button == "update_all" || mass_cb_required || (action_button == "update" && selected_rows.length > 1)) {
         const visibleCheckboxCount = attached_form.find('input.mass-op-cb:visible').length;
         if (visibleCheckboxCount == 0) {
                 djlst_show_mass_op_cbs(attached_form);

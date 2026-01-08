@@ -952,6 +952,9 @@ class Listing(ListingBase):
             self.row_form_errors.append(_("[CANNOT_EDIT_IN_AJAX]"))
             self.editable = False
 
+    def patch_attached_form_buttons_attrs(self, button, label, attrs):
+        pass
+
     def init(self, data, context=None, **kwargs):
         if not self.is_initialized():
             self.set_kwargs(**kwargs)

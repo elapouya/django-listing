@@ -342,6 +342,7 @@ class AttachedForm:
             attrs.update(name="action_button", value=button)
         if label:
             attrs.add("label", label)
+        self.listing.patch_attached_form_buttons_attrs(button, label, attrs)
         return attrs
 
     def init_buttons(self):
