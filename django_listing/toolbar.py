@@ -42,6 +42,7 @@ TOOLBAR_PARAMS_KEYS = {
     "choices",
     "icon",
     "label",
+    "title",
     "name",
     "template_name",
     "theme_button_class",
@@ -366,7 +367,8 @@ class InvertSelectionToolbarItem(ToolbarItem):
 class LinkButtonToolbarItem(ToolbarItem):
     template_name = ThemeTemplate("tbi_link_button.html")
     params_keys = ["url", "url_name", "querystring", "action"]
-    label = _("** link button **")
+    label = _("** link button2 **")
+    title = ""
     url = "#"
     url_name = None
     querystring = ""
