@@ -1,3 +1,8 @@
+0.10.61 (2026-01-15)
+--------------------
+- Add title attribute to LinkButtonToolbarItem
+- Add AutocompleteMultipleFilter and AutocompleteFilter
+
 0.10.60 (2026-01-08)
 --------------------
 - Add patch_attached_form_buttons_attrs()

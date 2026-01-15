@@ -1140,6 +1140,65 @@ class AutocompleteMultipleForeignKeyFilter(AutocompleteForeignKeyFilter):
     resolve_qs_value = True
 
 
+class AutocompleteFilter(AutocompleteForeignKeyFilter):
+    """Autocomplete filter."""
+
+    form_field_class = forms.CharField
+    widget_class = autocomplete.ListSelect2
+
+    def get_form_field_params(self, **kwargs):
+        params = Filter.get_form_field_params(self, **kwargs)
+        if "required" not in params:
+            params["required"] = False
+        return params
+
+    def extract_params(self, request_get_data):
+        """Extract filter value from GET data."""
+        super().extract_params(request_get_data)
+        if self.value == "":
+            self.value = None
+
+
+class AutocompleteMultipleFilter(AutocompleteFilter):
+    """Multiple selection version of AutocompleteFilter."""
+
+    widget_class = autocomplete.Select2Multiple
+    resolve_qs_value = False
+
+    def init(self, listing, name=None, **kwargs):
+        """Initialize the filter with __in suffix if needed."""
+        super().init(listing, name, **kwargs)
+        if not self.filter_key.endswith("__in"):
+            self.filter_key += "__in"
+
+    def get_form_field_class(self, **kwargs):
+        """
+        Return a MultipleValueField based on CharField.
+
+        Uses CharField's clean() which doesn't validate against choices,
+        then splits the result into a list.
+        """
+
+        class MultipleValueField(forms.CharField):
+            """CharField that returns a list of values."""
+
+            def clean(self, value):
+                """Return value as-is (already a list from widget)."""
+                if not value:
+                    return []
+                if isinstance(value, list):
+                    return value
+                return [value]
+
+        return MultipleValueField
+
+    def extract_params(self, request_get_data):
+        """Extract multiple values from GET data."""
+        self.value = request_get_data.getlist(self.input_name + self.listing.suffix)
+        if not self.value:
+            self.value = None
+
+
 class NoFilter(Filter):
     def filter_queryset(self, qs, cleaned_data=None):
         return qs
