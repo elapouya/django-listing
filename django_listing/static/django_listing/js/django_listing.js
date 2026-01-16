@@ -404,9 +404,6 @@ async function djlst_post_attached_form(event) {
     }
     const mass_cb_required = nav_obj.hasClass("mass-cb-required")
 
-    if (action_button == "update_all" || mass_cb_required) {
-        listing_div.find('.row-container').addClass('selected');
-    }
     if (action_button == "update_all" || mass_cb_required || (action_button == "update" && selected_rows.length > 1)) {
         const visibleCheckboxCount = attached_form.find('input.mass-op-cb:visible').length;
         if (visibleCheckboxCount == 0) {

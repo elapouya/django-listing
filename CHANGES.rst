@@ -1,3 +1,7 @@
+0.10.62 (2026-01-16)
+--------------------
+- Remove auto row select on the whole page with action xxx_all
+
 0.10.61 (2026-01-15)
 --------------------
 - Add title attribute to LinkButtonToolbarItem
