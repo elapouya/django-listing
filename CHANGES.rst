@@ -1,3 +1,7 @@
+0.10.63 (2026-01-28)
+--------------------
+- Fix FloatColumn
+
 0.10.62 (2026-01-16)
 --------------------
 - Remove auto row select on the whole page with action xxx_all

@@ -1308,7 +1308,7 @@ class FloatColumn(Column):
         if not isinstance(value, float):
             try:
                 value = float(value)
-            except ValueError:
+            except (ValueError, TypeError):
                 pass
         if isinstance(value, float):
             value = f"{value:{self.float_format}}"
