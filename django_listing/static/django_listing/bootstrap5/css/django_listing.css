@@ -1704,10 +1704,10 @@ form.dropzone .dz-error-mark svg g g {
 }
 
 @media (max-width: 991.98px) {
-  th {
-    display: inline-flex;
+  th, tfoot > tr > td {
+    display: flex;
   }
-  th:before {
+  th:before, tfoot > tr > td:before {
     padding-right: 5px;
   }
   th.not-sortable {
