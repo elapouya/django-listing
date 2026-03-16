@@ -1,3 +1,7 @@
+0.10.64 (2026-03-16)
+--------------------
+- Fix css for listing footer on smartphones
+
 0.10.63 (2026-01-28)
 --------------------
 - Fix FloatColumn
