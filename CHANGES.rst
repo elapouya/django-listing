@@ -1,3 +1,7 @@
+0.10.65 (2026-03-16)
+--------------------
+- URLs in apps.py now uses STATIC_URL from settings.py
+
 0.10.64 (2026-03-16)
 --------------------
 - Fix css for listing footer on smartphones
