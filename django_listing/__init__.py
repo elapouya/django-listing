@@ -1,9 +1,9 @@
-""" django_listing root __init__.py file
+"""django_listing root __init__.py file
 
-   isort:skip_file
+isort:skip_file
 """
 
-__version__ = "0.10.64"
+__version__ = "0.10.65"
 __author__ = "Eric Lapouyade"
 __copyright__ = "Copyright 2018, The Django listing Project"
 __credits__ = ["Eric Lapouyade"]
