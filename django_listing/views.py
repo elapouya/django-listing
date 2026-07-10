@@ -91,7 +91,7 @@ class ListingViewMixin:
                         serialized_data = request.POST.pop("serialized_data")
                         if isinstance(serialized_data, list):
                             serialized_data = serialized_data[0]
-                        data = parse_qs(serialized_data)
+                        data = parse_qs(serialized_data, keep_blank_values=True)
                         for k, v in data.items():
                             if k != "csrfmiddlewaretoken":
                                 if len(v) == 1:

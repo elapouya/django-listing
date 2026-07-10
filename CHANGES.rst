@@ -1,3 +1,7 @@
+0.10.66 (2026-07-10)
+--------------------
+- Add djlst_fill_attached_form() JS function
+
 0.10.65 (2026-03-16)
 --------------------
 - URLs in apps.py now uses STATIC_URL from settings.py

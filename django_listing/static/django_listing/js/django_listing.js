@@ -246,6 +246,7 @@ function djlst_post_action_button(event) {
     listing_div.addClass("spinning");
     const listing_id = listing_div.attr("id");
     const filter_form = $(`form[listing-id=${listing_id}]`);
+    const $attached_form = $("#" + listing_div.attr('attached-form-id'));
     const listing_suffix = listing_div.attr("listing-suffix");
     let listing_target = nav_obj.attr("listing-target");
     if (!listing_target) listing_target = "#" + listing_id;
@@ -261,7 +262,7 @@ function djlst_post_action_button(event) {
     request_data = djlst_add_filter_request_data(listing_div, nav_obj, request_data);
     update_csrf_token();
     $(document).trigger("djlst_before_post_action_button",
-        {listing: listing_target, payload:request_data}
+        {listing: listing_target, attached_form: $attached_form, payload:request_data}
     );
     $.ajax({
         type: "POST",
@@ -285,7 +286,7 @@ function djlst_post_action_button(event) {
         }
     });
     $(document).trigger("djlst_after_post_action_button",
-        {listing: listing_target, payload:request_data}
+        {listing: listing_target, attached_form: $attached_form, payload:request_data}
     );
 }
 
@@ -493,9 +494,18 @@ async function djlst_post_attached_form(event) {
                 let object_pk_input = new_attached_form.find('input[name="object_pk"]');
                 object_pk_input.val(mixed_response.object_pk);
             }
+            // Always re-read the attached form from the DOM so the event
+            // always carries a valid jQuery object, even when neither the
+            // flipped nor the object_pk branch above ran.
+            new_attached_form = $("#" + attached_form_id);
             $(document).trigger(
                 "djlst_ajax_attached_form_loaded",
-                {listing: listing_target, form: new_attached_form, response:mixed_response}
+                {
+                    listing: listing_target,
+                    form: new_attached_form,
+                    response:mixed_response,
+                    action_button: action_button
+                }
             );
             if ((!nav_obj.hasClass("flip") || mixed_response.layout_name === "") && attached_form_container.hasClass("flipped")) {
                 setTimeout(() => {
@@ -807,6 +817,21 @@ function djlst_selection_changed_hook(e) {
         selected_count: data.selected,
         all_count: data.all
     });
+}
+
+function djlst_fill_attached_form($attached_form) {
+    let pk = $attached_form.find('input[name="object_pk"]').val();
+    if (!pk) return;
+    let form_id = $attached_form.attr("id");
+    let listing_div = $('.django-listing-container[attached-form-id="' + form_id + '"]');
+    let row = listing_div.find('.row-container[data-pk="' + pk + '"]');
+    if (!row.length) return;
+    let serialized_data = row.attr('data-serialized-object');
+    if (serialized_data) {
+        let serialized_obj = decodeURIComponent(escape(atob(serialized_data)));
+        let obj = JSON.parse(serialized_obj);
+        djlst_fill_form($attached_form, obj, pk);
+    }
 }
 
 function djlst_set_form_input(element, value) {
