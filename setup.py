@@ -69,7 +69,7 @@ setup(
     author="Eric Lapouyade",
     author_email="elapouya@gmail.com",
     license="GPLv3+",
-    packages=find_packages(exclude=["showcase", "docs"]),
+    packages=find_packages(exclude=["showcase", "docs", "tests"]),
     include_package_data=True,
     install_requires=["django>=2", "tablib", "django-autocomplete-light"],
     extras_require={

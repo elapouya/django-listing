@@ -66,6 +66,19 @@ A sqlite database is already included, you do not have to make any migration,
 just open your brower at http://localhost:8123
 
 
+Tests
+-----
+
+The test suite uses a temporary sqlite database and needs no configuration.
+From the root of the repository, run::
+
+    python tests/runtests.py
+
+To run only some tests, give their labels, for example::
+
+    python tests/runtests.py tests.test_pagination_by_pk.PkQueryTest
+
+
 License
 -------
 Django-listing is licensed under the GPLv3 license for all open source applications.

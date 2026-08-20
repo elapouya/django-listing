@@ -156,6 +156,7 @@ LISTING_PARAMS_KEYS = {
     "onready_snippet",
     "orphans",
     "page",
+    "paginate_by_pk",
     "paginator_class",
     "per_page",
     "per_page_max",
@@ -555,6 +556,7 @@ class Listing(ListingBase):
     orphans = 0
     page = 1
     pagination = True
+    paginate_by_pk = True
     paginator = None
     paginator_class = Paginator
     per_page = LISTING_ROWS_PER_PAGE

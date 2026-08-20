@@ -1,3 +1,17 @@
+0.10.67 (2026-08-20)
+--------------------
+- Deep listing pages are now paginated on the primary keys : the page rows are
+  first located with a light query on the primary key, then hydrated. A wide
+  queryset (many select_related/annotations) does not have to be projected
+  anymore on all the rows discarded by the OFFSET.
+  Can be turned off with the new listing attribute ``paginate_by_pk = False``.
+  It is automatically skipped when it would not give the same rows : sequences,
+  ``.values()`` querysets ("group by" feature), combined querysets and queries
+  having a row-duplicating multi-valued join.
+- Listing sorting now always ends with the primary key, so that a sort on
+  columns having ties cannot show a same row on two different pages
+- Add a test suite : ``python tests/runtests.py``
+
 0.10.66 (2026-07-10)
 --------------------
 - Add djlst_fill_attached_form() JS function

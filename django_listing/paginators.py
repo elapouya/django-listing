@@ -5,6 +5,7 @@
 #
 
 from django.core.paginator import Paginator as DjangoPaginator, Page as DjangoPage
+from django.db.models.query import QuerySet
 from django.utils.translation import pgettext_lazy, gettext
 
 from .context import RenderContext
@@ -140,8 +141,61 @@ class Paginator(DjangoPaginator):
                 % self.listing.offset_max
             )
             return Page([], number, self, bottom, top)
-        page = Page(self.object_list[bottom:top], number, self, bottom, top)
+        page = Page(self.slice_object_list(bottom, top), number, self, bottom, top)
         return page
+
+    def slice_object_list(self, bottom, top):
+        """Extract the rows of the requested page out of the whole object list.
+
+        A plain ``qs[bottom:top]`` slice asks the database for a LIMIT/OFFSET on
+        the listing queryset : all the columns of the SELECT (select_related and
+        annotations included) are projected on every row skipped by the OFFSET.
+        On a wide queryset and a deep page that is very slow (and on PostgreSQL
+        the huge estimated cost even triggers a JIT compilation).
+        So, when it is safe to do so, get the primary keys of the page first with
+        a light index-only query, then hydrate only those rows.
+        """
+        qs = self.object_list
+        if not self.can_slice_on_pk(qs):
+            return qs[bottom:top]
+        pks = list(qs.values_list("pk", flat=True)[bottom:top])
+        if len(pks) != len(set(pks)):
+            # rows are duplicated : filtering on the primary keys would not
+            # give back the same rows as the plain slice
+            return qs[bottom:top]
+        return qs.filter(pk__in=pks)
+
+    def can_slice_on_pk(self, qs):
+        """Tell whether the page rows can be gotten by their primary keys"""
+        if not self.listing.paginate_by_pk or not isinstance(qs, QuerySet):
+            # sequences and raw querysets have no primary key to slice on
+            return False
+        query = qs.query
+        if query.values_select:
+            # .values()/.values_list() rows (the "group by" listing feature
+            # for example) do not have any primary key
+            return False
+        if query.combinator:
+            # union()/intersection()/difference() querysets cannot be filtered
+            return False
+        if query.distinct_fields:
+            # a DISTINCT ON requires its own ORDER BY : leave it alone
+            return False
+        if not query.group_by and self.has_multivalued_join(qs):
+            # a multi-valued join duplicates rows, unless an aggregate
+            # annotation groups them back on the primary key
+            return False
+        return True
+
+    def has_multivalued_join(self, qs):
+        """Tell whether the query joins a relation that can duplicate rows"""
+        for join in qs.query.alias_map.values():
+            join_field = getattr(join, "join_field", None)
+            if join_field is not None and (
+                join_field.one_to_many or join_field.many_to_many
+            ):
+                return True
+        return False
 
     def get_context(self):
         get_url = self.listing.get_url

@@ -316,8 +316,26 @@ class RecordManager:
         return order_by
 
     def order_queryset(self, qs):
-        order_by = self.get_order_by()
+        order_by = self.add_pk_tiebreak(qs, self.get_order_by())
         return qs.order_by(*order_by)
+
+    def add_pk_tiebreak(self, qs, order_by):
+        """Add the primary key as the last sorting key.
+
+        Sorting only on columns having ties leaves the order of those rows up to
+        the database : a same row could then show up on two different pages.
+        """
+        if self.listing.gb_cols or not isinstance(qs, QuerySet):
+            return order_by
+        if qs.query.values_select:
+            # .values() rows have no primary key, and sorting on it would
+            # add it to the GROUP BY clause
+            return order_by
+        pk_names = {"pk", qs.model._meta.pk.name}
+        pk_names |= {"-" + name for name in pk_names}
+        if any(f in pk_names for f in order_by if isinstance(f, str)):
+            return order_by
+        return list(order_by) + ["pk"]
 
     def order_sequence(self, data):
         # only manage one level sort
