@@ -108,9 +108,20 @@ class DjangoListingConfig(AppConfig):
         STATIC_FILES_VERSION = __version__
         if settings.DEBUG:
             STATIC_FILES_VERSION += f"_{time.perf_counter()}"
+        # The JS sends the CSRF token in the header Django expects, read from the
+        # cookie of the host application when it is readable (footer.html).
+        csrf_header_name = settings.CSRF_HEADER_NAME
+        if csrf_header_name.startswith("HTTP_"):
+            csrf_header_name = csrf_header_name[5:]
+        csrf_header_name = csrf_header_name.replace("_", "-")
         self.context.update(
             theme_config=self.theme_config,
             STATIC_URL=STATIC_URL,
             STATIC_FILES_VERSION=STATIC_FILES_VERSION,
+            CSRF_COOKIE_NAME=settings.CSRF_COOKIE_NAME,
+            CSRF_HEADER_NAME=csrf_header_name,
+            CSRF_COOKIE_READABLE=not (
+                settings.CSRF_USE_SESSIONS or settings.CSRF_COOKIE_HTTPONLY
+            ),
         )
         settings.django_listing_settings = self

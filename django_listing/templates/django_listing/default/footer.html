@@ -3,11 +3,20 @@
 <div id="listing-popup-container"></div>
 <script type="text/javascript">
     const csrf_token = "{{ csrf_token }}";
+    const djlst_csrf_cookie_name = "{{ CSRF_COOKIE_NAME }}";
+    const djlst_csrf_header_name = "{{ CSRF_HEADER_NAME }}";
+    const djlst_csrf_cookie_readable = {{ CSRF_COOKIE_READABLE|yesno:"true,false" }};
     const no_choice_msg = "{% trans "Please choose..." %}";
     const use_mass_cb_msg = "{% trans "Please use checkboxes to select one or more fields to mass update" %}";
     $(document).ready(function () {
-        $.ajaxSetup({
-            data: {'csrfmiddlewaretoken': csrf_token}
+        // Every unsafe same-origin jQuery request carries the CSRF token in the
+        // header Django expects. Nothing is injected in the request body anymore:
+        // a body token is appended to the URL on GET requests by jQuery, and can
+        // be overridden by a stale value.
+        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+            if (options.crossDomain) return;
+            if (/^(GET|HEAD|OPTIONS|TRACE)$/i.test(options.type)) return;
+            jqXHR.setRequestHeader(djlst_csrf_header_name, djlst_get_csrf_token());
         });
     });
 </script>

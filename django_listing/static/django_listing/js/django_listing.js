@@ -67,10 +67,16 @@ function djlst_removeUrlParam(url, params) {
     return newQueryString ? `${basePath}?${newQueryString}` : basePath;
 }
 
-function update_csrf_token() {
-    $.ajaxSetup({
-        data: {'csrfmiddlewaretoken': Cookies.get('csrftoken')}
-    });
+function djlst_get_csrf_token() {
+    // The cookie is the freshest source (the token may have been rotated by a
+    // login in another tab), but it is only readable when the host application
+    // keeps it out of the session and not HttpOnly. Fallback: the token rendered
+    // in the page by footer.html.
+    if (typeof djlst_csrf_cookie_readable !== "undefined" && djlst_csrf_cookie_readable) {
+        const cookie_token = Cookies.get(djlst_csrf_cookie_name);
+        if (cookie_token) return cookie_token;
+    }
+    return csrf_token;
 }
 
 function djlst_get_form_data_advanced(form) {
@@ -200,7 +206,6 @@ function djlst_load_listing_url(nav_obj, url, additional_data) {
     $(document).trigger("djlst_before_load_listing_url",
         {listing: listing_target, url: url, payload:request_data}
     );
-    update_csrf_token();
     $.ajax({
         type: "POST",
         url: url,
@@ -260,7 +265,6 @@ function djlst_post_action_button(event) {
     };
     request_data[$(this).attr('name')] = $(this).val();
     request_data = djlst_add_filter_request_data(listing_div, nav_obj, request_data);
-    update_csrf_token();
     $(document).trigger("djlst_before_post_action_button",
         {listing: listing_target, attached_form: $attached_form, payload:request_data}
     );
@@ -464,7 +468,6 @@ async function djlst_post_attached_form(event) {
         {listing: listing_target, form: attached_form, payload:request_data, nav_obj:nav_obj}
     );
 
-    update_csrf_token();
     $.ajax({
         type: "POST",
         url: ajax_url,
@@ -939,7 +942,6 @@ function djlst_view_object_popup(event) {
         serialized_data: nav_obj.closest('form').serialize()
     };
     request_data = djlst_add_filter_request_data(listing_div, nav_obj, request_data);
-    update_csrf_token();
     $.ajax({
         type: "POST",
         url: ajax_url,
