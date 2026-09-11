@@ -1,3 +1,13 @@
+0.10.68 (2026-09-11)
+--------------------
+- AJAX requests send the CSRF token in the header Django expects
+  (``CSRF_HEADER_NAME``) instead of the request body, and read it from the cookie
+  named by the host application's ``CSRF_COOKIE_NAME`` : a renamed cookie no
+  longer makes django-listing post a stale ``csrftoken`` value, and GET requests
+  do not carry the token in their URL anymore
+- When the cookie is not readable (``CSRF_USE_SESSIONS`` or
+  ``CSRF_COOKIE_HTTPONLY``), the token rendered in the page by footer.html is used
+
 0.10.67 (2026-08-20)
 --------------------
 - Deep listing pages are now paginated on the primary keys : the page rows are
