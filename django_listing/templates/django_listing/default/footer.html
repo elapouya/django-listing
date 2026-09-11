@@ -8,16 +8,19 @@
     const djlst_csrf_cookie_readable = {{ CSRF_COOKIE_READABLE|yesno:"true,false" }};
     const no_choice_msg = "{% trans "Please choose..." %}";
     const use_mass_cb_msg = "{% trans "Please use checkboxes to select one or more fields to mass update" %}";
-    $(document).ready(function () {
-        // Every unsafe same-origin jQuery request carries the CSRF token in the
-        // header Django expects. Nothing is injected in the request body anymore:
-        // a body token is appended to the URL on GET requests by jQuery, and can
-        // be overridden by a stale value.
-        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-            if (options.crossDomain) return;
-            if (/^(GET|HEAD|OPTIONS|TRACE)$/i.test(options.type)) return;
-            jqXHR.setRequestHeader(djlst_csrf_header_name, djlst_get_csrf_token());
-        });
+    // Every unsafe same-origin jQuery request carries the CSRF token in the
+    // header Django expects. Nothing is injected in the request body anymore:
+    // a body token is appended to the URL on GET requests by jQuery, and can
+    // be overridden by a stale value. Registered right away, not on DOM ready,
+    // so that a request sent by an early inline script is covered too.
+    $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+        if (options.crossDomain) return;
+        if (/^(GET|HEAD|OPTIONS|TRACE)$/i.test(options.type)) return;
+        // django_listing.js may not be loaded (AUTO_DECLARE_JS off, static in
+        // 404): fall back to the page token rather than breaking every POST.
+        const token = typeof djlst_get_csrf_token === "function"
+            ? djlst_get_csrf_token() : csrf_token;
+        jqXHR.setRequestHeader(djlst_csrf_header_name, token);
     });
 </script>
 {% noduplicatednl %}

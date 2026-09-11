@@ -69,6 +69,9 @@ class CsrfContextTest(SimpleTestCase):
 
 
 class FooterCsrfTest(SimpleTestCase):
+    def tearDown(self):
+        reload_listing_settings()
+
     def test_footer_declares_the_csrf_cookie_and_header_for_the_javascript(self):
         html = render_footer()
         self.assertIn('const djlst_csrf_cookie_name = "csrftoken";', html)
@@ -78,11 +81,34 @@ class FooterCsrfTest(SimpleTestCase):
     def test_footer_sends_the_token_in_a_header_not_in_the_request_body(self):
         html = render_footer()
         self.assertIn("$.ajaxPrefilter(", html)
-        self.assertIn(
-            "setRequestHeader(djlst_csrf_header_name, djlst_get_csrf_token())", html
-        )
+        self.assertIn("djlst_get_csrf_token()", html)
+        self.assertIn("setRequestHeader(djlst_csrf_header_name, token)", html)
         self.assertNotIn("ajaxSetup", html)
         self.assertNotIn("csrfmiddlewaretoken", html)
+
+    def test_footer_prefilter_survives_a_missing_django_listing_script(self):
+        # The prefilter sits on every POST of the host page: when the script is
+        # not loaded (AUTO_DECLARE_JS off, static in 404) it falls back to the
+        # page token instead of throwing on each request.
+        html = render_footer()
+        self.assertIn('typeof djlst_get_csrf_token === "function"', html)
+
+    def test_footer_prefilter_is_registered_before_dom_ready(self):
+        html = render_footer()
+        self.assertIn("$.ajaxPrefilter(", html)
+        self.assertNotIn("$(document).ready", html)
+
+    def test_footer_follows_the_host_csrf_settings(self):
+        with override_settings(
+            CSRF_COOKIE_NAME="synerj_csrf",
+            CSRF_HEADER_NAME="HTTP_X_SYNERJ_CSRF",
+            CSRF_COOKIE_HTTPONLY=True,
+        ):
+            reload_listing_settings()
+            html = render_footer()
+        self.assertIn('const djlst_csrf_cookie_name = "synerj_csrf";', html)
+        self.assertIn('const djlst_csrf_header_name = "X-SYNERJ-CSRF";', html)
+        self.assertIn("const djlst_csrf_cookie_readable = false;", html)
 
     def test_footer_still_renders_the_page_csrf_token(self):
         html = render_footer()
@@ -96,6 +122,9 @@ class JavascriptCsrfContractTest(SimpleTestCase):
         js = (STATIC_JS / "django_listing.js").read_text()
         self.assertIn("function djlst_get_csrf_token()", js)
         self.assertIn("Cookies.get(djlst_csrf_cookie_name)", js)
+        # js-cookie may not be loaded by the host: the getter must not throw
+        self.assertIn('typeof Cookies !== "undefined"', js)
+        self.assertIn('typeof csrf_token !== "undefined"', js)
         self.assertNotIn("update_csrf_token", js)
         self.assertNotIn("ajaxSetup", js)
         self.assertNotIn("csrftoken", js)
@@ -103,4 +132,7 @@ class JavascriptCsrfContractTest(SimpleTestCase):
     def test_minified_script_is_regenerated_from_the_source(self):
         js = (STATIC_JS / "django_listing.min.js").read_text()
         self.assertIn("djlst_get_csrf_token", js)
+        self.assertIn("typeof Cookies", js)
         self.assertNotIn("update_csrf_token", js)
+        self.assertNotIn("ajaxSetup", js)
+        self.assertNotIn("csrftoken", js)

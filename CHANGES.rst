@@ -7,6 +7,10 @@
   do not carry the token in their URL anymore
 - When the cookie is not readable (``CSRF_USE_SESSIONS`` or
   ``CSRF_COOKIE_HTTPONLY``), the token rendered in the page by footer.html is used
+- Migration note : jQuery requests of the host application no longer carry
+  ``csrfmiddlewaretoken`` in their body. ``CsrfViewMiddleware`` accepts the header,
+  but a view reading ``request.POST["csrfmiddlewaretoken"]`` itself must switch to
+  ``request.META[settings.CSRF_HEADER_NAME]``
 
 0.10.67 (2026-08-20)
 --------------------

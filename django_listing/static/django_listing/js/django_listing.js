@@ -71,12 +71,15 @@ function djlst_get_csrf_token() {
     // The cookie is the freshest source (the token may have been rotated by a
     // login in another tab), but it is only readable when the host application
     // keeps it out of the session and not HttpOnly. Fallback: the token rendered
-    // in the page by footer.html.
-    if (typeof djlst_csrf_cookie_readable !== "undefined" && djlst_csrf_cookie_readable) {
+    // in the page by footer.html. Nothing here may throw: the footer prefilter
+    // calls this getter on every unsafe jQuery request of the host page, and
+    // js-cookie may not be loaded by the host.
+    if (typeof djlst_csrf_cookie_readable !== "undefined" && djlst_csrf_cookie_readable
+            && typeof Cookies !== "undefined") {
         const cookie_token = Cookies.get(djlst_csrf_cookie_name);
         if (cookie_token) return cookie_token;
     }
-    return csrf_token;
+    return typeof csrf_token !== "undefined" ? csrf_token : "";
 }
 
 function djlst_get_form_data_advanced(form) {
