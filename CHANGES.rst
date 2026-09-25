@@ -1,3 +1,7 @@
+0.10.69 (2026-09-25)
+--------------------
+- rollback transaction if existing for catched exceptions
+
 0.10.68 (2026-09-11)
 --------------------
 - AJAX requests send the CSRF token in the header Django expects

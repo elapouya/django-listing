@@ -10,7 +10,7 @@ from django import forms
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 
-from django.db import models
+from django.db import connections, models
 from django.db.models import QuerySet
 from django.forms.models import construct_instance
 from django.http import (
@@ -46,6 +46,16 @@ INSTANCE_METHOD_PREFIX = "get_listing_instance_"
 LISTING_REDIRECT_NONE = None
 LISTING_REDIRECT_SAME_PAGE = 1
 LISTING_REDIRECT_NO_EDIT = 2
+
+
+def rollback_atomic_blocks():
+    # The view catches the exception and answers a 500 itself, so no exception
+    # reaches Django : ATOMIC_REQUESTS (or an atomic() around the view) would commit
+    # what was written before the failure. Mark the current atomic blocks for
+    # rollback instead, as Django REST framework does.
+    for connection in connections.all():
+        if connection.in_atomic_block:
+            connection.set_rollback(True)
 
 
 class ListingViewMixin:
@@ -113,12 +123,14 @@ class ListingViewMixin:
                 except Exception as e:
                     stack = traceback.format_exc()
                     logger.error(stack)
+                    rollback_atomic_blocks()
                     return HttpResponseServerError(e)
             response = self.manage_listing_post(request, *args, **kwargs)
             if response:
                 return response
             return self.get(request, *args, **kwargs)
         except ListingException as e:
+            rollback_atomic_blocks()
             return HttpResponseServerError(str(e))
 
     def get(self, request, *args, **kwargs):
