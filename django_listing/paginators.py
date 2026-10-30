@@ -10,6 +10,7 @@ from django.utils.translation import pgettext_lazy, gettext
 
 from .context import RenderContext
 from .theme_config import ThemeAttribute, ThemeTemplate
+from .utils import is_values_queryset
 
 __all__ = [
     "NoIconButtonPaginator",
@@ -170,11 +171,12 @@ class Paginator(DjangoPaginator):
         if not self.listing.paginate_by_pk or not isinstance(qs, QuerySet):
             # sequences and raw querysets have no primary key to slice on
             return False
-        query = qs.query
-        if query.values_select:
+        if is_values_queryset(qs):
             # .values()/.values_list() rows (the "group by" listing feature
-            # for example) do not have any primary key
+            # for example) are not objects : their primary keys, when grouped,
+            # would not select the rows of the page (#26)
             return False
+        query = qs.query
         if query.combinator:
             # union()/intersection()/difference() querysets cannot be filtered
             return False

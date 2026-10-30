@@ -20,7 +20,7 @@ from django.utils.translation import gettext as _
 
 from . import FILTER_QUERYSTRING_PREFIX
 from .exceptions import *
-from .utils import to_js_timestamp
+from .utils import is_values_queryset, to_js_timestamp
 
 __all__ = [
     "RecordManager",
@@ -320,19 +320,32 @@ class RecordManager:
         return qs.order_by(*order_by)
 
     def add_pk_tiebreak(self, qs, order_by):
-        """Add the primary key as the last sorting key.
+        """Add a tie-break as the last sorting keys.
 
         Sorting only on columns having ties leaves the order of those rows up to
         the database : a same row could then show up on two different pages.
+        The tie-break is the primary key, except on a ``.values()`` /
+        ``.values_list()`` queryset given names : sorting on the primary key
+        would add it to the GROUP BY clause, giving one row per object instead
+        of one per group. There, the names given to ``.values()`` identify a row
+        and are the tie-break, and a sort on the primary key is dropped unless
+        it is one of those names. A ``.values()`` without argument keeps the
+        primary key : its rows carry all the concrete fields.
         """
         if self.listing.gb_cols or not isinstance(qs, QuerySet):
             return order_by
-        if qs.query.values_select:
-            # .values() rows have no primary key, and sorting on it would
-            # add it to the GROUP BY clause
-            return order_by
         pk_names = {"pk", qs.model._meta.pk.name}
         pk_names |= {"-" + name for name in pk_names}
+        if is_values_queryset(qs) and qs._fields:
+            order_by = [
+                f
+                for f in order_by
+                if not isinstance(f, str)
+                or f not in pk_names
+                or f.lstrip("-") in qs._fields
+            ]
+            sorted_names = {f.lstrip("-") for f in order_by if isinstance(f, str)}
+            return order_by + [f for f in qs._fields if f not in sorted_names]
         if any(f in pk_names for f in order_by if isinstance(f, str)):
             return order_by
         return list(order_by) + ["pk"]

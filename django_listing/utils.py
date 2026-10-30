@@ -8,6 +8,7 @@ import pprint
 from datetime import datetime, date
 
 from django.core.exceptions import FieldError
+from django.db.models.query import QuerySet
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -119,6 +120,14 @@ class NotPresent:
 
 
 NOT_PRESENT = NotPresent()
+
+
+def is_values_queryset(qs):
+    """Tell whether qs is a ``.values()`` / ``.values_list()`` queryset."""
+    # values_select only lists model fields : a .values() naming annotations only
+    # leaves it empty. QuerySet._fields is None on a model queryset, and a tuple
+    # (empty without argument) after values()/values_list().
+    return isinstance(qs, QuerySet) and qs._fields is not None
 
 
 # Validate a list of names for qs.values(...) without hitting the DB

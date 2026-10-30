@@ -6,11 +6,12 @@
 #
 from django.db import connection
 from django.db.models import Count
+from django.db.models.functions import Substr, Upper
 from django.template import RequestContext
 from django.test import RequestFactory, TestCase
 from django.test.utils import CaptureQueriesContext
 
-from django_listing import Listing
+from django_listing import Column, Columns, Listing
 from django_listing.paginators import Paginator
 
 from .models import Author, Book, Review
@@ -19,6 +20,22 @@ from .models import Author, Book, Review
 class BookListing(Listing):
     model = Book
     per_page = 5
+
+
+class CatListing(Listing):
+    columns = Columns(Column("cat"), Column("count"))
+    per_page = 2
+
+
+class CategoryCountListing(Listing):
+    columns = Columns(Column("category"), Column("count"))
+    per_page = 2
+
+
+class GroupByCatListing(Listing):
+    columns = Columns(Column("cat"), Column("title"))
+    gb_cols = "cat"
+    per_page = 2
 
 
 def make_listing(data, listing_class=BookListing, url="/", **params):
@@ -161,6 +178,50 @@ class FallbackTest(PaginateByPkTestCase):
             [{"category": "cat0", "count": 15}, {"category": "cat1", "count": 15}],
         )
 
+    def captured_rows(self, qs, **params):
+        with CaptureQueriesContext(connection) as captured:
+            rows = list(page_of(qs, **params).current_page)
+        self.assert_single_select([q["sql"] for q in captured.captured_queries])
+        return rows
+
+    def test_values_on_annotations_only_are_aggregated_per_group(self):
+        # values_select stays empty when values() only names annotations : the
+        # queryset must not be mistaken for a model one (#26)
+        qs = (
+            Book.objects.annotate(cat=Upper("category"))
+            .values("cat")
+            .annotate(count=Count("id"))
+        )
+        for params in ({"sort": "cat"}, {}, {"sort": "-count"}):
+            with self.subTest(**params):
+                self.assertEqual(
+                    self.captured_rows(qs, listing_class=CatListing, **params),
+                    [{"cat": "CAT0", "count": 15}, {"cat": "CAT1", "count": 15}],
+                )
+
+    def test_values_list_on_annotations_only_is_aggregated_per_group(self):
+        qs = (
+            Book.objects.annotate(cat=Upper("category"))
+            .values_list("cat")
+            .annotate(count=Count("id"))
+        )
+        self.assertEqual(
+            self.captured_rows(qs, listing_class=CatListing, sort="cat"),
+            [("CAT0", 15), ("CAT1", 15)],
+        )
+
+    def test_unsorted_values_on_a_model_field_are_aggregated_per_group(self):
+        qs = Book.objects.values("category").annotate(count=Count("id"))
+        rows = self.captured_rows(qs, listing_class=CategoryCountListing)
+        self.assertEqual([row["count"] for row in rows], [15, 15])
+
+    def test_group_by_on_an_annotation_is_aggregated_per_group(self):
+        qs = Book.objects.annotate(cat=Upper("category"))
+        self.assertEqual(
+            self.captured_rows(qs, listing_class=GroupByCatListing),
+            [{"cat": "CAT0", "count": 15}, {"cat": "CAT1", "count": 15}],
+        )
+
     def test_multivalued_join_page_returns_the_same_rows_as_a_plain_slice(self):
         # a filter on a reverse relation duplicates rows : slicing on the pk
         # would not return the same number of rows
@@ -228,3 +289,45 @@ class PkTiebreakTest(PaginateByPkTestCase):
     def test_values_annotate_queryset_gets_no_pk_tiebreak(self):
         qs = Book.objects.values("category").annotate(count=Count("id"))
         self.assertEqual(self.order_by_of(qs, sort="category"), ["category"])
+
+    def test_values_on_annotations_only_are_tiebroken_on_the_values_names(self):
+        qs = (
+            Book.objects.annotate(cat=Upper("category"))
+            .values("cat")
+            .annotate(count=Count("id"))
+        )
+        for params, order_by in (
+            ({"sort": "cat"}, ["cat"]),
+            ({"sort": "-count"}, ["-count", "cat"]),
+            ({}, ["cat"]),
+        ):
+            with self.subTest(**params):
+                self.assertEqual(
+                    self.order_by_of(qs, listing_class=CatListing, **params), order_by
+                )
+
+    def test_a_pk_named_in_values_stays_in_the_ordering(self):
+        qs = Book.objects.values("id", "category")
+        self.assertEqual(self.order_by_of(qs, sort="-id"), ["-id", "category"])
+
+    def test_values_without_argument_keep_the_pk_tiebreak(self):
+        self.assertEqual(
+            self.order_by_of(Book.objects.values(), sort="category"),
+            ["category", "pk"],
+        )
+
+    def test_groups_sorted_on_ties_show_up_on_a_single_page(self):
+        # 10 groups of 3 books, all tied on count
+        qs = (
+            Book.objects.annotate(cat=Substr("title", 6, 1))
+            .values("cat")
+            .annotate(count=Count("id"))
+        )
+        rows = []
+        for page in (1, 2):
+            lsg = page_of(
+                qs, page=page, listing_class=CatListing, sort="-count", per_page=5
+            )
+            rows += list(lsg.current_page)
+        self.assertEqual(sorted(row["cat"] for row in rows), list("0123456789"))
+        self.assertEqual({row["count"] for row in rows}, {3})

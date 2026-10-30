@@ -1,3 +1,9 @@
+0.10.70 (2026-10-28)
+--------------------
+- Fix grouped ``.values()`` / ``.values_list()`` listings showing one row per object
+  instead of one per group : they are no longer sorted nor paginated on the primary
+  key, and their sort ends with the ``.values()`` names
+
 0.10.69 (2026-09-25)
 --------------------
 - rollback transaction if existing for catched exceptions
